@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><plug-in>
+    <name>workflow-ticketing</name>
+    <class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin</class>
+    <version>1.0.0-SNAPSHOT</version>
+    <documentation/>
+    <installation/>
+    <changes/>
+    <user-guide/>
+    <description>module.workflow.ticketing.module.description</description>
+    <provider>module.workflow.ticketing.module.provider</provider>
+    <provider-url>http://dev.lutece.paris.fr</provider-url>
+    <icon-url>images/admin/skin/feature_default_icon.png</icon-url>
+    <copyright>Copyright (c) 2015 Mairie de Paris</copyright>
+    
+    <!-- if the plugin must have a connection pool with parameter : 1 - yes, 0 - no -->
+    <db-pool-required>0</db-pool-required>
+    
+	<!-- Specific plugin Javascript files -->
+    <javascript-files>
+    </javascript-files>
+    
+    <!-- Specific plugin CSS stylesheet -->
+    <css-stylesheets>
+    </css-stylesheets>
+</plug-in>
