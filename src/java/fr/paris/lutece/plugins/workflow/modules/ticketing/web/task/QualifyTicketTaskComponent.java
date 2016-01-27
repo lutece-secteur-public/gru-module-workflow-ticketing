@@ -37,9 +37,7 @@ import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketCriticality;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.TicketPriority;
-import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.plugins.workflowcore.web.task.SimpleTaskComponent;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -52,10 +50,10 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * This class is a component for the task {@link fr.paris.lutece.plugins.ticketing.service.workflow.task.TaskQualifyTicket}
+ * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskQualifyTicket}
  *
  */
-public class QualifyTicketTaskComponent extends SimpleTaskComponent
+public class QualifyTicketTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_QUALIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_qualify_ticket_form.html";
@@ -97,23 +95,5 @@ public class QualifyTicketTaskComponent extends SimpleTaskComponent
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_QUALIFY_TICKET_FORM, locale, model );
 
         return template.getHtml(  );
-    }
-
-    @Override
-    public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
-
-    @Override
-    public String getTaskInformationXml( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
-    {
-        return null;
-    }
-
-    @Override
-    public String validateConfig( ITaskConfig config, HttpServletRequest request )
-    {
-        return null;
     }
 }

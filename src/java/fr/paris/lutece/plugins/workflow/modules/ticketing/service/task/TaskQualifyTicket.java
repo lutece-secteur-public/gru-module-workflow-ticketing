@@ -34,11 +34,16 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.TicketCriticality;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
+import fr.paris.lutece.plugins.ticketing.business.TicketPriority;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
-import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+
+import org.apache.commons.lang.StringUtils;
+
+import java.text.MessageFormat;
 
 import java.util.Locale;
 
@@ -51,10 +56,11 @@ import javax.servlet.http.HttpServletRequest;
  * This class represents a task to qualify the ticket
  *
  */
-public class TaskQualifyTicket extends SimpleTask
+public class TaskQualifyTicket extends AbstractTicketingTask
 {
     // Messages
     private static final String MESSAGE_QUALIFY_TICKET = "module.workflow.ticketing.task_qualify_ticket.labelQualifyTicket";
+    private static final String MESSAGE_QUALIFY_TICKET_INFORMATION = "module.workflow.ticketing.task_qualify_ticket.information";
 
     // PARAMETERS
     public static final String PARAMETER_TICKET_PRIORITY = "ticket_priority";
@@ -65,8 +71,10 @@ public class TaskQualifyTicket extends SimpleTask
     private IResourceHistoryService _resourceHistoryService;
 
     @Override
-    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
+        String strTaskInformation = StringUtils.EMPTY;
+
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
 
         if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
@@ -78,15 +86,28 @@ public class TaskQualifyTicket extends SimpleTask
             {
                 String strPriority = request.getParameter( PARAMETER_TICKET_PRIORITY );
                 int nPriority = Integer.parseInt( strPriority );
+                TicketPriority priorityBefore = TicketPriority.valueOf( ticket.getPriority(  ) );
+                TicketPriority priorityAfter = TicketPriority.valueOf( nPriority );
                 ticket.setPriority( nPriority );
 
                 String strCriticality = request.getParameter( PARAMETER_TICKET_CRITICALITY );
                 int nCriticality = Integer.parseInt( strCriticality );
+                TicketCriticality criticalityBefore = TicketCriticality.valueOf( ticket.getCriticality(  ) );
+                TicketCriticality criticalityAfter = TicketCriticality.valueOf( nCriticality );
                 ticket.setCriticality( nCriticality );
 
                 TicketHome.update( ticket );
+
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                            MESSAGE_QUALIFY_TICKET_INFORMATION, Locale.FRENCH ),
+                        priorityBefore.getLocalizedMessage( Locale.FRENCH ),
+                        priorityAfter.getLocalizedMessage( Locale.FRENCH ),
+                        criticalityBefore.getLocalizedMessage( Locale.FRENCH ),
+                        criticalityAfter.getLocalizedMessage( Locale.FRENCH ) );
             }
         }
+
+        return strTaskInformation;
     }
 
     @Override
