@@ -38,8 +38,11 @@ import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.ITicketReferenceService;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
-import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+
+import org.apache.commons.lang.StringUtils;
+
+import java.text.MessageFormat;
 
 import java.util.Locale;
 
@@ -52,10 +55,11 @@ import javax.servlet.http.HttpServletRequest;
  * This class represents a task to generate the ticket reference
  *
  */
-public class TaskGenerateTicketReference extends SimpleTask
+public class TaskGenerateTicketReference extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_GENERATE_TICKET_REFERENCE = "module.workflow.ticketing.task_ticket_reference_generator.labelGenerateTicketReference";
+    private static final String MESSAGE_GENERATE_TICKET_REFERENCE = "module.workflow.ticketing.task_generate_ticket_reference.labelGenerateTicketReference";
+    private static final String MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION = "module.workflow.ticketing.task_generate_ticket_reference.information";
 
     // Services
     @Inject
@@ -64,8 +68,9 @@ public class TaskGenerateTicketReference extends SimpleTask
     private ITicketReferenceService _ticketReferenceService;
 
     @Override
-    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
+        String strReference = StringUtils.EMPTY;
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
 
         if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
@@ -77,11 +82,15 @@ public class TaskGenerateTicketReference extends SimpleTask
             {
                 synchronized ( _ticketReferenceService )
                 {
-                    ticket.setReference( _ticketReferenceService.generateReference( ticket ) );
+                    strReference = _ticketReferenceService.generateReference( ticket );
+                    ticket.setReference( strReference );
                     TicketHome.update( ticket );
                 }
             }
         }
+
+        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION,
+                Locale.FRENCH ), strReference );
     }
 
     @Override
