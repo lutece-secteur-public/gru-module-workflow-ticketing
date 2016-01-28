@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS workflow_task_ticketing_additional_information;
+DROP TABLE IF EXISTS workflow_task_ticketing_information;
 
 
 /*==================================================================*/
