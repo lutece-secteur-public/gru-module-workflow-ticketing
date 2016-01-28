@@ -46,6 +46,8 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * This class represents a TaskComponent for Ticketing
@@ -60,10 +62,17 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
+        String strTaskInformation = StringUtils.EMPTY;
+        
         TaskInformation taskInformation = _taskInformationService.findByPrimaryKey( nIdHistory, task.getId(  ),
                 WorkflowUtils.getPlugin(  ) );
 
-        return taskInformation.getValue(  );
+        if ( taskInformation != null )
+        {
+            strTaskInformation = taskInformation.getValue(  );
+        }
+        
+        return strTaskInformation;
     }
 
     @Override
