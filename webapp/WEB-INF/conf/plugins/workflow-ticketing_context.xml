@@ -49,5 +49,16 @@
         p:titleI18nKey="module.workflow.ticketing.task_assign_unit_linked_to_category.title"
         p:beanName="workflow-ticketing.taskAssignUnitLinkedToCategory"
         p:taskForAutomaticAction="true" />
+
+    <!-- Task Assign up ticket -->
+    <bean id="workflow-ticketing.taskAssignUpTicket" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignUpTicket" scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeAssignUpTicket" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketingAssignUpTicket"
+        p:titleI18nKey="module.workflow.ticketing.task_assign_up_ticket.title"
+        p:beanName="workflow-ticketing.taskAssignUpTicket"
+        p:formTaskRequired="true"
+        p:taskForAutomaticAction="false" />
+    <bean id="workflow-ticketing.assignUpTicketTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignUpTicketTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeAssignUpTicket" />
     
 </beans>

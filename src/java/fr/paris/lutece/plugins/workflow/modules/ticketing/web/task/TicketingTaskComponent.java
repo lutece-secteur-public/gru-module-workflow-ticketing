@@ -39,14 +39,21 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.web.task.SimpleTaskComponent;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.util.mvc.utils.MVCMessage;
+import fr.paris.lutece.util.ErrorMessage;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -55,15 +62,19 @@ import org.apache.commons.lang.StringUtils;
  */
 public class TicketingTaskComponent extends SimpleTaskComponent
 {
+    protected static final String ATTRIBUTE_HIDE_NEXT_STEP_BUTTON = "hide_next_button";
+    private static final String MARK_ERRORS = "errors";
+
     // SERVICES
     @Inject
     private ITaskInformationService _taskInformationService;
+    private List<ErrorMessage> _listErrors = null;
 
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
         String strTaskInformation = StringUtils.EMPTY;
-        
+
         TaskInformation taskInformation = _taskInformationService.findByPrimaryKey( nIdHistory, task.getId(  ),
                 WorkflowUtils.getPlugin(  ) );
 
@@ -71,7 +82,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
         {
             strTaskInformation = taskInformation.getValue(  );
         }
-        
+
         return strTaskInformation;
     }
 
@@ -92,5 +103,46 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     public String validateConfig( ITaskConfig config, HttpServletRequest request )
     {
         return null;
+    }
+
+    /**
+     * Add an error message
+     * @param strMessage The message
+     */
+    protected void addError( String strMessage )
+    {
+        _listErrors.add( new MVCMessage( strMessage ) );
+    }
+
+    /**
+     * Add an error message
+     * @param strMessageKey The message
+     * @param locale The locale
+     */
+    protected void addError( String strMessageKey, Locale locale )
+    {
+        _listErrors.add( new MVCMessage( I18nService.getLocalizedString( strMessageKey, locale ) ) );
+    }
+
+    /**
+    * Fill the model with commons objects used in templates
+    * @param model The model
+    */
+    protected void fillCommons( Map<String, Object> model )
+    {
+        _listErrors = new ArrayList<ErrorMessage>(  );
+        model.put( MARK_ERRORS, _listErrors );
+    }
+
+    /**
+     * Get a model Object filled with default values
+     * @return The model
+     */
+    protected Map<String, Object> getModel(  )
+    {
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        fillCommons( model );
+
+        return model;
     }
 }
