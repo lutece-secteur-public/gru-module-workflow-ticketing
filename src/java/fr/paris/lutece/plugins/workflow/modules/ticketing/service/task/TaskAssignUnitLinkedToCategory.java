@@ -35,15 +35,18 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
-import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
+
+import java.text.MessageFormat;
 
 import java.util.Locale;
 
@@ -56,15 +59,21 @@ import javax.servlet.http.HttpServletRequest;
  * This class represents a task to assign a unit from the category selected
  *
  */
-public class TaskAssignUnitLinkedToCategory extends SimpleTask
+public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
 {
+    // Messages
+    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY = "module.workflow.ticketing.task_assign_unit_linked_to_category.labelAssignTicketLinkedToCategory";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY_INFORMATION = "module.workflow.ticketing.task_assign_unit_linked_to_category.information";
+
     // Services
     @Inject
     private IResourceHistoryService _resourceHistoryService;
 
     @Override
-    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
+        String strTaskInformation = StringUtils.EMPTY;
+
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
 
         if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
@@ -75,23 +84,37 @@ public class TaskAssignUnitLinkedToCategory extends SimpleTask
             if ( ticket != null )
             {
                 AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
-                Unit unit = UnitHome.findByPrimaryKey( TicketCategoryHome.findByPrimaryKey( 
-                            ticket.getIdTicketCategory(  ) ).getIdUnit(  ) );
+
+                if ( assigneeUnit == null )
+                {
+                    assigneeUnit = new AssigneeUnit(  );
+                }
+
+                TicketCategory ticketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) );
+
+                Unit unit = UnitHome.findByPrimaryKey( ticketCategory.getIdUnit(  ) );
 
                 if ( unit != null )
                 {
                     assigneeUnit.setUnitId( unit.getIdUnit(  ) );
                     assigneeUnit.setName( unit.getLabel(  ) );
                     ticket.setAssigneeUnit( assigneeUnit );
+                    ticket.setAssigneeUser( null );
                     TicketHome.update( ticket );
+
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                                MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY_INFORMATION, Locale.FRENCH ),
+                            assigneeUnit.getName(  ), ticketCategory.getLabel(  ) );
                 }
             }
         }
+
+        return strTaskInformation;
     }
 
     @Override
     public String getTitle( Locale locale )
     {
-        return StringUtils.EMPTY;
+        return I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY, locale );
     }
 }
