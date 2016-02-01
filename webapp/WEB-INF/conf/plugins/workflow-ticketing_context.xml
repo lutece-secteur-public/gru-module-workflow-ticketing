@@ -72,4 +72,15 @@
     <bean id="workflow-ticketing.assignTicketToUnitTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUnitTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUnit" />
     
+    <!-- Task Assign ticket to user -->    
+    <bean id="workflow-ticketing.taskAssignTicketToUser" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUser" scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeAssignTicketToUser" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketingAssignTicketToUser"
+        p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_user.title"
+        p:beanName="workflow-ticketing.taskAssignTicketToUser"
+        p:formTaskRequired="true"
+        p:taskForAutomaticAction="false" />
+    <bean id="workflow-ticketing.assignTicketToUserTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUserTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUser" />
+        
 </beans>

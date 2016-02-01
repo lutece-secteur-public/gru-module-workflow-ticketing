@@ -1,0 +1,8 @@
+<@messages errors=errors />
+<#if users_list?? && users_list?has_content>
+    <#if current_user?? && current_user?has_content>
+        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_user.labelUser" inputName="id_user" items=users_list value="${current_user}" i18nHelpBlockKey="ticketing.task_assign_ticket_to_user.labelUser.help" cssClass='' />
+    <#else>
+        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_user.labelUser" inputName="id_user" items=users_list value="" i18nHelpBlockKey="ticketing.task_assign_ticket_to_user.labelUser.help" cssClass='' />
+    </#if>
+</#if>
