@@ -92,7 +92,7 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
 
                 TicketCategory ticketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) );
 
-                Unit unit = UnitHome.findByPrimaryKey( ticketCategory.getIdUnit(  ) );
+                Unit unit = UnitHome.findByPrimaryKey( ticketCategory.getAssigneeUnit(  ).getUnitId(  ) );
 
                 if ( unit != null )
                 {
