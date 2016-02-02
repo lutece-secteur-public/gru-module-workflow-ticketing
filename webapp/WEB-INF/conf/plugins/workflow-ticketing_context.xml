@@ -49,6 +49,8 @@
         p:titleI18nKey="module.workflow.ticketing.task_assign_unit_linked_to_category.title"
         p:beanName="workflow-ticketing.taskAssignUnitLinkedToCategory"
         p:taskForAutomaticAction="true" />
+    <bean id="workflow-ticketing.assignUnitLinkedToCategoryTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeAssignUnitLinkedToCategory" />
 
     <!-- Task Assign up ticket -->
     <bean id="workflow-ticketing.taskAssignUpTicket" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignUpTicket" scope="prototype" />
