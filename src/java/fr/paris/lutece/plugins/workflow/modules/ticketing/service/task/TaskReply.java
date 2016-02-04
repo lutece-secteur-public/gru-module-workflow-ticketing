@@ -70,22 +70,17 @@ public class TaskReply extends AbstractTicketingTask
     {
         String strTaskInformation = StringUtils.EMPTY;
 
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        // We get the ticket to modify
+        Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( ticket != null )
         {
-            // We get the ticket to modify
-            Ticket ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+            String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
+            ticket.setUserMessage( strUserMessage );
+            TicketHome.update( ticket );
 
-            if ( ticket != null )
-            {
-                String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
-                ticket.setUserMessage( strUserMessage );
-                TicketHome.update( ticket );
-
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION,
-                            Locale.FRENCH ), strUserMessage );
-            }
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION,
+                        Locale.FRENCH ), strUserMessage );
         }
 
         return strTaskInformation;

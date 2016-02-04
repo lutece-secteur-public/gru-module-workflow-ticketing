@@ -39,7 +39,6 @@ import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -77,34 +76,29 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
         String strTaskInformation = StringUtils.EMPTY;
         String strTargetUnitId = request.getParameter( PARAMETER_TICKET_UP_ASSIGNEE_UNIT_ID );
 
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        // We get the ticket to modify
+        Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( ticket != null )
         {
-            // We get the ticket to modify
-            Ticket ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
+            Unit unit = UnitHome.findByPrimaryKey( Integer.parseInt( strTargetUnitId ) );
 
-            if ( ticket != null )
+            if ( unit != null )
             {
-                AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
-                Unit unit = UnitHome.findByPrimaryKey( Integer.parseInt( strTargetUnitId ) );
+                AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
+                assigneeUnit.setUnitId( unit.getIdUnit(  ) );
+                assigneeUnit.setName( unit.getLabel(  ) );
+                ticket.setAssigneeUnit( assigneeUnit );
+                ticket.setAssigneeUser( null );
+                TicketHome.update( ticket );
 
-                if ( unit != null )
-                {
-                    AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
-                    assigneeUnit.setUnitId( unit.getIdUnit(  ) );
-                    assigneeUnit.setName( unit.getLabel(  ) );
-                    ticket.setAssigneeUnit( assigneeUnit );
-                    ticket.setAssigneeUser( null );
-                    TicketHome.update( ticket );
-
-                    String strFormerUserInfos = ( assigneeUser == null )
-                        ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER, Locale.FRENCH )
-                        : ( assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ), strFormerUserInfos,
-                            assigneeUnit.getName(  ) );
-                }
+                String strFormerUserInfos = ( assigneeUser == null )
+                    ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER, Locale.FRENCH )
+                    : ( assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                            MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ), strFormerUserInfos,
+                        assigneeUnit.getName(  ) );
             }
         }
 

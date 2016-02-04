@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketCriticality;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.TicketPriority;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -68,36 +67,31 @@ public class TaskQualifyTicket extends AbstractTicketingTask
     {
         String strTaskInformation = StringUtils.EMPTY;
 
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        // We get the ticket to modify
+        Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( ticket != null )
         {
-            // We get the ticket to modify
-            Ticket ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+            String strPriority = request.getParameter( PARAMETER_TICKET_PRIORITY );
+            int nPriority = Integer.parseInt( strPriority );
+            TicketPriority priorityBefore = TicketPriority.valueOf( ticket.getPriority(  ) );
+            TicketPriority priorityAfter = TicketPriority.valueOf( nPriority );
+            ticket.setPriority( nPriority );
 
-            if ( ticket != null )
-            {
-                String strPriority = request.getParameter( PARAMETER_TICKET_PRIORITY );
-                int nPriority = Integer.parseInt( strPriority );
-                TicketPriority priorityBefore = TicketPriority.valueOf( ticket.getPriority(  ) );
-                TicketPriority priorityAfter = TicketPriority.valueOf( nPriority );
-                ticket.setPriority( nPriority );
+            String strCriticality = request.getParameter( PARAMETER_TICKET_CRITICALITY );
+            int nCriticality = Integer.parseInt( strCriticality );
+            TicketCriticality criticalityBefore = TicketCriticality.valueOf( ticket.getCriticality(  ) );
+            TicketCriticality criticalityAfter = TicketCriticality.valueOf( nCriticality );
+            ticket.setCriticality( nCriticality );
 
-                String strCriticality = request.getParameter( PARAMETER_TICKET_CRITICALITY );
-                int nCriticality = Integer.parseInt( strCriticality );
-                TicketCriticality criticalityBefore = TicketCriticality.valueOf( ticket.getCriticality(  ) );
-                TicketCriticality criticalityAfter = TicketCriticality.valueOf( nCriticality );
-                ticket.setCriticality( nCriticality );
+            TicketHome.update( ticket );
 
-                TicketHome.update( ticket );
-
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_QUALIFY_TICKET_INFORMATION, Locale.FRENCH ),
-                        priorityBefore.getLocalizedMessage( Locale.FRENCH ),
-                        priorityAfter.getLocalizedMessage( Locale.FRENCH ),
-                        criticalityBefore.getLocalizedMessage( Locale.FRENCH ),
-                        criticalityAfter.getLocalizedMessage( Locale.FRENCH ) );
-            }
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                        MESSAGE_QUALIFY_TICKET_INFORMATION, Locale.FRENCH ),
+                    priorityBefore.getLocalizedMessage( Locale.FRENCH ),
+                    priorityAfter.getLocalizedMessage( Locale.FRENCH ),
+                    criticalityBefore.getLocalizedMessage( Locale.FRENCH ),
+                    criticalityAfter.getLocalizedMessage( Locale.FRENCH ) );
         }
 
         return strTaskInformation;

@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.ITicketReferenceService;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -68,21 +67,17 @@ public class TaskGenerateTicketReference extends AbstractTicketingTask
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strReference = StringUtils.EMPTY;
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
 
-        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        // We get the ticket to modify
+        Ticket ticket = getTicket( nIdResourceHistory );
+
+        if ( ticket != null )
         {
-            // We get the ticket to modify
-            Ticket ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
-
-            if ( ticket != null )
+            synchronized ( _ticketReferenceService )
             {
-                synchronized ( _ticketReferenceService )
-                {
-                    strReference = _ticketReferenceService.generateReference( ticket );
-                    ticket.setReference( strReference );
-                    TicketHome.update( ticket );
-                }
+                strReference = _ticketReferenceService.generateReference( ticket );
+                ticket.setReference( strReference );
+                TicketHome.update( ticket );
             }
         }
 

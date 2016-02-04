@@ -38,7 +38,6 @@ import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,56 +70,51 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
         String strTaskInformation = StringUtils.EMPTY;
         String strUnitId = request.getParameter( PARAMETER_ASSIGNEE_UNIT );
 
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        // We get the ticket to modify
+        Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( ticket != null )
         {
-            // We get the ticket to modify
-            Ticket ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
+            String strCurrentUnit = null;
 
-            if ( ticket != null )
+            if ( assigneeUnit == null )
             {
-                AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
-                String strCurrentUnit = null;
+                assigneeUnit = new AssigneeUnit(  );
+                strCurrentUnit = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT,
+                        Locale.FRENCH );
+            }
+            else
+            {
+                strCurrentUnit = assigneeUnit.getName(  );
+            }
 
-                if ( assigneeUnit == null )
+            Unit unit = null;
+
+            if ( strUnitId != null )
+            {
+                unit = UnitHome.findByPrimaryKey( Integer.parseInt( strUnitId ) );
+            }
+
+            if ( unit != null )
+            {
+                if ( unit.getIdUnit(  ) != assigneeUnit.getUnitId(  ) )
                 {
-                    assigneeUnit = new AssigneeUnit(  );
-                    strCurrentUnit = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT,
-                            Locale.FRENCH );
+                    assigneeUnit.setUnitId( unit.getIdUnit(  ) );
+                    assigneeUnit.setName( unit.getLabel(  ) );
+                    ticket.setAssigneeUnit( assigneeUnit );
+                    ticket.setAssigneeUser( null );
+                    TicketHome.update( ticket );
+
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                                MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ), strCurrentUnit,
+                            assigneeUnit.getName(  ) );
                 }
                 else
                 {
-                    strCurrentUnit = assigneeUnit.getName(  );
-                }
-
-                Unit unit = null;
-
-                if ( strUnitId != null )
-                {
-                    unit = UnitHome.findByPrimaryKey( Integer.parseInt( strUnitId ) );
-                }
-
-                if ( unit != null )
-                {
-                    if ( unit.getIdUnit(  ) != assigneeUnit.getUnitId(  ) )
-                    {
-                        assigneeUnit.setUnitId( unit.getIdUnit(  ) );
-                        assigneeUnit.setName( unit.getLabel(  ) );
-                        ticket.setAssigneeUnit( assigneeUnit );
-                        ticket.setAssigneeUser( null );
-                        TicketHome.update( ticket );
-
-                        strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                    MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ), strCurrentUnit,
-                                assigneeUnit.getName(  ) );
-                    }
-                    else
-                    {
-                        strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                    MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION_NO_CHANGE, Locale.FRENCH ),
-                                assigneeUnit.getName(  ) );
-                    }
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                                MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION_NO_CHANGE, Locale.FRENCH ),
+                            assigneeUnit.getName(  ) );
                 }
             }
         }
