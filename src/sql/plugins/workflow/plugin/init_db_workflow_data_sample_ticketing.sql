@@ -24,9 +24,11 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
 			(302,'taskTicketingAssignUnitLinkedToCategory',301,2),
             (321,'taskTicketingQualifyTicket',302,1),
             (322,'taskTicketingAssignTicketToUnit',302,2),
-			(323, 'taskTypeComment', 302,3), 
+            (323,'taskTicketingModifyTicketCategory',302,3),
+			(324, 'taskTypeComment', 302,4), 
             (341,'taskTicketingQualifyTicket',303,1),
-            (342, 'taskTypeComment', 303,2),
+            (342,'taskTicketingModifyTicketCategory',303,2),
+            (343, 'taskTypeComment', 303,3),
             (351,'taskTicketingAssignTicketToUnit',305,1),
             (352, 'taskTypeComment', 305,2),
             (361,'taskTicketingAssignTicketToUser',306,1),
@@ -34,12 +36,13 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
             (371,'taskTicketingAssignTicketToMe',307,1),
             (372, 'taskTypeComment', 307,2),
 			(381,'taskTicketingAssignUpTicket',304,1),
-			(382, 'taskTypeComment', 304,2);
+			(382, 'taskTypeComment', 304,2)
+			;
 
-DELETE FROM workflow_task_comment_config WHERE id_task >= 300 AND id_task < 400;			
+DELETE FROM workflow_task_comment_config WHERE id_task >= 300 AND id_task < 450;			
 INSERT INTO workflow_task_comment_config (id_task, title, is_mandatory) 
-	VALUES	(323, 'Commentaire', 0),
-			(342, 'Commentaire', 0),
+	VALUES	(324, 'Commentaire', 0),
+			(343, 'Commentaire', 0),
 			(352, 'Commentaire', 0),
 			(362, 'Commentaire', 0),
 			(372, 'Commentaire', 0),
