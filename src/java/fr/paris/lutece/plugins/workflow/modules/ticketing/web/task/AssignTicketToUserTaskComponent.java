@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -66,7 +65,6 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
     private static final String MESSAGE_NO_USER_FOUND = "module.workflow.ticketing.task_assign_ticket_to_user.labelNoUserFound";
 
     // MARKS
-    private static final String MARK_TICKET = "ticket";
     private static final String MARK_USERS_LIST = "users_list";
     private static final String MARK_CURRENT_USER = "current_user";
 
@@ -80,41 +78,34 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Locale locale, ITask task )
     {
-        Map<String, Object> model = getModel(  );
-        Ticket ticket;
+        Ticket ticket = getTicket( nIdResource, strResourceType );
+        Map<String, Object> model = getModel( ticket );
         ReferenceList usersList = null;
         String strCurrentUserId = null;
 
-        if ( ( strResourceType != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( strResourceType ) )
+        if ( ticket != null )
         {
-            ticket = TicketHome.findByPrimaryKey( nIdResource );
-
-            if ( ticket != null )
+            if ( ticket.getAssigneeUnit(  ) != null )
             {
-                model.put( MARK_TICKET, ticket );
+                usersList = getUsersList( ticket.getAssigneeUnit(  ).getUnitId(  ) );
+                strCurrentUserId = ( ticket.getAssigneeUser(  ) == null ) ? EMPTY_CHOICE_IN_LIST
+                                                                          : ( String.valueOf( ticket.getAssigneeUser(  )
+                                                                                                    .getAdminUserId(  ) ) );
 
-                if ( ticket.getAssigneeUnit(  ) != null )
+                if ( usersList.toMap(  ).containsKey( strCurrentUserId ) )
                 {
-                    usersList = getUsersList( ticket.getAssigneeUnit(  ).getUnitId(  ) );
-                    strCurrentUserId = ( ticket.getAssigneeUser(  ) == null ) ? EMPTY_CHOICE_IN_LIST
-                                                                              : ( String.valueOf( ticket.getAssigneeUser(  )
-                                                                                                        .getAdminUserId(  ) ) );
+                    model.put( MARK_CURRENT_USER, strCurrentUserId );
+                }
+            }
 
-                    if ( usersList.toMap(  ).containsKey( strCurrentUserId ) )
-                    {
-                        model.put( MARK_CURRENT_USER, strCurrentUserId );
-                    }
-                }
-
-                if ( ( usersList == null ) || ( usersList.size(  ) <= 1 ) )
-                {
-                    request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
-                    addError( I18nService.getLocalizedString( MESSAGE_NO_USER_FOUND, locale ) );
-                }
-                else
-                {
-                    model.put( MARK_USERS_LIST, usersList );
-                }
+            if ( ( usersList == null ) || ( usersList.size(  ) <= 1 ) )
+            {
+                request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
+                addError( I18nService.getLocalizedString( MESSAGE_NO_USER_FOUND, locale ) );
+            }
+            else
+            {
+                model.put( MARK_USERS_LIST, usersList );
             }
         }
 

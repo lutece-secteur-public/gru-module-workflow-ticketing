@@ -33,16 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketCriticality;
-import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.TicketPriority;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -59,7 +56,6 @@ public class QualifyTicketTaskComponent extends TicketingTaskComponent
     private static final String TEMPLATE_TASK_QUALIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_qualify_ticket_form.html";
 
     // MARKS
-    private static final String MARK_TICKET = "ticket";
     private static final String MARK_TICKET_PRIORITIES_LIST = "ticket_priorities_list";
     private static final String MARK_TICKET_PRIORITY_DEFAULT = "ticket_priority_default";
     private static final String MARK_TICKET_CRITICALITIES_LIST = "ticket_criticalities_list";
@@ -72,17 +68,7 @@ public class QualifyTicketTaskComponent extends TicketingTaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-
-        if ( ( strResourceType != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( strResourceType ) )
-        {
-            Ticket ticket = TicketHome.findByPrimaryKey( nIdResource );
-
-            if ( ticket != null )
-            {
-                model.put( MARK_TICKET, ticket );
-            }
-        }
+        Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
 
         ReferenceList listPriorities = TicketPriority.getReferenceList( locale );
         model.put( MARK_TICKET_PRIORITIES_LIST, listPriorities );

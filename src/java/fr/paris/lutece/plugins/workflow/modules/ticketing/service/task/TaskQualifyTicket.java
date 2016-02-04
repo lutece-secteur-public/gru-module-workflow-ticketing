@@ -38,7 +38,6 @@ import fr.paris.lutece.plugins.ticketing.business.TicketCriticality;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.TicketPriority;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,8 +45,6 @@ import org.apache.commons.lang.StringUtils;
 import java.text.MessageFormat;
 
 import java.util.Locale;
-
-import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -65,10 +62,6 @@ public class TaskQualifyTicket extends AbstractTicketingTask
     // PARAMETERS
     public static final String PARAMETER_TICKET_PRIORITY = "ticket_priority";
     public static final String PARAMETER_TICKET_CRITICALITY = "ticket_criticality";
-
-    // Services
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )

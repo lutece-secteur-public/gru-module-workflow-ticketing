@@ -33,15 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -60,7 +57,6 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     // Markers
     private static final String MARK_WEBAPP_URL = "webapp_url";
     private static final String MARK_LOCALE = "locale";
-    private static final String MARK_TICKET = "ticket";
 
     /**
      * {@inheritDoc}
@@ -69,17 +65,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-
-        if ( ( strResourceType != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( strResourceType ) )
-        {
-            Ticket ticket = TicketHome.findByPrimaryKey( nIdResource );
-
-            if ( ticket != null )
-            {
-                model.put( MARK_TICKET, ticket );
-            }
-        }
+        Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
 
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage(  ) );

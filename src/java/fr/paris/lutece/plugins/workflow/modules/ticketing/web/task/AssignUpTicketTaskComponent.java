@@ -35,8 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.ticketing.business.SupportEntity;
 import fr.paris.lutece.plugins.ticketing.business.SupportEntityHome;
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -66,7 +64,6 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
     private static final String MESSAGE_NO_SUPPORT_ENTITY_FOUND = "module.workflow.ticketing.task_assign_up_ticket.labelNoSupportEntiesFound";
 
     // MARKS
-    private static final String MARK_TICKET = "ticket";
     private static final String MARK_TICKET_SUPPORT_ENTITIES = "ticket_up_units";
 
     /**
@@ -76,28 +73,18 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Locale locale, ITask task )
     {
-        Map<String, Object> model = getModel(  );
+        Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
         ReferenceList lstRefSupportEntities = new ReferenceList(  );
 
-        if ( ( strResourceType != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( strResourceType ) )
+        AdminUser adminUser = AdminUserService.getAdminUser( request );
+        List<SupportEntity> lstSupportEntity = SupportEntityHome.getEligibleSupportEntities( adminUser );
+
+        for ( SupportEntity supportEntity : lstSupportEntity )
         {
-            Ticket ticket = TicketHome.findByPrimaryKey( nIdResource );
-
-            if ( ticket != null )
-            {
-                model.put( MARK_TICKET, ticket );
-            }
-
-            AdminUser adminUser = AdminUserService.getAdminUser( request );
-            List<SupportEntity> lstSupportEntity = SupportEntityHome.getEligibleSupportEntities( adminUser );
-
-            for ( SupportEntity supportEntity : lstSupportEntity )
-            {
-                ReferenceItem refItem = new ReferenceItem(  );
-                refItem.setName( supportEntity.getName(  ) );
-                refItem.setCode( String.valueOf( supportEntity.getUnit(  ).getUnitId(  ) ) );
-                lstRefSupportEntities.add( refItem );
-            }
+            ReferenceItem refItem = new ReferenceItem(  );
+            refItem.setName( supportEntity.getName(  ) );
+            refItem.setCode( String.valueOf( supportEntity.getUnit(  ).getUnitId(  ) ) );
+            lstRefSupportEntities.add( refItem );
         }
 
         if ( ( lstRefSupportEntities == null ) || ( lstRefSupportEntities.size(  ) == 0 ) )

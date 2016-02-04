@@ -40,7 +40,6 @@ import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -51,8 +50,6 @@ import java.text.MessageFormat;
 
 import java.util.List;
 import java.util.Locale;
-
-import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,10 +64,6 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
     private static final String MESSAGE_ASSIGN_TICKET_TO_ME = "module.workflow.ticketing.task_assign_ticket_to_me.labelAssignTicketToMe";
     private static final String MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION = "module.workflow.ticketing.task_assign_ticket_to_me.information";
     private static final String MESSAGE_ASSIGN_TICKET_TO_ME_NO_CURRENT_USER = "module.workflow.ticketing.task_assign_ticket_to_me.no_current_user";
-
-    // Services
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )

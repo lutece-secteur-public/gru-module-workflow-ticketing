@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.ITicketReferenceService;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,8 +61,6 @@ public class TaskGenerateTicketReference extends AbstractTicketingTask
     private static final String MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION = "module.workflow.ticketing.task_generate_ticket_reference.information";
 
     // Services
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
     @Inject
     private ITicketReferenceService _ticketReferenceService;
 

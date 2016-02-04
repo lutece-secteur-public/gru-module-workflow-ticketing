@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.ticketing.business.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -47,8 +46,6 @@ import org.apache.commons.lang.StringUtils;
 import java.text.MessageFormat;
 
 import java.util.Locale;
-
-import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,10 +65,6 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
 
     // PARAMETERS
     public static final String PARAMETER_ASSIGNEE_USER = "id_user";
-
-    // Services
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
