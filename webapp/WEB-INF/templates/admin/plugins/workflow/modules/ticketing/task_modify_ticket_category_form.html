@@ -1,0 +1,13 @@
+<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType" inputName="id_ticket_type" items=ticket_types_list value="${ticket.idTicketType!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType.help" cssClass='' />
+<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain" inputName="id_ticket_domain" items=ticket_domains_list value="${ticket.idTicketDomain!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain.help" cssClass='' />
+<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketCategory" inputName="id_ticket_category" items=ticket_categories_list value="${ticket.idTicketCategory!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketCategory.help" cssClass='' />
+
+<script src="js/plugins/ticketing/ticket_tree.js"></script>
+<script language="javascript"> 
+    var category_id = ${ticket.idTicketCategory!''};
+    var is_front = false ;
+    var is_generic_attributes_managed = false;
+    $(document).ready(function() {
+        lutece_ticket_tree("#id_ticket_type", "#id_ticket_domain", "#id_ticket_category", category_id, is_front, is_generic_attributes_managed);
+    });
+</script>
