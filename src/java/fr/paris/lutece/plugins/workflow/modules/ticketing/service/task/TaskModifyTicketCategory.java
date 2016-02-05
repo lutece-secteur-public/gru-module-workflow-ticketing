@@ -77,42 +77,35 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
     {
         String strTaskInformation = StringUtils.EMPTY;
 
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( ticket != null )
         {
-            // We get the ticket to modify
-            Ticket ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+            String strNewCategoryId = request.getParameter( PARAMETER_TICKET_CATEGORY_ID );
+            int nNewCategoryId = Integer.parseInt( strNewCategoryId );
+            String strNewTypeId = request.getParameter( PARAMETER_TICKET_TYPE_ID );
+            int nNewTypeId = Integer.parseInt( strNewTypeId );
+            String strNewDomainId = request.getParameter( PARAMETER_TICKET_DOMAIN_ID );
+            int nNewDomainId = Integer.parseInt( strNewDomainId );
 
-            if ( ticket != null )
-            {
-                String strNewCategoryId = request.getParameter( PARAMETER_TICKET_CATEGORY_ID );
-                int nNewCategoryId = Integer.parseInt( strNewCategoryId );
-                String strNewTypeId = request.getParameter( PARAMETER_TICKET_TYPE_ID );
-                int nNewTypeId = Integer.parseInt( strNewTypeId );
-                String strNewDomainId = request.getParameter( PARAMETER_TICKET_DOMAIN_ID );
-                int nNewDomainId = Integer.parseInt( strNewDomainId );
+            String strNewTypeLabel = TicketCategoryHome.findByPrimaryKey( nNewCategoryId ).getLabel(  );
+            String strNewDomainLabel = TicketDomainHome.findByPrimaryKey( nNewDomainId ).getLabel(  );
+            String strNewCategoryLabel = TicketTypeHome.findByPrimaryKey( nNewTypeId ).getLabel(  );
 
-                String strNewTypeLabel = TicketCategoryHome.findByPrimaryKey( nNewCategoryId ).getLabel(  );
-                String strNewDomainLabel = TicketDomainHome.findByPrimaryKey( nNewDomainId ).getLabel(  );
-                String strNewCategoryLabel = TicketTypeHome.findByPrimaryKey( nNewTypeId ).getLabel(  );
-
-                String strPreviousCategoryLabel = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) )
-                                                                    .getLabel(  );
-                String strPreviousDomainLabel = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain(  ) )
+            String strPreviousCategoryLabel = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) )
                                                                 .getLabel(  );
-                String strPreviousTypeLabel = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType(  ) ).getLabel(  );
+            String strPreviousDomainLabel = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain(  ) ).getLabel(  );
+            String strPreviousTypeLabel = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType(  ) ).getLabel(  );
 
-                ticket.setIdTicketType( nNewTypeId );
-                ticket.setIdTicketDomain( nNewDomainId );
-                ticket.setIdTicketCategory( nNewCategoryId );
-                TicketHome.update( ticket );
+            ticket.setIdTicketType( nNewTypeId );
+            ticket.setIdTicketDomain( nNewDomainId );
+            ticket.setIdTicketCategory( nNewCategoryId );
+            TicketHome.update( ticket );
 
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ), strPreviousTypeLabel,
-                        strPreviousDomainLabel, strPreviousCategoryLabel, strNewTypeLabel, strNewDomainLabel,
-                        strNewCategoryLabel );
-            }
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                        MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ), strPreviousTypeLabel,
+                    strPreviousDomainLabel, strPreviousCategoryLabel, strNewTypeLabel, strNewDomainLabel,
+                    strNewCategoryLabel );
         }
 
         return strTaskInformation;

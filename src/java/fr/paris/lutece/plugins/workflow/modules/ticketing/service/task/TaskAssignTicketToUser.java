@@ -36,8 +36,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 import fr.paris.lutece.plugins.ticketing.business.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -47,8 +45,6 @@ import org.apache.commons.lang.StringUtils;
 import java.text.MessageFormat;
 
 import java.util.Locale;
-
-import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -69,78 +65,68 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
     // PARAMETERS
     public static final String PARAMETER_ASSIGNEE_USER = "id_user";
 
-    // Services
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
-
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
         String strUserId = request.getParameter( PARAMETER_ASSIGNEE_USER );
 
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        // We get the ticket to modify
+        Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( ticket != null )
         {
-            // We get the ticket to modify
-            Ticket ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+            AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
+            String strCurrentUser = null;
 
-            if ( ticket != null )
+            if ( assigneeUser == null )
             {
-                AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
-                String strCurrentUser = null;
+                assigneeUser = new AssigneeUser(  );
+                strCurrentUser = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER,
+                        Locale.FRENCH );
+            }
+            else
+            {
+                strCurrentUser = assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  );
+            }
 
-                if ( assigneeUser == null )
-                {
-                    assigneeUser = new AssigneeUser(  );
-                    strCurrentUser = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER,
-                            Locale.FRENCH );
-                }
-                else
-                {
-                    strCurrentUser = assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  );
-                }
+            AdminUser user = null;
 
-                AdminUser user = null;
+            if ( strUserId != null )
+            {
+                user = AdminUserHome.findByPrimaryKey( Integer.parseInt( strUserId ) );
+            }
 
-                if ( strUserId != null )
+            if ( user != null )
+            {
+                if ( user.getUserId(  ) != assigneeUser.getAdminUserId(  ) )
                 {
-                    user = AdminUserHome.findByPrimaryKey( Integer.parseInt( strUserId ) );
-                }
-
-                if ( user != null )
-                {
-                    if ( user.getUserId(  ) != assigneeUser.getAdminUserId(  ) )
-                    {
-                        assigneeUser.setAdminUserId( user.getUserId(  ) );
-                        assigneeUser.setEmail( user.getEmail(  ) );
-                        assigneeUser.setFirstname( user.getFirstName(  ) );
-                        assigneeUser.setLastname( user.getLastName(  ) );
-                        ticket.setAssigneeUser( assigneeUser );
-                        TicketHome.update( ticket );
-
-                        strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                    MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ), strCurrentUser,
-                                assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
-                    }
-                    else
-                    {
-                        strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                    MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_NO_CHANGE, Locale.FRENCH ),
-                                assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
-                    }
-                }
-                else
-                {
-                    // Unassign ticket
-                    ticket.setAssigneeUser( null );
+                    assigneeUser.setAdminUserId( user.getUserId(  ) );
+                    assigneeUser.setEmail( user.getEmail(  ) );
+                    assigneeUser.setFirstname( user.getFirstName(  ) );
+                    assigneeUser.setLastname( user.getLastName(  ) );
+                    ticket.setAssigneeUser( assigneeUser );
                     TicketHome.update( ticket );
 
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ),
-                            strCurrentUser );
+                                MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ), strCurrentUser,
+                            assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
                 }
+                else
+                {
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                                MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_NO_CHANGE, Locale.FRENCH ),
+                            assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
+                }
+            }
+            else
+            {
+                // Unassign ticket
+                ticket.setAssigneeUser( null );
+                TicketHome.update( ticket );
+
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                            MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ), strCurrentUser );
             }
         }
 

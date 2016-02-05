@@ -33,9 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import fr.paris.lutece.plugins.ticketing.business.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformation;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.information.ITaskInformationService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
@@ -55,6 +59,10 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractTicketingTask extends SimpleTask
 {
     private static final String LOG_ERROR_SAVE_INFORMATION = "Error when saving message '{0}' for resourceId {1} and taskId {2}";
+
+    // Services
+    @Inject
+    private IResourceHistoryService _resourceHistoryService;
     @Inject
     private ITaskInformationService _taskInformationService;
 
@@ -77,6 +85,25 @@ public abstract class AbstractTicketingTask extends SimpleTask
                     nIdResourceHistory, this.getId(  ) );
             AppLogService.error( strErrorMessage );
         }
+    }
+
+    /**
+     * Gives the ticket from resourceHistory
+     * @param nIdResourceHistory the resourceHistory id
+     * @return the ticket if the resourceHistory corresponds to a ticket, {@code null} otherwise
+     */
+    protected Ticket getTicket( int nIdResourceHistory )
+    {
+        Ticket ticket = null;
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+
+        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        {
+            // We get the ticket to modify
+            ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+        }
+
+        return ticket;
     }
 
     /**

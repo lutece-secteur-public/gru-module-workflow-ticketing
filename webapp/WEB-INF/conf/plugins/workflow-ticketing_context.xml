@@ -95,6 +95,17 @@
     <bean id="workflow-ticketing.assignTicketToMeTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToMe" />
         
+    <!-- Task Reply to a ticket -->    
+    <bean id="workflow-ticketing.taskReply" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReply" scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeReply" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketingReply"
+        p:titleI18nKey="module.workflow.ticketing.task_reply.title"
+        p:beanName="workflow-ticketing.taskReply"
+        p:formTaskRequired="true"
+        p:taskForAutomaticAction="false" />
+    <bean id="workflow-ticketing.replyTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ReplyTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeReply" />
+                
     <!-- Task Modify ticket category -->    
     <bean id="workflow-ticketing.taskModifyTicketCategory" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketCategory" scope="prototype" />
     <bean id="workflow-ticketing.taskTypeModifyTicketCategory" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"

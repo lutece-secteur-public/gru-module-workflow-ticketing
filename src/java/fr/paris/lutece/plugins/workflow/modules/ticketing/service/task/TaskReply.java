@@ -34,9 +34,7 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketCriticality;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
-import fr.paris.lutece.plugins.ticketing.business.TicketPriority;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,21 +47,25 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * This class represents a task to qualify the ticket
+ * This class represents a task to reply to a ticket
  *
  */
-public class TaskQualifyTicket extends AbstractTicketingTask
+public class TaskReply extends AbstractTicketingTask
 {
-    // Messages
-    private static final String MESSAGE_QUALIFY_TICKET = "module.workflow.ticketing.task_qualify_ticket.labelQualifyTicket";
-    private static final String MESSAGE_QUALIFY_TICKET_INFORMATION = "module.workflow.ticketing.task_qualify_ticket.information";
+    private static final String MESSAGE_REPLY = "module.workflow.ticketing.task_reply.labelReply";
+    private static final String MESSAGE_REPLY_INFORMATION = "module.workflow.ticketing.task_reply.information";
 
     // PARAMETERS
-    public static final String PARAMETER_TICKET_PRIORITY = "ticket_priority";
-    public static final String PARAMETER_TICKET_CRITICALITY = "ticket_criticality";
+    public static final String PARAMETER_USER_MESSAGE = "user_message";
 
     @Override
-    public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    public String getTitle( Locale locale )
+    {
+        return I18nService.getLocalizedString( MESSAGE_REPLY, locale );
+    }
+
+    @Override
+    protected String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
 
@@ -72,34 +74,14 @@ public class TaskQualifyTicket extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            String strPriority = request.getParameter( PARAMETER_TICKET_PRIORITY );
-            int nPriority = Integer.parseInt( strPriority );
-            TicketPriority priorityBefore = TicketPriority.valueOf( ticket.getPriority(  ) );
-            TicketPriority priorityAfter = TicketPriority.valueOf( nPriority );
-            ticket.setPriority( nPriority );
-
-            String strCriticality = request.getParameter( PARAMETER_TICKET_CRITICALITY );
-            int nCriticality = Integer.parseInt( strCriticality );
-            TicketCriticality criticalityBefore = TicketCriticality.valueOf( ticket.getCriticality(  ) );
-            TicketCriticality criticalityAfter = TicketCriticality.valueOf( nCriticality );
-            ticket.setCriticality( nCriticality );
-
+            String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
+            ticket.setUserMessage( strUserMessage );
             TicketHome.update( ticket );
 
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                        MESSAGE_QUALIFY_TICKET_INFORMATION, Locale.FRENCH ),
-                    priorityBefore.getLocalizedMessage( Locale.FRENCH ),
-                    priorityAfter.getLocalizedMessage( Locale.FRENCH ),
-                    criticalityBefore.getLocalizedMessage( Locale.FRENCH ),
-                    criticalityAfter.getLocalizedMessage( Locale.FRENCH ) );
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION,
+                        Locale.FRENCH ), strUserMessage );
         }
 
         return strTaskInformation;
-    }
-
-    @Override
-    public String getTitle( Locale locale )
-    {
-        return I18nService.getLocalizedString( MESSAGE_QUALIFY_TICKET, locale );
     }
 }

@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -63,7 +62,6 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
     private static final String MESSAGE_NO_UNIT_FOUND = "module.workflow.ticketing.task_assign_ticket_to_unit.labelNoUnitFound";
 
     // MARKS
-    private static final String MARK_TICKET = "ticket";
     private static final String MARK_UNITS_LIST = "units_list";
     private static final String MARK_CURRENT_UNIT = "current_unit";
 
@@ -74,39 +72,33 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Locale locale, ITask task )
     {
-        Map<String, Object> model = getModel(  );
-        Ticket ticket;
+        Ticket ticket = getTicket( nIdResource, strResourceType );
+        Map<String, Object> model = getModel( ticket );
         ReferenceList unitsList = null;
         String strCurrentUnitId = null;
 
-        if ( ( strResourceType != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( strResourceType ) )
+        if ( ticket != null )
         {
-            ticket = TicketHome.findByPrimaryKey( nIdResource );
+            unitsList = getUnitsList(  );
 
-            if ( ticket != null )
+            if ( ticket.getAssigneeUnit(  ) != null )
             {
-                model.put( MARK_TICKET, ticket );
-                unitsList = getUnitsList(  );
+                strCurrentUnitId = String.valueOf( ticket.getAssigneeUnit(  ).getUnitId(  ) );
 
-                if ( ticket.getAssigneeUnit(  ) != null )
+                if ( unitsList.toMap(  ).containsKey( strCurrentUnitId ) )
                 {
-                    strCurrentUnitId = String.valueOf( ticket.getAssigneeUnit(  ).getUnitId(  ) );
+                    model.put( MARK_CURRENT_UNIT, strCurrentUnitId );
+                }
+            }
 
-                    if ( unitsList.toMap(  ).containsKey( strCurrentUnitId ) )
-                    {
-                        model.put( MARK_CURRENT_UNIT, strCurrentUnitId );
-                    }
-                }
-
-                if ( ( unitsList == null ) || ( unitsList.size(  ) == 0 ) )
-                {
-                    request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
-                    addError( I18nService.getLocalizedString( MESSAGE_NO_UNIT_FOUND, locale ) );
-                }
-                else
-                {
-                    model.put( MARK_UNITS_LIST, unitsList );
-                }
+            if ( ( unitsList == null ) || ( unitsList.size(  ) == 0 ) )
+            {
+                request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
+                addError( I18nService.getLocalizedString( MESSAGE_NO_UNIT_FOUND, locale ) );
+            }
+            else
+            {
+                model.put( MARK_UNITS_LIST, unitsList );
             }
         }
 

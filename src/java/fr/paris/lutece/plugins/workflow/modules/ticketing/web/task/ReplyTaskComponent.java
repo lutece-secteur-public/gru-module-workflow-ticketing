@@ -33,12 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketCategoryHome;
-import fr.paris.lutece.plugins.ticketing.business.TicketDomainHome;
-import fr.paris.lutece.plugins.ticketing.business.TicketTypeHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.util.Locale;
@@ -48,18 +46,17 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketCategory}
+ * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReply}
  *
  */
-public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
+public class ReplyTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_category_form.html";
+    private static final String TEMPLATE_TASK_REPLY_FORM = "admin/plugins/workflow/modules/ticketing/task_reply_form.html";
 
-    // MARKS
-    private static final String MARK_TICKET_TYPES_LIST = "ticket_types_list";
-    private static final String MARK_TICKET_DOMAINS_LIST = "ticket_domains_list";
-    private static final String MARK_TICKET_CATEGORIES_LIST = "ticket_categories_list";
+    // Markers
+    private static final String MARK_WEBAPP_URL = "webapp_url";
+    private static final String MARK_LOCALE = "locale";
 
     /**
      * {@inheritDoc}
@@ -68,16 +65,12 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Locale locale, ITask task )
     {
-        Ticket ticket = getTicket( nIdResource, strResourceType );
-        Map<String, Object> model = getModel( ticket );
+        Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
 
-        model.put( MARK_TICKET_TYPES_LIST, TicketTypeHome.getReferenceList(  ) );
-        model.put( MARK_TICKET_DOMAINS_LIST,
-            TicketDomainHome.getReferenceListByType( ( ticket != null ) ? ticket.getIdTicketType(  ) : 1 ) );
-        model.put( MARK_TICKET_CATEGORIES_LIST,
-            TicketCategoryHome.getReferenceListByDomain( ( ticket != null ) ? ticket.getIdTicketDomain(  ) : 1 ) );
+        model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
+        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage(  ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM, locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_REPLY_FORM, locale, model );
 
         return template.getHtml(  );
     }

@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import fr.paris.lutece.plugins.ticketing.business.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformation;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.information.ITaskInformationService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
@@ -63,12 +65,15 @@ import javax.servlet.http.HttpServletRequest;
 public class TicketingTaskComponent extends SimpleTaskComponent
 {
     protected static final String ATTRIBUTE_HIDE_NEXT_STEP_BUTTON = "hide_next_button";
+
+    // Markers
     private static final String MARK_ERRORS = "errors";
+    private static final String MARK_TICKET = "ticket";
 
     // SERVICES
     @Inject
     private ITaskInformationService _taskInformationService;
-    private List<ErrorMessage> _listErrors = null;
+    private List<ErrorMessage> _listErrors;
 
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
@@ -136,13 +141,37 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
     /**
      * Get a model Object filled with default values
+     * @param ticket the ticket used to fill the model
      * @return The model
      */
-    protected Map<String, Object> getModel(  )
+    protected Map<String, Object> getModel( Ticket ticket )
     {
         Map<String, Object> model = new HashMap<String, Object>(  );
         fillCommons( model );
 
+        if ( ticket != null )
+        {
+            model.put( MARK_TICKET, ticket );
+        }
+
         return model;
+    }
+
+    /**
+     * Gives the ticket from resource
+     * @param nIdResource the resource id
+     * @param strResourceType the resource type
+     * @return the ticket if the resource corresponds to a ticket, {@code null} otherwise
+     */
+    protected Ticket getTicket( int nIdResource, String strResourceType )
+    {
+        Ticket ticket = null;
+
+        if ( ( strResourceType != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( strResourceType ) )
+        {
+            ticket = TicketHome.findByPrimaryKey( nIdResource );
+        }
+
+        return ticket;
     }
 }
