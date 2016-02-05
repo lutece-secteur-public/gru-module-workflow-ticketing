@@ -1,4 +1,8 @@
 <@messages errors=errors />
+
+<input name="details_to_list" id="details_to_list" value="false" type="hidden">
+<input id="former_unit" value="${ticket.assigneeUnit.unitId}" type="hidden">
+
 <#if units_list?? && units_list?has_content>
     <#if current_unit?? && current_unit?has_content>
         <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit" inputName="id_unit" items=units_list value="${current_unit}" i18nHelpBlockKey="ticketing.task_assign_ticket_to_unit.labelUnit.help" cssClass='' />
@@ -6,4 +10,12 @@
         <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit" inputName="id_unit" items=units_list value="" i18nHelpBlockKey="ticketing.task_assign_ticket_to_unit.labelUnit.help" cssClass='' />
     </#if>
 </#if>
+
+<script language="javascript">
+    $(document).ready(function() {
+        $('#id_unit').change(function() {
+        	$('#details_to_list').val($('#id_unit').val() != $('#former_unit').val());
+        });
+    });
+</script>
 
