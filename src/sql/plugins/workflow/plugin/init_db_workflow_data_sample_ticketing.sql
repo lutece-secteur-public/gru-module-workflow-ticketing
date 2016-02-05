@@ -41,8 +41,6 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
             (371,'taskTicketingAssignTicketToMe',307,1),
             (372, 'taskTypeComment', 307,2),
 			(381,'taskTicketingAssignUpTicket',304,1),
-			(382, 'taskTypeComment', 304,2)
-			;
 			(382, 'taskTypeComment', 304,2),
 			(420, 'taskTicketingReply', 310,1);
 
