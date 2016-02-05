@@ -38,8 +38,6 @@ import fr.paris.lutece.plugins.ticketing.business.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.TicketDomainHome;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.TicketTypeHome;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,8 +45,6 @@ import org.apache.commons.lang.StringUtils;
 import java.text.MessageFormat;
 
 import java.util.Locale;
-
-import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,10 +64,6 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
     public static final String PARAMETER_TICKET_DOMAIN_ID = "id_ticket_domain";
     public static final String PARAMETER_TICKET_TYPE_ID = "id_ticket_type";
 
-    // Services
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
-
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
@@ -88,9 +80,9 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
             String strNewDomainId = request.getParameter( PARAMETER_TICKET_DOMAIN_ID );
             int nNewDomainId = Integer.parseInt( strNewDomainId );
 
-            String strNewTypeLabel = TicketCategoryHome.findByPrimaryKey( nNewCategoryId ).getLabel(  );
+            String strNewTypeLabel = TicketTypeHome.findByPrimaryKey( nNewTypeId ).getLabel(  );
             String strNewDomainLabel = TicketDomainHome.findByPrimaryKey( nNewDomainId ).getLabel(  );
-            String strNewCategoryLabel = TicketTypeHome.findByPrimaryKey( nNewTypeId ).getLabel(  );
+            String strNewCategoryLabel = TicketCategoryHome.findByPrimaryKey( nNewCategoryId ).getLabel(  );
 
             String strPreviousCategoryLabel = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) )
                                                                 .getLabel(  );
