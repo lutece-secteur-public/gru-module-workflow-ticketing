@@ -42,6 +42,7 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
             (372, 'taskTypeComment', 307,2),
 			(381,'taskTicketingAssignUpTicket',304,1),
 			(382, 'taskTypeComment', 304,2),
+			(390, 'taskTicketingReply', 309,1),
 			(420, 'taskTicketingReply', 310,1);
 
 DELETE FROM workflow_task_comment_config WHERE id_task >= 300 AND id_task < 450;			
@@ -52,4 +53,9 @@ INSERT INTO workflow_task_comment_config (id_task, title, is_mandatory)
 			(362, 'Commentaire', 0),
 			(372, 'Commentaire', 0),
 			(382, 'Commentaire', 0);
+			
+DELETE FROM workflow_task_ticketing_reply_config;
+INSERT INTO workflow_task_ticketing_reply_config (id_task, message_direction) 
+    VALUES  (390, 0),
+            (420, 1);
 	

@@ -34,15 +34,19 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.ticketing.web.user.UserPreferencesJspBean;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.prefs.AdminUserPreferencesService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -57,11 +61,78 @@ public class ReplyTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_REPLY_FORM = "admin/plugins/workflow/modules/ticketing/task_reply_form.html";
+    private static final String TEMPLATE_TASK_REPLY_CONFIG = "admin/plugins/workflow/modules/ticketing/task_reply_config.html";
 
     // Markers
     private static final String MARK_WEBAPP_URL = "webapp_url";
     private static final String MARK_LOCALE = "locale";
     private static final String MARK_USER_SIGNATURE = "user_signature";
+    private static final String MARK_AGENT_VIEW = "agent_view";
+    private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
+    private static final String MARK_MESSAGE_DIRECTION = "message_direction";
+
+    // Parameters
+    private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    {
+        TaskReplyConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+
+        ReferenceList listMessageDirections = MessageDirection.getReferenceList( locale );
+
+        Map<String, Object> model = new HashMap<String, Object>(  );
+
+        model.put( MARK_MESSAGE_DIRECTIONS_LIST, listMessageDirections );
+        
+        if ( config != null )
+        {
+            model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection(  ).ordinal(  ) );
+        }
+        else
+        {
+            model.put( MARK_MESSAGE_DIRECTION, MessageDirection.AGENT_TO_USER );
+        }
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_REPLY_CONFIG, locale, model );
+
+        return template.getHtml(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
+    {
+        int nMessageDirectionId = Integer.parseInt( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
+
+        TaskReplyConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        Boolean bConfigToCreate = false;
+
+        if ( config == null )
+        {
+            config = new TaskReplyConfig(  );
+            config.setIdTask( task.getId(  ) );
+            bConfigToCreate = true;
+        }
+
+        config.setMessageDirection( MessageDirection.valueOf( nMessageDirectionId ) );
+
+        if ( bConfigToCreate )
+        {
+            this.getTaskConfigService(  ).create( config );
+        }
+        else
+        {
+            this.getTaskConfigService(  ).update( config );
+        }
+
+        return null;
+    }
 
     /**
      * {@inheritDoc}
@@ -71,11 +142,21 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         Locale locale, ITask task )
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
+        TaskReplyConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        String strUserSignature = StringUtils.EMPTY;
+        boolean bIsAgentView = false;
 
-        String strUserSignature = AdminUserPreferencesService.instance(  )
-                                                             .get( String.valueOf( 
+        if ( config.getMessageDirection(  ) == MessageDirection.AGENT_TO_USER )
+        {
+            bIsAgentView = true;
+        }
+
+        strUserSignature = AdminUserPreferencesService.instance(  )
+                                                      .get( String.valueOf( 
                     AdminUserService.getAdminUser( request ).getUserId(  ) ),
                 UserPreferencesJspBean.USER_PREFERENCE_SIGNATURE, StringUtils.EMPTY );
+
+        model.put( MARK_AGENT_VIEW, bIsAgentView );
         model.put( MARK_USER_SIGNATURE, strUserSignature );
 
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );

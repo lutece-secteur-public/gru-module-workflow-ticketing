@@ -12,9 +12,15 @@
        
     <!-- DAO -->
     <bean id="workflow-ticketing.taskInformationDAO" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformationDAO" />
+    <bean id="workflow-ticketing.taskReplyConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfigDAO" />
     
     <!-- Services -->
     <bean id="workflow-ticketing.taskInformationService" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.information.TaskInformationService" />
+    <bean id="workflow-ticketing.taskReplyConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService" 
+        p:taskConfigDAO-ref="workflow-ticketing.taskReplyConfigDAO" />
+        
+    <!-- Task config -->
+    <bean id="workflow-ticketing.taskReplyConfig" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig" scope="prototype" />
        
     <!-- Task Generate ticket reference -->
     <bean id="workflow-ticketing.ticketReferenceService" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.TicketReferencePrefixAndNumberService" >
@@ -96,15 +102,18 @@
         p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToMe" />
         
     <!-- Task Reply to a ticket -->    
-    <bean id="workflow-ticketing.taskReply" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReply" scope="prototype" />
+    <bean id="workflow-ticketing.taskReply" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReply" scope="prototype" 
+        p:taskConfigService-ref="workflow-ticketing.taskReplyConfigService" />
     <bean id="workflow-ticketing.taskTypeReply" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
         p:key="taskTicketingReply"
         p:titleI18nKey="module.workflow.ticketing.task_reply.title"
         p:beanName="workflow-ticketing.taskReply"
-        p:formTaskRequired="true"
-        p:taskForAutomaticAction="false" />
+        p:configBeanName="workflow-ticketing.taskReplyConfig"
+        p:configRequired="true"
+        p:formTaskRequired="true" />
     <bean id="workflow-ticketing.replyTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ReplyTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeReply" />
+        p:taskType-ref="workflow-ticketing.taskTypeReply"
+        p:taskConfigService-ref="workflow-ticketing.taskReplyConfigService" />
                 
     <!-- Task Modify ticket category -->    
     <bean id="workflow-ticketing.taskModifyTicketCategory" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketCategory" scope="prototype" />

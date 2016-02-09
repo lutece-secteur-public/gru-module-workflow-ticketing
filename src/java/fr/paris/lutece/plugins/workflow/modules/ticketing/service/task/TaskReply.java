@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,10 +55,11 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskReply extends AbstractTicketingTask
 {
     private static final String MESSAGE_REPLY = "module.workflow.ticketing.task_reply.labelReply";
-    private static final String MESSAGE_REPLY_INFORMATION = "module.workflow.ticketing.task_reply.information";
+    private static final String MESSAGE_REPLY_INFORMATION_PREFIX = "module.workflow.ticketing.task_reply.information.";
 
     // PARAMETERS
     public static final String PARAMETER_USER_MESSAGE = "user_message";
+    private ITaskConfigService _taskConfigService;
 
     @Override
     public String getTitle( Locale locale )
@@ -78,10 +81,30 @@ public class TaskReply extends AbstractTicketingTask
             ticket.setUserMessage( strUserMessage );
             TicketHome.update( ticket );
 
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION,
-                        Locale.FRENCH ), strUserMessage );
+            TaskReplyConfig config = _taskConfigService.findByPrimaryKey( this.getId(  ) );
+
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX +
+                        config.getMessageDirection(  ).toString(  ).toLowerCase(  ), Locale.FRENCH ), strUserMessage );
         }
 
         return strTaskInformation;
+    }
+
+    /**
+     * Gives the task config service
+     * @return the task config service
+     */
+    public ITaskConfigService getTaskConfigService(  )
+    {
+        return _taskConfigService;
+    }
+
+    /**
+     * Sets the task config service
+     * @param taskConfigService the task config service
+     */
+    public void setTaskConfigService( ITaskConfigService taskConfigService )
+    {
+        this._taskConfigService = taskConfigService;
     }
 }
