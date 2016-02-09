@@ -33,11 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import fr.paris.lutece.plugins.ticketing.web.user.UserPreferencesJspBean;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.prefs.AdminUserPreferencesService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Locale;
 import java.util.Map;
@@ -57,6 +61,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     // Markers
     private static final String MARK_WEBAPP_URL = "webapp_url";
     private static final String MARK_LOCALE = "locale";
+    private static final String MARK_USER_SIGNATURE = "user_signature";
 
     /**
      * {@inheritDoc}
@@ -66,6 +71,12 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         Locale locale, ITask task )
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
+
+        String strUserSignature = AdminUserPreferencesService.instance(  )
+                                                             .get( String.valueOf( 
+                    AdminUserService.getAdminUser( request ).getUserId(  ) ),
+                UserPreferencesJspBean.USER_PREFERENCE_SIGNATURE, StringUtils.EMPTY );
+        model.put( MARK_USER_SIGNATURE, strUserSignature );
 
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage(  ) );
