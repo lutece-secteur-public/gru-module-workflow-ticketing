@@ -87,7 +87,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         Map<String, Object> model = new HashMap<String, Object>(  );
 
         model.put( MARK_MESSAGE_DIRECTIONS_LIST, listMessageDirections );
-        
+
         if ( config != null )
         {
             model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection(  ).ordinal(  ) );
@@ -149,12 +149,12 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         if ( config.getMessageDirection(  ) == MessageDirection.AGENT_TO_USER )
         {
             bIsAgentView = true;
-        }
 
-        strUserSignature = AdminUserPreferencesService.instance(  )
-                                                      .get( String.valueOf( 
-                    AdminUserService.getAdminUser( request ).getUserId(  ) ),
-                UserPreferencesJspBean.USER_PREFERENCE_SIGNATURE, StringUtils.EMPTY );
+            strUserSignature = AdminUserPreferencesService.instance(  )
+                                                          .get( String.valueOf( 
+                        AdminUserService.getAdminUser( request ).getUserId(  ) ),
+                    UserPreferencesJspBean.USER_PREFERENCE_SIGNATURE, StringUtils.EMPTY );
+        }
 
         model.put( MARK_AGENT_VIEW, bIsAgentView );
         model.put( MARK_USER_SIGNATURE, strUserSignature );
