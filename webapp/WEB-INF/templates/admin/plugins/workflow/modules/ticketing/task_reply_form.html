@@ -1,4 +1,6 @@
-<#include "/admin/util/editor/editor.html" />
+<#if agent_view>
+    <#include "/admin/util/editor/editor.html" />
+</#if>
 
 <input name="details_to_list" value="true" type="hidden">
 
@@ -21,4 +23,6 @@
 	</div>
 </#if>
 
-<@initEditor />
+<#if agent_view>
+    <@initEditor />
+</#if>
