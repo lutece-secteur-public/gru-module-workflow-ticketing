@@ -88,6 +88,24 @@ public abstract class AbstractTicketingTask extends SimpleTask
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doRemoveTaskInformation( int nIdHistory )
+    {
+        _taskInformationService.removeByHistory( nIdHistory, this.getId(  ), WorkflowUtils.getPlugin(  ) );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doRemoveConfig(  )
+    {
+        _taskInformationService.removeByTask( this.getId(  ), WorkflowUtils.getPlugin(  ) );
+    }
+
+    /**
      * Gives the ticket from resourceHistory
      * @param nIdResourceHistory the resourceHistory id
      * @return the ticket if the resourceHistory corresponds to a ticket, {@code null} otherwise

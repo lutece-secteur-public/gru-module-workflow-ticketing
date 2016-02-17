@@ -91,6 +91,16 @@ public class TaskReply extends AbstractTicketingTask
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doRemoveConfig(  )
+    {
+        _taskConfigService.remove( this.getId(  ) );
+        super.doRemoveConfig(  );
+    }
+
+    /**
      * Gives the task config service
      * @return the task config service
      */
