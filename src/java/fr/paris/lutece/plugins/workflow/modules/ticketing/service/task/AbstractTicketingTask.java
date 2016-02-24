@@ -45,6 +45,9 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 
 import java.text.MessageFormat;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -62,7 +65,7 @@ public abstract class AbstractTicketingTask extends SimpleTask
 
     // Services
     @Inject
-    private IResourceHistoryService _resourceHistoryService;
+    protected IResourceHistoryService _resourceHistoryService;
     @Inject
     private ITaskInformationService _taskInformationService;
 
