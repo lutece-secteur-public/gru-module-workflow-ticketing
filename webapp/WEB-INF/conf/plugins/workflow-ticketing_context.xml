@@ -173,6 +173,16 @@
 	<bean id="workflow-ticketing.modifyTicketCategoryTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketCategoryTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeModifyTicketCategory" />
+		
+	<!-- Task Reply assign up ticket -->    
+    <bean id="workflow-ticketing.taskReplyAssignUpTicket" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReplyAssignUpTicket" scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeReplyAssignUpTicket" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketingReplyAssignUpTicket"
+        p:titleI18nKey="module.workflow.ticketing.task_reply_assign_up_ticket.title"
+        p:beanName="workflow-ticketing.taskReplyAssignUpTicket"
+        p:taskForAutomaticAction="false" />
+    <bean id="workflow-ticketing.replyAssignUpTicketTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeReplyAssignUpTicket" />
 
 	<!-- Task Edit a ticket -->
 	<bean id="workflow-ticketing.taskEditTicket"
@@ -205,5 +215,4 @@
 			<value>change me</value>
 		</property>
 	</bean>
-
 </beans>
