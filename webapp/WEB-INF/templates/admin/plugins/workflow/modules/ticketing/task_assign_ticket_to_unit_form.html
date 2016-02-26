@@ -14,7 +14,20 @@
 <script language="javascript">
     $(document).ready(function() {
         $('#id_unit').change(function() {
-        	$('#details_to_list').val($('#id_unit').val() != $('#former_unit').val());
+            $('#details_to_list').val($('#id_unit').val() != $('#former_unit').val());
+            //if a user field is present and unit change
+            if ($('#id_unit').val() != $('#former_unit').val() )
+            {
+                //set user to empty and disable field
+                $('#id_user').val( $('#id_user option:first-child').val() );
+                $('#id_user').prop("disabled", true);
+            }
+            else
+            {
+                //if unit is restored to its initial value
+                //enable user field
+                $('#id_user').prop("disabled", false);
+            }
         });
     });
 </script>
