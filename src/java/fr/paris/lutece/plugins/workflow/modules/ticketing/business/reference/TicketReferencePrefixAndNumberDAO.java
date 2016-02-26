@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference;
 
-import fr.paris.lutece.plugins.ticketing.service.TicketingPlugin;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
@@ -52,7 +52,7 @@ public class TicketReferencePrefixAndNumberDAO implements ITicketReferenceDAO
     public String findLastTicketReference( String strPrefix )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE,
-                PluginService.getPlugin( TicketingPlugin.PLUGIN_NAME ) );
+                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
         daoUtil.setInt( 1, strPrefix.length(  ) + 1 );
         daoUtil.setString( 2, strPrefix + SQL_LIKE_WILDCARD );
         daoUtil.executeQuery(  );
