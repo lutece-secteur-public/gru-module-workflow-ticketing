@@ -44,9 +44,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 
 import java.text.MessageFormat;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 
 import javax.inject.Inject;

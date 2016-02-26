@@ -42,7 +42,6 @@ import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
-import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
@@ -157,7 +156,7 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
 
         List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource,
                 resourceHistory.getResourceType(  ), resourceHistory.getWorkflow(  ).getId(  ) );
-        
+
         boolean isAssignUpActionFound = false;
         ListIterator<Integer> iterator = listIdHistory.listIterator( listIdHistory.size(  ) );
 
