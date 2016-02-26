@@ -214,9 +214,8 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            // TODO : set the URL in the ticket
-            ticket.setUserMessage( buildEditUrl( request, nIdResourceHistory, getId(  ),
-                    config.getIdUserEditionAction(  ) ) );
+            ticket.setUrl( buildEditUrl( request, nIdResourceHistory, getId(  ), config.getIdUserEditionAction(  ) ) );
+            TicketHome.update( ticket );
         }
 
         if ( sbEntries.length(  ) == 0 )
