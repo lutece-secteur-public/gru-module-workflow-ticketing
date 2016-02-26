@@ -25,7 +25,7 @@ INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state
 			(311, 'Ré-ouvrir la sollicitation', 'Réouverture d\'une sollicitation close', 301, 305, 303, 1, 0, 0, 11, 0),
             (312, 'Répondre à l\'escalade', 'Répondre à l\'escalade', 301, 303, 303, 1, 0, 0, 12, 0);
 		
-DELETE FROM workflow_task WHERE id_action >= 300 AND id_action < 450;
+DELETE FROM workflow_task WHERE id_action >= 300 AND id_action < 450 AND id_task != 303 ;
 INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order) 
 	VALUES 	(301,'taskTicketingGenerateTicketReference',301,1),
 			(302,'taskTicketingAssignUnitLinkedToCategory',301,2),
