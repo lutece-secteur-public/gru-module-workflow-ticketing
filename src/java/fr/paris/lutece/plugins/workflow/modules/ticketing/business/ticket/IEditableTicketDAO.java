@@ -31,41 +31,62 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.util.sql.DAOUtil;
+import java.util.List;
 
 
 /**
- * This class accesses a ticket reference in the following format: <prefix><sequence>
+ *
+ * This class is a data access object for {@link EditableTicket}
  *
  */
-public class TicketReferencePrefixAndNumberDAO implements ITicketReferenceDAO
+public interface IEditableTicketDAO
 {
-    // SQL QUERIES
-    private static final String SQL_QUERY_SELECT_LAST_TICKET_REFERENCE = " SELECT max( substring( ticket_reference, ? ) ) FROM ticketing_ticket WHERE ticket_reference LIKE ? ";
-    private static final String SQL_LIKE_WILDCARD = "%";
+    /**
+     * Insert new editable ticket
+     * @param editableTicket the EditableTicket Object
+     */
+    void insert( EditableTicket editableTicket );
 
-    @Override
-    public String findLastTicketReference( String strPrefix )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE,
-                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, strPrefix.length(  ) + 1 );
-        daoUtil.setString( 2, strPrefix + SQL_LIKE_WILDCARD );
-        daoUtil.executeQuery(  );
+    /**
+     * Insert new editable ticket
+     * @param editableTicket the EditableTicket Object
+     */
+    void store( EditableTicket editableTicket );
 
-        String lastTicketReference = null;
+    /**
+     * Load a EditableTicket by id history
+     * @param nIdHistory the id history
+     * @param nIdTask the task id
+     * @return EditableTicket Object
+     */
+    EditableTicket load( int nIdHistory, int nIdTask );
 
-        if ( daoUtil.next(  ) )
-        {
-            lastTicketReference = daoUtil.getString( 1 );
-        }
+    /**
+     * Load the non edited EditableTicket by id ticket
+     * @param nIdTicket the id ticket
+     * @return EditableTicket Object
+     */
+    EditableTicket loadByIdTicket( int nIdTicket );
 
-        daoUtil.free(  );
+    /**
+     * Load a list of EditableTicket by id task
+     * @param nIdTask the id task
+     * @return a list of EditableTicket
+     */
+    List<EditableTicket> loadByIdTask( int nIdTask );
 
-        return lastTicketReference;
-    }
+    /**
+     * Remove EditableTicket by id history
+     * @param nIdHistory the id history
+     * @param nIdTask the task id
+     */
+    void deleteByIdHistory( int nIdHistory, int nIdTask );
+
+    /**
+     * Remove EditableTicket by id task
+     * @param nIdTask the task id
+     */
+    void deleteByIdTask( int nIdTask );
 }

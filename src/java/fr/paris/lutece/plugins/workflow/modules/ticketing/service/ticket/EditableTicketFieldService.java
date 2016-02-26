@@ -31,41 +31,56 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket;
 
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.IEditableTicketFieldDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.util.sql.DAOUtil;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import javax.inject.Inject;
 
 
 /**
- * This class accesses a ticket reference in the following format: <prefix><sequence>
+ *
+ * Implementation of {@link IEditableTicketFieldService}
  *
  */
-public class TicketReferencePrefixAndNumberDAO implements ITicketReferenceDAO
+public class EditableTicketFieldService implements IEditableTicketFieldService
 {
-    // SQL QUERIES
-    private static final String SQL_QUERY_SELECT_LAST_TICKET_REFERENCE = " SELECT max( substring( ticket_reference, ? ) ) FROM ticketing_ticket WHERE ticket_reference LIKE ? ";
-    private static final String SQL_LIKE_WILDCARD = "%";
+    public static final String BEAN_SERVICE = "workflow-ticketing.editableTicketFieldService";
+    @Inject
+    private IEditableTicketFieldDAO _editableTicketFieldDAO;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String findLastTicketReference( String strPrefix )
+    @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
+    public void create( EditableTicketField editableTicketField )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE,
-                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, strPrefix.length(  ) + 1 );
-        daoUtil.setString( 2, strPrefix + SQL_LIKE_WILDCARD );
-        daoUtil.executeQuery(  );
+        _editableTicketFieldDAO.insert( editableTicketField );
+    }
 
-        String lastTicketReference = null;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<EditableTicketField> find( int nIdHistory )
+    {
+        return _editableTicketFieldDAO.load( nIdHistory );
+    }
 
-        if ( daoUtil.next(  ) )
-        {
-            lastTicketReference = daoUtil.getString( 1 );
-        }
-
-        daoUtil.free(  );
-
-        return lastTicketReference;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
+    public void remove( int nIdHistory )
+    {
+        _editableTicketFieldDAO.delete( nIdHistory );
     }
 }

@@ -1,0 +1,17 @@
+<#assign idStateAfterEdition = -1>
+<#assign defaultMessage = ''>
+<#if config?exists>
+    <#assign idUserEditionAction = config.idUserEditionAction>
+    <#if config.defaultMessage??>
+        <#assign defaultMessage = config.defaultMessage>
+    </#if>
+</#if>
+<p class="lead">#i18n{module.workflow.ticketing.task_edit_ticket_config.title}</p>
+<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_edit_ticket_config.labelMessageDirections" mandatory=true inputName="message_direction" items=message_directions_list value="${message_direction}" i18nHelpBlockKey="module.workflow.ticketing.task_edit_ticket_config.labelMessageDirections.help" cssClass='' />
+<@fieldInputText i18nLabelKey="module.workflow.ticketing.task_edit_ticket_config.labelUserEditionAction" inputName="idUserEditionAction" value="${idUserEditionAction!'0'}" i18nHelpBlockKey="module.workflow.ticketing.task_edit_ticket_config.labelUserEditionAction.help" />
+<div class="form-group">
+    <label class="col-xs-12 col-sm-3 control-label" for="defaultMessage">#i18n{module.workflow.ticketing.task_edit_ticket_config.labelDefaultMessage}</label>
+    <div class="col-xs-12 col-sm-9">    
+        <textarea name="defaultMessage" rows="4" style="width:50%;">${defaultMessage}</textarea>
+    </div>
+</div>

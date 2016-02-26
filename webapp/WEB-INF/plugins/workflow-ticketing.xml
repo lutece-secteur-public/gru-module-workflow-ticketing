@@ -13,7 +13,15 @@
     <copyright>Copyright (c) 2015 Mairie de Paris</copyright>
     
     <!-- if the plugin must have a connection pool with parameter : 1 - yes, 0 - no -->
-    <db-pool-required>0</db-pool-required>
+    <db-pool-required>1</db-pool-required>
+    
+    <!-- Xpage configuration -->
+    <applications>
+        <application>
+            <application-id>editticket</application-id>
+            <application-class>fr.paris.lutece.plugins.workflow.modules.ticketing.web.EditTicketXPage</application-class>
+        </application>
+    </applications>
     
 	<!-- Specific plugin Javascript files -->
     <javascript-files>

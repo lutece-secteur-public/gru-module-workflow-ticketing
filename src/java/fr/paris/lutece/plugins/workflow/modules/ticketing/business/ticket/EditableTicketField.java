@@ -31,41 +31,52 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference;
-
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.util.sql.DAOUtil;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 
 
 /**
- * This class accesses a ticket reference in the following format: <prefix><sequence>
+ *
+ * This class represents an editable ticket field
  *
  */
-public class TicketReferencePrefixAndNumberDAO implements ITicketReferenceDAO
+public class EditableTicketField
 {
-    // SQL QUERIES
-    private static final String SQL_QUERY_SELECT_LAST_TICKET_REFERENCE = " SELECT max( substring( ticket_reference, ? ) ) FROM ticketing_ticket WHERE ticket_reference LIKE ? ";
-    private static final String SQL_LIKE_WILDCARD = "%";
+    private int _nIdHistory;
+    private int _nIdEntry;
 
-    @Override
-    public String findLastTicketReference( String strPrefix )
+    /**
+    * Get the id history
+    * @return the id history
+    */
+    public int getIdHistory(  )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE,
-                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, strPrefix.length(  ) + 1 );
-        daoUtil.setString( 2, strPrefix + SQL_LIKE_WILDCARD );
-        daoUtil.executeQuery(  );
+        return _nIdHistory;
+    }
 
-        String lastTicketReference = null;
+    /**
+     * Set the id history
+     * @param nIdHistory the id history
+     */
+    public void setIdHistory( int nIdHistory )
+    {
+        _nIdHistory = nIdHistory;
+    }
 
-        if ( daoUtil.next(  ) )
-        {
-            lastTicketReference = daoUtil.getString( 1 );
-        }
+    /**
+     * Get the id entry
+     * @return the id entry
+     */
+    public int getIdEntry(  )
+    {
+        return _nIdEntry;
+    }
 
-        daoUtil.free(  );
-
-        return lastTicketReference;
+    /**
+     * Set the id entry
+     * @param nIdEntry the id entry
+     */
+    public void setIdEntry( int nIdEntry )
+    {
+        _nIdEntry = nIdEntry;
     }
 }

@@ -1,0 +1,45 @@
+<#if config?exists>
+    
+    <#if agent_view >
+        <#if list_entries?? && list_entries?size &gt; 0>
+            <p class="lead">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelListEntries}</p>
+                <#list list_entries as entry>
+                    <#if entry.entryType.group>
+                        <fieldset>
+                            <legend>${entry.title}</legend>
+                            <#list entry.children as child >
+                                <div>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" />
+                                        ${child.title}
+                                    </label>
+                                </div>
+                            </#list>
+                        </fieldset>
+                    <#else>
+                        <div>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" />
+                                ${entry.title}
+                            </label>
+                        </div>
+                    </#if>
+                </#list>
+            </p>
+        </#if>
+        <hr>
+        <label for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelAgentMessage} *</label>
+        <textarea rows="6" class="input-xxlarge" name="message_${config.idTask}"><#if config.defaultMessage??>${config.defaultMessage}</#if></textarea>
+    
+    <#else>
+        <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
+        <#if entries_html_form??>
+            ${entries_html_form}
+        </#if>
+        
+        <label for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelUserMessage}</label>
+        <textarea rows="6" class="input-xxlarge" name="user_message"></textarea>
+        <@addRequiredJsFiles />
+        <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
+    </#if>
+</#if>

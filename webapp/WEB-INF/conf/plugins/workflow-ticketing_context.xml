@@ -1,128 +1,218 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
-       
-    <!-- DAO -->
-    <bean id="workflow-ticketing.taskInformationDAO" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformationDAO" />
-    <bean id="workflow-ticketing.taskReplyConfigDAO" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfigDAO" />
-    
-    <!-- Services -->
-    <bean id="workflow-ticketing.taskInformationService" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.information.TaskInformationService" />
-    <bean id="workflow-ticketing.taskReplyConfigService" class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService" 
-        p:taskConfigDAO-ref="workflow-ticketing.taskReplyConfigDAO" />
-        
-    <!-- Task config -->
-    <bean id="workflow-ticketing.taskReplyConfig" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig" scope="prototype" />
-       
-    <!-- Task Generate ticket reference -->
-    <bean id="workflow-ticketing.ticketReferenceService" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.TicketReferencePrefixAndNumberService" >
-        <constructor-arg>
-            <bean class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference.TicketReferencePrefixAndNumberDAO" />
-        </constructor-arg>
-    </bean>
-    <bean id="workflow-ticketing.taskGenerateTicketReference" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskGenerateTicketReference" scope="prototype" />
-    <bean id="workflow-ticketing.taskTypeGenerateTicketReference" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskTicketingGenerateTicketReference"
-        p:titleI18nKey="module.workflow.ticketing.task_generate_ticket_reference.title"
-        p:beanName="workflow-ticketing.taskGenerateTicketReference"
-        p:taskForAutomaticAction="true" />
-    <bean id="workflow-ticketing.generateTicketReferenceTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeGenerateTicketReference" />
-    
-    <!-- Task Qualify ticket -->    
-    <bean id="workflow-ticketing.taskQualifyTicket" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskQualifyTicket" scope="prototype" />
-    <bean id="workflow-ticketing.taskTypeQualifyTicket" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskTicketingQualifyTicket"
-        p:titleI18nKey="module.workflow.ticketing.task_qualify_ticket.title"
-        p:beanName="workflow-ticketing.taskQualifyTicket"
-        p:formTaskRequired="true"
-        p:taskForAutomaticAction="false" />
-    <bean id="workflow-ticketing.qualifyTicketTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.QualifyTicketTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeQualifyTicket" />
 
-    <!-- Task Assign Unit linked to Category -->
-    <bean id="workflow-ticketing.taskAssignUnitLinkedToCategory" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignUnitLinkedToCategory" scope="prototype" />
-    <bean id="workflow-ticketing.taskTypeAssignUnitLinkedToCategory" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskTicketingAssignUnitLinkedToCategory"
-        p:titleI18nKey="module.workflow.ticketing.task_assign_unit_linked_to_category.title"
-        p:beanName="workflow-ticketing.taskAssignUnitLinkedToCategory"
-        p:taskForAutomaticAction="true" />
-    <bean id="workflow-ticketing.assignUnitLinkedToCategoryTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeAssignUnitLinkedToCategory" />
+	<!-- Transaction Manager -->
+    <bean id="workflow-ticketing.transactionManager" class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager"
+        p:pluginName="workflow-ticketing" />
+	
+	<!-- DAO -->
+	<bean id="workflow-ticketing.taskInformationDAO"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformationDAO" />
+	<bean id="workflow-ticketing.taskReplyConfigDAO"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfigDAO" />
+    <bean id="workflow-ticketing.taskEditTicketConfigDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfigDAO" />
+    <bean id="workflow-ticketing.editableTicketDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketDAO" />
+    <bean id="workflow-ticketing.editableTicketFieldDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketFieldDAO" />
 
-    <!-- Task Assign up ticket -->
-    <bean id="workflow-ticketing.taskAssignUpTicket" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignUpTicket" scope="prototype" />
-    <bean id="workflow-ticketing.taskTypeAssignUpTicket" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskTicketingAssignUpTicket"
-        p:titleI18nKey="module.workflow.ticketing.task_assign_up_ticket.title"
-        p:beanName="workflow-ticketing.taskAssignUpTicket"
-        p:formTaskRequired="true"
+	<!-- Services -->
+	<bean id="workflow-ticketing.taskInformationService"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.information.TaskInformationService" />
+	<bean id="workflow-ticketing.taskReplyConfigService"
+		class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+		p:taskConfigDAO-ref="workflow-ticketing.taskReplyConfigDAO" />
+	<bean id="workflow-ticketing.taskEditTicketConfigService"
+		class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+		p:taskConfigDAO-ref="workflow-ticketing.taskEditTicketConfigDAO" />
+	<bean id="workflow-ticketing.editableTicketFieldService"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.EditableTicketFieldService" />
+	<bean id="workflow-ticketing.editableTicketService"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.EditableTicketService" />
+
+	<!-- Task config -->
+	<bean id="workflow-ticketing.taskReplyConfig"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskEditTicketConfig"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig"
+		scope="prototype" />
+
+	<!-- Task Generate ticket reference -->
+	<bean id="workflow-ticketing.ticketReferenceService"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.TicketReferencePrefixAndNumberService">
+		<constructor-arg>
+			<bean
+				class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference.TicketReferencePrefixAndNumberDAO" />
+		</constructor-arg>
+	</bean>
+	<bean id="workflow-ticketing.taskGenerateTicketReference"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskGenerateTicketReference"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeGenerateTicketReference"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingGenerateTicketReference" p:titleI18nKey="module.workflow.ticketing.task_generate_ticket_reference.title"
+		p:beanName="workflow-ticketing.taskGenerateTicketReference"
+		p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.generateTicketReferenceTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeGenerateTicketReference" />
+
+	<!-- Task Qualify ticket -->
+	<bean id="workflow-ticketing.taskQualifyTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskQualifyTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeQualifyTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingQualifyTicket" p:titleI18nKey="module.workflow.ticketing.task_qualify_ticket.title"
+		p:beanName="workflow-ticketing.taskQualifyTicket" p:formTaskRequired="true"
+		p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.qualifyTicketTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.QualifyTicketTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeQualifyTicket" />
+
+	<!-- Task Assign Unit linked to Category -->
+	<bean id="workflow-ticketing.taskAssignUnitLinkedToCategory"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignUnitLinkedToCategory"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAssignUnitLinkedToCategory"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingAssignUnitLinkedToCategory"
+		p:titleI18nKey="module.workflow.ticketing.task_assign_unit_linked_to_category.title"
+		p:beanName="workflow-ticketing.taskAssignUnitLinkedToCategory"
+		p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.assignUnitLinkedToCategoryTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeAssignUnitLinkedToCategory" />
+
+	<!-- Task Assign up ticket -->
+	<bean id="workflow-ticketing.taskAssignUpTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignUpTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAssignUpTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingAssignUpTicket" p:titleI18nKey="module.workflow.ticketing.task_assign_up_ticket.title"
+		p:beanName="workflow-ticketing.taskAssignUpTicket" p:formTaskRequired="true"
+		p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.assignUpTicketTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignUpTicketTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeAssignUpTicket" />
+
+	<!-- Task Assign ticket to unit -->
+	<bean id="workflow-ticketing.taskAssignTicketToUnit"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUnit"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAssignTicketToUnit"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingAssignTicketToUnit" p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_unit.title"
+		p:beanName="workflow-ticketing.taskAssignTicketToUnit"
+		p:formTaskRequired="true" p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.assignTicketToUnitTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUnitTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUnit" />
+
+	<!-- Task Assign ticket to user -->
+	<bean id="workflow-ticketing.taskAssignTicketToUser"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUser"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAssignTicketToUser"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingAssignTicketToUser" p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_user.title"
+		p:beanName="workflow-ticketing.taskAssignTicketToUser"
+		p:formTaskRequired="true" p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.assignTicketToUserTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUserTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUser" />
+
+	<!-- Task Assign ticket to me -->
+	<bean id="workflow-ticketing.taskAssignTicketToMe"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToMe"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAssignTicketToMe"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingAssignTicketToMe" p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_me.title"
+		p:beanName="workflow-ticketing.taskAssignTicketToMe"
+		p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.assignTicketToMeTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToMe" />
+
+	<!-- Task Reply to a ticket -->
+	<bean id="workflow-ticketing.taskReply"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReply"
+		scope="prototype" p:taskConfigService-ref="workflow-ticketing.taskReplyConfigService" />
+	<bean id="workflow-ticketing.taskTypeReply"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingReply" p:titleI18nKey="module.workflow.ticketing.task_reply.title"
+		p:beanName="workflow-ticketing.taskReply" p:configBeanName="workflow-ticketing.taskReplyConfig"
+		p:configRequired="true" p:formTaskRequired="true" />
+	<bean id="workflow-ticketing.replyTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ReplyTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeReply"
+		p:taskConfigService-ref="workflow-ticketing.taskReplyConfigService" />
+
+	<!-- Task Modify ticket category -->
+	<bean id="workflow-ticketing.taskModifyTicketCategory"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketCategory"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeModifyTicketCategory"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingModifyTicketCategory" p:titleI18nKey="module.workflow.ticketing.task_modify_ticket_category.title"
+		p:beanName="workflow-ticketing.taskModifyTicketCategory"
+		p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.modifyTicketCategoryTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketCategoryTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeModifyTicketCategory" />
+		
+	<!-- Task Reply assign up ticket -->    
+    <bean id="workflow-ticketing.taskReplyAssignUpTicket" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReplyAssignUpTicket" scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeReplyAssignUpTicket" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketingReplyAssignUpTicket"
+        p:titleI18nKey="module.workflow.ticketing.task_reply_assign_up_ticket.title"
+        p:beanName="workflow-ticketing.taskReplyAssignUpTicket"
         p:taskForAutomaticAction="false" />
-    <bean id="workflow-ticketing.assignUpTicketTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignUpTicketTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeAssignUpTicket" />
-        
-    <!-- Task Assign ticket to unit -->    
-    <bean id="workflow-ticketing.taskAssignTicketToUnit" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUnit" scope="prototype" />
-    <bean id="workflow-ticketing.taskTypeAssignTicketToUnit" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskTicketingAssignTicketToUnit"
-        p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_unit.title"
-        p:beanName="workflow-ticketing.taskAssignTicketToUnit"
-        p:formTaskRequired="true"
-        p:taskForAutomaticAction="false" />
-    <bean id="workflow-ticketing.assignTicketToUnitTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUnitTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUnit" />
-    
-    <!-- Task Assign ticket to user -->    
-    <bean id="workflow-ticketing.taskAssignTicketToUser" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUser" scope="prototype" />
-    <bean id="workflow-ticketing.taskTypeAssignTicketToUser" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskTicketingAssignTicketToUser"
-        p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_user.title"
-        p:beanName="workflow-ticketing.taskAssignTicketToUser"
-        p:formTaskRequired="true"
-        p:taskForAutomaticAction="false" />
-    <bean id="workflow-ticketing.assignTicketToUserTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUserTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUser" />
-        
-    <!-- Task Assign ticket to me -->    
-    <bean id="workflow-ticketing.taskAssignTicketToMe" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToMe" scope="prototype" />
-    <bean id="workflow-ticketing.taskTypeAssignTicketToMe" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskTicketingAssignTicketToMe"
-        p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_me.title"
-        p:beanName="workflow-ticketing.taskAssignTicketToMe"
-        p:taskForAutomaticAction="false" />
-    <bean id="workflow-ticketing.assignTicketToMeTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToMe" />
-        
-    <!-- Task Reply to a ticket -->    
-    <bean id="workflow-ticketing.taskReply" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReply" scope="prototype" 
-        p:taskConfigService-ref="workflow-ticketing.taskReplyConfigService" />
-    <bean id="workflow-ticketing.taskTypeReply" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskTicketingReply"
-        p:titleI18nKey="module.workflow.ticketing.task_reply.title"
-        p:beanName="workflow-ticketing.taskReply"
-        p:configBeanName="workflow-ticketing.taskReplyConfig"
-        p:configRequired="true"
-        p:formTaskRequired="true" />
-    <bean id="workflow-ticketing.replyTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ReplyTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeReply"
-        p:taskConfigService-ref="workflow-ticketing.taskReplyConfigService" />
-                
-    <!-- Task Modify ticket category -->    
-    <bean id="workflow-ticketing.taskModifyTicketCategory" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketCategory" scope="prototype" />
-    <bean id="workflow-ticketing.taskTypeModifyTicketCategory" class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-        p:key="taskTicketingModifyTicketCategory"
-        p:titleI18nKey="module.workflow.ticketing.task_modify_ticket_category.title"
-        p:beanName="workflow-ticketing.taskModifyTicketCategory"
-        p:taskForAutomaticAction="false" />
-    <bean id="workflow-ticketing.modifyTicketCategoryTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketCategoryTaskComponent"
-        p:taskType-ref="workflow-ticketing.taskTypeModifyTicketCategory" />
-    
+    <bean id="workflow-ticketing.replyAssignUpTicketTaskComponent" class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeReplyAssignUpTicket" />
+
+	<!-- Task Edit a ticket -->
+	<bean id="workflow-ticketing.taskEditTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskEditTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeEditTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingEditTicket" p:titleI18nKey="module.workflow.ticketing.task_edit_ticket_title"
+		p:beanName="workflow-ticketing.taskEditTicket" p:configBeanName="workflow-ticketing.taskEditTicketConfig"
+		p:configRequired="true" p:formTaskRequired="true" />
+	<bean id="workflow-ticketing.editTicketTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.EditTicketTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeEditTicket"
+		p:taskConfigService-ref="workflow-ticketing.taskEditTicketConfigService" />
+
+	<!-- SignRequest -->
+	<bean id="workflow-ticketing.hashService"
+		class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
+	<bean id="workflow-ticketing.editTicketRequestAuthentication"
+		class="fr.paris.lutece.util.signrequest.RequestHashAuthenticator">
+		<property name="hashService" ref="workflow-ticketing.hashService" />
+		<property name="signatureElements">
+			<list>
+				<value>id_history</value>
+				<value>id_task</value>
+				<value>id_action</value>
+			</list>
+		</property>
+		<property name="privateKey">
+			<value>change me</value>
+		</property>
+	</bean>
 </beans>

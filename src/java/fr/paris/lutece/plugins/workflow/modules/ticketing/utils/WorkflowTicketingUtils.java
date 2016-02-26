@@ -31,41 +31,46 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.utils;
 
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.util.sql.DAOUtil;
+import fr.paris.lutece.plugins.ticketing.business.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.TicketHome;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 
 /**
- * This class accesses a ticket reference in the following format: <prefix><sequence>
+ * This class provides utility methods for the module-workflow-ticketing
  *
  */
-public class TicketReferencePrefixAndNumberDAO implements ITicketReferenceDAO
+public final class WorkflowTicketingUtils
 {
-    // SQL QUERIES
-    private static final String SQL_QUERY_SELECT_LAST_TICKET_REFERENCE = " SELECT max( substring( ticket_reference, ? ) ) FROM ticketing_ticket WHERE ticket_reference LIKE ? ";
-    private static final String SQL_LIKE_WILDCARD = "%";
+    private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
 
-    @Override
-    public String findLastTicketReference( String strPrefix )
+    /**
+     * Private constructor
+     */
+    private WorkflowTicketingUtils(  )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE,
-                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, strPrefix.length(  ) + 1 );
-        daoUtil.setString( 2, strPrefix + SQL_LIKE_WILDCARD );
-        daoUtil.executeQuery(  );
+    }
 
-        String lastTicketReference = null;
+    /**
+     * Get the ticket from a given id history
+     * @param nIdHistory the id history
+     * @return the ticket
+     */
+    public static Ticket findTicketByIdHistory( int nIdHistory )
+    {
+        Ticket ticket = null;
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
 
-        if ( daoUtil.next(  ) )
+        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
         {
-            lastTicketReference = daoUtil.getString( 1 );
+            ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
         }
 
-        daoUtil.free(  );
-
-        return lastTicketReference;
+        return ticket;
     }
 }

@@ -31,41 +31,40 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket;
 
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.util.sql.DAOUtil;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 /**
- * This class accesses a ticket reference in the following format: <prefix><sequence>
+ * This class provides methods to manage {@link fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField}
  *
  */
-public class TicketReferencePrefixAndNumberDAO implements ITicketReferenceDAO
+public interface IEditableTicketFieldService
 {
-    // SQL QUERIES
-    private static final String SQL_QUERY_SELECT_LAST_TICKET_REFERENCE = " SELECT max( substring( ticket_reference, ? ) ) FROM ticketing_ticket WHERE ticket_reference LIKE ? ";
-    private static final String SQL_LIKE_WILDCARD = "%";
+    /**
+    * Create a new editable ticket field
+    * @param editableTicketField the editable ticket field
+    */
+    @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
+    void create( EditableTicketField editableTicketField );
 
-    @Override
-    public String findLastTicketReference( String strPrefix )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE,
-                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, strPrefix.length(  ) + 1 );
-        daoUtil.setString( 2, strPrefix + SQL_LIKE_WILDCARD );
-        daoUtil.executeQuery(  );
+    /**
+     * Find editable ticket fields from a given id history
+     * @param nIdHistory the id history
+     * @return a list of EditableTicketField
+     */
+    List<EditableTicketField> find( int nIdHistory );
 
-        String lastTicketReference = null;
-
-        if ( daoUtil.next(  ) )
-        {
-            lastTicketReference = daoUtil.getString( 1 );
-        }
-
-        daoUtil.free(  );
-
-        return lastTicketReference;
-    }
+    /**
+     * Remove EditableTicketField from a given id editable ticket
+     * @param nIdHistory the id history
+     */
+    @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
+    void remove( int nIdHistory );
 }

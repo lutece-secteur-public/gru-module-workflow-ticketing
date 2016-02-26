@@ -34,11 +34,10 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformation;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.information.ITaskInformationService;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -62,7 +61,7 @@ public abstract class AbstractTicketingTask extends SimpleTask
 
     // Services
     @Inject
-    private IResourceHistoryService _resourceHistoryService;
+    protected IResourceHistoryService _resourceHistoryService;
     @Inject
     private ITaskInformationService _taskInformationService;
 
@@ -112,16 +111,7 @@ public abstract class AbstractTicketingTask extends SimpleTask
      */
     protected Ticket getTicket( int nIdResourceHistory )
     {
-        Ticket ticket = null;
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-
-        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
-        {
-            // We get the ticket to modify
-            ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
-        }
-
-        return ticket;
+        return WorkflowTicketingUtils.findTicketByIdHistory( nIdResourceHistory );
     }
 
     /**

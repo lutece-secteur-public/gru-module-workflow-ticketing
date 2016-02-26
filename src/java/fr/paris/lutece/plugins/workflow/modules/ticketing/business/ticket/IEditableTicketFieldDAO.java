@@ -31,41 +31,34 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.util.sql.DAOUtil;
+import java.util.List;
 
 
 /**
- * This class accesses a ticket reference in the following format: <prefix><sequence>
+ *
+ * This class is a data access object for {@link EditableTicketField}
  *
  */
-public class TicketReferencePrefixAndNumberDAO implements ITicketReferenceDAO
+public interface IEditableTicketFieldDAO
 {
-    // SQL QUERIES
-    private static final String SQL_QUERY_SELECT_LAST_TICKET_REFERENCE = " SELECT max( substring( ticket_reference, ? ) ) FROM ticketing_ticket WHERE ticket_reference LIKE ? ";
-    private static final String SQL_LIKE_WILDCARD = "%";
+    /**
+     * Insert new editable ticket field
+     * @param editableTicketField the EditableTicketField Object
+     */
+    void insert( EditableTicketField editableTicketField );
 
-    @Override
-    public String findLastTicketReference( String strPrefix )
-    {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE,
-                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, strPrefix.length(  ) + 1 );
-        daoUtil.setString( 2, strPrefix + SQL_LIKE_WILDCARD );
-        daoUtil.executeQuery(  );
+    /**
+     * Load a EditableTicketField by id of the editable ticket
+     * @param nIdHistory the id history
+     * @return a list of EditableTicketField
+     */
+    List<EditableTicketField> load( int nIdHistory );
 
-        String lastTicketReference = null;
-
-        if ( daoUtil.next(  ) )
-        {
-            lastTicketReference = daoUtil.getString( 1 );
-        }
-
-        daoUtil.free(  );
-
-        return lastTicketReference;
-    }
+    /**
+     * Remove by id editable ticket field
+     * @param nIdHistory the id history
+     */
+    void delete( int nIdHistory );
 }

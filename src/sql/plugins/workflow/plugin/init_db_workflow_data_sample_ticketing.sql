@@ -22,7 +22,8 @@ INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state
 			(308,'Demander des informations complémentaires à l\'usager','Demander des informations complémentaires à l\'usager',301,303,304,1,0,0,8,0),
 			(309,'Répondre','Action de répondre pour l\'usager',301,304,303,1,0,0,9,0),
             (310,'Répondre','Action de répondre pour l\'agent',301,303,305,1,0,0,10,0),            
-			(311, 'Ré-ouvrir la sollicitation', 'Réouverture d\'une sollicitation close', 301, 305, 303, 1, 0, 0, 11, 0);
+			(311, 'Ré-ouvrir la sollicitation', 'Réouverture d\'une sollicitation close', 301, 305, 303, 1, 0, 0, 11, 0),
+            (312, 'Répondre à l\'escalade', 'Répondre à l\'escalade', 301, 303, 303, 1, 0, 0, 12, 0);
 		
 DELETE FROM workflow_task WHERE id_action >= 300 AND id_action < 450;
 INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order) 
@@ -45,13 +46,16 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
             (372, 'taskTypeComment', 307,2),
 			(381,'taskTicketingAssignUpTicket',304,1),
 			(382, 'taskTypeComment', 304,2),
-            (390, 'taskTicketingReply', 308,1), -- Ask for user information
-            (400, 'taskTicketingReply', 309,1), -- Reply to agent
+            (390, 'taskTicketingEditTicket', 308,1), -- Ask for user information
+            (400, 'taskTicketingEditTicket', 309,1), -- Reply to agent
 			(420, 'taskTicketingReply', 310,1), -- Reply to user
 			(431, 'taskTicketingQualifyTicket', 311, 1), 
 			(432, 'taskTicketingAssignTicketToUnit', 311, 2), 
 			(433, 'taskTicketingModifyTicketCategory', 311, 3), 
-			(434, 'taskTypeComment', 311, 4);
+			(434, 'taskTypeComment', 311, 4),
+            (441, 'taskTicketingReplyAssignUpTicket',312,1),
+            (442, 'taskTypeComment', 312,2);
+
 
 DELETE FROM workflow_task_comment_config WHERE id_task >= 300 AND id_task < 450;			
 INSERT INTO workflow_task_comment_config (id_task, title, is_mandatory) 
@@ -61,12 +65,21 @@ INSERT INTO workflow_task_comment_config (id_task, title, is_mandatory)
 			(362, 'Commentaire', 0),
 			(372, 'Commentaire', 0),
 			(382, 'Commentaire', 0),
-			(434, 'Motif de ré-ouverture', 1);
+			(434, 'Motif de ré-ouverture', 1),
+            (442, 'Commentaire', 0)
+;
+
+DELETE FROM workflow_task_ticketing_edit_ticket_config;
+INSERT INTO workflow_task_ticketing_edit_ticket_config (id_task, message_direction, id_user_edition_action, default_message) 
+    VALUES  (390, 1, 309, "Bonjour,
+Merci de compléter les champs suivants.
+En vous remerciant par avance,
+Mairie de Paris"),  -- Ask for user information
+            (400, 0, 309, "") -- Reply to agent
+;
 			
 DELETE FROM workflow_task_ticketing_reply_config;
 INSERT INTO workflow_task_ticketing_reply_config (id_task, message_direction) 
-    VALUES  (390, 1),  -- Ask for user information
-            (400, 0), -- Reply to agent
-            (420, 1) -- Reply to user
+    VALUES  (420, 1) -- Reply to user
 ;
 	

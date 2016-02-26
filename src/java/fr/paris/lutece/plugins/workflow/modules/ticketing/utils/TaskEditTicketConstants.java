@@ -31,41 +31,34 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference;
-
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.util.sql.DAOUtil;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.utils;
 
 
 /**
- * This class accesses a ticket reference in the following format: <prefix><sequence>
+ *
+ * This class provides constants for the task to edit a ticket
  *
  */
-public class TicketReferencePrefixAndNumberDAO implements ITicketReferenceDAO
+public final class TaskEditTicketConstants
 {
-    // SQL QUERIES
-    private static final String SQL_QUERY_SELECT_LAST_TICKET_REFERENCE = " SELECT max( substring( ticket_reference, ? ) ) FROM ticketing_ticket WHERE ticket_reference LIKE ? ";
-    private static final String SQL_LIKE_WILDCARD = "%";
+    // MARKS
+    public static final String MARK_EDITABLE_TICKET = "editable_ticket";
+    public static final String MARK_ENTRIES_HTML_FORM = "entries_html_form";
 
-    @Override
-    public String findLastTicketReference( String strPrefix )
+    // PARAMETERS
+    public static final String PARAMETER_ID_HISTORY = "id_history";
+    public static final String PARAMETER_ID_TASK = "id_task";
+    public static final String PARAMETER_ID_ACTION = "id_action";
+    public static final String PARAMETER_SIGNATURE = "signature";
+    public static final String PARAMETER_TIMESTAMP = "timestamp";
+
+    // Messages
+    public static final String MESSAGE_NO_CONFIGURATION = "module.workflow.ticketing.task_edit_ticket.message.no_configuration";
+
+    /**
+     * Private constructor
+     */
+    private TaskEditTicketConstants(  )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE,
-                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, strPrefix.length(  ) + 1 );
-        daoUtil.setString( 2, strPrefix + SQL_LIKE_WILDCARD );
-        daoUtil.executeQuery(  );
-
-        String lastTicketReference = null;
-
-        if ( daoUtil.next(  ) )
-        {
-            lastTicketReference = daoUtil.getString( 1 );
-        }
-
-        daoUtil.free(  );
-
-        return lastTicketReference;
     }
 }
