@@ -71,10 +71,7 @@ INSERT INTO workflow_task_comment_config (id_task, title, is_mandatory)
 
 DELETE FROM workflow_task_ticketing_edit_ticket_config;
 INSERT INTO workflow_task_ticketing_edit_ticket_config (id_task, message_direction, id_user_edition_action, default_message) 
-    VALUES  (390, 1, 309, "Bonjour,
-Merci de compléter les champs suivants.
-En vous remerciant par avance,
-Mairie de Paris"),  -- Ask for user information
+    VALUES  (390, 1, 309, "<p>Bonjour,</p><p>Merci de compl&eacute;ter les champs suivants.</p><p>En vous remerciant par avance,</p><p>Mairie de Paris</p>"),  -- Ask for user information
             (400, 0, 309, "") -- Reply to agent
 ;
 			
