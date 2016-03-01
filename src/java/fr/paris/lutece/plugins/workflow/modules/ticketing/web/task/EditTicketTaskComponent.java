@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketForm;
 import fr.paris.lutece.plugins.ticketing.business.TicketFormHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.web.TicketHelper;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
@@ -119,6 +120,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         {
             model.put( MARK_MESSAGE_DIRECTION, MessageDirection.AGENT_TO_USER );
         }
+        
+        TicketHelper.storeRichTextMarksIntoModel( request, model );
 
         model.put( MARK_CONFIG, config );
 
@@ -202,6 +205,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
                 model.put( MARK_LIST_ENTRIES, listEntryFirstLevel );
             }
+            
+            TicketHelper.storeRichTextMarksIntoModel( request, model );
         }
         else
         {

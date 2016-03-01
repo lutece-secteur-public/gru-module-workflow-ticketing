@@ -1,3 +1,4 @@
+<#include "/admin/util/editor/editor.html" />
 <#assign idStateAfterEdition = -1>
 <#assign defaultMessage = ''>
 <#if config?exists>
@@ -12,6 +13,7 @@
 <div class="form-group">
     <label class="col-xs-12 col-sm-3 control-label" for="defaultMessage">#i18n{module.workflow.ticketing.task_edit_ticket_config.labelDefaultMessage}</label>
     <div class="col-xs-12 col-sm-9">    
-        <textarea name="defaultMessage" rows="4" style="width:50%;">${defaultMessage}</textarea>
+        <textarea name="defaultMessage" class="richtext" rows="4" style="width:50%;">${defaultMessage}</textarea>
     </div>
 </div>
+<@initEditor />

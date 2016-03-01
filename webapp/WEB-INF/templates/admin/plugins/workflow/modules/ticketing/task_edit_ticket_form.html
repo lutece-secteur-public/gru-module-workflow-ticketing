@@ -2,6 +2,7 @@
     
     <#if agent_view >
         <input name="redirect" id="redirect" value="list" type="hidden">
+        <#include "/admin/util/editor/editor.html" />
         <#if list_entries?? && list_entries?size &gt; 0>
             <p class="lead">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelListEntries}</p>
                 <#list list_entries as entry>
@@ -30,7 +31,8 @@
         </#if>
         <hr>
         <label for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelAgentMessage} *</label>
-        <textarea rows="6" class="input-xxlarge" name="message_${config.idTask}"><#if config.defaultMessage??>${config.defaultMessage}</#if></textarea>
+        <textarea class="richtext" rows="6" class="input-xxlarge" name="message_${config.idTask}"><#if config.defaultMessage??>${config.defaultMessage}</#if></textarea>
+        <@initEditor />
     
     <#else>
         <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
