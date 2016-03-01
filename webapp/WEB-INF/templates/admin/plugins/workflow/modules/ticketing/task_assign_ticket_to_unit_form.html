@@ -1,6 +1,6 @@
 <@messages errors=errors />
 
-<input name="details_to_list" id="details_to_list" value="false" type="hidden">
+<input name="redirect" id="redirect" value="" type="hidden">
 <input id="former_unit" value="${ticket.assigneeUnit.unitId}" type="hidden">
 
 <#if units_list?? && units_list?has_content>
@@ -14,7 +14,12 @@
 <script language="javascript">
     $(document).ready(function() {
         $('#id_unit').change(function() {
-            $('#details_to_list').val($('#id_unit').val() != $('#former_unit').val());
+            //action goes back to list view if unit changes
+            if ( $('#id_unit').val() != $('#former_unit').val() )
+            {
+            	$('#redirect').val("list");
+            }
+            
             //if a user field is present and unit change
             if ($('#id_unit').val() != $('#former_unit').val() )
             {

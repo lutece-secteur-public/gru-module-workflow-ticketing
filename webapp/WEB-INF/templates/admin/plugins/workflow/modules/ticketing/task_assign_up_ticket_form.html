@@ -1,4 +1,5 @@
 <@messages errors=errors />
+<input name="redirect" id="redirect" value="list" type="hidden">
 <#if ticket_up_units?? &&  ticket_up_units?has_content>
 	<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_up_ticket.labelSupportEntities" inputName="ticket_up_unit_id" items=ticket_up_units value="" i18nHelpBlockKey="module.workflow.ticketing.task_assign_up_ticket.labelTicketPriority.help" cssClass='' /> 
 </#if>

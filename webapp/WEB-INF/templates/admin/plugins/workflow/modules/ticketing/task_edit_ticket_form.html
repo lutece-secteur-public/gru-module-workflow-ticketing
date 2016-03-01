@@ -1,6 +1,7 @@
 <#if config?exists>
     
     <#if agent_view >
+        <input name="redirect" id="redirect" value="list" type="hidden">
         <#if list_entries?? && list_entries?size &gt; 0>
             <p class="lead">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelListEntries}</p>
                 <#list list_entries as entry>
