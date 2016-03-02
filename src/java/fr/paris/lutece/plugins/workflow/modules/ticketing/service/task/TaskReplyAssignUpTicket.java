@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.ticketing.business.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
@@ -48,7 +49,6 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -138,7 +138,7 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
                         Locale.FRENCH );
             }
         }
-
+        request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
         return strTaskInformation;
     }
 

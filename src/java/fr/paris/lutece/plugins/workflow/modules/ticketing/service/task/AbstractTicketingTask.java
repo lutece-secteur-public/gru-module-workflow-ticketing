@@ -64,6 +64,8 @@ public abstract class AbstractTicketingTask extends SimpleTask
     protected IResourceHistoryService _resourceHistoryService;
     @Inject
     private ITaskInformationService _taskInformationService;
+    
+    protected final static String REDIRECT_TO_LIST = "list";
 
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
