@@ -120,7 +120,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         {
             model.put( MARK_MESSAGE_DIRECTION, MessageDirection.AGENT_TO_USER );
         }
-        
+
         TicketHelper.storeRichTextMarksIntoModel( request, model );
 
         model.put( MARK_CONFIG, config );
@@ -205,7 +205,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
                 model.put( MARK_LIST_ENTRIES, listEntryFirstLevel );
             }
-            
+
             TicketHelper.storeRichTextMarksIntoModel( request, model );
         }
         else

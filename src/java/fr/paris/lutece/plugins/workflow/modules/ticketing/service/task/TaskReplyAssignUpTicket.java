@@ -49,6 +49,7 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -138,7 +139,9 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
                         Locale.FRENCH );
             }
         }
+
         request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
+
         return strTaskInformation;
     }
 

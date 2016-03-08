@@ -58,14 +58,13 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractTicketingTask extends SimpleTask
 {
     private static final String LOG_ERROR_SAVE_INFORMATION = "Error when saving message '{0}' for resourceId {1} and taskId {2}";
+    protected final static String REDIRECT_TO_LIST = "list";
 
     // Services
     @Inject
     protected IResourceHistoryService _resourceHistoryService;
     @Inject
     private ITaskInformationService _taskInformationService;
-    
-    protected final static String REDIRECT_TO_LIST = "list";
 
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
