@@ -88,6 +88,7 @@ public class TaskEditTicket extends AbstractTicketingTask
     private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT = "module.workflow.ticketing.task_edit_ticket.information.view.agent";
     private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED = "module.workflow.ticketing.task_edit_ticket.information.view.agent.noFieldEdited";
     private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER = "module.workflow.ticketing.task_edit_ticket.information.view.user";
+    private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED = "module.workflow.ticketing.task_edit_ticket.information.view.user.noFieldEdited";
 
     // Parameters
     private static final String PARAMETER_USER_MESSAGE = "user_message";
@@ -195,7 +196,7 @@ public class TaskEditTicket extends AbstractTicketingTask
 
             if ( sbEntries.length(  ) != 0 )
             {
-                sbEntries.delete( sbEntries.length(  ) - SEPARATOR.length(  ), sbEntries.length(  ) - 1 );
+                sbEntries.delete( sbEntries.length(  ) - SEPARATOR.length(  ), sbEntries.length(  ) );
             }
         }
 
@@ -244,6 +245,7 @@ public class TaskEditTicket extends AbstractTicketingTask
     private String processUserTask( int nIdResourceHistory, HttpServletRequest request, Locale locale,
         TaskEditTicketConfig config )
     {
+        String strTaskInformation = StringUtils.EMPTY;
         StringBuilder sbEntries = new StringBuilder(  );
 
         String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
@@ -271,6 +273,7 @@ public class TaskEditTicket extends AbstractTicketingTask
             }
 
             _ticketFormService.getResponseEntry( request, entry.getIdEntry(  ), request.getLocale(  ), ticket );
+            sbEntries.append( entry.getTitle(  ) ).append( SEPARATOR );
         }
 
         // remove and add generic attributes responses
@@ -282,13 +285,12 @@ public class TaskEditTicket extends AbstractTicketingTask
             {
                 ResponseHome.create( response );
                 TicketHome.insertTicketResponse( ticket.getId(  ), response.getIdResponse(  ) );
-                sbEntries.append( response.getEntry(  ).getTitle(  ) ).append( SEPARATOR );
             }
         }
 
         if ( sbEntries.length(  ) != 0 )
         {
-            sbEntries.delete( sbEntries.length(  ) - SEPARATOR.length(  ), sbEntries.length(  ) - 1 );
+            sbEntries.delete( sbEntries.length(  ) - SEPARATOR.length(  ), sbEntries.length(  ) );
         }
 
         ticket.setUserMessage( strUserMessage );
@@ -297,8 +299,19 @@ public class TaskEditTicket extends AbstractTicketingTask
         editableTicket.setIsEdited( true );
         _editableTicketService.update( editableTicket );
 
-        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER,
-                Locale.FRENCH ), sbEntries.toString(  ), strUserMessage );
+        if ( sbEntries.length(  ) == 0 )
+        {
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                        MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED, Locale.FRENCH ), strUserMessage );
+        }
+        else
+        {
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                        MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER, Locale.FRENCH ), sbEntries.toString(  ),
+                    strUserMessage );
+        }
+
+        return strTaskInformation;
     }
 
     /**
