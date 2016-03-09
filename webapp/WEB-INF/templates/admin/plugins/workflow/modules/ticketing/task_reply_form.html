@@ -12,16 +12,47 @@
             </#if>
         </textarea>
     </div>
-</div>
+</div> 
 
 <#if agent_view>
 	<div class="form-group">
-	    <div class="col-xs-12">
+	<div class="col-xs-6">
 	        <a href="jsp/admin/plugins/ticketing/UserPreferences.jsp" class="btn btn-primary btn-xs btn-flat" >#i18n{module.workflow.ticketing.task_reply.button.manageUserPreferences}</a>
 	    </div>
+		<div class="col-xs-6">
+	        <a id="search_results_button" onclick="showSearchResponse()" class="btn btn-primary btn-xs btn-flat" >#i18n{module.workflow.ticketing.task_reply.button.searchResponse}</a>
+	    </div>
+	</div>
+	<div id="search_results_div">
+		<#include "/admin/plugins/ticketing/search/search_response.html" />
 	</div>
 </#if>
 
 <#if agent_view>
     <@initEditor />
+	<script>
+	   $( function(){
+            $("#search_results_div").hide();
+            //unregister previous listeners
+            $(document).off('click','a[name^="response_"]');
+            $(window).keydown(function(event){
+                //do not submit when enter key is pressed
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+		 });
+		function showSearchResponse() {
+				$("#search_results_div").toggle();
+				//start search
+				if( $("#search_results_div").is(':visible') &&  $("#query").val() != '' ){
+					$("#search_button").click();
+				}
+		}
+		$(document).on('click','a[name^="response_"]', {} ,function(event) {
+			var element = "#content_"+event.target.name;
+					parent.tinymce.activeEditor.insertContent($(element).html());
+		});
+	</script>
 </#if>
