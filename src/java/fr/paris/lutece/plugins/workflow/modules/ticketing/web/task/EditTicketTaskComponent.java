@@ -215,7 +215,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
             List<Entry> listEntries = _editableTicketService.buildListEntriesToEdit( request,
                     editableTicket.getListEditableTicketFields(  ) );
 
-            String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale(  ), true, request );
+            String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale(  ), false, request );
 
             model.put( TaskEditTicketConstants.MARK_EDITABLE_TICKET, editableTicket );
             model.put( TaskEditTicketConstants.MARK_ENTRIES_HTML_FORM, htmlForm );
