@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.ticketing.web.TicketHelper;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.user.UserPreferencesJspBean;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
@@ -151,7 +152,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
             strUserSignature = AdminUserPreferencesService.instance(  )
                                                           .get( String.valueOf( 
                         AdminUserService.getAdminUser( request ).getUserId(  ) ),
-                    UserPreferencesJspBean.USER_PREFERENCE_SIGNATURE, StringUtils.EMPTY );
+                    TicketingConstants.USER_PREFERENCE_SIGNATURE, StringUtils.EMPTY );
         }
 
         model.put( MARK_AGENT_VIEW, bIsAgentView );

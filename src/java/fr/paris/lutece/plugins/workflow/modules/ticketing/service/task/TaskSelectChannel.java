@@ -33,10 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import fr.paris.lutece.plugins.ticketing.business.ChannelHome;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.ITicketReferenceService;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,54 +45,85 @@ import java.text.MessageFormat;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-
 import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * This class represents a task to generate the ticket reference
+ * This class represents a task to reply to a ticket
  *
  */
-public class TaskGenerateTicketReference extends AbstractTicketingTask
+public class TaskSelectChannel extends AbstractTicketingTask
 {
-    // Messages
-    private static final String MESSAGE_GENERATE_TICKET_REFERENCE = "module.workflow.ticketing.task_generate_ticket_reference.labelGenerateTicketReference";
-    private static final String MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION = "module.workflow.ticketing.task_generate_ticket_reference.information";
+    private static final String MESSAGE_SELECT_CHANNEL = "module.workflow.ticketing.task_select_channel.labelChannel";
+    private static final String MESSAGE_SELECT_CHANNEL_INFORMATION_PREFIX = "module.workflow.ticketing.task_select_channel.information";
 
-    // Services
-    @Inject
-    private ITicketReferenceService _ticketReferenceService;
+    // PARAMETERS
+    public static final String PARAMETER_USER_MESSAGE = "user_message";
+    private ITaskConfigService _taskConfigService;
     private int _idChannel;
-
-    @Override
-    public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
-    {
-        String strReference = StringUtils.EMPTY;
-
-        // We get the ticket to modify
-        Ticket ticket = getTicket( nIdResourceHistory );
-
-        if ( ticket != null )
-        {
-            synchronized ( _ticketReferenceService )
-            {
-                strReference = _ticketReferenceService.generateReference( ticket );
-                ticket.setReference( strReference );
-                TicketHome.update( ticket );
-            }
-
-            _idChannel = ticket.getIdChannel(  );
-        }
-
-        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION,
-                Locale.FRENCH ), strReference );
-    }
 
     @Override
     public String getTitle( Locale locale )
     {
-        return I18nService.getLocalizedString( MESSAGE_GENERATE_TICKET_REFERENCE, locale );
+        return I18nService.getLocalizedString( MESSAGE_SELECT_CHANNEL, locale );
+    }
+
+    @Override
+    protected String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    {
+        String strTaskInformation = StringUtils.EMPTY;
+
+        // We get the ticket to modify
+        Ticket ticket = getTicket( nIdResourceHistory );
+
+        if ( StringUtils.isNotEmpty( request.getParameter( TicketingConstants.PARAMETER_SELECTED_ID_CHANNEL ) ) )
+        {
+            _idChannel = Integer.parseInt( request.getParameter( TicketingConstants.PARAMETER_SELECTED_ID_CHANNEL ) );
+        }
+        else
+        {
+            _idChannel = ( ticket != null ) ? ticket.getIdChannel(  ) : TicketingConstants.NO_ID_CHANNEL;
+        }
+
+        String strChannel = "";
+
+        if ( _idChannel != TicketingConstants.NO_ID_CHANNEL )
+        {
+            strChannel = ChannelHome.findByPrimaryKey( _idChannel ).getLabel(  );
+        }
+
+        strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                    MESSAGE_SELECT_CHANNEL_INFORMATION_PREFIX, Locale.FRENCH ), strChannel );
+
+        return strTaskInformation;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doRemoveConfig(  )
+    {
+        _taskConfigService.remove( this.getId(  ) );
+        super.doRemoveConfig(  );
+    }
+
+    /**
+     * Gives the task config service
+     * @return the task config service
+     */
+    public ITaskConfigService getTaskConfigService(  )
+    {
+        return _taskConfigService;
+    }
+
+    /**
+     * Sets the task config service
+     * @param taskConfigService the task config service
+     */
+    public void setTaskConfigService( ITaskConfigService taskConfigService )
+    {
+        this._taskConfigService = taskConfigService;
     }
 
     /**

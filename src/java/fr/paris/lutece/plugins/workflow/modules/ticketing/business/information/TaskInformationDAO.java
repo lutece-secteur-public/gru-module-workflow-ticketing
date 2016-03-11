@@ -44,10 +44,10 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskInformationDAO implements ITaskInformationDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_task,information_value  " +
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_task,information_value,id_channel  " +
         "FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_ticketing_information " +
-        "(id_history,id_task,information_value ) VALUES( ?, ?, ? )";
+        "(id_history,id_task,information_value,id_channel ) VALUES( ?, ?, ?, ? )";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
     private static final String SQL_QUERY_DELETE_BY_TASK = "DELETE FROM workflow_task_ticketing_information WHERE id_task=?";
 
@@ -62,6 +62,7 @@ public class TaskInformationDAO implements ITaskInformationDAO
         daoUtil.setInt( 1, taskInformation.getIdResourceHistory(  ) );
         daoUtil.setInt( 2, taskInformation.getIdTask(  ) );
         daoUtil.setString( 3, taskInformation.getValue(  ) );
+        daoUtil.setInt( 4, taskInformation.getIdChannel(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -88,6 +89,7 @@ public class TaskInformationDAO implements ITaskInformationDAO
             taskInformation.setIdResourceHistory( daoUtil.getInt( 1 ) );
             taskInformation.setIdTask( daoUtil.getInt( 2 ) );
             taskInformation.setValue( daoUtil.getString( 3 ) );
+            taskInformation.setIdChannel( daoUtil.getInt( 4 ) );
         }
 
         daoUtil.free(  );

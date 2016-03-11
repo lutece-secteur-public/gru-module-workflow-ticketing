@@ -44,6 +44,7 @@ public class TaskInformation
     private int _nIdResourceHistory;
     private int _nIdTask;
     private String _strValue;
+    private int _nIdChannel;
 
     /**
      *
@@ -97,5 +98,23 @@ public class TaskInformation
     public void setValue( String strValue )
     {
         _strValue = strValue;
+    }
+
+    /**
+     *
+     * @return the channel id
+     */
+    public int getIdChannel(  )
+    {
+        return _nIdChannel;
+    }
+
+    /**
+     * the channel id
+     * @param nIdChannel the channel id
+     */
+    public void setIdChannel( int nIdChannel )
+    {
+        _nIdChannel = nIdChannel;
     }
 }

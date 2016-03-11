@@ -48,6 +48,7 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
 			(382, 'taskTypeComment', 304,2),
             (390, 'taskTicketingEditTicket', 308,1), -- Ask for user information
             (400, 'taskTicketingEditTicket', 309,1), -- Reply to agent
+            (401, 'taskTicketingSelectChannel', 309,2),
 			(420, 'taskTicketingReply', 310,1), -- Reply to user
 			(431, 'taskTicketingQualifyTicket', 311, 1), 
 			(432, 'taskTicketingAssignTicketToUnit', 311, 2), 

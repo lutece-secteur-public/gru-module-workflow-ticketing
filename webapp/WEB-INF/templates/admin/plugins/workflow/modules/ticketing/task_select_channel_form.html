@@ -1,0 +1,33 @@
+<input name="redirect" id="redirect" value="" type="hidden">
+<#if agent_view && channels_list?? && channels_list?has_content>
+  <div class="form-group">
+    <label class="col-xs-12 col-sm-3 control-label">#i18n{module.workflow.ticketing.task_select_channel.labelChannel}</label>
+    <div class="col-xs-12 col-sm-9">
+      <select id="selected_channel" name="selected_channel" class="form-control">
+        <#if selectable_id_channel_list?? && selectable_id_channel_list?has_content>
+          <#list channels_list as channel>
+            <#assign is_selectable = false>
+            <#if selectable_id_channel_list?? && selectable_id_channel_list?has_content>
+              <#list selectable_id_channel_list as selectable_channel_id>
+                <#if "${channel.code}" == "${selectable_channel_id}">
+                   <#assign is_selectable = true>
+                </#if>
+              </#list>
+            </#if>
+            <#if is_selectable == true>
+              <#if "${channel.code}" == "${preferred_id_channel}">
+                <option selected="selected" value="${channel.code}" >${channel.name}</option>
+              <#else>
+                <option value="${channel.code}" >${channel.name}</option>
+              </#if>
+            </#if>
+          </#list>
+        <#else>
+          <#list channels_list as channel>
+            <option value="${channel.code}" >${channel.name}</option>
+          </#list>
+        </#if>
+      </select>
+    </div>
+  </div>
+</#if>

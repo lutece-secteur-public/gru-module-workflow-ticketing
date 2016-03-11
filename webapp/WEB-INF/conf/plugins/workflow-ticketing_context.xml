@@ -198,6 +198,19 @@
 		p:taskType-ref="workflow-ticketing.taskTypeEditTicket"
 		p:taskConfigService-ref="workflow-ticketing.taskEditTicketConfigService" />
 
+    <!-- Task Select channel -->
+    <bean id="workflow-ticketing.taskSelectChannel"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskSelectChannel"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeSelectChannel"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketingSelectChannel" p:titleI18nKey="module.workflow.ticketing.task_select_channel.title"
+        p:beanName="workflow-ticketing.taskSelectChannel"
+        p:formTaskRequired="true" p:taskForAutomaticAction="false" />
+    <bean id="workflow-ticketing.selectChannelTaskComponent"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.SelectChannelTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeSelectChannel" />
+
 	<!-- SignRequest -->
 	<bean id="workflow-ticketing.hashService"
 		class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
