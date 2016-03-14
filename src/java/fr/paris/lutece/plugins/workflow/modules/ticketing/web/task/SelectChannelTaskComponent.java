@@ -66,9 +66,6 @@ public class SelectChannelTaskComponent extends TicketingTaskComponent
     // TEMPLATES
     private static final String TEMPLATE_TASK_SELECT_CHANNEL_FORM = "admin/plugins/workflow/modules/ticketing/task_select_channel_form.html";
 
-    // Properties
-    private static final String PROPERTY_ADMINUSER_FRONT_ID = "ticketing.adminUser.front.id";
-
     /**
      * {@inheritDoc}
      */
@@ -80,11 +77,9 @@ public class SelectChannelTaskComponent extends TicketingTaskComponent
         Map<String, Object> model = getModel( ticket );
 
         boolean bIsAgentView = false;
-
         AdminUser user = AdminUserService.getAdminUser( request );
-
         AdminUser userFront = AdminUserHome.findByPrimaryKey( AppPropertiesService.getPropertyInt( 
-                    PROPERTY_ADMINUSER_FRONT_ID, -1 ) );
+                    TicketingConstants.PROPERTY_ADMINUSER_FRONT_ID, -1 ) );
 
         if ( ( user != null ) && ( user.getUserId(  ) != userFront.getUserId(  ) ) )
         {

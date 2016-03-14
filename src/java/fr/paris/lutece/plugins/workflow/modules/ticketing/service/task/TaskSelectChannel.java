@@ -37,12 +37,15 @@ import fr.paris.lutece.plugins.ticketing.business.ChannelHome;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.business.user.AdminUserHome;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
-
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,23 +78,25 @@ public class TaskSelectChannel extends AbstractTicketingTask
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
+        
+        AdminUser user = AdminUserService.getAdminUser( request );
+        AdminUser userFront = AdminUserHome.findByPrimaryKey( AppPropertiesService.getPropertyInt( 
+                    TicketingConstants.PROPERTY_ADMINUSER_FRONT_ID, -1 ) );
 
-        if ( StringUtils.isNotEmpty( request.getParameter( TicketingConstants.PARAMETER_SELECTED_ID_CHANNEL ) ) )
+        if ( ( user != null ) && ( user.getUserId(  ) != userFront.getUserId(  ) ) )
         {
             _idChannel = Integer.parseInt( request.getParameter( TicketingConstants.PARAMETER_SELECTED_ID_CHANNEL ) );
         }
         else
         {
-            _idChannel = ( ticket != null ) ? ticket.getIdChannel(  ) : TicketingConstants.NO_ID_CHANNEL;
+            _idChannel = TicketingConstants.WEB_ID_CHANNEL;
         }
-
+        
         String strChannel = "";
-
         if ( _idChannel != TicketingConstants.NO_ID_CHANNEL )
         {
             strChannel = ChannelHome.findByPrimaryKey( _idChannel ).getLabel(  );
         }
-
         strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
                     MESSAGE_SELECT_CHANNEL_INFORMATION_PREFIX, Locale.FRENCH ), strChannel );
 
