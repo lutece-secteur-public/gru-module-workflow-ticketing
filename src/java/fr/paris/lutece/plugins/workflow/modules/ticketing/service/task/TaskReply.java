@@ -43,6 +43,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.sql.Timestamp;
 import java.text.MessageFormat;
 
 import java.util.Locale;
@@ -87,6 +88,7 @@ public class TaskReply extends AbstractTicketingTask
             if ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) )
             {
                 ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
+                ticket.setDateClose( new Timestamp( new java.util.Date(  ).getTime(  ) ) );
             }
             
             TicketHome.update( ticket );
