@@ -94,10 +94,12 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
             ticket.setIdTicketCategory( nNewCategoryId );
             TicketHome.update( ticket );
 
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+            if ( !strPreviousTypeLabel.equals( strNewTypeLabel ) || !strPreviousDomainLabel.equals( strNewDomainLabel ) || !strPreviousCategoryLabel.equals( strNewCategoryLabel ) ) {
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
                         MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ), strPreviousTypeLabel,
                     strPreviousDomainLabel, strPreviousCategoryLabel, strNewTypeLabel, strNewDomainLabel,
                     strNewCategoryLabel );
+            }
         }
 
         return strTaskInformation;

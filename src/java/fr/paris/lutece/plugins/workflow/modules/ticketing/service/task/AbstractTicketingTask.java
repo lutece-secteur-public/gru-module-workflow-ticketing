@@ -51,6 +51,8 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * This class represents a Task for Ticketing
@@ -72,20 +74,23 @@ public abstract class AbstractTicketingTask extends SimpleTask
     {
         String strTaskInformation = processTicketingTask( nIdResourceHistory, request, locale );
 
-        try
+        if ( !StringUtils.isEmpty( strTaskInformation ) )
         {
-            TaskInformation taskInformation = new TaskInformation(  );
-            taskInformation.setIdResourceHistory( nIdResourceHistory );
-            taskInformation.setIdTask( this.getId(  ) );
-            taskInformation.setValue( strTaskInformation );
-            taskInformation.setIdChannel( this.getIdChannel(  ) );
-            _taskInformationService.create( taskInformation, WorkflowUtils.getPlugin(  ) );
-        }
-        catch ( Exception e )
-        {
-            String strErrorMessage = MessageFormat.format( LOG_ERROR_SAVE_INFORMATION, strTaskInformation,
-                    nIdResourceHistory, this.getId(  ) );
-            AppLogService.error( strErrorMessage );
+            try
+            {
+                TaskInformation taskInformation = new TaskInformation(  );
+                taskInformation.setIdResourceHistory( nIdResourceHistory );
+                taskInformation.setIdTask( this.getId(  ) );
+                taskInformation.setValue( strTaskInformation );
+                taskInformation.setIdChannel( this.getIdChannel(  ) );
+                _taskInformationService.create( taskInformation, WorkflowUtils.getPlugin(  ) );
+            }
+            catch ( Exception e )
+            {
+                String strErrorMessage = MessageFormat.format( LOG_ERROR_SAVE_INFORMATION, strTaskInformation,
+                        nIdResourceHistory, this.getId(  ) );
+                AppLogService.error( strErrorMessage );
+            }
         }
     }
 

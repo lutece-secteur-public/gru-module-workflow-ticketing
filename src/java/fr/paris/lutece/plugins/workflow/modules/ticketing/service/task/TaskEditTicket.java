@@ -89,6 +89,7 @@ public class TaskEditTicket extends AbstractTicketingTask
     private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED = "module.workflow.ticketing.task_edit_ticket.information.view.agent.noFieldEdited";
     private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER = "module.workflow.ticketing.task_edit_ticket.information.view.user";
     private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED = "module.workflow.ticketing.task_edit_ticket.information.view.user.noFieldEdited";
+    private static final String MESSAGE_EDIT_TICKET_INFORMATION_NO_MESSAGE = "module.workflow.ticketing.task_edit_ticket.information.noMessage";
 
     // Parameters
     private static final String PARAMETER_USER_MESSAGE = "user_message";
@@ -298,6 +299,11 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         editableTicket.setIsEdited( true );
         _editableTicketService.update( editableTicket );
+        
+        if ( StringUtils.isEmpty( strUserMessage ) )
+        {
+            strUserMessage = I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_NO_MESSAGE, Locale.FRENCH );
+        }
 
         if ( sbEntries.length(  ) == 0 )
         {

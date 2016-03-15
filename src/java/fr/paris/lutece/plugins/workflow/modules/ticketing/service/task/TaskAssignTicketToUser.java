@@ -59,7 +59,6 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
     private static final String MESSAGE_ASSIGN_TICKET_TO_USER = "module.workflow.ticketing.task_assign_ticket_to_user.labelAssignTicketToUser";
     private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION = "module.workflow.ticketing.task_assign_ticket_to_user.information";
     private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET = "module.workflow.ticketing.task_assign_ticket_to_user.information.unassign_ticket";
-    private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_NO_CHANGE = "module.workflow.ticketing.task_assign_ticket_to_user.information.no_change";
     private static final String MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER = "module.workflow.ticketing.task_assign_ticket_to_user.no_current_user";
 
     // PARAMETERS
@@ -112,12 +111,6 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
                                 MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ), strCurrentUser,
                             assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
                 }
-                else
-                {
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_NO_CHANGE, Locale.FRENCH ),
-                            assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
-                }
             }
             else
             {
@@ -125,8 +118,11 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
                 ticket.setAssigneeUser( null );
                 TicketHome.update( ticket );
 
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                if ( assigneeUser.getAdminUserId(  ) != 0 )
+                {
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
                             MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ), strCurrentUser );
+                }
             }
         }
 

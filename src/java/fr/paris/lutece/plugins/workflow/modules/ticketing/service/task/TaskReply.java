@@ -59,6 +59,7 @@ public class TaskReply extends AbstractTicketingTask
 {
     private static final String MESSAGE_REPLY = "module.workflow.ticketing.task_reply.labelReply";
     private static final String MESSAGE_REPLY_INFORMATION_PREFIX = "module.workflow.ticketing.task_reply.information.";
+    private static final String MESSAGE_REPLY_INFORMATION_NO_MESSAGE = "module.workflow.ticketing.task_reply.information.";
 
     // PARAMETERS
     public static final String PARAMETER_USER_MESSAGE = "user_message";
@@ -92,6 +93,11 @@ public class TaskReply extends AbstractTicketingTask
             }
             
             TicketHome.update( ticket );
+            
+            if ( StringUtils.isEmpty( strUserMessage ) )
+            {
+                strUserMessage = I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_NO_MESSAGE, Locale.FRENCH );
+            }
 
             strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX +
                         config.getMessageDirection(  ).toString(  ).toLowerCase(  ), Locale.FRENCH ), strUserMessage );

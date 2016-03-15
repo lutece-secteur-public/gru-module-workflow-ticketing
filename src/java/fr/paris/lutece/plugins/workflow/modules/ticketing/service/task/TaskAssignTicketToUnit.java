@@ -58,7 +58,6 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
     // Messages
     private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT = "module.workflow.ticketing.task_assign_ticket_to_unit.labelAssignTicketToUnit";
     private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION = "module.workflow.ticketing.task_assign_ticket_to_unit.information";
-    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION_NO_CHANGE = "module.workflow.ticketing.task_assign_ticket_to_unit.information.no_change";
     private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT = "module.workflow.ticketing.task_assign_ticket_to_unit.no_current_unit";
 
     // PARAMETERS
@@ -108,12 +107,6 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
 
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
                                 MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ), strCurrentUnit,
-                            assigneeUnit.getName(  ) );
-                }
-                else
-                {
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION_NO_CHANGE, Locale.FRENCH ),
                             assigneeUnit.getName(  ) );
                 }
             }
