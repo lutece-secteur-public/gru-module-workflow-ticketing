@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.ChannelHome;
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -77,16 +76,13 @@ public class TaskSelectChannel extends AbstractTicketingTask
     {
         String strTaskInformation = StringUtils.EMPTY;
 
-        // We get the ticket to modify
-        Ticket ticket = getTicket( nIdResourceHistory );
-
         AdminUser user = AdminUserService.getAdminUser( request );
         AdminUser userFront = AdminUserHome.findByPrimaryKey( AppPropertiesService.getPropertyInt( 
                     TicketingConstants.PROPERTY_ADMINUSER_FRONT_ID, -1 ) );
 
         if ( ( user != null ) && ( user.getUserId(  ) != userFront.getUserId(  ) ) )
         {
-            _idChannel = Integer.parseInt( request.getParameter( TicketingConstants.PARAMETER_SELECTED_ID_CHANNEL ) );
+            _idChannel = Integer.parseInt( request.getParameter( TicketingConstants.PARAMETER_ID_CHANNEL ) );
         }
         else
         {
