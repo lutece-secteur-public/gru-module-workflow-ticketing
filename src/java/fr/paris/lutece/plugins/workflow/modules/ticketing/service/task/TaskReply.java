@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -79,9 +81,15 @@ public class TaskReply extends AbstractTicketingTask
         {
             String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
             ticket.setUserMessage( strUserMessage );
-            TicketHome.update( ticket );
 
             TaskReplyConfig config = _taskConfigService.findByPrimaryKey( this.getId(  ) );
+            
+            if ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) )
+            {
+                ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
+            }
+            
+            TicketHome.update( ticket );
 
             strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX +
                         config.getMessageDirection(  ).toString(  ).toLowerCase(  ), Locale.FRENCH ), strUserMessage );
