@@ -33,24 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import fr.paris.lutece.plugins.ticketing.business.ChannelHome;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.web.TicketHelper;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
-import fr.paris.lutece.plugins.ticketing.web.user.UserPreferencesJspBean;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.prefs.AdminUserPreferencesService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -88,21 +81,8 @@ public class SelectChannelTaskComponent extends TicketingTaskComponent
 
         model.put( TicketingConstants.MARK_AGENT_VIEW, bIsAgentView );
 
-        model.put( TicketingConstants.MARK_CHANNELS_LIST, ChannelHome.getReferenceList(  ) );
-
-        String strIdChannelList = AdminUserPreferencesService.instance(  )
-                                                             .get( String.valueOf( 
-                    AdminUserService.getAdminUser( request ).getUserId(  ) ),
-                TicketingConstants.USER_PREFERENCE_CHANNELS_LIST, StringUtils.EMPTY );
-        List<String> idChannelList = TicketHelper.getIdChannelList( strIdChannelList );
-        model.put( TicketingConstants.MARK_SELECTABLE_ID_CHANNEL_LIST, idChannelList );
-
-        String strPreferredIdChannel = AdminUserPreferencesService.instance(  )
-                                                                  .get( String.valueOf( 
-                    AdminUserService.getAdminUser( request ).getUserId(  ) ),
-                TicketingConstants.USER_PREFERENCE_PREFERRED_CHANNEL, StringUtils.EMPTY );
-        model.put( TicketingConstants.MARK_PREFERRED_ID_CHANNEL, strPreferredIdChannel );
-
+        TicketHelper.storeChannelsMarksIntoModel( request, model );
+        
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_SELECT_CHANNEL_FORM, locale, model );
 
         return template.getHtml(  );
