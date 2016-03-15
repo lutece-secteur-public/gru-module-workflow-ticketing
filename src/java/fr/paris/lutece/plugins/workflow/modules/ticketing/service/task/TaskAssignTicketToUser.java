@@ -121,7 +121,8 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
                 if ( assigneeUser.getAdminUserId(  ) != 0 )
                 {
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ), strCurrentUser );
+                                MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ),
+                            strCurrentUser );
                 }
             }
         }

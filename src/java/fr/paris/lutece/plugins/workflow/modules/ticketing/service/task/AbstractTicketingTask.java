@@ -43,6 +43,8 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistorySer
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.text.MessageFormat;
 
 import java.util.Locale;
@@ -50,8 +52,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**

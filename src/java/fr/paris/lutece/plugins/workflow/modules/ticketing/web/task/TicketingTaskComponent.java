@@ -45,6 +45,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.util.mvc.utils.MVCMessage;
 import fr.paris.lutece.util.ErrorMessage;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,8 +56,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -70,13 +70,13 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     private static final String MARK_ERRORS = "errors";
     private static final String MARK_TICKET = "ticket";
 
+    // Other constants
+    private static final String SEPARATOR = "<hr>";
+
     // SERVICES
     @Inject
     private ITaskInformationService _taskInformationService;
     private List<ErrorMessage> _listErrors;
-    
-    // Other constants
-    private static final String SEPARATOR = "<hr>";
 
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )

@@ -299,7 +299,7 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         editableTicket.setIsEdited( true );
         _editableTicketService.update( editableTicket );
-        
+
         if ( StringUtils.isEmpty( strUserMessage ) )
         {
             strUserMessage = I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_NO_MESSAGE, Locale.FRENCH );

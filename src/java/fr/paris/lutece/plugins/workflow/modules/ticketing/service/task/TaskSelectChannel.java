@@ -46,6 +46,7 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
+
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,7 +79,7 @@ public class TaskSelectChannel extends AbstractTicketingTask
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
-        
+
         AdminUser user = AdminUserService.getAdminUser( request );
         AdminUser userFront = AdminUserHome.findByPrimaryKey( AppPropertiesService.getPropertyInt( 
                     TicketingConstants.PROPERTY_ADMINUSER_FRONT_ID, -1 ) );
@@ -91,12 +92,14 @@ public class TaskSelectChannel extends AbstractTicketingTask
         {
             _idChannel = TicketingConstants.WEB_ID_CHANNEL;
         }
-        
+
         String strChannel = "";
+
         if ( _idChannel != TicketingConstants.NO_ID_CHANNEL )
         {
             strChannel = ChannelHome.findByPrimaryKey( _idChannel ).getLabel(  );
         }
+
         strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
                     MESSAGE_SELECT_CHANNEL_INFORMATION_PREFIX, Locale.FRENCH ), strChannel );
 
