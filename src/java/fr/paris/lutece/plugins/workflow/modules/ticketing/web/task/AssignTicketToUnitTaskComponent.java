@@ -33,11 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import fr.paris.lutece.plugins.ticketing.business.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -79,7 +83,8 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
 
         if ( ticket != null )
         {
-            unitsList = getUnitsList(  );
+            AdminUser user = AdminUserService.getAdminUser( request );
+            unitsList = getUnitsList( user );
 
             if ( ticket.getAssigneeUnit(  ) != null )
             {
@@ -108,18 +113,23 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
     }
 
     /**
-     * Load the data of all the unit objects and returns them in form of a collection
-     *
+     * Load the data of all the unit objects allowed for assignment
+     * and returns them in form of a collection
+     * @param user connected admin user
      * @return the list which contains the data of all the unit objects
      */
-    protected static ReferenceList getUnitsList(  )
+    protected static ReferenceList getUnitsList( AdminUser user )
     {
         List<Unit> lstUnits = UnitHome.findAll(  );
         ReferenceList lstRef = new ReferenceList( lstUnits.size(  ) );
 
         for ( Unit unit : lstUnits )
         {
-            lstRef.addItem( unit.getIdUnit(  ), unit.getLabel(  ) );
+            AssigneeUnit assigneeUnit = new AssigneeUnit( unit );
+            if ( RBACService.isAuthorized( assigneeUnit, AssigneeUnit.PERMISSION_ASSIGN, user ) )
+            {
+                lstRef.addItem( unit.getIdUnit(  ), unit.getLabel(  ) );
+            }
         }
 
         return lstRef;
