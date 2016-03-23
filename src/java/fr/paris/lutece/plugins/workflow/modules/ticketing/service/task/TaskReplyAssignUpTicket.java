@@ -33,26 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
-import fr.paris.lutece.plugins.ticketing.business.AssigneeUnit;
-import fr.paris.lutece.plugins.ticketing.business.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
-import fr.paris.lutece.plugins.unittree.business.unit.Unit;
-import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,14 +57,6 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
     private static final String MESSAGE_REPLY_ASSIGN_UP_TICKET = "module.workflow.ticketing.task_reply_assign_up_ticket.labelReplyAssignUpTicket";
     private static final String MESSAGE_REPLY_ASSIGN_UP_TICKET_INFORMATION = "module.workflow.ticketing.task_reply_assign_up_ticket.information";
     private static final String MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER = "module.workflow.ticketing.task_reply_assign_up_ticket.no_current_user";
-    private static final String MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND = "module.workflow.ticketing.task_reply_assign_up_ticket.no_user_found";
-    private static final String PROPERTY_ASSIGN_UP_ACTION_ID = "workflow-ticketing.workflow.action.id.assignUp";
-    private static int ASSIGN_UP_ACTION_ID = 304;
-
-    static
-    {
-        ASSIGN_UP_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID, ASSIGN_UP_ACTION_ID );
-    }
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -87,93 +68,28 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
-            AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
-            String strCurrentUnit = null;
-            String strCurrentUser = null;
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                        MESSAGE_REPLY_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
+                    ( ticket.getAssigneeUser(  ) != null )
+                    ? ( ticket.getAssigneeUser(  ).getFirstname(  ) + " " + ticket.getAssigneeUser(  ).getLastname(  ) )
+                    : I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER, Locale.FRENCH ),
+                    ( ticket.getAssigneeUnit(  ) != null ) ? ticket.getAssigneeUnit(  ).getName(  ) : StringUtils.EMPTY,
+                    ( ticket.getAssignerUser(  ) != null )
+                    ? ( ticket.getAssignerUser(  ).getFirstname(  ) + " " + ticket.getAssigneeUser(  ).getLastname(  ) )
+                    : I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER, Locale.FRENCH ),
+                    ( ticket.getAssignerUnit(  ) != null ) ? ticket.getAssignerUnit(  ).getName(  ) : StringUtils.EMPTY );
 
-            if ( assigneeUnit != null )
-            {
-                strCurrentUnit = assigneeUnit.getName(  );
-            }
+            ticket.setAssigneeUser( ticket.getAssignerUser(  ) );
+            ticket.setAssigneeUnit( ticket.getAssignerUnit(  ) );
+            ticket.setAssignerUser( null );
+            ticket.setAssignerUnit( null );
 
-            if ( assigneeUser == null )
-            {
-                assigneeUser = new AssigneeUser(  );
-                strCurrentUser = I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER,
-                        Locale.FRENCH );
-            }
-            else
-            {
-                strCurrentUser = assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  );
-            }
-
-            AdminUser user = getAssigner( nIdResourceHistory );
-
-            if ( ( user != null ) && ( user.getUserId(  ) != assigneeUser.getAdminUserId(  ) ) )
-            {
-                assigneeUser.setAdminUserId( user.getUserId(  ) );
-                assigneeUser.setEmail( user.getEmail(  ) );
-                assigneeUser.setFirstname( user.getFirstName(  ) );
-                assigneeUser.setLastname( user.getLastName(  ) );
-                ticket.setAssigneeUser( assigneeUser );
-
-                List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId(  ) );
-
-                if ( ( unitsList != null ) && ( unitsList.size(  ) > 0 ) )
-                {
-                    assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
-                    ticket.setAssigneeUnit( assigneeUnit );
-                }
-
-                TicketHome.update( ticket );
-
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_REPLY_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ), strCurrentUser,
-                        strCurrentUnit, assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ),
-                        assigneeUnit.getName(  ) );
-            }
-            else
-            {
-                strTaskInformation = I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND,
-                        Locale.FRENCH );
-            }
+            TicketHome.update( ticket );
         }
 
         request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
 
         return strTaskInformation;
-    }
-
-    /**
-     * Get the user assigning up the ticket corresponding to the resource of the resourceHistory id
-     * @param nIdResourceHistory the resourceHistory id
-     * @return the user assigning up the ticket corresponding to the resource of the resourceHistory id , {@code null} otherwise
-     */
-    protected AdminUser getAssigner( int nIdResourceHistory )
-    {
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
-
-        List<Integer> listIdResource = new ArrayList<Integer>(  );
-        listIdResource.add( resourceHistory.getIdResource(  ) );
-
-        List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource,
-                resourceHistory.getResourceType(  ), resourceHistory.getWorkflow(  ).getId(  ) );
-
-        boolean isAssignUpActionFound = false;
-        ListIterator<Integer> iterator = listIdHistory.listIterator( listIdHistory.size(  ) );
-
-        while ( !isAssignUpActionFound && iterator.hasPrevious(  ) )
-        {
-            resourceHistory = _resourceHistoryService.findByPrimaryKey( iterator.previous(  ) );
-
-            if ( resourceHistory.getAction(  ).getId(  ) == ASSIGN_UP_ACTION_ID )
-            {
-                isAssignUpActionFound = true;
-            }
-        }
-
-        return ( isAssignUpActionFound ? AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode(  ) ) : null );
     }
 
     @Override

@@ -81,24 +81,28 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
+            AssigneeUnit assigneeUnit = new AssigneeUnit(  );
             Unit unit = UnitHome.findByPrimaryKey( Integer.parseInt( strTargetUnitId ) );
 
             if ( unit != null )
             {
                 AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
-                assigneeUnit.setUnitId( unit.getIdUnit(  ) );
-                assigneeUnit.setName( unit.getLabel(  ) );
-                ticket.setAssigneeUnit( assigneeUnit );
-                ticket.setAssigneeUser( null );
-                TicketHome.update( ticket );
 
                 String strFormerUserInfos = ( assigneeUser == null )
                     ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER, Locale.FRENCH )
                     : ( assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
                 strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ), strFormerUserInfos,
-                        assigneeUnit.getName(  ) );
+                            MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ), strFormerUserInfos, unit.getLabel(  ) );
+
+                ticket.setAssignerUser( ticket.getAssigneeUser(  ) );
+                ticket.setAssignerUnit( ticket.getAssigneeUnit(  ) );
+                ticket.setAssigneeUser( null );
+                assigneeUnit.setUnitId( unit.getIdUnit(  ) );
+                assigneeUnit.setName( unit.getLabel(  ) );
+                ticket.setAssigneeUnit( assigneeUnit );
+                ticket.setAssigneeUser( null );
+
+                TicketHome.update( ticket );
             }
         }
 
