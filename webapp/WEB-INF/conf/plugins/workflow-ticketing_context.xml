@@ -219,7 +219,7 @@
         class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
         p:key="taskTicketingIndexTicket" p:titleI18nKey="module.workflow.ticketing.task_index_ticket.title"
         p:beanName="workflow-ticketing.taskIndexTicket"
-        p:taskForAutomaticAction="false" />
+        p:taskForAutomaticAction="true" />
     <bean id="workflow-ticketing.indexTicketTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeIndexTicket" />
