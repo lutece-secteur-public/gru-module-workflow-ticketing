@@ -211,6 +211,19 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.SelectChannelTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeSelectChannel" />
 
+    <!-- Task Index ticket -->
+    <bean id="workflow-ticketing.taskIndexTicket"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskIndexTicket"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeIndexTicket"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketingIndexTicket" p:titleI18nKey="module.workflow.ticketing.task_index_ticket.title"
+        p:beanName="workflow-ticketing.taskIndexTicket"
+        p:taskForAutomaticAction="true" />
+    <bean id="workflow-ticketing.indexTicketTaskComponent"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeIndexTicket" />
+
 	<!-- SignRequest -->
 	<bean id="workflow-ticketing.hashService"
 		class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
