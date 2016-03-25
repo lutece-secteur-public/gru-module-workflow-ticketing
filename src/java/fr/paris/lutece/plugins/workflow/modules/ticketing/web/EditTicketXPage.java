@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.ticketing.web.TicketHelper;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
@@ -214,6 +215,7 @@ public class EditTicketXPage implements XPageApplication
         Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory(  ) );
 
         String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale(  ), true, request );
+        TicketAsynchronousUploadHandler.getHandler(  ).removeSessionFiles( request.getSession(  ).getId(  ) );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( TaskEditTicketConstants.MARK_EDITABLE_TICKET, editableTicket );
