@@ -33,12 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.TicketCategoryHome;
@@ -48,6 +42,12 @@ import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
+
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -72,8 +72,8 @@ public class TaskIndexTicket extends AbstractTicketingTask
         State state = WorkflowService.getInstance(  )
                                      .getState( ticket.getId(  ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null );
 
-        IndexerAction indexerAction = new IndexerAction( );
-        indexerAction.setIdTicket( ticket.getId( ) );
+        IndexerAction indexerAction = new IndexerAction(  );
+        indexerAction.setIdTicket( ticket.getId(  ) );
 
         if ( ( state == null ) ||
                 ( state.getId(  ) == AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ACTION_ID_NEW, 301 ) ) )
@@ -84,8 +84,9 @@ public class TaskIndexTicket extends AbstractTicketingTask
         {
             indexerAction.setIdTask( IndexerAction.TASK_MODIFY );
         }
+
         IndexerActionHome.create( indexerAction );
-        
+
         return strTaskInformation;
     }
 

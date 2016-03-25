@@ -126,6 +126,7 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
         for ( Unit unit : lstUnits )
         {
             AssigneeUnit assigneeUnit = new AssigneeUnit( unit );
+
             if ( RBACService.isAuthorized( assigneeUnit, AssigneeUnit.PERMISSION_ASSIGN, user ) )
             {
                 lstRef.addItem( unit.getIdUnit(  ), unit.getLabel(  ) );

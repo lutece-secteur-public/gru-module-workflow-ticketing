@@ -82,7 +82,7 @@ public class SelectChannelTaskComponent extends TicketingTaskComponent
         model.put( TicketingConstants.MARK_AGENT_VIEW, bIsAgentView );
 
         TicketHelper.storeChannelsMarksIntoModel( request, model );
-        
+
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_SELECT_CHANNEL_FORM, locale, model );
 
         return template.getHtml(  );
