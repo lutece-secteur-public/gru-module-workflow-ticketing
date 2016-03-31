@@ -5,25 +5,23 @@ INSERT INTO workflow_workflow (id_workflow, name, description, creation_date, is
 DELETE FROM workflow_state WHERE id_workflow >= 300 AND id_workflow < 400;
 INSERT INTO workflow_state (id_state, name, description, id_workflow, is_initial_state, is_required_workgroup_assigned, id_icon, display_order) 
 	VALUES	(301,'Nouveau','Nouveau',301,1,0,NULL,1),
-			(302,'A qualifier','A qualifier',301,0,0,NULL,2),
-			(303,'A traiter','A traiter',301,0,0,NULL,3),
-			(304,'En attente d\'informations de l\'usager','En attente d\'informations de l\'usager',301,0,0,NULL,4),
-			(305,'Clos','Clos',301,0,0,NULL,5);
+			(303,'A traiter','A traiter',301,0,0,NULL,2),
+			(304,'En attente d\'informations de l\'usager','En attente d\'informations de l\'usager',301,0,0,NULL,3),
+			(305,'Clos','Clos',301,0,0,NULL,4);
 
 DELETE FROM workflow_action WHERE id_workflow >= 300 AND id_workflow < 400;
 INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state_before, id_state_after, id_icon, is_automatic, is_mass_action, display_order, is_automatic_reflexive_action) 
-	VALUES 	(301,'Initialisation','Initialisation de la sollicitation',301,301,302,1,1,0,1,0),
-			(302,'Qualifier','Qualifier',301,302,303,1,0,0,2,0),
-			(303,'Requalifier','Requalifier',301,303,303,1,0,0,3,0),
-            (304,'Escalader','Escalader',301,303,303,1,0,0,7,0),
-			(305,'Assigner à une autre entité','Assigner une sollicitation à une autre entité',301,303,303,1,0,0,6,0),
-            (306,'Assigner à un autre agent','Assigner une sollicitation à un autre agent',301,303,303,1,0,0,5,0),
-			(307,'Me l\'assigner','M\'assigner une sollicitation',301,303,303,1,0,0,4,0),
-			(308,'Demander des informations complémentaires à l\'usager','Demander des informations complémentaires à l\'usager',301,303,304,1,0,0,8,0),
-			(309,'Répondre','Action de répondre pour l\'usager',301,304,303,1,0,0,9,0),
-            (310,'Répondre','Action de répondre pour l\'agent',301,303,305,1,0,0,10,0),            
-			(311, 'Ré-ouvrir la sollicitation', 'Réouverture d\'une sollicitation close', 301, 305, 303, 1, 0, 0, 11, 0),
-            (312, 'Répondre à l\'escalade', 'Répondre à l\'escalade', 301, 303, 303, 1, 0, 0, 12, 0);
+	VALUES 	(301,'Initialisation','Initialisation de la sollicitation',301,301,303,1,1,0,1,0),
+			(303,'Requalifier','Requalifier',301,303,303,1,0,0,2,0),
+            (304,'Escalader','Escalader',301,303,303,1,0,0,6,0),
+			(305,'Assigner à une autre entité','Assigner une sollicitation à une autre entité',301,303,303,1,0,0,5,0),
+            (306,'Assigner à un autre agent','Assigner une sollicitation à un autre agent',301,303,303,1,0,0,4,0),
+			(307,'Me l\'assigner','M\'assigner une sollicitation',301,303,303,1,0,0,3,0),
+			(308,'Demander des informations complémentaires à l\'usager','Demander des informations complémentaires à l\'usager',301,303,304,1,0,0,7,0),
+			(309,'Répondre','Action de répondre pour l\'usager',301,304,303,1,0,0,8,0),
+            (310,'Répondre','Action de répondre pour l\'agent',301,303,305,1,0,0,9,0),
+			(311, 'Ré-ouvrir la sollicitation', 'Réouverture d\'une sollicitation close', 301, 305, 303, 1, 0, 0, 10, 0),
+            (312, 'Répondre à l\'escalade', 'Répondre à l\'escalade', 301, 303, 303, 1, 0, 0, 11, 0);
 		
 DELETE FROM workflow_task WHERE id_action >= 300 AND id_action < 450 AND id_task != 303 ;
 INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order) 
