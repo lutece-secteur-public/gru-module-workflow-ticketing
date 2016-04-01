@@ -56,7 +56,6 @@ CREATE TABLE workflow_task_ticketing_edit_ticket_config
     id_task INT DEFAULT 0 NOT NULL,
     message_direction INT DEFAULT NULL,
     id_user_edition_action INT DEFAULT 0 NOT NULL,
-    default_message LONG VARCHAR,
     PRIMARY KEY (id_task)
 );
 

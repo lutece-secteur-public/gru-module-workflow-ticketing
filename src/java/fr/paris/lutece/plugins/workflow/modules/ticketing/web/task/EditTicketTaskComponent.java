@@ -40,7 +40,7 @@ import fr.paris.lutece.plugins.ticketing.business.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.TicketForm;
 import fr.paris.lutece.plugins.ticketing.business.TicketFormHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
-import fr.paris.lutece.plugins.ticketing.web.TicketHelper;
+import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
@@ -86,7 +86,6 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
     private static final String PARAMETER_ID_USER_EDITION_ACTION = "idUserEditionAction";
-    private static final String PARAMETER_DEFAULT_MESSAGE = "defaultMessage";
     private static final String PARAMETER_MESSAGE = "message";
 
     // Other constants
@@ -121,7 +120,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
             model.put( MARK_MESSAGE_DIRECTION, MessageDirection.AGENT_TO_USER );
         }
 
-        TicketHelper.storeRichTextMarksIntoModel( request, model );
+        ModelUtils.storeRichText( request, model );
 
         model.put( MARK_CONFIG, config );
 
@@ -138,7 +137,6 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     {
         int nMessageDirectionId = Integer.parseInt( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
         int nIdUserEditionAction = Integer.parseInt( request.getParameter( PARAMETER_ID_USER_EDITION_ACTION ) );
-        String strDefaultMessage = request.getParameter( PARAMETER_DEFAULT_MESSAGE );
 
         TaskEditTicketConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
         Boolean bConfigToCreate = false;
@@ -152,7 +150,6 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         config.setMessageDirection( MessageDirection.valueOf( nMessageDirectionId ) );
         config.setIdUserEditionAction( nIdUserEditionAction );
-        config.setDefaultMessage( strDefaultMessage );
 
         if ( bConfigToCreate )
         {
@@ -206,7 +203,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
                 model.put( MARK_LIST_ENTRIES, listEntryFirstLevel );
             }
 
-            TicketHelper.storeRichTextMarksIntoModel( request, model );
+            ModelUtils.storeUserSignature( request, model );
+            ModelUtils.storeRichText( request, model );
         }
         else
         {

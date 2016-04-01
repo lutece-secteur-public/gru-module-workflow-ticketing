@@ -39,8 +39,9 @@ import fr.paris.lutece.plugins.ticketing.business.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUploadHandler;
-import fr.paris.lutece.plugins.ticketing.web.TicketHelper;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
+import fr.paris.lutece.plugins.ticketing.web.util.TicketUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.authentication.EditTicketRequestAuthenticationService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.EditableTicketService;
@@ -225,7 +226,7 @@ public class EditTicketXPage implements XPageApplication
         model.put( MARK_SIGNATURE, request.getParameter( TaskEditTicketConstants.PARAMETER_SIGNATURE ) );
         model.put( MARK_TIMESTAMP, request.getParameter( TaskEditTicketConstants.PARAMETER_TIMESTAMP ) );
 
-        TicketHelper.storeReadOnlyHtmlResponsesIntoModel( request, model, ticket );
+        ModelUtils.storeReadOnlyHtmlResponses( request, model, ticket );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_EDIT_TICKET, request.getLocale(  ), model );
 
@@ -252,7 +253,7 @@ public class EditTicketXPage implements XPageApplication
         {
             if ( ACTION_DO_MODIFY_TICKET.equals( strAction ) )
             {
-                TicketHelper.registerDefaultAdminUser( request );
+                TicketUtils.registerDefaultAdminUser( request );
 
                 Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory(  ) );
                 TicketCategory ticketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) );

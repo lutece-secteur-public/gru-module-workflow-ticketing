@@ -30,7 +30,8 @@
         </#if>
         <hr>
         <label for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelAgentMessage} *</label>
-        <textarea class="richtext" rows="6" class="input-xxlarge" name="message_${config.idTask}"><#if config.defaultMessage??>${config.defaultMessage}</#if></textarea>
+        <textarea class="richtext" rows="6" class="input-xxlarge" name="message_${config.idTask}"><p>${user_signature}</p></textarea>
+        <a href="jsp/admin/plugins/ticketing/UserPreferences.jsp" class="btn btn-primary btn-xs btn-flat" >#i18n{module.workflow.ticketing.button.manageUserSignature}</a>
         <@initEditor />
     
     <#else>

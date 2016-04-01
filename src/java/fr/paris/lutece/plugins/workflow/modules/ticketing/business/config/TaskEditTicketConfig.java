@@ -52,7 +52,6 @@ public class TaskEditTicketConfig extends TaskConfig
     @NotNull
     @Min( 1 )
     private int _nIdStateAfterEdition;
-    private String _strDefaultMessage;
     private MessageDirection _messageDirection;
 
     /**
@@ -89,23 +88,5 @@ public class TaskEditTicketConfig extends TaskConfig
     public int getIdUserEditionAction(  )
     {
         return _nIdUserEditionAction;
-    }
-
-    /**
-     * Set the default message
-     * @param strDefaultMessage the default message
-     */
-    public void setDefaultMessage( String strDefaultMessage )
-    {
-        _strDefaultMessage = strDefaultMessage;
-    }
-
-    /**
-     * Get the default message
-     * @return the default message
-     */
-    public String getDefaultMessage(  )
-    {
-        return _strDefaultMessage;
     }
 }

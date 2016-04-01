@@ -33,19 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import fr.paris.lutece.plugins.ticketing.web.TicketHelper;
-import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
-import fr.paris.lutece.plugins.ticketing.web.user.UserPreferencesJspBean;
+import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.prefs.AdminUserPreferencesService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -65,7 +59,6 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     private static final String TEMPLATE_TASK_REPLY_CONFIG = "admin/plugins/workflow/modules/ticketing/task_reply_config.html";
 
     // Markers
-    private static final String MARK_USER_SIGNATURE = "user_signature";
     private static final String MARK_AGENT_VIEW = "agent_view";
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
@@ -142,23 +135,18 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
         TaskReplyConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
-        String strUserSignature = StringUtils.EMPTY;
         boolean bIsAgentView = false;
 
         if ( config.getMessageDirection(  ) == MessageDirection.AGENT_TO_USER )
         {
             bIsAgentView = true;
 
-            strUserSignature = AdminUserPreferencesService.instance(  )
-                                                          .get( String.valueOf( 
-                        AdminUserService.getAdminUser( request ).getUserId(  ) ),
-                    TicketingConstants.USER_PREFERENCE_SIGNATURE, StringUtils.EMPTY );
+            ModelUtils.storeUserSignature( request, model );
         }
 
         model.put( MARK_AGENT_VIEW, bIsAgentView );
-        model.put( MARK_USER_SIGNATURE, strUserSignature );
 
-        TicketHelper.storeRichTextMarksIntoModel( request, model );
+        ModelUtils.storeRichText( request, model );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_REPLY_FORM, locale, model );
 

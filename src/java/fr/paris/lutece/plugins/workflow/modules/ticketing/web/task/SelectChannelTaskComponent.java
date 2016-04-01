@@ -34,8 +34,8 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.web.TicketHelper;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
@@ -81,7 +81,7 @@ public class SelectChannelTaskComponent extends TicketingTaskComponent
 
         model.put( TicketingConstants.MARK_AGENT_VIEW, bIsAgentView );
 
-        TicketHelper.storeChannelsMarksIntoModel( request, model );
+        ModelUtils.storeChannels( request, model );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_SELECT_CHANNEL_FORM, locale, model );
 

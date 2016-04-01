@@ -46,11 +46,11 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, message_direction, id_user_edition_action, default_message FROM workflow_task_ticketing_edit_ticket_config " +
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, message_direction, id_user_edition_action FROM workflow_task_ticketing_edit_ticket_config " +
         " WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_edit_ticket_config ( id_task, message_direction, id_user_edition_action, default_message ) " +
-        " VALUES ( ?,?,?,? ) ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_edit_ticket_config SET message_direction = ?, id_user_edition_action = ?, default_message = ? " +
+    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_edit_ticket_config ( id_task, message_direction, id_user_edition_action ) " +
+        " VALUES ( ?,?,? ) ";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_edit_ticket_config SET message_direction = ?, id_user_edition_action = ? " +
         " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_edit_ticket_config WHERE id_task = ? ";
 
@@ -67,7 +67,6 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
         daoUtil.setInt( nIndex++, config.getIdTask(  ) );
         daoUtil.setInt( nIndex++, config.getMessageDirection(  ).ordinal(  ) );
         daoUtil.setInt( nIndex++, config.getIdUserEditionAction(  ) );
-        daoUtil.setString( nIndex++, config.getDefaultMessage(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -85,7 +84,6 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
 
         daoUtil.setInt( nIndex++, config.getMessageDirection(  ).ordinal(  ) );
         daoUtil.setInt( nIndex++, config.getIdUserEditionAction(  ) );
-        daoUtil.setString( nIndex++, config.getDefaultMessage(  ) );
 
         daoUtil.setInt( nIndex++, config.getIdTask(  ) );
         daoUtil.executeUpdate(  );
@@ -114,7 +112,6 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
             config.setIdTask( daoUtil.getInt( nIndex++ ) );
             config.setMessageDirection( MessageDirection.valueOf( daoUtil.getInt( nIndex++ ) ) );
             config.setIdUserEditionAction( daoUtil.getInt( nIndex++ ) );
-            config.setDefaultMessage( daoUtil.getString( nIndex++ ) );
         }
 
         daoUtil.free(  );
