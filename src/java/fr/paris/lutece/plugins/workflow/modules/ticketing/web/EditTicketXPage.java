@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUpload
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketUtils;
+import fr.paris.lutece.plugins.ticketing.web.workflow.WorkflowCapableXPage;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.authentication.EditTicketRequestAuthenticationService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.EditableTicketService;
@@ -56,6 +57,7 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.web.constants.Messages;
@@ -176,14 +178,23 @@ public class EditTicketXPage implements XPageApplication
         {
             if ( _editableTicketService.isStateValid( editableTicket, request.getLocale(  ) ) )
             {
-                if ( doProcessWorkflowAction( request, nIdAction, editableTicket ) )
+                try
                 {
-                    // Back to home page
-                    setSiteMessage( request, MESSAGE_EDITION_COMPLETE, SiteMessage.TYPE_INFO, strUrlReturn );
+                    if ( doProcessWorkflowAction( request, nIdAction, editableTicket ) )
+                    {
+                        // Back to home page
+                        setSiteMessage( request, MESSAGE_EDITION_COMPLETE, SiteMessage.TYPE_INFO, strUrlReturn );
+                    }
+                    else
+                    {
+                        page = getEditTicketPage( request, editableTicket );
+                    }
                 }
-                else
+                catch ( RuntimeException e )
                 {
-                    page = getEditTicketPage( request, editableTicket );
+                    AppLogService.error( e );
+                    setSiteMessage( request, WorkflowCapableXPage.ERROR_WORKFLOW_ACTION_ABORTED, SiteMessage.TYPE_STOP,
+                        strUrlReturn );
                 }
             }
             else
