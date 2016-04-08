@@ -11,7 +11,8 @@
                             <#list entry.children as child >
                                 <div>
                                     <label class="checkbox-inline">
-                                        <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" />
+                                        <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" 
+                                            onchange="javascript:toggleEditableFieldsMessage(${config.idTask});" />
                                         ${child.title}
                                     </label>
                                 </div>
@@ -20,14 +21,29 @@
                     <#else>
                         <div>
                             <label class="checkbox-inline">
-                                <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" />
+                                <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" 
+                                    onchange="javascript:toggleEditableFieldsMessage(${config.idTask});" />
                                 ${entry.title}
                             </label>
                         </div>
                     </#if>
                 </#list>
+                <div id="editable_fields_message_${config.idTask}">
+                    <div class="alert alert-warning" style="margin:10px 0 0 0;">
+                        <i class="fa fa-exclamation-circle"></i> #i18n{module.workflow.ticketing.task_edit_ticket_form.message.noAdditionalFieldSelected}
+                    </div>
+                </div>
             </p>
         </#if>
+        <script type="text/javascript" >
+            function toggleEditableFieldsMessage(idTask) {
+                if ($("input[name=ids_entry_" + idTask + "]:checked").length > 0) {
+                    $("#editable_fields_message_" + idTask).hide();
+                } else {
+                    $("#editable_fields_message_" + idTask).show();
+                }
+            }
+        </script>
         <hr>
         <label for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelAgentMessage} *</label>
         <textarea class="richtext" rows="6" class="input-xxlarge" name="message_${config.idTask}"><p>${user_signature}</p></textarea>
