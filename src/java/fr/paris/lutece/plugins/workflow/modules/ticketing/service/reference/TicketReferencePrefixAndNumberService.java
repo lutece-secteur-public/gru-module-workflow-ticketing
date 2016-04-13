@@ -33,9 +33,9 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference;
 
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketType;
-import fr.paris.lutece.plugins.ticketing.business.TicketTypeHome;
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.tickettype.TicketType;
+import fr.paris.lutece.plugins.ticketing.business.tickettype.TicketTypeHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference.ITicketReferenceDAO;
 
 import org.jsoup.helper.StringUtil;

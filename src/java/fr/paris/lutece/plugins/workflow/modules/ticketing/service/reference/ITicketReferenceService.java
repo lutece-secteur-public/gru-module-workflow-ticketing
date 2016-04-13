@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference;
 
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 
 
 /**

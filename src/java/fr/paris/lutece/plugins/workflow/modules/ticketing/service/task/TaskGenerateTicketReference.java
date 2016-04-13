@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.TicketHome;
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.ITicketReferenceService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 

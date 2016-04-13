@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.ticketing.business.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.IEditableTicketDAO;

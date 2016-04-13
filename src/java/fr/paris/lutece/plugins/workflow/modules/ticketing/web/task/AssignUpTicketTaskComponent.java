@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import fr.paris.lutece.plugins.ticketing.business.SupportEntity;
-import fr.paris.lutece.plugins.ticketing.business.SupportEntityHome;
+import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntity;
+import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntityHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;

@@ -28,6 +28,5 @@
     </javascript-files>
     
     <!-- Specific plugin CSS stylesheet -->
-    <css-stylesheets>
-    </css-stylesheets>
+    <css-stylesheets></css-stylesheets>
 </plug-in>

@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import fr.paris.lutece.plugins.ticketing.business.TicketCriticality;
-import fr.paris.lutece.plugins.ticketing.business.TicketPriority;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketCriticality;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketPriority;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
