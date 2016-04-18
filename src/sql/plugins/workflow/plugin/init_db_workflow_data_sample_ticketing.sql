@@ -24,26 +24,32 @@ INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state
             (311, 'Répondre à l''escalade', 'Répondre à l''escalade', 301, 303, 303, 1, 0, 0, 11, 0);
 		
 INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order) 
-	VALUES 	(301,'taskTicketingGenerateTicketReference',301,1),
+	VALUES 	(301,'taskTicketingGenerateTicketReference',301,1), -- Initialize
 			(302,'taskTicketingAssignUnitLinkedToCategory',301,2),
 			-- 303 is reserved by module ticketing gru 	(303,'taskTicketingCreateCustomer',301,3)
-            (341,'taskTicketingQualifyTicket',303,1),
+			(304, 'taskTicketingIndexTicket',301,3),
+            (341,'taskTicketingQualifyTicket',303,1), -- Qualify
             (342,'taskTicketingModifyTicketCategory',303,2),
             (343, 'taskTypeComment', 303,3),
-            (351,'taskTicketingAssignTicketToUnit',305,1),
+            (344, 'taskTicketingIndexTicket',303,4),
+            (351,'taskTicketingAssignTicketToUnit',305,1), -- Assign to unit
             (352, 'taskTypeComment', 305,2),
-            (361,'taskTicketingAssignTicketToUser',306,1),
+            (361,'taskTicketingAssignTicketToUser',306,1), -- Assign to user
             (362, 'taskTypeComment', 306,2),
-            (371,'taskTicketingAssignTicketToMe',307,1),
+            (371,'taskTicketingAssignTicketToMe',307,1), -- Assign to me
             (372, 'taskTypeComment', 307,2),
-			(381,'taskTicketingAssignUpTicket',304,1),
+			(381,'taskTicketingAssignUpTicket',304,1), -- Assign up
 			(382, 'taskTypeComment', 304,2),
             (390, 'taskTicketingEditTicket', 308,1), -- Ask for user information
+            (391, 'taskTicketingIndexTicket',308,2),
             (400, 'taskTicketingEditTicket', 309,1), -- Reply to agent
             (401, 'taskTicketingSelectChannel', 309,2),
+            (402, 'taskTicketingIndexTicket', 309,3),
 			(420, 'taskTicketingReply', 310,1), -- Reply to user
-            (441, 'taskTicketingReplyAssignUpTicket',311,1),
-            (442, 'taskTypeComment', 311,2);
+			(421, 'taskTicketingIndexTicket', 310,2),
+            (441, 'taskTicketingReplyAssignUpTicket',311,1), -- Reply to assign up
+            (442, 'taskTypeComment', 311,2)
+;
 
 
 DELETE FROM workflow_task_comment_config WHERE id_task >= 300 AND id_task < 450;			
