@@ -1,37 +1,32 @@
+DELETE FROM workflow_task WHERE id_action >= 300 AND id_action < 450 AND id_task != 303 ;
+DELETE FROM workflow_action WHERE id_workflow >= 300 AND id_workflow < 400;
+DELETE FROM workflow_state WHERE id_workflow >= 300 AND id_workflow < 400;
 DELETE FROM workflow_workflow WHERE id_workflow >= 300 AND id_workflow < 400; 
 INSERT INTO workflow_workflow (id_workflow, name, description, creation_date, is_enabled, workgroup_key) 
 	VALUES	(301,'Workflow GRU','Workflow GRU','2016-01-13 08:36:34',1,'all');
 
-DELETE FROM workflow_state WHERE id_workflow >= 300 AND id_workflow < 400;
 INSERT INTO workflow_state (id_state, name, description, id_workflow, is_initial_state, is_required_workgroup_assigned, id_icon, display_order) 
 	VALUES	(301,'Nouveau','Nouveau',301,1,0,NULL,1),
 			(303,'A traiter','A traiter',301,0,0,NULL,2),
 			(304,'En attente de compléments par l''usager','En attente de compléments par l''usager',301,0,0,NULL,3),
 			(305,'Traité','Traité',301,0,0,NULL,4);
 
-DELETE FROM workflow_action WHERE id_workflow >= 300 AND id_workflow < 400;
 INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state_before, id_state_after, id_icon, is_automatic, is_mass_action, display_order, is_automatic_reflexive_action) 
 	VALUES 	(301,'Initialisation','Initialisation de la sollicitation',301,301,303,1,1,0,1,0),
 			(303,'Requalifier','Requalifier la sollicitation',301,303,303,1,0,0,2,0),
             (304,'Escalader','Escalader',301,303,303,1,0,0,6,0),
 			(305,'Assigner à une autre entité','Assigner la sollicitation à une autre entité',301,303,303,1,0,0,5,0),
             (306,'Assigner à un autre agent','Assigner la sollicitation à un autre agent',301,303,303,1,0,0,4,0),
-			(307,'Me l\'assigner','M\'assigner la sollicitation',301,303,303,1,0,0,3,0),
-			(308,'Demander compléments','Demander des informations complémentaires à l\'usager',301,303,304,1,0,0,7,0),
-			(309,'Répondre pour l\'usager','Répondre à la place de l\'usager',301,304,303,1,0,0,8,0),
+			(307,'Me l''assigner','M''assigner la sollicitation',301,303,303,1,0,0,3,0),
+			(308,'Demander compléments','Demander des informations complémentaires à l''usager',301,303,304,1,0,0,7,0),
+			(309,'Répondre pour l''usager','Répondre à la place de l''usager',301,304,303,1,0,0,8,0),
             (310,'Répondre à l''usager','Répondre à l''usager',301,303,305,1,0,0,9,0),
-            (311, 'Répondre à l\'escalade', 'Répondre à l\'escalade', 301, 303, 303, 1, 0, 0, 11, 0);
+            (311, 'Répondre à l''escalade', 'Répondre à l''escalade', 301, 303, 303, 1, 0, 0, 11, 0);
 		
-DELETE FROM workflow_task WHERE id_action >= 300 AND id_action < 450 AND id_task != 303 ;
 INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order) 
 	VALUES 	(301,'taskTicketingGenerateTicketReference',301,1),
 			(302,'taskTicketingAssignUnitLinkedToCategory',301,2),
 			-- 303 is reserved by module ticketing gru 	(303,'taskTicketingCreateCustomer',301,3)
-            (321,'taskTicketingQualifyTicket',302,1),
-            (322,'taskTicketingAssignTicketToUnit',302,2),
-			(323,'taskTicketingAssignTicketToUser',302,3),
-            (324,'taskTicketingModifyTicketCategory',302,4),
-			(325, 'taskTypeComment', 302,5), 
             (341,'taskTicketingQualifyTicket',303,1),
             (342,'taskTicketingModifyTicketCategory',303,2),
             (343, 'taskTypeComment', 303,3),
