@@ -111,11 +111,11 @@ public class EditTicketXPage implements XPageApplication
 
     // ACTIONS
     private static final String ACTION_DO_MODIFY_TICKET = "do_modify_ticket";
-    private static WorkflowService _workflowService = WorkflowService.getInstance(  );
+    private static transient WorkflowService _workflowService = WorkflowService.getInstance(  );
 
     // SERVICES
-    private IEditableTicketService _editableTicketService = SpringContextService.getBean( EditableTicketService.BEAN_NAME );
-    private TicketFormService _ticketFormService = SpringContextService.getBean( TicketFormService.BEAN_NAME );
+    private transient IEditableTicketService _editableTicketService = SpringContextService.getBean( EditableTicketService.BEAN_NAME );
+    private transient TicketFormService _ticketFormService = SpringContextService.getBean( TicketFormService.BEAN_NAME );
 
     /**
      * {@inheritDoc}

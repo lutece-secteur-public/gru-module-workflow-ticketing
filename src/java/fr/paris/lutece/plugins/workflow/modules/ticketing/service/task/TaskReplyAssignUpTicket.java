@@ -71,15 +71,8 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
     private static final String MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND = "module.workflow.ticketing.task_reply_assign_up_ticket.no_user_found";
     private static final String PROPERTY_ASSIGN_UP_ACTION_ID = "workflow-ticketing.workflow.action.id.assignUp";
     private static final String PROPERTY_ASSIGN_TO_UNIT_ACTION_ID = "workflow-ticketing.workflow.action.id.assignToUnit";
-    private static int ASSIGN_UP_ACTION_ID = 304;
-    private static int ASSIGN_TO_UNIT_ACTION_ID = 305;
-
-    static
-    {
-        ASSIGN_UP_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID, ASSIGN_UP_ACTION_ID );
-        ASSIGN_TO_UNIT_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_TO_UNIT_ACTION_ID,
-                ASSIGN_TO_UNIT_ACTION_ID );
-    }
+    private static int ASSIGN_UP_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID, 304 );
+    private static int ASSIGN_TO_UNIT_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_TO_UNIT_ACTION_ID, 305 );
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -94,7 +87,6 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
             AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
             AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
             String strCurrentUnit = null;
-            String strCurrentUser = null;
 
             if ( assigneeUnit != null )
             {
@@ -104,12 +96,6 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
             if ( assigneeUser == null )
             {
                 assigneeUser = new AssigneeUser(  );
-                strCurrentUser = I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER,
-                        Locale.FRENCH );
-            }
-            else
-            {
-                strCurrentUser = assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  );
             }
 
             AdminUser user = getAssigner( nIdResourceHistory );

@@ -54,7 +54,7 @@ public class TicketReferencePrefixAndNumberService implements ITicketReferenceSe
     private static final int SEQUENCE_INITIAL_VALUE = 0;
     private static final String REFERENCE_FORMAT = "%s%05d";
     private static final String DATE_FORMAT = "yyMM";
-    private static SimpleDateFormat _simpleDateFormat = new SimpleDateFormat( DATE_FORMAT );
+    private SimpleDateFormat _simpleDateFormat = new SimpleDateFormat( DATE_FORMAT );
     private ITicketReferenceDAO _dao;
 
     /**
