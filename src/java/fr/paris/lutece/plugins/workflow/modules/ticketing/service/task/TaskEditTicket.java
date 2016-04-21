@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
@@ -349,9 +350,9 @@ public class TaskEditTicket extends AbstractTicketingTask
             url.addParameter( XPageAppService.PARAM_XPAGE_APP, EditTicketXPage.XPAGE );
             url.addParameter( TaskEditTicketConstants.PARAMETER_ID_HISTORY, nIdHistory );
             url.addParameter( TaskEditTicketConstants.PARAMETER_ID_TASK, nIdTask );
-            url.addParameter( TaskEditTicketConstants.PARAMETER_ID_ACTION, nIdAction );
-            url.addParameter( TaskEditTicketConstants.PARAMETER_SIGNATURE, strSignature );
-            url.addParameter( TaskEditTicketConstants.PARAMETER_TIMESTAMP, strTimestamp );
+            url.addParameter( TicketingConstants.PARAMETER_WORKFLOW_ID_ACTION, nIdAction );
+            url.addParameter( TicketingConstants.PARAMETER_SIGNATURE, strSignature );
+            url.addParameter( TicketingConstants.PARAMETER_TIMESTAMP, strTimestamp );
 
             strInfo = url.getUrl(  );
         }

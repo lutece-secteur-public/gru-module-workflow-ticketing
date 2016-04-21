@@ -132,7 +132,7 @@ public class EditTicketXPage implements XPageApplication
         {
             String strIdHistory = request.getParameter( TaskEditTicketConstants.PARAMETER_ID_HISTORY );
             String strIdTask = request.getParameter( TaskEditTicketConstants.PARAMETER_ID_TASK );
-            String strIdAction = request.getParameter( TaskEditTicketConstants.PARAMETER_ID_ACTION );
+            String strIdAction = request.getParameter( TicketingConstants.PARAMETER_WORKFLOW_ID_ACTION );
 
             if ( StringUtils.isNotBlank( strIdHistory ) && StringUtils.isNumeric( strIdHistory ) &&
                     StringUtils.isNotBlank( strIdTask ) && StringUtils.isNumeric( strIdTask ) &&
@@ -232,10 +232,10 @@ public class EditTicketXPage implements XPageApplication
         Map<String, Object> model = new HashMap<String, Object>(  );
         model.put( TaskEditTicketConstants.MARK_EDITABLE_TICKET, editableTicket );
         model.put( TicketingConstants.MARK_TICKET, ticket );
-        model.put( MARK_ID_ACTION, request.getParameter( TaskEditTicketConstants.PARAMETER_ID_ACTION ) );
+        model.put( MARK_ID_ACTION, request.getParameter( TicketingConstants.PARAMETER_WORKFLOW_ID_ACTION ) );
         model.put( TaskEditTicketConstants.MARK_ENTRIES_HTML_FORM, htmlForm );
-        model.put( MARK_SIGNATURE, request.getParameter( TaskEditTicketConstants.PARAMETER_SIGNATURE ) );
-        model.put( MARK_TIMESTAMP, request.getParameter( TaskEditTicketConstants.PARAMETER_TIMESTAMP ) );
+        model.put( MARK_SIGNATURE, request.getParameter( TicketingConstants.PARAMETER_SIGNATURE ) );
+        model.put( MARK_TIMESTAMP, request.getParameter( TicketingConstants.PARAMETER_TIMESTAMP ) );
 
         ModelUtils.storeReadOnlyHtmlResponses( request, model, ticket );
 
@@ -301,11 +301,11 @@ public class EditTicketXPage implements XPageApplication
     }
 
     /**
-     * Check if the request is authenticated or not
+     * Checks if the request is authenticated or not
      * @param request the HTTP request
-     * @return true if the requet is authenticated, false otherwise
+     * @return {@code true} if the request is authenticated, {@code false} otherwise
      */
-    public boolean isRequestAuthenticated( HttpServletRequest request )
+    private boolean isRequestAuthenticated( HttpServletRequest request )
     {
         return EditTicketRequestAuthenticationService.getRequestAuthenticator(  ).isRequestAuthenticated( request );
     }
