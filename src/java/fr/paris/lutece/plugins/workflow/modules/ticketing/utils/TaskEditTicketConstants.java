@@ -48,9 +48,6 @@ public final class TaskEditTicketConstants
     // PARAMETERS
     public static final String PARAMETER_ID_HISTORY = "id_history";
     public static final String PARAMETER_ID_TASK = "id_task";
-    public static final String PARAMETER_ID_ACTION = "id_action";
-    public static final String PARAMETER_SIGNATURE = "signature";
-    public static final String PARAMETER_TIMESTAMP = "timestamp";
 
     // Messages
     public static final String MESSAGE_NO_CONFIGURATION = "module.workflow.ticketing.task_edit_ticket.message.no_configuration";
