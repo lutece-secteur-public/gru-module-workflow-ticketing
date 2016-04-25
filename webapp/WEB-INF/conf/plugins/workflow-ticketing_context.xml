@@ -25,6 +25,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketDAO" />
     <bean id="workflow-ticketing.editableTicketFieldDAO"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketFieldDAO" />
+    <bean id="workflow-ticketing.resourceHistoryDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistoryDAO" />
 
 	<!-- Services -->
 	<bean id="workflow-ticketing.taskInformationService"
@@ -39,6 +41,9 @@
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.EditableTicketFieldService" />
 	<bean id="workflow-ticketing.editableTicketService"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.EditableTicketService" />
+    <bean id="workflow-ticketing.resourceHistoryService"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistoryService" />
+    
 
 	<!-- Task config -->
 	<bean id="workflow-ticketing.taskReplyConfig"
@@ -223,6 +228,21 @@
     <bean id="workflow-ticketing.indexTicketTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeIndexTicket" />
+
+    <!-- Task Register channel -->
+    <bean id="workflow-ticketing.taskRegisterChannel"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskRegisterChannel"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeRegisterChannel"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketingRegisterChannel" p:titleI18nKey="module.workflow.ticketing.task_register_channel.title"
+        p:beanName="workflow-ticketing.taskRegisterChannel"
+        p:taskForAutomaticAction="true" />
+    <bean id="workflow-ticketing.selectRegisterTaskComponent"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeRegisterChannel" />
+
+
 
 	<!-- SignRequest -->
 	<bean id="workflow-ticketing.hashService"

@@ -33,8 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
-import fr.paris.lutece.plugins.ticketing.business.channel.ChannelHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
@@ -44,9 +46,9 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.text.MessageFormat;
-
 import java.util.Locale;
+
+import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,12 +60,14 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskSelectChannel extends AbstractTicketingTask
 {
     private static final String MESSAGE_SELECT_CHANNEL = "module.workflow.ticketing.task_select_channel.labelChannel";
-    private static final String MESSAGE_SELECT_CHANNEL_INFORMATION_PREFIX = "module.workflow.ticketing.task_select_channel.information";
 
     // PARAMETERS
     public static final String PARAMETER_USER_MESSAGE = "user_message";
     private ITaskConfigService _taskConfigService;
-    private int _idChannel;
+
+    // Services
+    @Inject
+    protected IResourceHistoryService _resourceHistoryServiceTicketing;
 
     @Override
     public String getTitle( Locale locale )
@@ -75,6 +79,7 @@ public class TaskSelectChannel extends AbstractTicketingTask
     protected String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
+        int idChannel = TicketingConstants.NO_ID_CHANNEL;
 
         AdminUser user = AdminUserService.getAdminUser( request );
         AdminUser userFront = AdminUserHome.findByPrimaryKey( AppPropertiesService.getPropertyInt( 
@@ -82,22 +87,17 @@ public class TaskSelectChannel extends AbstractTicketingTask
 
         if ( ( user != null ) && ( user.getUserId(  ) != userFront.getUserId(  ) ) )
         {
-            _idChannel = Integer.parseInt( request.getParameter( TicketingConstants.PARAMETER_ID_CHANNEL ) );
+            idChannel = Integer.parseInt( request.getParameter( TicketingConstants.PARAMETER_ID_CHANNEL ) );
         }
         else
         {
-            _idChannel = TicketingConstants.WEB_ID_CHANNEL;
+            idChannel = TicketingConstants.WEB_ID_CHANNEL;
         }
 
-        String strChannel = "";
-
-        if ( _idChannel != TicketingConstants.NO_ID_CHANNEL )
-        {
-            strChannel = ChannelHome.findByPrimaryKey( _idChannel ).getLabel(  );
-        }
-
-        strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                    MESSAGE_SELECT_CHANNEL_INFORMATION_PREFIX, Locale.FRENCH ), strChannel );
+        ResourceHistory resourceHistory = new ResourceHistory(  );
+        resourceHistory.setIdHistory( nIdResourceHistory );
+        resourceHistory.setIdChannel( idChannel );
+        _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin(  ) );
 
         return strTaskInformation;
     }
@@ -128,15 +128,5 @@ public class TaskSelectChannel extends AbstractTicketingTask
     public void setTaskConfigService( ITaskConfigService taskConfigService )
     {
         this._taskConfigService = taskConfigService;
-    }
-
-    /**
-     * Get id channel
-     * @return the channel id
-     */
-    @Override
-    protected int getIdChannel(  )
-    {
-        return _idChannel;
     }
 }

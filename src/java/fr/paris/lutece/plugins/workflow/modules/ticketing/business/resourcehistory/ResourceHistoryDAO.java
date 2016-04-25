@@ -31,37 +31,39 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.information;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory;
 
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+
+import java.util.List;
 
 
 /**
  *
- * TaskInformationDAO
+ * ResourceHistoryDAO
  *
  */
-public class TaskInformationDAO implements ITaskInformationDAO
+public class ResourceHistoryDAO implements IResourceHistoryDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_task,information_value  " +
-        "FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_ticketing_information " +
-        "(id_history,id_task,information_value ) VALUES( ?, ?, ? )";
-    private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
-    private static final String SQL_QUERY_DELETE_BY_TASK = "DELETE FROM workflow_task_ticketing_information WHERE id_task=?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_channel  " +
+        "FROM workflow_resource_history_ticketing WHERE id_history=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_history_ticketing " +
+        "(id_history,id_channel ) VALUES( ?, ? )";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_resource_history_ticketing WHERE id_history=?";
+    private static final String SQL_QUERY_DELETE_BY_RESOURCE = "DELETE wrht FROM workflow_resource_history wrh, workflow_resource_history_ticketing wrht WHERE wrh.id_history = wrht.id_history AND wrh.id_resource = ? AND wrh.resource_type = ?";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void insert( TaskInformation taskInformation, Plugin plugin )
+    public synchronized void insert( ResourceHistory resourceHistory, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
 
-        daoUtil.setInt( 1, taskInformation.getIdResourceHistory(  ) );
-        daoUtil.setInt( 2, taskInformation.getIdTask(  ) );
-        daoUtil.setString( 3, taskInformation.getValue(  ) );
+        daoUtil.setInt( 1, resourceHistory.getIdHistory(  ) );
+        daoUtil.setInt( 2, resourceHistory.getIdChannel(  ) );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -71,40 +73,37 @@ public class TaskInformationDAO implements ITaskInformationDAO
      * {@inheritDoc}
      */
     @Override
-    public TaskInformation load( int nIdHistory, int nIdTask, Plugin plugin )
+    public ResourceHistory load( int nIdHistory, Plugin plugin )
     {
-        TaskInformation taskInformation = null;
+        ResourceHistory resourceHistory = null;
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
 
         daoUtil.setInt( 1, nIdHistory );
-        daoUtil.setInt( 2, nIdTask );
 
         daoUtil.executeQuery(  );
 
         if ( daoUtil.next(  ) )
         {
-            taskInformation = new TaskInformation(  );
-            taskInformation.setIdResourceHistory( daoUtil.getInt( 1 ) );
-            taskInformation.setIdTask( daoUtil.getInt( 2 ) );
-            taskInformation.setValue( daoUtil.getString( 3 ) );
+            resourceHistory = new ResourceHistory(  );
+            resourceHistory.setIdHistory( daoUtil.getInt( 1 ) );
+            resourceHistory.setIdChannel( daoUtil.getInt( 2 ) );
         }
 
         daoUtil.free(  );
 
-        return taskInformation;
+        return resourceHistory;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin )
+    public void deleteByHistory( int nIdHistory, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
 
         daoUtil.setInt( 1, nIdHistory );
-        daoUtil.setInt( 2, nIdTask );
 
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
@@ -114,11 +113,13 @@ public class TaskInformationDAO implements ITaskInformationDAO
      * {@inheritDoc}
      */
     @Override
-    public void deleteByTask( int nIdTask, Plugin plugin )
+    public void deleteByResource( int nIdResource, String strResourceType, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_RESOURCE, plugin );
 
-        daoUtil.setInt( 1, nIdTask );
+        daoUtil.setInt( 1, nIdResource );
+        daoUtil.setString( 2, strResourceType );
+
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
     }

@@ -35,6 +35,7 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
 			(302,'taskTicketingAssignUnitLinkedToCategory',301,2),
 			-- 303 is reserved by module ticketing gru 	(303,'taskTicketingCreateCustomer',301,3)
 			(304, 'taskTicketingIndexTicket',301,3),
+            (306, 'taskTicketingRegisterChannel',301,6),
             (341,'taskTicketingQualifyTicket',303,1), -- Qualify
             (342,'taskTicketingModifyTicketCategory',303,2),
             (343, 'taskTypeComment', 303,3),

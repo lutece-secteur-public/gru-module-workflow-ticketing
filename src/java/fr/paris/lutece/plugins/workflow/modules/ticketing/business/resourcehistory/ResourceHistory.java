@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright8 (c) 2002-2015, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,71 +31,52 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.information;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory;
 
 
 /**
  *
- * TaskInformation
+ * ResourceHistory
  *
  */
-public class TaskInformation
+public class ResourceHistory
 {
-    private int _nIdResourceHistory;
-    private int _nIdTask;
-    private String _strValue;
+    private int _nIdHistory;
+    private int _nIdChannel;
 
     /**
      *
      * @return the resource history id
      */
-    public int getIdResourceHistory(  )
+    public int getIdHistory(  )
     {
-        return _nIdResourceHistory;
+        return _nIdHistory;
     }
 
     /**
      * the resource history id
-     * @param nIdResourceHistory the resource history id
+     * @param nIdHistory the resource history id
      */
-    public void setIdResourceHistory( int nIdResourceHistory )
+    public void setIdHistory( int nIdHistory )
     {
-        _nIdResourceHistory = nIdResourceHistory;
+        _nIdHistory = nIdHistory;
     }
 
     /**
      *
-     * @return the task id
+     * @return the channel id
      */
-    public int getIdTask(  )
+    public int getIdChannel(  )
     {
-        return _nIdTask;
+        return _nIdChannel;
     }
 
     /**
-     * the task id
-     * @param nIdTask the task id
+     * the channel id
+     * @param nIdChannel the channel id
      */
-    public void setIdTask( int nIdTask )
+    public void setIdChannel( int nIdChannel )
     {
-        _nIdTask = nIdTask;
-    }
-
-    /**
-     * return the value
-     * @return the value
-     */
-    public String getValue(  )
-    {
-        return _strValue;
-    }
-
-    /**
-     * set the value
-     * @param strValue the value
-     */
-    public void setValue( String strValue )
-    {
-        _strValue = strValue;
+        _nIdChannel = nIdChannel;
     }
 }

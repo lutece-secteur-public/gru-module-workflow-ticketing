@@ -71,8 +71,10 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
     private static final String MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND = "module.workflow.ticketing.task_reply_assign_up_ticket.no_user_found";
     private static final String PROPERTY_ASSIGN_UP_ACTION_ID = "workflow-ticketing.workflow.action.id.assignUp";
     private static final String PROPERTY_ASSIGN_TO_UNIT_ACTION_ID = "workflow-ticketing.workflow.action.id.assignToUnit";
-    private static final int ASSIGN_UP_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID, 304 );
-    private static final int ASSIGN_TO_UNIT_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_TO_UNIT_ACTION_ID, 305 );
+    private static final int ASSIGN_UP_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID,
+            304 );
+    private static final int ASSIGN_TO_UNIT_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_TO_UNIT_ACTION_ID,
+            305 );
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )

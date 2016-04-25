@@ -34,13 +34,13 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.ITicketReferenceService;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
-
-import java.text.MessageFormat;
 
 import java.util.Locale;
 
@@ -50,44 +50,43 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * This class represents a task to generate the ticket reference
+ * This class represents a task to register the channel on ticket creation
  *
  */
-public class TaskGenerateTicketReference extends AbstractTicketingTask
+public class TaskRegisterChannel extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_GENERATE_TICKET_REFERENCE = "module.workflow.ticketing.task_generate_ticket_reference.labelGenerateTicketReference";
-    private static final String MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION = "module.workflow.ticketing.task_generate_ticket_reference.information";
+    private static final String MESSAGE_REGISTER_CHANNEL = "module.workflow.ticketing.task_register_channel.labelRegisterChannel";
 
     // Services
     @Inject
-    private ITicketReferenceService _ticketReferenceService;
+    protected IResourceHistoryService _resourceHistoryServiceTicketing;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        String strReference = StringUtils.EMPTY;
+        String strChannel = StringUtils.EMPTY;
+        int idChannel = TicketingConstants.NO_ID_CHANNEL;
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
         if ( ticket != null )
         {
-            synchronized ( _ticketReferenceService )
-            {
-                strReference = _ticketReferenceService.generateReference( ticket );
-                ticket.setReference( strReference );
-                TicketHome.update( ticket );
-            }
+            idChannel = ticket.getIdChannel(  );
+
+            ResourceHistory resourceHistory = new ResourceHistory(  );
+            resourceHistory.setIdHistory( nIdResourceHistory );
+            resourceHistory.setIdChannel( idChannel );
+            _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin(  ) );
         }
 
-        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION,
-                Locale.FRENCH ), strReference );
+        return strChannel;
     }
 
     @Override
     public String getTitle( Locale locale )
     {
-        return I18nService.getLocalizedString( MESSAGE_GENERATE_TICKET_REFERENCE, locale );
+        return I18nService.getLocalizedString( MESSAGE_REGISTER_CHANNEL, locale );
     }
 }

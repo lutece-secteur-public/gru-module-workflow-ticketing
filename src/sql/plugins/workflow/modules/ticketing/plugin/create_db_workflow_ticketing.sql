@@ -7,7 +7,6 @@ CREATE TABLE workflow_task_ticketing_information
     id_history INT DEFAULT 0 NOT NULL,
     id_task INT DEFAULT NULL,
     information_value LONG VARCHAR DEFAULT NULL,
-    id_channel INT DEFAULT 0 NOT NULL,
     PRIMARY KEY (id_history, id_task)
 );
 
@@ -59,3 +58,12 @@ CREATE TABLE workflow_task_ticketing_edit_ticket_config
     PRIMARY KEY (id_task)
 );
 
+/*==================================================================*/
+/* Table structure for table workflow_resource_history_ticketing    */
+/*==================================================================*/
+DROP TABLE IF EXISTS workflow_resource_history_ticketing;
+CREATE TABLE workflow_resource_history_ticketing (
+id_history INT NOT NULL,
+id_channel INT NOT NULL,
+PRIMARY KEY (id_history)
+);

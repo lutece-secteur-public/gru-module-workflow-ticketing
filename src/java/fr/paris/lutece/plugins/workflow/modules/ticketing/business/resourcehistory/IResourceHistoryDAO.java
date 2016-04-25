@@ -31,71 +31,45 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.information;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory;
+
+import fr.paris.lutece.portal.service.plugin.Plugin;
 
 
 /**
  *
- * TaskInformation
+ *  IResourceHistoryDAO
  *
  */
-public class TaskInformation
+public interface IResourceHistoryDAO
 {
-    private int _nIdResourceHistory;
-    private int _nIdTask;
-    private String _strValue;
+    /**
+     * Insert new record
+     * @param resourceHistory the ResourceHistory Object
+     * @param plugin the plugin
+     */
+    void insert( ResourceHistory resourceHistory, Plugin plugin );
 
     /**
-     *
-     * @return the resource history id
+     * Load a record by primary key
+     * @param nIdHistory the history id
+     * @param plugin the plugin
+     * @return ResourceHistory Object
      */
-    public int getIdResourceHistory(  )
-    {
-        return _nIdResourceHistory;
-    }
+    ResourceHistory load( int nIdHistory, Plugin plugin );
 
     /**
-     * the resource history id
-     * @param nIdResourceHistory the resource history id
+     * Remove resourceHistory by history
+     * @param nIdHistory the History id
+     * @param plugin the plugin
      */
-    public void setIdResourceHistory( int nIdResourceHistory )
-    {
-        _nIdResourceHistory = nIdResourceHistory;
-    }
+    void deleteByHistory( int nIdHistory, Plugin plugin );
 
     /**
-     *
-     * @return the task id
+     * Remove resourceHistory by resource
+     * @param nIdResource the resource id
+     * @param strResourceType the resource type
+     * @param plugin the plugin
      */
-    public int getIdTask(  )
-    {
-        return _nIdTask;
-    }
-
-    /**
-     * the task id
-     * @param nIdTask the task id
-     */
-    public void setIdTask( int nIdTask )
-    {
-        _nIdTask = nIdTask;
-    }
-
-    /**
-     * return the value
-     * @return the value
-     */
-    public String getValue(  )
-    {
-        return _strValue;
-    }
-
-    /**
-     * set the value
-     * @param strValue the value
-     */
-    public void setValue( String strValue )
-    {
-        _strValue = strValue;
-    }
+    void deleteByResource( int nIdResource, String strResourceType, Plugin plugin );
 }

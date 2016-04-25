@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformation;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.information.ITaskInformationService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
@@ -82,7 +81,6 @@ public abstract class AbstractTicketingTask extends SimpleTask
                 taskInformation.setIdResourceHistory( nIdResourceHistory );
                 taskInformation.setIdTask( this.getId(  ) );
                 taskInformation.setValue( strTaskInformation );
-                taskInformation.setIdChannel( this.getIdChannel(  ) );
                 _taskInformationService.create( taskInformation, WorkflowUtils.getPlugin(  ) );
             }
             catch ( Exception e )
@@ -120,15 +118,6 @@ public abstract class AbstractTicketingTask extends SimpleTask
     protected Ticket getTicket( int nIdResourceHistory )
     {
         return WorkflowTicketingUtils.findTicketByIdHistory( nIdResourceHistory );
-    }
-
-    /**
-     * Get id channel
-     * @return the channel id
-     */
-    protected int getIdChannel(  )
-    {
-        return TicketingConstants.NO_ID_CHANNEL;
     }
 
     /**
