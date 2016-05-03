@@ -25,9 +25,8 @@ INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state
 			(311,'Répondre (usager)','Réponse de l''usager à une demande d''informations',301,304,303,1,0,0,10,0),
             (312,'Répondre à l''usager','Réponse finale à l''usager',301,303,306,1,0,0,11,0),
             (313,'Répondre à l''escalade', 'Réponse à l''escalade', 301, 305, 303, 1, 0, 0, 12, 0),
-   			(314,'Assigner à une autre entité','Assignation de la sollicitation à une autre entité',301,305,305,1,0,0,5,0), -- assignation a autre entite pour tickets escaladés
-            (315,'Assigner à un autre agent','Assignation de la sollicitation à un autre agent',301,305,305,1,0,0,4,0), -- assignation a autre agent pour tickets escaladés
-			(316,'Me l''assigner','Prise en charge de la sollicitation',301,305,305,1,0,0,3,0) -- auto assignation pour tickets escaladés
+            (314,'Assigner à un autre agent','Assignation de la sollicitation à un autre agent',301,305,305,1,0,0,4,0), -- assignation a autre agent pour tickets escaladés
+			(315,'Me l''assigner','Prise en charge de la sollicitation',301,305,305,1,0,0,3,0) -- auto assignation pour tickets escaladés
 ;
 		
 INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order) 
@@ -62,12 +61,10 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
             (423, 'taskTicketingIndexTicket', 312,3),
             (441, 'taskTicketingReplyAssignUpTicket',313,1), -- Reply to assign up
             (442, 'taskTypeComment', 313,2),
-            (451,'taskTicketingAssignTicketToUnit',314,1), -- Assign to unit LEVEL3
-            (452, 'taskTypeComment', 314,2),
-            (461,'taskTicketingAssignTicketToUser',315,1), -- Assign to user LEVEL3
-            (462, 'taskTypeComment', 315,2),
-            (471,'taskTicketingAssignTicketToMe',316,1), -- Assign to me LEVEL3
-            (472, 'taskTypeComment', 316,2)
+            (461,'taskTicketingAssignTicketToUser',314,1), -- Assign to user LEVEL3
+            (462, 'taskTypeComment', 314,2),
+            (471,'taskTicketingAssignTicketToMe',315,1), -- Assign to me LEVEL3
+            (472, 'taskTypeComment', 315,2)
 ;
 
 
@@ -81,7 +78,6 @@ INSERT INTO workflow_task_comment_config (id_task, title, is_mandatory)
 			(382, 'Commentaire', 0),
 			(387, 'Commentaire', 0),
             (442, 'Commentaire', 0),
-            (452, 'Commentaire', 0),
             (462, 'Commentaire', 0),
 			(472, 'Commentaire', 0)
 ;
@@ -97,5 +93,11 @@ INSERT INTO workflow_task_ticketing_edit_ticket_config (id_task, message_directi
 DELETE FROM workflow_task_ticketing_reply_config;
 INSERT INTO workflow_task_ticketing_reply_config (id_task, message_direction) 
     VALUES  (420, 1) -- Reply to user
+;
+
+DELETE FROM ticketing_configuration;
+INSERT INTO `ticketing_configuration` (`ticketing_key`, `ticketing_value`) VALUES
+('ticketing.workflow.id', '301'),
+('ticketing.workflow.state.id.closed', '306')
 ;
 	
