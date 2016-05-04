@@ -46,7 +46,7 @@
         </script>
         <hr>
         <label for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelAgentMessage} *</label>
-        <textarea class="richtext" rows="6" class="input-xxlarge" name="message_${config.idTask}"><p>${user_signature}</p></textarea>
+        <textarea class="richtext" class="ticketing input-xxlarge" name="message_${config.idTask}"><p>${user_signature}</p></textarea>
         <a href="jsp/admin/plugins/ticketing/UserPreferences.jsp" class="btn btn-primary btn-xs btn-flat" >#i18n{module.workflow.ticketing.button.manageUserSignature}</a>
         <@initEditor />
     
@@ -57,7 +57,7 @@
         </#if>
         
         <label for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelUserMessage}</label>
-        <textarea rows="6" class="input-xxlarge" name="user_message"></textarea>
+        <textarea class="ticketing input-xxlarge" name="user_message"></textarea>
         <@addRequiredJsFiles />
         <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
     </#if>
