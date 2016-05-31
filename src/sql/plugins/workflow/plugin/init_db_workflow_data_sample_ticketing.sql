@@ -95,9 +95,9 @@ INSERT INTO workflow_task_ticketing_reply_config (id_task, message_direction)
     VALUES  (420, 1) -- Reply to user
 ;
 
-DELETE FROM ticketing_configuration;
-INSERT INTO `ticketing_configuration` (`ticketing_key`, `ticketing_value`) VALUES
-('ticketing.workflow.id', '301'),
-('ticketing.workflow.state.id.closed', '306')
+DELETE FROM core_datastore WHERE entity_key LIKE 'ticketing.configuration.%';
+INSERT INTO `core_datastore` (`entity_key`, `entity_value`) VALUES
+('ticketing.configuration.workflow.id', '301'),
+('ticketing.configuration.state.id.closed', '306')
 ;
 	
