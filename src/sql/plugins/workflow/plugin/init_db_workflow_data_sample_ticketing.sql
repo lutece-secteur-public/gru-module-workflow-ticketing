@@ -98,6 +98,8 @@ INSERT INTO workflow_task_ticketing_reply_config (id_task, message_direction)
 DELETE FROM core_datastore WHERE entity_key LIKE 'ticketing.configuration.%';
 INSERT INTO `core_datastore` (`entity_key`, `entity_value`) VALUES
 ('ticketing.configuration.workflow.id', '301'),
+('ticketing.configuration.workflow.states.selected', '303'),
+('ticketing.configuration.workflow.states.selected.for.role.gru_level_3', '305'),
 ('ticketing.configuration.state.id.closed', '306')
 ;
 	
