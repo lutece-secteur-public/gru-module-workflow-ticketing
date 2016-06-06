@@ -101,6 +101,8 @@ INSERT INTO `core_datastore` (`entity_key`, `entity_value`) VALUES
 ('ticketing.configuration.states.selected', '303'),
 ('ticketing.configuration.states.selected.for.role.gru_level_3', '305'),
 ('ticketing.configuration.state.id.closed', '306'),
-('ticketing.configuration.actions.filtered.when.assigned.to.me', '308;315')
+('ticketing.configuration.actions.filtered.when.assigned.to.me', '308;315'),
+('ticketing.configuration.adminUser.id.front', '5'),
+('ticketing.configuration.channel.id.front', '99')
 ;
 	

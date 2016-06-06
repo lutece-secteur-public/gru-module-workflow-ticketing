@@ -264,15 +264,22 @@ public class EditTicketXPage implements XPageApplication
         {
             if ( ACTION_DO_MODIFY_TICKET.equals( strAction ) )
             {
-                TicketUtils.registerDefaultAdminUser( request );
+                TicketUtils.registerAdminUserFront( request );
 
-                Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory(  ) );
-                TicketCategory ticketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) );
+                try
+                {
+                    Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory(  ) );
+                    TicketCategory ticketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) );
 
-                _workflowService.doProcessAction( ticket.getId(  ), Ticket.TICKET_RESOURCE_TYPE, nIdAction,
-                    ticketCategory.getId(  ), request, request.getLocale(  ), false );
+                    _workflowService.doProcessAction( ticket.getId(  ), Ticket.TICKET_RESOURCE_TYPE, nIdAction,
+                        ticketCategory.getId(  ), request, request.getLocale(  ), false );
 
-                bIsActionProccessed = true;
+                    bIsActionProccessed = true;
+                }
+                finally
+                {
+                    TicketUtils.unregisterAdminUserFront( request );
+                }
             }
         }
 

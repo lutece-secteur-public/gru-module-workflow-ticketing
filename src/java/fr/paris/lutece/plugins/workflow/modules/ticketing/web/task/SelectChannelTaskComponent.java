@@ -34,14 +34,13 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.util.Locale;
@@ -71,10 +70,10 @@ public class SelectChannelTaskComponent extends TicketingTaskComponent
 
         boolean bIsAgentView = false;
         AdminUser user = AdminUserService.getAdminUser( request );
-        AdminUser userFront = AdminUserHome.findByPrimaryKey( AppPropertiesService.getPropertyInt( 
-                    TicketingConstants.PROPERTY_ADMINUSER_FRONT_ID, -1 ) );
+        int nIdUserFront = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ADMINUSER_ID_FRONT,
+                TicketingConstants.PROPERTY_UNSET_INT );
 
-        if ( ( user != null ) && ( user.getUserId(  ) != userFront.getUserId(  ) ) )
+        if ( ( user != null ) && ( user.getUserId(  ) != nIdUserFront ) )
         {
             bIsAgentView = true;
         }

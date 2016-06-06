@@ -33,16 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -63,7 +61,6 @@ public class TaskSelectChannel extends AbstractTicketingTask
 
     // PARAMETERS
     public static final String PARAMETER_USER_MESSAGE = "user_message";
-    private ITaskConfigService _taskConfigService;
 
     // Services
     @Inject
@@ -82,16 +79,17 @@ public class TaskSelectChannel extends AbstractTicketingTask
         int idChannel = TicketingConstants.NO_ID_CHANNEL;
 
         AdminUser user = AdminUserService.getAdminUser( request );
-        AdminUser userFront = AdminUserHome.findByPrimaryKey( AppPropertiesService.getPropertyInt( 
-                    TicketingConstants.PROPERTY_ADMINUSER_FRONT_ID, -1 ) );
+        int nIdUserFront = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ADMINUSER_ID_FRONT,
+                TicketingConstants.PROPERTY_UNSET_INT );
 
-        if ( ( user != null ) && ( user.getUserId(  ) != userFront.getUserId(  ) ) )
+        if ( ( user != null ) && ( user.getUserId(  ) != nIdUserFront ) )
         {
             idChannel = Integer.parseInt( request.getParameter( TicketingConstants.PARAMETER_ID_CHANNEL ) );
         }
         else
         {
-            idChannel = TicketingConstants.WEB_ID_CHANNEL;
+            idChannel = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_CHANNEL_ID_FRONT,
+                    TicketingConstants.PROPERTY_UNSET_INT );
         }
 
         ResourceHistory resourceHistory = new ResourceHistory(  );
@@ -100,33 +98,5 @@ public class TaskSelectChannel extends AbstractTicketingTask
         _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin(  ) );
 
         return strTaskInformation;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void doRemoveConfig(  )
-    {
-        _taskConfigService.remove( this.getId(  ) );
-        super.doRemoveConfig(  );
-    }
-
-    /**
-     * Gives the task config service
-     * @return the task config service
-     */
-    public ITaskConfigService getTaskConfigService(  )
-    {
-        return _taskConfigService;
-    }
-
-    /**
-     * Sets the task config service
-     * @param taskConfigService the task config service
-     */
-    public void setTaskConfigService( ITaskConfigService taskConfigService )
-    {
-        this._taskConfigService = taskConfigService;
     }
 }
