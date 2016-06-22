@@ -32,9 +32,10 @@ INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state
 INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order) 
 	VALUES 	(301,'taskTicketingGenerateTicketReference',301,1), -- Initialize
 			(302,'taskTicketingAssignUnitLinkedToCategory',301,2),
-			-- 303 is reserved by module ticketing gru 	(303,'taskTicketingCreateCustomer',301,3)
-			(304, 'taskTicketingIndexTicket',301,3),
-            (306, 'taskTicketingRegisterChannel',301,6),
+			(303, 'taskAutomaticAssignment',301,3),
+			-- 304 is reserved by module ticketing gru 	(304,'taskTicketingCreateCustomer',301,4)
+			(305, 'taskTicketingIndexTicket',301,5),
+            (307, 'taskTicketingRegisterChannel',301,7),
             (341,'taskTicketingQualifyTicket',303,1), -- Qualify
             (342,'taskTicketingModifyTicketCategory',303,2),
             (343, 'taskTypeComment', 303,3),
@@ -105,4 +106,3 @@ INSERT INTO `core_datastore` (`entity_key`, `entity_value`) VALUES
 ('ticketing.configuration.adminUser.id.front', '5'),
 ('ticketing.configuration.channel.id.front', '99')
 ;
-	

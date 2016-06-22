@@ -27,6 +27,9 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketFieldDAO" />
     <bean id="workflow-ticketing.resourceHistoryDAO"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistoryDAO" />
+    <bean id="workflow-ticketing.taskAutomaticAssignmentDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.assignment.TaskAutomaticAssignmentDAO" />
+
 
 	<!-- Services -->
 	<bean id="workflow-ticketing.taskInformationService"
@@ -43,7 +46,13 @@
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.EditableTicketService" />
     <bean id="workflow-ticketing.resourceHistoryService"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistoryService" />
-    
+		
+	<bean id="workflow-ticketing.taskAutomaticAssignmentConfigService"
+		class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+		p:taskConfigDAO-ref="workflow-ticketing.taskAutomaticAssignmentDAO" />
+		
+    <bean id="workflow-ticketing.automaticAssignmentService"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.assignment.AutomaticAssignmentService" />    
 
 	<!-- Task config -->
 	<bean id="workflow-ticketing.taskReplyConfig"
@@ -51,6 +60,9 @@
 		scope="prototype" />
 	<bean id="workflow-ticketing.taskEditTicketConfig"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskAutomaticAssignmentConfig"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.assignment.TaskAutomaticAssignmentConfig"
 		scope="prototype" />
 
 	<!-- Task Generate ticket reference -->
@@ -242,8 +254,21 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeRegisterChannel" />
 
+	<!-- Task Auto assignment -->
+	<bean id="workflow-ticketing.taskAutomaticAssignment"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAutomaticAssignment"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAutomaticAssignment"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskAutomaticAssignment" p:titleI18nKey="module.workflow.ticketing.task_automatic_assignment_title"
+		p:beanName="workflow-ticketing.taskAutomaticAssignment" p:configBeanName="workflow-ticketing.taskAutomaticAssignmentConfig"
+		p:configRequired="true" p:formTaskRequired="true" p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.automaticAssignmentTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AutomaticAssignmentTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeAutomaticAssignment"
+		p:taskConfigService-ref="workflow-ticketing.taskAutomaticAssignmentConfigService" />
 
-
+		
 	<!-- SignRequest -->
 	<bean id="workflow-ticketing.hashService"
 		class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
