@@ -73,7 +73,7 @@ public class TaskRegisterChannel extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            idChannel = ticket.getIdChannel(  );
+            idChannel = ticket.getChannel(  ).getId(  );
 
             ResourceHistory resourceHistory = new ResourceHistory(  );
             resourceHistory.setIdHistory( nIdResourceHistory );
