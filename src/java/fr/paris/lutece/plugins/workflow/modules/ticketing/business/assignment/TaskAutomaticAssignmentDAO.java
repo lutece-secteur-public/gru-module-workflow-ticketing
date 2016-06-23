@@ -291,9 +291,13 @@ public class TaskAutomaticAssignmentDAO implements ITaskAutomaticAssignmentDAO
     @Override
     public TaskAutomaticAssignmentConfig load( int nIdTask )
     {
-        TaskAutomaticAssignmentConfig config = new TaskAutomaticAssignmentConfig(  );
-        config.setAutomaticAssignmentConf( getAllAutoAssignementConf( nIdTask ) );
-
+        TaskAutomaticAssignmentConfig config = null;
+        List<UserAutomaticAssignmentConfig> listUserAutoAssConf = getAllAutoAssignementConf( nIdTask ) ;
+        if ( listUserAutoAssConf != null && listUserAutoAssConf.size(  ) > 0 )
+        {
+            config = new TaskAutomaticAssignmentConfig(  );
+            config.setAutomaticAssignmentConf( listUserAutoAssConf );
+        }
         return config;
     }
 
