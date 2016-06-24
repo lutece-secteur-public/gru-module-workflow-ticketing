@@ -34,11 +34,14 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomain;
 import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomainHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.unittree.business.unit.Unit;
+import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.assignment.IAutomaticAssignmentService;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -47,13 +50,12 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
-
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -102,11 +104,21 @@ public class TaskAutomaticAssignment extends AbstractTicketingTask
                 {
                     AssigneeUser assigneeUser = new AssigneeUser( adminUser );
                     ticket.setAssigneeUser( assigneeUser );
+                    List<Unit> listUnit = UnitHome.findByIdUser( adminUser.getUserId( ) );
+                    AssigneeUnit assigneeUnit = null;
+                    if ( listUnit != null && listUnit.size( ) > 0 )
+                    {
+                        assigneeUnit = new AssigneeUnit( listUnit.get( 0 ) ) ;
+                    }
+                    if ( assigneeUnit != null )
+                    {
+                        ticket.setAssigneeUnit( assigneeUnit );
+                    }
                     TicketHome.update( ticket );
 
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
                                 MESSAGE_AUTOMATIC_ASSIGN_TICKET_INFORMATION, Locale.FRENCH ),
-                            adminUser.getFirstName(  ) + " " + adminUser.getLastName(  ) );
+                            adminUser.getFirstName(  ) + " " + adminUser.getLastName(  ), ticket.getAssigneeUnit( ).getName( ) );
                 }
             }
         }
