@@ -71,16 +71,15 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
 
 DELETE FROM workflow_task_comment_config WHERE id_task >= 300 AND id_task < 500;			
 INSERT INTO workflow_task_comment_config (id_task, title, is_mandatory) 
-	VALUES	(325, 'Commentaire', 0),
-			(343, 'Commentaire', 0),
-			(352, 'Commentaire', 0),
-			(362, 'Commentaire', 0),
-			(372, 'Commentaire', 0),
-			(382, 'Commentaire', 0),
-			(387, 'Commentaire', 0),
-            (442, 'Commentaire', 0),
-            (462, 'Commentaire', 0),
-			(472, 'Commentaire', 0)
+	VALUES	(343, 'Commentaire', 0, 1),
+			(352, 'Commentaire', 0, 1),
+			(362, 'Commentaire', 0, 1),
+			(372, 'Commentaire', 0, 1),
+			(382, 'Commentaire', 0, 1),
+			(387, 'Commentaire', 0, 1),
+            (442, 'Commentaire', 0, 1),
+            (462, 'Commentaire', 0, 1),
+			(472, 'Commentaire', 0, 1)
 ;
 
 DELETE FROM workflow_task_ticketing_edit_ticket_config;
