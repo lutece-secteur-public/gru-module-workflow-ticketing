@@ -101,4 +101,13 @@ public interface ITaskAutomaticAssignmentDAO extends ITaskConfigDAO<TaskAutomati
     * @return list containing all of automatic assignement config initialization
     */
     List<UserAutomaticAssignmentConfig> initializeAssignementConf( int nIdTask );
+
+    /**
+     * returns user assignment conf
+     * @param nIdTask id of task
+     * @param adminUser  admin user
+     * @param plugin plugin
+     * @return user assignment conf
+     */
+    UserAutomaticAssignmentConfig getUserAssignemnt( int nIdTask, AdminUser adminUser, Plugin plugin );
 }

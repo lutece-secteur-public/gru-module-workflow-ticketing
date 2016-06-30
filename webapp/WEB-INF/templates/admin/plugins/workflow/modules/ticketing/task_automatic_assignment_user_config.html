@@ -1,0 +1,125 @@
+<div>
+	<p class="lead">#i18n{module.workflow.ticketing.task_automatic_assignment_config.title}</p>
+	<div class="row col-sm-12 ">	
+		<div class="form-group">
+			<label class="col-xs-12 col-sm-3 control-label">#i18n{module.workflow.ticketing.task_automatic_assignment.config.user.adminUserLabel}  :</label>
+			<div class="col-xs-12 col-sm-9" >
+				<#if list_domain_user?? && list_domain_user?has_content>
+					<select id="agents" >
+					 <#list list_domain_user as user>    
+						   <option value="${user.accessCode}" <#if selected_agent?? && user.accessCode == selected_agent.accessCode > selected</#if>>${user.firstName} ${user.lastName}
+					</#list>
+					</select>
+				</#if>	  
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="row  vertical-center col-sm-12">
+		<div class="col-sm-4">
+			<div class="pull-right form-group">
+				<div>
+					<label class="control-label">#i18n{module.workflow.ticketing.task_automatic_assignment.config.user.availableSlots} :</label>
+				</div>
+				<div>
+					<select name="available_slots" id="available_slots" multiple="true" size="10" class="automatic-assignment">
+						<#if available_slots?? && available_slots?has_content>
+							<#list available_slots as slot>    
+								   <option value="${slot}">${slot}</option> 
+							</#list>
+						</#if>    
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-2">
+			<br><br><br>
+			<button class="center-block  btn btn-sm btn-xs btn-info" id="assign" > #i18n{module.workflow.ticketing.task_automatic_assignment.config.user.addAssignment} </button>
+			<br>
+			<button  class="center-block btn btn-sm btn-xs btn-info" id="unassign" > #i18n{module.workflow.ticketing.task_automatic_assignment.config.user.removeAssignment}  </button>
+		</div>
+		<div class="col-sm-4">
+			<div class="pull-left form-group">
+				<div>
+					<label class="control-label">#i18n{module.workflow.ticketing.task_automatic_assignment.config.user.assignedSlots} :</label>
+				</div>
+				<div>
+					<select name="agent_slots" id="agent_slots" multiple="true" size="10" class="automatic-assignment">
+						<#if agent_slot?? && agent_slot?has_content>
+							<#list agent_slot as slot>    
+								   <option value="${slot}">${slot}</option> 
+							</#list>
+						</#if> 
+					</select>         
+				</div>
+			</div>
+		</div>
+	</div>	
+	<br>
+	<div class="row col-sm-12">
+	&nbsp;
+	</div>
+</div>
+<script language="javascript">
+  $(function(){
+    $('#assign, #unassign').on('click', function(){
+        if($(this).attr('id')=='assign')
+        {
+            var l=$('#available_slots option:selected').length;
+            if(!l) { 
+                //alert("Option not selected !");
+                return false;
+            }
+            
+            $('#available_slots option:selected').each(function(){
+                $('#agent_slots').append($(this));
+            });
+        }
+        else
+        {
+            var l=$('#agent_slots option:selected').length;
+            if(!l) { 
+                //alert("Option not selected !");
+                return false;
+            }
+            
+            $('#agent_slots option:selected').each(function(){
+                $('#available_slots').append($(this));
+            });
+        }
+		return false;
+    });
+	$('#agents').on('change', function(){
+		<#if new_agent_config?? && new_agent_config == true >
+			var input = $("<input>").attr("type", "hidden").attr("name", "action").val('add_user_config');
+			$('.form-horizontal').append($(input));  
+		</#if>
+		var input = $("<input>").attr("type", "hidden").attr("name", "user_access_code").val($( "#agents" ).val());
+		$('.form-horizontal').append($(input));  
+		input = $("<input>").attr("type", "hidden").attr("name", "action").val('display_user_config');
+		$('.form-horizontal').append($(input));         
+		$('.form-horizontal').submit();
+	});
+	
+	$("button[name*='save']").on('click',function(){
+		 $('#agent_slots option').prop('selected', true);
+	    var input = $("<input>").attr("type", "hidden").attr("name", "user_access_code").val($( "#agents" ).val());
+		$('.form-horizontal').append($(input));  
+		input = $("<input>").attr("type", "hidden").attr("name", "action").val('save_user_assignment');
+		$('.form-horizontal').append($(input));         
+		$('.form-horizontal').submit();	
+	});
+	
+	$("button[name*='cancel']").on('click',function(){
+		var input = $("<input>").attr("type", "hidden").attr("name", "action").val('display_global_config');
+		$('.form-horizontal').append($(input));         
+		$('.form-horizontal').submit();
+		return false;
+	});
+});
+  
+</script>	
+	
+	
+	
+    

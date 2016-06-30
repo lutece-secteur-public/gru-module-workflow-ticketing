@@ -69,16 +69,8 @@ public class AutomaticAssignmentService implements IAutomaticAssignmentService
     @Override
     public void assign( int idTask, String strUserAccessCode, String strSuffix )
     {
-        // TODO Auto-generated method stub        
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void unassign( int nIdTask, String strSuffix )
-    {
-        // TODO Auto-generated method stub
+        _dao.assign( idTask, strUserAccessCode, strSuffix,
+            PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
     }
 
     /**
@@ -128,5 +120,15 @@ public class AutomaticAssignmentService implements IAutomaticAssignmentService
     public void removeConfig( int nIdTask )
     {
         _dao.delete( nIdTask );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UserAutomaticAssignmentConfig getUserAssignments( int nIdTask, AdminUser adminUser )
+    {
+        return _dao.getUserAssignemnt( nIdTask, adminUser,
+            PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
     }
 }

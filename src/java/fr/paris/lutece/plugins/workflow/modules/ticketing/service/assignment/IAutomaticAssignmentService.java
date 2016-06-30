@@ -55,19 +55,20 @@ public interface IAutomaticAssignmentService
     void assign( int idTask, String strUserAccessCode, String strSuffix );
 
     /**
-     * update automaticAssignement
-     * @param nIdTask task id
-     * @param strSuffix suffix
-     */
-    void unassign( int nIdTask, String strSuffix );
-
-    /**
      * return adminUser assigned to the suffix
      * @param nIdTask task id
      * @param strSuffix suffix
      * @return adminUser assigned to the suffix
      */
     AdminUser getAssignedUser( int nIdTask, String strSuffix );
+
+    /**
+     * returns user assignment conf
+     * @param nIdTask id of task
+     * @param adminUser  admin user
+     * @return user assignment conf
+     */
+    UserAutomaticAssignmentConfig getUserAssignments( int nIdTask, AdminUser adminUser );
 
     /**
      *

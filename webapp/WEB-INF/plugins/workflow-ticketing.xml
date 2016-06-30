@@ -15,6 +15,17 @@
     <!-- if the plugin must have a connection pool with parameter : 1 - yes, 0 - no -->
     <db-pool-required>1</db-pool-required>
     
+       
+    <core-version-dependency>
+        <min-core-version>4.1.0</min-core-version>
+        <max-core-version/>	
+    </core-version-dependency>
+
+    <!-- Admin features parameters -->
+    <admin-features>
+    </admin-features>    
+    
+    
     <!-- Xpage configuration -->
     <applications>
         <application>
@@ -23,10 +34,18 @@
         </application>
     </applications>
     
+    <!-- Portlet parameters -->
+    <portlets>
+   	</portlets>
+    
+    
 	<!-- Specific plugin Javascript files -->
     <javascript-files>
     </javascript-files>
     
     <!-- Specific plugin CSS stylesheet -->
+	<admin-css-stylesheets>
+        <admin-css-stylesheet>css/admin/plugins/workflow/modules/ticketing/workflow_ticketing.css</admin-css-stylesheet>
+    </admin-css-stylesheets>
     <css-stylesheets></css-stylesheets>
 </plug-in>

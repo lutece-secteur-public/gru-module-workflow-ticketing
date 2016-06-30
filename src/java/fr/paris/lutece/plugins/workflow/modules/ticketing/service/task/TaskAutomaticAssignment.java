@@ -50,12 +50,14 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -104,21 +106,26 @@ public class TaskAutomaticAssignment extends AbstractTicketingTask
                 {
                     AssigneeUser assigneeUser = new AssigneeUser( adminUser );
                     ticket.setAssigneeUser( assigneeUser );
-                    List<Unit> listUnit = UnitHome.findByIdUser( adminUser.getUserId( ) );
+
+                    List<Unit> listUnit = UnitHome.findByIdUser( adminUser.getUserId(  ) );
                     AssigneeUnit assigneeUnit = null;
-                    if ( listUnit != null && listUnit.size( ) > 0 )
+
+                    if ( ( listUnit != null ) && ( listUnit.size(  ) > 0 ) )
                     {
-                        assigneeUnit = new AssigneeUnit( listUnit.get( 0 ) ) ;
+                        assigneeUnit = new AssigneeUnit( listUnit.get( 0 ) );
                     }
+
                     if ( assigneeUnit != null )
                     {
                         ticket.setAssigneeUnit( assigneeUnit );
                     }
+
                     TicketHome.update( ticket );
 
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
                                 MESSAGE_AUTOMATIC_ASSIGN_TICKET_INFORMATION, Locale.FRENCH ),
-                            adminUser.getFirstName(  ) + " " + adminUser.getLastName(  ), ticket.getAssigneeUnit( ).getName( ) );
+                            adminUser.getFirstName(  ) + " " + adminUser.getLastName(  ),
+                            ticket.getAssigneeUnit(  ).getName(  ) );
                 }
             }
         }

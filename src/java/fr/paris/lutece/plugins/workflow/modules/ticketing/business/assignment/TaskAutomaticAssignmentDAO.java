@@ -56,11 +56,12 @@ import java.util.Map;
  */
 public class TaskAutomaticAssignmentDAO implements ITaskAutomaticAssignmentDAO
 {
-    private static final String SQL_QUERY_UNASSIGN = "UPDATE workflow_task_ticketing_automatic_assignment_config SET user_access_code = NULL " +
+    private static final String SQL_QUERY_UNASSIGN = "UPDATE workflow_task_ticketing_automatic_assignment_config SET user_access_code IS NULL " +
         " WHERE id_task = ? AND assignment_suffix = ?";
     private static final String SQL_QUERY_ASSIGN = "UPDATE workflow_task_ticketing_automatic_assignment_config SET user_access_code = ? " +
         " WHERE id_task = ? AND assignment_suffix = ?";
-    private static final String SQL_QUERY_FIND_UNASSIGNED = "SELECT  assignment_suffix FROM workflow_task_ticketing_automatic_assignment_config WHERE user_access_code = NULL AND id_task = ?  ORDER BY assignment_suffix ASC";
+    private static final String SQL_QUERY_FIND_BY_ACCESS_CODE = "SELECT  assignment_suffix FROM workflow_task_ticketing_automatic_assignment_config WHERE id_task = ? AND user_access_code = ? ";
+    private static final String SQL_QUERY_FIND_UNASSIGNED = "SELECT  assignment_suffix FROM workflow_task_ticketing_automatic_assignment_config WHERE user_access_code IS NULL AND id_task = ?  ORDER BY assignment_suffix ASC";
     private static final String SQL_QUERY_FIND_BY_SUFFIX = "SELECT user_access_code FROM workflow_task_ticketing_automatic_assignment_config WHERE id_task = ? AND assignment_suffix = ? AND user_access_code IS NOT NULL ORDER BY assignment_suffix ASC";
     private static final String SQL_QUERY_UNASSIGN_BY_USER_ACCESS_CODE = "UPDATE workflow_task_ticketing_automatic_assignment_config SET user_access_code = NULL WHERE id_task = ? AND user_access_code = ? ";
     private static final String SQL_QUERY_FIND_ALL = "SELECT user_access_code, assignment_suffix FROM workflow_task_ticketing_automatic_assignment_config WHERE id_task = ? ORDER BY assignment_suffix ASC";
@@ -194,9 +195,10 @@ public class TaskAutomaticAssignmentDAO implements ITaskAutomaticAssignmentDAO
 
             String strUserAccessCode = daoUtil.getString( nIndex++ );
 
-            if ( strUserAccessCode == null )
+            if ( StringUtils.isBlank( strUserAccessCode ) )
             {
-                strUserAccessCode = StringUtils.EMPTY;
+                //no user config 
+                continue;
             }
 
             String strSuffix = daoUtil.getString( nIndex++ );
@@ -292,12 +294,14 @@ public class TaskAutomaticAssignmentDAO implements ITaskAutomaticAssignmentDAO
     public TaskAutomaticAssignmentConfig load( int nIdTask )
     {
         TaskAutomaticAssignmentConfig config = null;
-        List<UserAutomaticAssignmentConfig> listUserAutoAssConf = getAllAutoAssignementConf( nIdTask ) ;
-        if ( listUserAutoAssConf != null && listUserAutoAssConf.size(  ) > 0 )
+        List<UserAutomaticAssignmentConfig> listUserAutoAssConf = getAllAutoAssignementConf( nIdTask );
+
+        if ( ( listUserAutoAssConf != null ) && ( listUserAutoAssConf.size(  ) > 0 ) )
         {
             config = new TaskAutomaticAssignmentConfig(  );
             config.setAutomaticAssignmentConf( listUserAutoAssConf );
         }
+
         return config;
     }
 
@@ -314,5 +318,34 @@ public class TaskAutomaticAssignmentDAO implements ITaskAutomaticAssignmentDAO
         daoUtil.setInt( nIndex++, nIdTask );
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UserAutomaticAssignmentConfig getUserAssignemnt( int nIdTask, AdminUser adminUser, Plugin plugin )
+    {
+        UserAutomaticAssignmentConfig userAutoAssignConf = new UserAutomaticAssignmentConfig(  );
+        userAutoAssignConf.setAdminUser( adminUser );
+
+        List<String> listAssignedSuffix = new ArrayList<String>(  );
+
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ACCESS_CODE,
+                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        daoUtil.setInt( 1, nIdTask );
+        daoUtil.setString( 2, adminUser.getAccessCode(  ) );
+        daoUtil.executeQuery(  );
+
+        while ( daoUtil.next(  ) )
+        {
+            int nIndex = 1;
+            listAssignedSuffix.add( daoUtil.getString( nIndex++ ) );
+        }
+
+        daoUtil.free(  );
+        userAutoAssignConf.setAssignedSuffix( listAssignedSuffix );
+
+        return userAutoAssignConf;
     }
 }
