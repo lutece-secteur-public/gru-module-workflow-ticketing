@@ -62,6 +62,7 @@
 </div>
 <script language="javascript">
   $(function(){
+	$("button[name*='cancel']").html('#i18n{module.workflow.ticketing.task_automatic_assignment.config.returnButtonLabel}');
     $('#assign, #unassign').on('click', function(){
         if($(this).attr('id')=='assign')
         {

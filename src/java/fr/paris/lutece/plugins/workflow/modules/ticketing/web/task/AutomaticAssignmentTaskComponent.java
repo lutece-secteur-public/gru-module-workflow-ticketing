@@ -252,6 +252,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
                     StringUtils.isEmpty( userAssignmentConf.getAdminUser(  ).getAccessCode(  ) ) )
             {
                 hasUnassignedSlots = true;
+
                 break;
             }
         }
@@ -305,7 +306,8 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
             else if ( strAction.equals( ACTION_SAVE_ASSIGNMENT ) )
             {
                 storeUserAssignments( request, task, strUserAccessCode );
-                mapParameters.put( PARAMETER_ACTION, ACTION_DISPLAY_GLOBAL_CONFIG );
+                mapParameters.put( PARAMETER_ACTION, ACTION_DISPLAY_USER_CONFIG );
+                mapParameters.put( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
 
                 return getDisplayConfigFormUrl( task, mapParameters );
             }
