@@ -244,9 +244,27 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
         model.put( MARK_USER_ASSIGNMENT_LIST, listAdminUserAssigmentConfig );
 
         List<AdminUser> listAdminUserDomain = new ArrayList<AdminUser>( AdminUserHome.findByRole( _strRoleKey ) );
+        boolean hasUnassignedSlots = false;
+
+        for ( UserAutomaticAssignmentConfig userAssignmentConf : listAdminUserAssigmentConfig )
+        {
+            if ( ( userAssignmentConf.getAdminUser(  ) == null ) ||
+                    StringUtils.isEmpty( userAssignmentConf.getAdminUser(  ).getAccessCode(  ) ) )
+            {
+                hasUnassignedSlots = true;
+                break;
+            }
+        }
+
+        int nbAssignedAgent = listAdminUserAssigmentConfig.size(  );
+
+        if ( hasUnassignedSlots )
+        {
+            nbAssignedAgent--;
+        }
 
         if ( ( listAdminUserDomain != null ) && ( listAdminUserAssigmentConfig != null ) &&
-                ( listAdminUserAssigmentConfig.size(  ) < listAdminUserDomain.size(  ) ) )
+                ( nbAssignedAgent < listAdminUserDomain.size(  ) ) )
         {
             model.put( MARK_HAS_UNASSIGNED_AGENT, true );
         }
