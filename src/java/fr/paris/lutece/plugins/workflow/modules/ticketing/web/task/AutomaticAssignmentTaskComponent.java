@@ -43,9 +43,15 @@ import fr.paris.lutece.plugins.workflow.web.task.NoFormTaskComponent;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.util.mvc.utils.MVCMessage;
+import fr.paris.lutece.util.ErrorMessage;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.url.UrlItem;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -84,17 +90,24 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
     private static final String PARAMETER_USER_ACCESS_CODE = "user_access_code";
     private static final String PARAMETER_ACTION = "action";
     private static final String PARAMETER_AGENT_SLOTS = "agent_slots";
+    private static final String PARAMETER_TASK_ID = "id_task";
 
     //action type
+    private static final String ACTION_CONFIRM_REMOVE_ASSIGNMENT = "confirm_remove_assignment";
     private static final String ACTION_REMOVE_ASSIGNMENT = "remove_assignment";
     private static final String ACTION_SAVE_ASSIGNMENT = "save_user_assignment";
     private static final String ACTION_ADD_NEW_USERCONFIG = "add_user_config";
     private static final String ACTION_DISPLAY_USER_CONFIG = "display_user_config";
     private static final String ACTION_DISPLAY_GLOBAL_CONFIG = "display_global_config";
     private static final String PROPERTY_AUTOMATIC_ASSIGNMENT_DOMAIN_RBAC_CODE = "workflow-ticketing.workflow.automatic_assignment.domainRBACCode";
+    private static final String MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_SUCCESSFUL_SAVED = "module.workflow.ticketing.task_automatic_assignment.config.user.savedSuccessful";
+    private static final String MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_CONFIRMATION_REMOVE = "module.workflow.ticketing.task_automatic_assignment.config.labelConfirmRemove";
+    private static final String MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_SUCCESSFUL_REMOVED = "module.workflow.ticketing.task_automatic_assignment.config.successfulRemove";
+    private static final String MARK_INFOS = "infos";
 
     // Other constants
     private static final String SEPARATOR = "<hr>";
+    private List<ErrorMessage> _listInfos = new ArrayList<ErrorMessage>(  );
     private String _strRoleKey = AppPropertiesService.getProperty( PROPERTY_AUTOMATIC_ASSIGNMENT_DOMAIN_RBAC_CODE );
 
     // SERVICES
@@ -158,6 +171,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
         model.put( MARK_SELECTED_AGENT, adminUserSelected );
         model.put( MARK_AVAILABLE_SLOTS,
             _automaticAssignmentService.getAvailableAutoAssignementList( task.getId(  ) ).getAssignedSuffix(  ) );
+        model.put( MARK_INFOS, _listInfos );
 
         if ( adminUserSelected != null )
         {
@@ -224,6 +238,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
         model.put( MARK_ADD_NEW_AGENT_CONFIG, true );
         model.put( MARK_AVAILABLE_SLOTS,
             _automaticAssignmentService.getAvailableAutoAssignementList( task.getId(  ) ).getAssignedSuffix(  ) );
+        model.put( MARK_INFOS, _listInfos );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_AUTOMATIC_ASSIGNMENT_USER_CONFIG, locale,
                 model );
@@ -270,6 +285,8 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
             model.put( MARK_HAS_UNASSIGNED_AGENT, true );
         }
 
+        model.put( MARK_INFOS, _listInfos );
+
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_AUTOMATIC_ASSIGNMENT_CONFIG, locale, model );
 
         return template.getHtml(  );
@@ -294,12 +311,18 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
         String strAction = request.getParameter( PARAMETER_ACTION );
         String strUserAccessCode = request.getParameter( PARAMETER_USER_ACCESS_CODE );
         HashMap<String, String> mapParameters = new HashMap<String, String>(  );
+        _listInfos = new ArrayList<ErrorMessage>(  );
 
         if ( StringUtils.isNotBlank( strAction ) )
         {
-            if ( strAction.equals( ACTION_REMOVE_ASSIGNMENT ) )
+            if ( strAction.equals( ACTION_CONFIRM_REMOVE_ASSIGNMENT ) )
+            {
+                return getConfirmRemoveUserAssignement( request, locale, task, strUserAccessCode );
+            }
+            else if ( strAction.equals( ACTION_REMOVE_ASSIGNMENT ) )
             {
                 deleteUserAssignement( task, strUserAccessCode );
+                addInfo( I18nService.getLocalizedString( MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_SUCCESSFUL_REMOVED, locale ) );
 
                 return getDisplayConfigFormUrl( task, null );
             }
@@ -308,6 +331,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
                 storeUserAssignments( request, task, strUserAccessCode );
                 mapParameters.put( PARAMETER_ACTION, ACTION_DISPLAY_USER_CONFIG );
                 mapParameters.put( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
+                addInfo( I18nService.getLocalizedString( MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_SUCCESSFUL_SAVED, locale ) );
 
                 return getDisplayConfigFormUrl( task, mapParameters );
             }
@@ -332,6 +356,28 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
         }
 
         return null;
+    }
+
+    /**
+     * build remove confirmation message
+     * @param request request
+     * @param locale locae
+     * @param task task
+     * @param strUserAccessCode userAccessCode
+     * @return url
+     */
+    private String getConfirmRemoveUserAssignement( HttpServletRequest request, Locale locale, ITask task,
+        String strUserAccessCode )
+    {
+        UrlItem url = new UrlItem( request.getRequestURI(  ) );
+        url.addParameter( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
+        url.addParameter( PARAMETER_ACTION, ACTION_REMOVE_ASSIGNMENT );
+        url.addParameter( PARAMETER_TASK_ID, task.getId(  ) );
+
+        String strMessageUrl = AdminMessageService.getMessageUrl( request,
+                MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_CONFIRMATION_REMOVE, url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
+
+        return strMessageUrl;
     }
 
     /**
@@ -421,5 +467,14 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
     {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * Add an info message
+     * @param strMessage The message
+     */
+    protected void addInfo( String strMessage )
+    {
+        _listInfos.add( new MVCMessage( strMessage ) );
     }
 }

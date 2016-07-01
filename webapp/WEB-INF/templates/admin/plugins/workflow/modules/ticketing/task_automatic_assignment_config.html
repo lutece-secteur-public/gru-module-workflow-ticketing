@@ -1,4 +1,5 @@
 <p class="lead">#i18n{module.workflow.ticketing.task_automatic_assignment_config.title}</p>
+<@messages infos=infos />
 <table class="table table-striped">
   <thead>
 	<tr>
@@ -46,19 +47,11 @@
 	$("button[name*='save']").remove();
  });
  function removeAssignment(user_access_code) {
-    var toRemove = confirm("#i18n{module.workflow.ticketing.task_automatic_assignment.config.labelConfirmRemove}");
-    if ( toRemove )
-    {
-        var input = $("<input>").attr("type", "hidden").attr("name", "user_access_code").val(user_access_code);
-		$('.form-horizontal').append($(input));  
-		input = $("<input>").attr("type", "hidden").attr("name", "action").val('remove_assignment');
-		$('.form-horizontal').append($(input));         
-		$('.form-horizontal').submit();
-    }
-    else
-    {
-        return false;
-    }
+	var input = $("<input>").attr("type", "hidden").attr("name", "user_access_code").val(user_access_code);
+	$('.form-horizontal').append($(input));  
+	input = $("<input>").attr("type", "hidden").attr("name", "action").val('confirm_remove_assignment');
+	$('.form-horizontal').append($(input));         
+	$('.form-horizontal').submit();
  }
  
   function editAssignment(user_access_code) {
