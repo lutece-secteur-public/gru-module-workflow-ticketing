@@ -70,7 +70,7 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
 
 
 DELETE FROM workflow_task_comment_config WHERE id_task >= 300 AND id_task < 500;			
-INSERT INTO workflow_task_comment_config (id_task, title, is_mandatory) 
+INSERT INTO workflow_task_comment_config (id_task, title, is_mandatory, is_richtext) 
 	VALUES	(343, 'Commentaire', 0, 1),
 			(352, 'Commentaire', 0, 1),
 			(362, 'Commentaire', 0, 1),
