@@ -197,8 +197,7 @@ public class TaskAutomaticAssignmentDAO implements ITaskAutomaticAssignmentDAO
 
             if ( StringUtils.isBlank( strUserAccessCode ) )
             {
-                //no user config 
-                continue;
+                strUserAccessCode = StringUtils.EMPTY;
             }
 
             String strSuffix = daoUtil.getString( nIndex++ );
