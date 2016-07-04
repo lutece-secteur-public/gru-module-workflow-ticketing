@@ -60,7 +60,7 @@ public class TaskAutomaticAssignmentDAO implements ITaskAutomaticAssignmentDAO
         " WHERE id_task = ? AND assignment_suffix = ?";
     private static final String SQL_QUERY_ASSIGN = "UPDATE workflow_task_ticketing_automatic_assignment_config SET user_access_code = ? " +
         " WHERE id_task = ? AND assignment_suffix = ?";
-    private static final String SQL_QUERY_FIND_BY_ACCESS_CODE = "SELECT  assignment_suffix FROM workflow_task_ticketing_automatic_assignment_config WHERE id_task = ? AND user_access_code = ? ";
+    private static final String SQL_QUERY_FIND_BY_ACCESS_CODE = "SELECT  assignment_suffix FROM workflow_task_ticketing_automatic_assignment_config WHERE id_task = ? AND user_access_code = ?  ORDER BY assignment_suffix ASC";
     private static final String SQL_QUERY_FIND_UNASSIGNED = "SELECT  assignment_suffix FROM workflow_task_ticketing_automatic_assignment_config WHERE user_access_code IS NULL AND id_task = ?  ORDER BY assignment_suffix ASC";
     private static final String SQL_QUERY_FIND_BY_SUFFIX = "SELECT user_access_code FROM workflow_task_ticketing_automatic_assignment_config WHERE id_task = ? AND assignment_suffix = ? AND user_access_code IS NOT NULL ORDER BY assignment_suffix ASC";
     private static final String SQL_QUERY_UNASSIGN_BY_USER_ACCESS_CODE = "UPDATE workflow_task_ticketing_automatic_assignment_config SET user_access_code = NULL WHERE id_task = ? AND user_access_code = ? ";
