@@ -75,7 +75,8 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
     // TEMPLATES
     private static final String TEMPLATE_TASK_AUTOMATIC_ASSIGNMENT_CONFIG = "admin/plugins/workflow/modules/ticketing/task_automatic_assignment_config.html";
     private static final String TEMPLATE_TASK_AUTOMATIC_ASSIGNMENT_USER_CONFIG = "admin/plugins/workflow/modules/ticketing/task_automatic_assignment_user_config.html";
-    private static final String URL_DISPLAY_CONFIG_FORM = "ModifyTask.jsp?id_task=";
+    private static final String URL_DISPLAY_CONFIG_FORM = "ModifyTask.jsp";
+    private static final String URL_DO_REMOVE_CONFIG = "jsp/admin/plugins/workflow/DoModifyTask.jsp";
 
     // Marks
     private static final String MARK_USER_ASSIGNMENT_LIST = "list_user_assignment";
@@ -369,7 +370,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
     private String getConfirmRemoveUserAssignement( HttpServletRequest request, Locale locale, ITask task,
         String strUserAccessCode )
     {
-        UrlItem url = new UrlItem( request.getRequestURI(  ) );
+        UrlItem url = new UrlItem( URL_DO_REMOVE_CONFIG );
         url.addParameter( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
         url.addParameter( PARAMETER_ACTION, ACTION_REMOVE_ASSIGNMENT );
         url.addParameter( PARAMETER_TASK_ID, task.getId(  ) );
@@ -406,17 +407,18 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
      */
     private static String getDisplayConfigFormUrl( ITask task, HashMap<String, String> mapParams )
     {
-        String strReturnUrl = URL_DISPLAY_CONFIG_FORM + task.getId(  );
+        UrlItem url = new UrlItem( URL_DISPLAY_CONFIG_FORM );
+        url.addParameter( PARAMETER_TASK_ID, task.getId(  ) );
 
         if ( ( mapParams != null ) && ( mapParams.size(  ) > 0 ) )
         {
             for ( Map.Entry<String, String> entry : mapParams.entrySet(  ) )
             {
-                strReturnUrl += ( "&" + entry.getKey(  ) + "=" + entry.getValue(  ) );
+                url.addParameter( entry.getKey(  ), entry.getValue(  ) );
             }
         }
 
-        return strReturnUrl;
+        return url.toString(  );
     }
 
     /**
