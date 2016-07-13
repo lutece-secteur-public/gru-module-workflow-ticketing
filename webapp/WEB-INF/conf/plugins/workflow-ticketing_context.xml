@@ -267,6 +267,15 @@
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AutomaticAssignmentTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeAutomaticAssignment"
 		p:taskConfigService-ref="workflow-ticketing.taskAutomaticAssignmentConfigService" />
+		
+	<!-- Task Mark as unread -->
+    <bean id="workflow-ticketing.taskMarkAsUnread"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskMarkAsUnread"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeMarkAsUnread"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketingMarkAsUnread" p:titleI18nKey="module.workflow.ticketing.task_mark_as_unread.title"
+        p:beanName="workflow-ticketing.taskMarkAsUnread" />
 
 		
 	<!-- SignRequest -->

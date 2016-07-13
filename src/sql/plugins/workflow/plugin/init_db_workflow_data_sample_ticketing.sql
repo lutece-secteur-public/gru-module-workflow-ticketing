@@ -40,30 +40,39 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
             (342,'taskTicketingModifyTicketCategory',303,2),
             (343, 'taskTypeComment', 303,3),
             (344, 'taskTicketingIndexTicket',303,4),
+            (345, 'taskTicketingMarkAsUnread', 303,5),
             (351,'taskTicketingAssignTicketToUnit',306,1), -- Assign to unit
             (352, 'taskTypeComment', 306,2),
+            (353, 'taskTicketingMarkAsUnread', 306,3),
             (361,'taskTicketingAssignTicketToUser',307,1), -- Assign to user
             (362, 'taskTypeComment', 307,2),
+            (363, 'taskTicketingMarkAsUnread', 307,3),
             (371,'taskTicketingAssignTicketToMe',308,1), -- Assign to me
             (372, 'taskTypeComment', 308,2),
 			(381,'taskTicketingAssignUpTicket',304,1), -- Assign up
 			(382, 'taskTypeComment', 304,2),
+			(383, 'taskTicketingMarkAsUnread', 304,3),
 			(386,'taskTicketingAssignUpTicket',305,1), -- Assign up level 3
 			(387, 'taskTypeComment', 305,2),
+			(388, 'taskTicketingMarkAsUnread', 305,3),
             (390, 'taskTicketingEditTicket', 309,1), -- Ask for user information
             (391, 'taskTicketingIndexTicket',309,2),
             (400, 'taskTicketingEditTicket', 310,1), -- Reply to info request from agent to agent
             (401, 'taskTicketingSelectChannel', 310,2),
             (403, 'taskTicketingIndexTicket', 310,4),
+            (404, 'taskTicketingMarkAsUnread', 310,5),
             (410, 'taskTicketingEditTicket',311,1), -- Reply to info request from user to agent
             (411, 'taskTicketingSelectChannel',311,2),
             (413, 'taskTicketingIndexTicket', 311,4),
+            (414, 'taskTicketingMarkAsUnread', 311,5),
 			(420, 'taskTicketingReply', 312,1), -- Reply to user
             (423, 'taskTicketingIndexTicket', 312,3),
             (441, 'taskTicketingReplyAssignUpTicket',313,1), -- Reply to assign up
             (442, 'taskTypeComment', 313,2),
+            (443, 'taskTicketingMarkAsUnread', 313,3),
             (461,'taskTicketingAssignTicketToUser',314,1), -- Assign to user LEVEL3
             (462, 'taskTypeComment', 314,2),
+            (463, 'taskTicketingMarkAsUnread', 314,3),
             (471,'taskTicketingAssignTicketToMe',315,1), -- Assign to me LEVEL3
             (472, 'taskTypeComment', 315,2)
 ;
