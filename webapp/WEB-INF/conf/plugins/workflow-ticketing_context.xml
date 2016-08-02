@@ -150,7 +150,20 @@
 	<bean id="workflow-ticketing.assignTicketToUserTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUserTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUser" />
-
+		
+	<!-- Task Modify Ticket's Nomenclature -->
+	<bean id="workflow-ticketing.taskModifyTicketNomenclature" 
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketNomenclature" 
+		scope="prototype"/>
+	<bean id="workflow-ticketing.taskTypeModifyTicketNomenclature"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingModifyTicketNomenclature" p:titleI18nKey="module.workflow.ticketing.task_modify_ticket_nomenclature.title"
+		p:beanName="workflow-ticketing.taskModifyTicketNomenclature"
+		p:formTaskRequired="true" p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.modifyTicketNomenclatureTaskComponent" 
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketNomenclatureTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeModifyTicketNomenclature" />
+		
 	<!-- Task Assign ticket to me -->
 	<bean id="workflow-ticketing.taskAssignTicketToMe"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToMe"
