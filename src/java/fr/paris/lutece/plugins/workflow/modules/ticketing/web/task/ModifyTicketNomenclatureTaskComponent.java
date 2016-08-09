@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.util.HashMap;
@@ -55,6 +56,7 @@ public class ModifyTicketNomenclatureTaskComponent extends TicketingTaskComponen
 {
     //template
     private static final String TEMPLATE_TASK_MODIFY_TICKET_NOMENCLATURE_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_nomenclature_form.html";
+    
     //list
     private static final String MARK_TICKET_NOMENCLATURE = "ticket_nomenclature";
    
@@ -64,6 +66,8 @@ public class ModifyTicketNomenclatureTaskComponent extends TicketingTaskComponen
     // Message reply
     private static final String MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR = "module.workflow.ticketing.task_modify_ticket_nomenclature.error";
     
+    //Property
+    private static final String PROPERTY_NOMENCLATURE_REGEXP = "workflow-ticketing.workflow.nomenclature.regexp";
     
     @Override
     public String getDisplayTaskForm( int nIdHistory, String strResourceType, HttpServletRequest request,
@@ -88,7 +92,7 @@ public class ModifyTicketNomenclatureTaskComponent extends TicketingTaskComponen
     {	
         String strNewNomenclature = request.getParameter( PARAMETER_TICKET_NOMENCLATURE );
         
-        if ( !strNewNomenclature.matches( "[A-Z,0-9]{3}" ) )
+        if ( !strNewNomenclature.matches( AppPropertiesService.getProperty( PROPERTY_NOMENCLATURE_REGEXP ) ) )
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR,
                 AdminMessage.TYPE_STOP );
