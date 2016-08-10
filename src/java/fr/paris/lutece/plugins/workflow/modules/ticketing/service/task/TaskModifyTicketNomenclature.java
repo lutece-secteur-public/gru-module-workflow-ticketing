@@ -54,6 +54,7 @@ public class TaskModifyTicketNomenclature extends AbstractTicketingTask
 {
     //Message
     private static final String MESSAGE_TASK_TITLE = "module.workflow.ticketing.task_modify_ticket_nomenclature.labelModifyNomenclatureTicket";
+    private static final String MESSAGE_NO_VALUE = "module.workflow.ticketing.task_modify_ticket_nomenclature.noValue";
     private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION = "module.workflow.ticketing.task_modify_ticket_nomenclature.information";
 
     //Parameter
@@ -86,8 +87,13 @@ public class TaskModifyTicketNomenclature extends AbstractTicketingTask
                 TicketHome.update( ticket );
 
                 strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ), strOldNomenclature,
-                        strNewNomenclature );
+                            MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ),
+                        StringUtils.isNotEmpty( strOldNomenclature ) ? strOldNomenclature
+                                                                     : I18nService.getLocalizedString( 
+                            MESSAGE_NO_VALUE, locale ),
+                        StringUtils.isNotEmpty( strNewNomenclature ) ? strNewNomenclature
+                                                                     : I18nService.getLocalizedString( 
+                            MESSAGE_NO_VALUE, locale ) );
             }
         }
 
