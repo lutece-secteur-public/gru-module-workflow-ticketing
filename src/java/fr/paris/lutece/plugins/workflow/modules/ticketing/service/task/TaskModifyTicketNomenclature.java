@@ -52,10 +52,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class TaskModifyTicketNomenclature extends AbstractTicketingTask
 {
-	//Message
+    //Message
     private static final String MESSAGE_TASK_TITLE = "module.workflow.ticketing.task_modify_ticket_nomenclature.labelModifyNomenclatureTicket";
     private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION = "module.workflow.ticketing.task_modify_ticket_nomenclature.information";
-    
+
     //Parameter
     private static final String PARAMETER_TICKET_NOMENCLATURE = "nomenclature";
 
@@ -75,19 +75,19 @@ public class TaskModifyTicketNomenclature extends AbstractTicketingTask
         Ticket ticket = getTicket( nIdResourceHistory );
 
         if ( ticket != null )
-        {	
-        	strOldNomenclature = ticket.getNomenclature(  );
+        {
+            strOldNomenclature = ticket.getNomenclature(  );
             strNewNomenclature = request.getParameter( PARAMETER_TICKET_NOMENCLATURE );
-            
-            if( !strNewNomenclature.equals( strOldNomenclature ) )
-            {	
-            	ticket.setNomenclature( strNewNomenclature );
-            	
-            	TicketHome.update( ticket );
-            	
-            	strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                        MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ), strOldNomenclature,
-                    strNewNomenclature );
+
+            if ( !strNewNomenclature.equals( strOldNomenclature ) )
+            {
+                ticket.setNomenclature( strNewNomenclature );
+
+                TicketHome.update( ticket );
+
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                            MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ), strOldNomenclature,
+                        strNewNomenclature );
             }
         }
 

@@ -41,6 +41,8 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -56,19 +58,19 @@ public class ModifyTicketNomenclatureTaskComponent extends TicketingTaskComponen
 {
     //template
     private static final String TEMPLATE_TASK_MODIFY_TICKET_NOMENCLATURE_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_nomenclature_form.html";
-    
+
     //list
     private static final String MARK_TICKET_NOMENCLATURE = "ticket_nomenclature";
-   
+
     //Parameter
     private static final String PARAMETER_TICKET_NOMENCLATURE = "nomenclature";
-    
+
     // Message reply
     private static final String MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR = "module.workflow.ticketing.task_modify_ticket_nomenclature.error";
-    
+
     //Property
     private static final String PROPERTY_NOMENCLATURE_REGEXP = "workflow-ticketing.workflow.nomenclature.regexp";
-    
+
     @Override
     public String getDisplayTaskForm( int nIdHistory, String strResourceType, HttpServletRequest request,
         Locale locale, ITask task )
@@ -89,14 +91,15 @@ public class ModifyTicketNomenclatureTaskComponent extends TicketingTaskComponen
     @Override
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
         ITask task )
-    {	
+    {
         String strNewNomenclature = request.getParameter( PARAMETER_TICKET_NOMENCLATURE );
-        
-        if ( !strNewNomenclature.matches( AppPropertiesService.getProperty( PROPERTY_NOMENCLATURE_REGEXP ) ) )
+
+        if ( StringUtils.isNotEmpty( strNewNomenclature ) && !strNewNomenclature.matches( AppPropertiesService.getProperty( PROPERTY_NOMENCLATURE_REGEXP ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR,
-                AdminMessage.TYPE_STOP );
+           return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR,
+               AdminMessage.TYPE_STOP );
         }
+
         return null;
     }
 }
