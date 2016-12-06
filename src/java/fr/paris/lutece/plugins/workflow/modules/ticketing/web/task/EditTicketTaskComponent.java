@@ -197,7 +197,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
                 filter.setResourceType( TicketForm.RESOURCE_TYPE );
                 filter.setEntryParentNull( EntryFilter.FILTER_TRUE );
                 filter.setFieldDependNull( EntryFilter.FILTER_TRUE );
-
+                filter.setIdIsComment( EntryFilter.FILTER_FALSE );
                 List<Entry> listEntryFirstLevel = EntryHome.getEntryList( filter );
 
                 model.put( MARK_LIST_ENTRIES, listEntryFirstLevel );
