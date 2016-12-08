@@ -269,7 +269,7 @@ public class EditTicketXPage implements XPageApplication
                 try
                 {
                     Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory(  ) );
-                    TicketCategory ticketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) );
+                    TicketCategory ticketCategory = ticket.getTicketCategory(  );
 
                     _workflowService.doProcessAction( ticket.getId(  ), Ticket.TICKET_RESOURCE_TYPE, nIdAction,
                         ticketCategory.getId(  ), request, request.getLocale(  ), false );

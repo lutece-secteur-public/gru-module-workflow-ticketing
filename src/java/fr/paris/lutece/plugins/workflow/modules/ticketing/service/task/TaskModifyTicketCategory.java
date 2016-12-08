@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomainHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -84,14 +85,17 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
             String strNewDomainLabel = TicketDomainHome.findByPrimaryKey( nNewDomainId ).getLabel(  );
             String strNewCategoryLabel = TicketCategoryHome.findByPrimaryKey( nNewCategoryId ).getLabel(  );
 
-            String strPreviousCategoryLabel = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) )
-                                                                .getLabel(  );
+            String strPreviousCategoryLabel = ticket.getTicketCategory(  ).getLabel(  );
             String strPreviousDomainLabel = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain(  ) ).getLabel(  );
             String strPreviousTypeLabel = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType(  ) ).getLabel(  );
 
             ticket.setIdTicketType( nNewTypeId );
             ticket.setIdTicketDomain( nNewDomainId );
-            ticket.setIdTicketCategory( nNewCategoryId );
+
+            TicketCategory ticketCategory = new TicketCategory(  );
+            ticketCategory.setId( nNewCategoryId );
+            ticket.setTicketCategory( ticketCategory );
+
             TicketHome.update( ticket );
 
             if ( !strPreviousTypeLabel.equals( strNewTypeLabel ) ||
