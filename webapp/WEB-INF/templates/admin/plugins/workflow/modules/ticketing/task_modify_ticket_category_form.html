@@ -5,7 +5,7 @@
 <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketCategory" inputName="id_ticket_category" items=ticket_categories_list value="${ticket.ticketCategory.id!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketCategory.help" cssClass='' />
 
 <div id="requalify_category" class="form-group">
-	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6 col-md-offset-3 col-lg-offset-3">
+	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6 col-sm-offset-3 col-md-offset-md-3 col-lg-offset-3">
 		<#assign params = "class=form-control" >
 		<#assign i18nHelpBlockKey = "module.workflow.ticketing.task_modify_ticket_category.labelTicketCategoryPrecision.help" >
 		<@comboWithParams name="id_ticket_precision" items=ticket_precisions_list default_value="" additionalParameters=params />
