@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.tickettype.TicketTypeHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.util.Locale;
@@ -60,6 +61,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     private static final String MARK_TICKET_TYPES_LIST = "ticket_types_list";
     private static final String MARK_TICKET_DOMAINS_LIST = "ticket_domains_list";
     private static final String MARK_TICKET_CATEGORIES_LIST = "ticket_categories_list";
+    private static final String MARK_TICKET_PRECISIONS_LIST = "ticket_precisions_list";
 
     /**
      * {@inheritDoc}
@@ -76,6 +78,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             TicketDomainHome.getReferenceListByType( ( ticket != null ) ? ticket.getIdTicketType(  ) : 1 ) );
         model.put( MARK_TICKET_CATEGORIES_LIST,
             TicketCategoryHome.getReferenceListByDomain( ( ticket != null ) ? ticket.getIdTicketDomain(  ) : 1 ) );
+        model.put( MARK_TICKET_PRECISIONS_LIST, new ReferenceList(  ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM, locale, model );
 

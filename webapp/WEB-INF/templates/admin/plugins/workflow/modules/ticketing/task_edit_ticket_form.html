@@ -19,6 +19,7 @@
                             </#list>
                         </fieldset>
                     <#else>
+                      <#if entry.entryType.beanName != "ticketing.entryTypeComment">
                         <div>
                             <label class="checkbox-inline">
                                 <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" 
@@ -26,6 +27,7 @@
                                 ${entry.title}
                             </label>
                         </div>
+                      </#if>
                     </#if>
                 </#list>
                 <div id="editable_fields_message_${config.idTask}">

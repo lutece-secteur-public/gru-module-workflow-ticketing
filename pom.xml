@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>module-workflow-ticketing</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
     <name>Lutece Workflow Ticketing module</name>
 
     <repositories>
@@ -26,13 +26,13 @@
         <dependency>
             <groupId>fr.paris.lutece</groupId>
             <artifactId>lutece-core</artifactId>
-            <version>[5.1.1-SNAPSHOT,)</version>
+            <version>[5.1.1,)</version>
             <type>lutece-core</type>
         </dependency>
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>plugin-ticketing</artifactId>
-            <version>[1.0.2-SNAPSHOT,)</version>
+            <version>[1.0.2,)</version>
             <type>lutece-plugin</type>
         </dependency>
         <dependency>

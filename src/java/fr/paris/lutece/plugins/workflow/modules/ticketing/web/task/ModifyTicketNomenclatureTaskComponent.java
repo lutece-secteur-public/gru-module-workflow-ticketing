@@ -94,10 +94,11 @@ public class ModifyTicketNomenclatureTaskComponent extends TicketingTaskComponen
     {
         String strNewNomenclature = request.getParameter( PARAMETER_TICKET_NOMENCLATURE );
 
-        if ( StringUtils.isNotEmpty( strNewNomenclature ) && !strNewNomenclature.matches( AppPropertiesService.getProperty( PROPERTY_NOMENCLATURE_REGEXP ) ) )
+        if ( StringUtils.isNotEmpty( strNewNomenclature ) &&
+                !strNewNomenclature.matches( AppPropertiesService.getProperty( PROPERTY_NOMENCLATURE_REGEXP ) ) )
         {
-           return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR,
-               AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR,
+                AdminMessage.TYPE_STOP );
         }
 
         return null;

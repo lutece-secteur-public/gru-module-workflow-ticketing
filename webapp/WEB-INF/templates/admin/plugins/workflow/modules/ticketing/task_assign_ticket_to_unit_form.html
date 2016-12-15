@@ -5,9 +5,9 @@
 
 <#if units_list?? && units_list?has_content>
     <#if current_unit?? && current_unit?has_content>
-        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit" inputName="id_unit" items=units_list value="${current_unit}" i18nHelpBlockKey="ticketing.task_assign_ticket_to_unit.labelUnit.help" cssClass='' />
+        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit" inputName="id_unit" items=units_list value="${current_unit}" i18nHelpBlockKey="ticketing.task_assign_ticket_to_unit.labelUnit.help" />
     <#else>
-        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit" inputName="id_unit" items=units_list value="" i18nHelpBlockKey="ticketing.task_assign_ticket_to_unit.labelUnit.help" cssClass='' />
+        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit" inputName="id_unit" items=units_list value="" i18nHelpBlockKey="ticketing.task_assign_ticket_to_unit.labelUnit.help" />
     </#if>
 </#if>
 

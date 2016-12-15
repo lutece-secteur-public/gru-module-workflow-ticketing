@@ -34,11 +34,7 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.ticketform.TicketForm;
-import fr.paris.lutece.plugins.ticketing.business.ticketform.TicketFormHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
@@ -62,7 +58,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -188,21 +183,10 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         if ( messageDirection == MessageDirection.AGENT_TO_USER )
         {
-            TicketForm ticketForm = TicketFormHome.findByCategoryId( ticket.getIdTicketCategory(  ) );
+            List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory(  ).getId(  ) );
 
-            if ( ticketForm != null )
-            {
-                EntryFilter filter = new EntryFilter(  );
-                filter.setIdResource( ticketForm.getIdForm(  ) );
-                filter.setResourceType( TicketForm.RESOURCE_TYPE );
-                filter.setEntryParentNull( EntryFilter.FILTER_TRUE );
-                filter.setFieldDependNull( EntryFilter.FILTER_TRUE );
-
-                List<Entry> listEntryFirstLevel = EntryHome.getEntryList( filter );
-
-                model.put( MARK_LIST_ENTRIES, listEntryFirstLevel );
-            }
-
+            model.put( MARK_LIST_ENTRIES, listEntry );
+            
             ModelUtils.storeUserSignature( request, model );
             ModelUtils.storeRichText( request, model );
         }

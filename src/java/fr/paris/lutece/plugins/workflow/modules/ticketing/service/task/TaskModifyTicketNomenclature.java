@@ -78,12 +78,12 @@ public class TaskModifyTicketNomenclature extends AbstractTicketingTask
         if ( ticket != null )
         {
             strOldNomenclature = ticket.getNomenclature(  );
-            
-            if( strOldNomenclature == null )
+
+            if ( strOldNomenclature == null )
             {
-            	strOldNomenclature = StringUtils.EMPTY;
+                strOldNomenclature = StringUtils.EMPTY;
             }
-            
+
             strNewNomenclature = request.getParameter( PARAMETER_TICKET_NOMENCLATURE );
 
             if ( !strNewNomenclature.equals( strOldNomenclature ) )

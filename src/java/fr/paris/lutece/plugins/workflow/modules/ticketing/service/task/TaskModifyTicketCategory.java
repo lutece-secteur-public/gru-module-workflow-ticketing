@@ -111,7 +111,11 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
             ticket.setIdTicketType( nNewTypeId );
             ticket.setIdTicketDomain( nNewDomainId );
-            ticket.setTicketCategory( newTicketCategory );
+
+            TicketCategory ticketCategory = new TicketCategory(  );
+            ticketCategory.setId( nNewCategoryId );
+            ticket.setTicketCategory( ticketCategory );
+
             TicketHome.update( ticket );
 
             if ( !strPreviousTypeLabel.equals( strNewTypeLabel ) ||

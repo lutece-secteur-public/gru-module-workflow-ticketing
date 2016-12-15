@@ -67,7 +67,7 @@ public class TaskIndexTicket extends AbstractTicketingTask
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
-        TicketCategory ticketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) );
+        TicketCategory ticketCategory = ticket.getTicketCategory(  );
         int nIdWorkflow = ticketCategory.getIdWorkflow(  );
         State state = WorkflowService.getInstance(  )
                                      .getState( ticket.getId(  ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null );
