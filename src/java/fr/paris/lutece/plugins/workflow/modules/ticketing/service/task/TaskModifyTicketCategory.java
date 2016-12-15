@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomainHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -63,6 +64,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
     public static final String PARAMETER_TICKET_CATEGORY_ID = "id_ticket_category";
     public static final String PARAMETER_TICKET_DOMAIN_ID = "id_ticket_domain";
     public static final String PARAMETER_TICKET_TYPE_ID = "id_ticket_type";
+    public static final String SEPARATOR = " - ";
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -82,16 +84,34 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
             String strNewTypeLabel = TicketTypeHome.findByPrimaryKey( nNewTypeId ).getLabel(  );
             String strNewDomainLabel = TicketDomainHome.findByPrimaryKey( nNewDomainId ).getLabel(  );
-            String strNewCategoryLabel = TicketCategoryHome.findByPrimaryKey( nNewCategoryId ).getLabel(  );
 
-            String strPreviousCategoryLabel = TicketCategoryHome.findByPrimaryKey( ticket.getIdTicketCategory(  ) )
-                                                                .getLabel(  );
+            TicketCategory newTicketCategory = TicketCategoryHome.findByPrimaryKey( nNewCategoryId );
+            TicketCategory previousTicketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getTicketCategory(  )
+                                                                                               .getId(  ) );
+            String strNewCategoryLabel = newTicketCategory.getLabel(  );
+            String strPreviousCategoryLabel = previousTicketCategory.getLabel(  );
+
+            StringBuilder sb = new StringBuilder(  );
+
+            if ( StringUtils.isNotEmpty( newTicketCategory.getPrecision(  ) ) )
+            {
+                sb.append( strNewCategoryLabel ).append( SEPARATOR ).append( newTicketCategory.getPrecision(  ) );
+                strNewCategoryLabel = sb.toString(  );
+            }
+
+            if ( StringUtils.isNotEmpty( previousTicketCategory.getPrecision(  ) ) )
+            {
+                sb = new StringBuilder(  );
+                sb.append( strPreviousCategoryLabel ).append( SEPARATOR ).append( previousTicketCategory.getPrecision(  ) );
+                strPreviousCategoryLabel = sb.toString(  );
+            }
+
             String strPreviousDomainLabel = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain(  ) ).getLabel(  );
             String strPreviousTypeLabel = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType(  ) ).getLabel(  );
 
             ticket.setIdTicketType( nNewTypeId );
             ticket.setIdTicketDomain( nNewDomainId );
-            ticket.setIdTicketCategory( nNewCategoryId );
+            ticket.setTicketCategory( newTicketCategory );
             TicketHome.update( ticket );
 
             if ( !strPreviousTypeLabel.equals( strNewTypeLabel ) ||
