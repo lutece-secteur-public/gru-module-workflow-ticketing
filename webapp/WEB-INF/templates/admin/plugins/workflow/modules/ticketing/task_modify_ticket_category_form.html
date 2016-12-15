@@ -2,14 +2,23 @@
 <input type="hidden" id="label_category" name="label_category" value="${ticket.ticketCategory.label!''}">
 <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType" inputName="id_ticket_type" items=ticket_types_list value="${ticket.idTicketType!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType.help" />
 <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain" inputName="id_ticket_domain" items=ticket_domains_list value="${ticket.idTicketDomain!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain.help" />
-<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketCategory" inputName="id_ticket_category" items=ticket_categories_list value="${ticket.ticketCategory.id!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketCategory.help" />
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_ticket_category">#i18n{module.workflow.ticketing.task_modify_ticket_category.labelTicketCategory}&nbsp;:</label>
+	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+		<#assign params = "class=form-control" >
+		<#assign i18nHelpBlockKey = "module.workflow.ticketing.task_modify_ticket_category.labelTicketCategoryPrecision.help" >
+		<@comboWithParams name="id_ticket_category" items=ticket_categories_list default_value="" additionalParameters=params />
+		<span class="help-block" id="help_message_category" style="display:none;"></span>
+	</div>
+</div>
 
 <div id="requalify_category" class="form-group">
 	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6 col-sm-offset-3 col-md-offset-md-3 col-lg-offset-3">
 		<#assign params = "class=form-control" >
 		<#assign i18nHelpBlockKey = "module.workflow.ticketing.task_modify_ticket_category.labelTicketCategoryPrecision.help" >
 		<@comboWithParams name="id_ticket_precision" items=ticket_precisions_list default_value="" additionalParameters=params />
-		<#if i18nHelpBlockKey != ''><p class="help-block">#i18n{${i18nHelpBlockKey}}</p></#if>
+		<span class="help-block" id="help_message_precision" style="display:none;"></span>
 	</div>
 </div>
 	
