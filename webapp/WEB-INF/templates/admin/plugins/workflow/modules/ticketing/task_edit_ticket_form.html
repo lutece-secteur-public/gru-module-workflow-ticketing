@@ -5,30 +5,13 @@
         <#if list_entries?? && list_entries?size &gt; 0>
             <p class="lead">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelListEntries}</p>
                 <#list list_entries as entry>
-                    <#if entry.entryType.group>
-                        <fieldset>
-                            <legend>${entry.title}</legend>
-                            <#list entry.children as child >
-                                <div>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${child.idEntry}" 
-                                            onchange="javascript:toggleEditableFieldsMessage(${config.idTask});" />
-                                        ${child.title}
-                                    </label>
-                                </div>
-                            </#list>
-                        </fieldset>
-                    <#else>
-                      <#if entry.entryType.beanName != "ticketing.entryTypeComment">
-                        <div>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" 
-                                    onchange="javascript:toggleEditableFieldsMessage(${config.idTask});" />
-                                ${entry.title}
-                            </label>
-                        </div>
-                      </#if>
-                    </#if>
+                    <div>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" 
+                                onchange="javascript:toggleEditableFieldsMessage(${config.idTask});" />
+                            ${entry.title}
+                        </label>
+                    </div>
                 </#list>
                 <div id="editable_fields_message_${config.idTask}">
                     <div class="alert alert-warning" style="margin:10px 0 0 0;">

@@ -55,7 +55,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -211,7 +210,10 @@ public class EditableTicketService implements IEditableTicketService
         {
             Entry entry = EntryHome.findByPrimaryKey( editableTicketField.getIdEntry(  ) );
 
-            listEntries.add( entry );
+            if ( !entry.getEntryType(  ).getComment(  ) )
+            {
+                listEntries.add( entry );
+            }
         }
 
         return listEntries;
