@@ -34,12 +34,14 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.IEditableTicketService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.TaskEditTicketConstants;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -52,6 +54,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -184,8 +187,17 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         if ( messageDirection == MessageDirection.AGENT_TO_USER )
         {
             List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory(  ).getId(  ) );
+            List<Entry> listEntryWithoutComment = new ArrayList<Entry>(  );
 
-            model.put( MARK_LIST_ENTRIES, listEntry );
+            for ( Entry entry : listEntry )
+            {
+                if ( !entry.getEntryType(  ).getComment(  ) )
+                {
+                    listEntryWithoutComment.add( entry );
+                }
+            }
+
+            model.put( MARK_LIST_ENTRIES, listEntryWithoutComment );
             
             ModelUtils.storeUserSignature( request, model );
             ModelUtils.storeRichText( request, model );
