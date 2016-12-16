@@ -61,6 +61,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -198,7 +199,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
             }
 
             model.put( MARK_LIST_ENTRIES, listEntryWithoutComment );
-            
+
             ModelUtils.storeUserSignature( request, model );
             ModelUtils.storeRichText( request, model );
         }
