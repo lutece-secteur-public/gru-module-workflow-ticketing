@@ -33,19 +33,27 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
-import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomainHome;
-import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.tickettype.TicketTypeHome;
-import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.html.HtmlTemplate;
-
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
+import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomainHome;
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.tickettype.TicketTypeHome;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceItem;
+import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 
 /**
@@ -56,14 +64,89 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_category_form.html";
+    private static final String TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_CONFIG = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_category_config.html";
 
     // MARKS
+    private static final String MARK_CONFIG = "config";
+    private static final String MARK_CONFIG_ALL_ENTRY = "form_entries";
+    private static final String MARK_CONFIG_SELECTED_ENTRY = "selected_form_entry";
     private static final String MARK_TICKET_TYPES_LIST = "ticket_types_list";
     private static final String MARK_TICKET_DOMAINS_LIST = "ticket_domains_list";
     private static final String MARK_TICKET_CATEGORIES_LIST = "ticket_categories_list";
     private static final String MARK_TICKET_PRECISIONS_LIST = "ticket_precisions_list";
-
+    
+    
     /**
+	 * {@inheritDoc}
+	 */
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    {
+    	TaskModifyTicketCategoryConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+    	
+        EntryFilter entryFilter = new EntryFilter(  );
+        entryFilter.setResourceType( TicketingConstants.RESOURCE_TYPE_INPUT );
+        entryFilter.setEntryParentNull( EntryFilter.FILTER_TRUE );
+        entryFilter.setFieldDependNull( EntryFilter.FILTER_TRUE );
+        entryFilter.setIdIsComment( EntryFilter.FILTER_FALSE );
+
+        List<Entry> lReferenceEntry = EntryHome.getEntryList( entryFilter );
+
+        Map<String, Object> model = new HashMap<String, Object>(  );
+        model.put( MARK_CONFIG, config );
+        model.put( MARK_CONFIG_ALL_ENTRY, mergeConfigAndReference( config, lReferenceEntry ) );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_CONFIG, locale, model );
+
+        return template.getHtml(  );
+    }
+
+    private ReferenceList mergeConfigAndReference( TaskModifyTicketCategoryConfig config, List<Entry> lReferenceEntry )
+    {
+    	ReferenceList refList = new ReferenceList(  );
+    	
+    	for ( Entry refEntry : lReferenceEntry )
+        {
+	        ReferenceItem refItem = new ReferenceItem(  );
+	        refItem.setCode( Integer.toString( refEntry.getIdEntry(  ) ) );
+	        StringBuilder strInput = new StringBuilder( refEntry.getTitle(  ) );
+	        strInput.append( " (" ).append( refEntry.getEntryType(  ).getTitle(  ) ).append( ")" );
+	        refItem.setName( strInput.toString(  ) );
+	        refItem.setChecked( config.getSelectedEntries(  ).contains( refEntry.getIdEntry(  ) ) );
+	        
+	        refList.add( refItem );
+        }
+    	
+    	return refList;
+    }
+    
+
+	/**
+	 * {@inheritDoc}
+	 */
+    @Override
+    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
+    {
+    	TaskModifyTicketCategoryConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+    	String[] tSelectedEntries = new String[  ]{  };
+    	config.clearSelectedEntries(  );
+    	
+    	if( request.getParameterValues( MARK_CONFIG_SELECTED_ENTRY ) != null )
+    	{
+    		tSelectedEntries = request.getParameterValues( MARK_CONFIG_SELECTED_ENTRY );
+    	}
+    	
+    	for ( String strSelectedEntry : tSelectedEntries )
+        {
+    		config.addSelectedEntry( Integer.parseInt( strSelectedEntry ) );
+        }
+    	
+    	this.getTaskConfigService(  ).update( config );
+
+    	return null;
+    }
+
+	/**
      * {@inheritDoc}
      */
     @Override
@@ -72,7 +155,11 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     {
         Ticket ticket = getTicket( nIdResource, strResourceType );
         Map<String, Object> model = getModel( ticket );
+        
+        TaskModifyTicketCategoryConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+    	
 
+        model.put( MARK_CONFIG, config );
         model.put( MARK_TICKET_TYPES_LIST, TicketTypeHome.getReferenceList(  ) );
         model.put( MARK_TICKET_DOMAINS_LIST,
             TicketDomainHome.getReferenceListByType( ( ticket != null ) ? ticket.getIdTicketType(  ) : 1 ) );

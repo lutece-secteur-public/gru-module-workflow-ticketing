@@ -1,0 +1,23 @@
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <fieldset>
+        <legend>#i18n{module.workflow.ticketing.task_modify_ticket_category_config.title}</legend>
+        <div class="row">
+        	 <span class="help-block col-xs-12 col-sm-12 col-md-12 col-lg-12">#i18n{module.workflow.ticketing.task_modify_ticket_category_config.help}</span>
+        </div>
+        <div class="row">
+            <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3">#i18n{module.workflow.ticketing.task_modify_ticket_category_config.entries.label}</label>
+		</div>
+		<div class="form-group row">
+			<div class="checkbox col-xs-12 col-sm-12 col-md-9 col-md-offset-3 col-lg-9 col-lg-offset-3">
+        <#list form_entries as form_entry>
+				<label for="selected_form_entry_${form_entry.code}">
+					<input type="checkbox" <#if form_entry.checked >checked</#if> name="selected_form_entry" id="selected_form_entry_${form_entry.code}" value="${form_entry.code}">&nbsp;${form_entry.name}
+				</label>
+				<br/>
+		</#list>
+			</div>
+		</div>
+     </fieldset>
+	</div>
+</div>
