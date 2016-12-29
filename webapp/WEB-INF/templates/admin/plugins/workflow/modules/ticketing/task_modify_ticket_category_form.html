@@ -1,4 +1,5 @@
 <input name="redirect" id="redirect" value="" type="hidden">
+<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <input type="hidden" id="label_category" name="label_category" value="${ticket.ticketCategory.label!''}">
 <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType" inputName="id_ticket_type" items=ticket_types_list value="${ticket.idTicketType!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType.help" />
 <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain" inputName="id_ticket_domain" items=ticket_domains_list value="${ticket.idTicketDomain!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain.help" />
@@ -13,7 +14,7 @@
 	</div>
 </div>
 
-<div id="requalify_category" class="form-group">
+<div class="form-group">
 	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6 col-sm-offset-3 col-md-offset-md-3 col-lg-offset-3">
 		<#assign params = "class=form-control" >
 		<#assign i18nHelpBlockKey = "module.workflow.ticketing.task_modify_ticket_category.labelTicketCategoryPrecision.help" >
@@ -22,20 +23,22 @@
 	</div>
 </div>
 
-<div id="generic_attributes_parent" class="form-group" style="display:none;">
+<div id="generic_attributes_parent" class="form-group">
 	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="generic_attributes">#i18n{module.workflow.ticketing.task_modify_ticket_category.labelListEntries}&nbsp;:</label>
 	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6" style="padding-left: 30px">
 		<div id="generic_attributes"></div>
 	</div>
 </div>
-	
+
+<script src="js/bootstrap-datepicker.js"></script>
+<script src="js/locales/bootstrap-datepicker.fr.js" charset="utf-8"></script>
+<@addRequiredJsFiles />
+<script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
 <script src="js/plugins/ticketing/ticket_tree.js"></script>
 <script language="javascript"> 
     var category_id = ${ticket.ticketCategory.id!''};
-    var is_front = false ;
-    var is_generic_attributes_managed = true;
-    var generic_attributes_filter = ${config.entryArray};
+    var url = "jsp/admin/plugins/ticketing/ModifyTicketCategory.jsp?view=ticketForm&id_task=${id_task}";
     $(document).ready(function() {
-        lutece_ticket_tree("#id_ticket_type", "#id_ticket_domain", "#id_ticket_category", "#id_ticket_precision", category_id, is_front, is_generic_attributes_managed);
+        lutece_ticket_tree("#id_ticket_type", "#id_ticket_domain", "#id_ticket_category", "#id_ticket_precision", category_id, url);
     });
 </script>

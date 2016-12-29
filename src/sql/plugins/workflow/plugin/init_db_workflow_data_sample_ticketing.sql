@@ -114,3 +114,8 @@ INSERT INTO `core_datastore` (`entity_key`, `entity_value`) VALUES
 ('ticketing.configuration.adminUser.id.front', '5'),
 ('ticketing.configuration.channel.id.front', '99')
 ;
+
+DELETE FROM workflow_task_ticketing_modify_config;
+INSERT INTO workflow_task_ticketing_modify_config (id_task, id_entry)
+    VALUES  (342, 202) -- Allow Facil Famille account number
+;

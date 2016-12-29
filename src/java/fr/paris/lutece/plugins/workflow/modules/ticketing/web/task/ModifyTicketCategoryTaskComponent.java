@@ -38,15 +38,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
-import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomainHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.tickettype.TicketTypeHome;
+import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -74,7 +73,11 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     private static final String MARK_TICKET_DOMAINS_LIST = "ticket_domains_list";
     private static final String MARK_TICKET_CATEGORIES_LIST = "ticket_categories_list";
     private static final String MARK_TICKET_PRECISIONS_LIST = "ticket_precisions_list";
+    private static final String MARK_ID_TASK = "id_task";
     
+    @Inject
+    private TicketFormService _ticketFormService;
+
     
     /**
 	 * {@inheritDoc}
@@ -154,18 +157,15 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         Locale locale, ITask task )
     {
         Ticket ticket = getTicket( nIdResource, strResourceType );
-        Map<String, Object> model = getModel( ticket );
-        
-        TaskModifyTicketCategoryConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
-    	
+        _ticketFormService.saveTicketInSession( request.getSession(  ), ticket );
 
-        model.put( MARK_CONFIG, config );
-        model.put( MARK_TICKET_TYPES_LIST, TicketTypeHome.getReferenceList(  ) );
-        model.put( MARK_TICKET_DOMAINS_LIST,
-            TicketDomainHome.getReferenceListByType( ( ticket != null ) ? ticket.getIdTicketType(  ) : 1 ) );
-        model.put( MARK_TICKET_CATEGORIES_LIST,
-            TicketCategoryHome.getReferenceListByDomain( ( ticket != null ) ? ticket.getIdTicketDomain(  ) : 1 ) );
+        Map<String, Object> model = getModel( ticket );
+
+        model.put( MARK_TICKET_TYPES_LIST, new ReferenceList(  ) );
+        model.put( MARK_TICKET_DOMAINS_LIST, new ReferenceList(  ) );
+        model.put( MARK_TICKET_CATEGORIES_LIST, new ReferenceList(  ) );
         model.put( MARK_TICKET_PRECISIONS_LIST, new ReferenceList(  ) );
+        model.put( MARK_ID_TASK, task.getId(  ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM, locale, model );
 

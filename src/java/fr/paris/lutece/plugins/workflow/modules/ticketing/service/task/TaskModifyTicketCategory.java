@@ -33,21 +33,31 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomainHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.tickettype.TicketTypeHome;
+import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
-
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 
 /**
@@ -65,6 +75,16 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
     public static final String PARAMETER_TICKET_DOMAIN_ID = "id_ticket_domain";
     public static final String PARAMETER_TICKET_TYPE_ID = "id_ticket_type";
     public static final String SEPARATOR = " - ";
+
+    // Beans
+    private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE = "workflow-ticketing.taskModifyTicketCategoryConfigService";
+
+    @Inject
+    private TicketFormService _ticketFormService;
+
+    @Inject
+    @Named( BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE )
+    private ITaskConfigService _taskModifyTicketCategoryConfigService;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -117,6 +137,38 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
             ticket.setTicketCategory( ticketCategory );
 
             TicketHome.update( ticket );
+
+            if ( ticket.getTicketCategory(  ).getId(  ) > 0 )
+            {
+                TaskModifyTicketCategoryConfig config = _taskModifyTicketCategoryConfigService.findByPrimaryKey( getId(  ) );
+                List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory(  ).getId(  ), config.getSelectedEntries() );
+
+                for ( Entry entry : listEntry )
+                {
+                    Iterator<Response> iterator = ticket.getListResponse(  ).iterator(  );
+                    while ( iterator.hasNext(  ) )
+                    {
+                        Response response = iterator.next(  );
+                        if ( response.getEntry(  ).getIdEntry(  ) == entry.getIdEntry(  ) )
+                        {
+                            iterator.remove(  );
+                        }
+                    }
+                    _ticketFormService.getResponseEntry( request, entry.getIdEntry(  ), locale, ticket );
+                }
+
+	            // remove and add generic attributes responses
+	            TicketHome.removeTicketResponse( ticket.getId(  ) );
+
+	            if ( ( ticket.getListResponse(  ) != null ) && !ticket.getListResponse(  ).isEmpty(  ) )
+	            {
+	                for ( Response response : ticket.getListResponse(  ) )
+	                {
+	                    ResponseHome.create( response );
+	                    TicketHome.insertTicketResponse( ticket.getId(  ), response.getIdResponse(  ) );
+	                }
+	            }
+            }
 
             if ( !strPreviousTypeLabel.equals( strNewTypeLabel ) ||
                     !strPreviousDomainLabel.equals( strNewDomainLabel ) ||

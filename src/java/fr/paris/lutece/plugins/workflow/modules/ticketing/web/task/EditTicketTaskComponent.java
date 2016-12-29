@@ -187,7 +187,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         if ( messageDirection == MessageDirection.AGENT_TO_USER )
         {
-            List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory(  ).getId(  ) );
+            List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory(  ).getId(  ), null );
             List<Entry> listEntryWithoutComment = new ArrayList<Entry>(  );
 
             for ( Entry entry : listEntry )

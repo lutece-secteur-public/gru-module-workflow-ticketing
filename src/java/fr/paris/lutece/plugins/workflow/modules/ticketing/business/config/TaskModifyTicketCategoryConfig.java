@@ -43,7 +43,7 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
  */
 public class TaskModifyTicketCategoryConfig extends TaskConfig
 {
-	private List<Integer> _lSelectedEntries;
+	private List<Integer> _listSelectedEntries;
 	
 	
 
@@ -53,7 +53,7 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
     public TaskModifyTicketCategoryConfig(  )
     {
 	    super(  );
-	    this._lSelectedEntries = new ArrayList<Integer>(  );
+	    this._listSelectedEntries = new ArrayList<Integer>(  );
     }
 
 	/**
@@ -61,15 +61,15 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
 	 */
 	public List<Integer> getSelectedEntries()
 	{
-		return _lSelectedEntries;
+		return _listSelectedEntries;
 	}
 
 	/**
-	 * @param _lSelectedEntries the _lSelectedEntries to set
+	 * @param _listSelectedEntries
 	 */
 	public void addSelectedEntry( Integer _nSelectedEntry )
 	{
-		this._lSelectedEntries.add( _nSelectedEntry );
+		this._listSelectedEntries.add( _nSelectedEntry );
 	}
 	
 	/**
@@ -77,25 +77,6 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
 	 */
 	public void clearSelectedEntries(  )
 	{
-		this._lSelectedEntries = new ArrayList<Integer>(  );
-	}
-	
-	/**
-	 * Retrieve javascript array of entry ID
-	 */
-	public String getEntryArray(  )
-	{
-		StringBuilder strArray = new StringBuilder( "[" );
-		if( !_lSelectedEntries.isEmpty(  ) )
-		{
-			strArray.append( _lSelectedEntries.get( 0 ) );
-			for ( int nIdx=1; nIdx<_lSelectedEntries.size(  ); nIdx++ )
-	        {
-				strArray.append( "," );
-				strArray.append( _lSelectedEntries.get( nIdx ) );
-	        }
-		}
-		strArray.append( "]" );
-		return strArray.toString(  );
+		this._listSelectedEntries = new ArrayList<Integer>(  );
 	}
 }
