@@ -33,26 +33,35 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import com.drew.lang.StringUtil;
+
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceItem;
+import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.HtmlTemplate;
+
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
-import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
-import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.util.ReferenceItem;
-import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.html.HtmlTemplate;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -74,19 +83,23 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     private static final String MARK_TICKET_CATEGORIES_LIST = "ticket_categories_list";
     private static final String MARK_TICKET_PRECISIONS_LIST = "ticket_precisions_list";
     private static final String MARK_ID_TASK = "id_task";
-    
+
+    //Parameter
+    private static final String PARAMETER_ID_CATEGORY = "id_ticket_category";
+
+    // Message reply
+    private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_ERROR = "module.workflow.ticketing.task_modify_ticket_attribute.error";
     @Inject
     private TicketFormService _ticketFormService;
 
-    
     /**
-	 * {@inheritDoc}
-	 */
+         * {@inheritDoc}
+         */
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-    	TaskModifyTicketCategoryConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
-    	
+        TaskModifyTicketCategoryConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+
         EntryFilter entryFilter = new EntryFilter(  );
         entryFilter.setResourceType( TicketingConstants.RESOURCE_TYPE_INPUT );
         entryFilter.setEntryParentNull( EntryFilter.FILTER_TRUE );
@@ -99,59 +112,60 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         model.put( MARK_CONFIG, config );
         model.put( MARK_CONFIG_ALL_ENTRY, mergeConfigAndReference( config, lReferenceEntry ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_CONFIG, locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_CONFIG, locale,
+                model );
 
         return template.getHtml(  );
     }
 
     private ReferenceList mergeConfigAndReference( TaskModifyTicketCategoryConfig config, List<Entry> lReferenceEntry )
     {
-    	ReferenceList refList = new ReferenceList(  );
-    	
-    	for ( Entry refEntry : lReferenceEntry )
-        {
-	        ReferenceItem refItem = new ReferenceItem(  );
-	        refItem.setCode( Integer.toString( refEntry.getIdEntry(  ) ) );
-	        StringBuilder strInput = new StringBuilder( refEntry.getTitle(  ) );
-	        strInput.append( " (" ).append( refEntry.getEntryType(  ).getTitle(  ) ).append( ")" );
-	        refItem.setName( strInput.toString(  ) );
-	        refItem.setChecked( config.getSelectedEntries(  ).contains( refEntry.getIdEntry(  ) ) );
-	        
-	        refList.add( refItem );
-        }
-    	
-    	return refList;
-    }
-    
+        ReferenceList refList = new ReferenceList(  );
 
-	/**
-	 * {@inheritDoc}
-	 */
+        for ( Entry refEntry : lReferenceEntry )
+        {
+            ReferenceItem refItem = new ReferenceItem(  );
+            refItem.setCode( Integer.toString( refEntry.getIdEntry(  ) ) );
+
+            StringBuilder strInput = new StringBuilder( refEntry.getTitle(  ) );
+            strInput.append( " (" ).append( refEntry.getEntryType(  ).getTitle(  ) ).append( ")" );
+            refItem.setName( strInput.toString(  ) );
+            refItem.setChecked( config.getSelectedEntries(  ).contains( refEntry.getIdEntry(  ) ) );
+
+            refList.add( refItem );
+        }
+
+        return refList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
-    	TaskModifyTicketCategoryConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
-    	String[] tSelectedEntries = new String[  ]{  };
-    	config.clearSelectedEntries(  );
-    	
-    	if( request.getParameterValues( MARK_CONFIG_SELECTED_ENTRY ) != null )
-    	{
-    		tSelectedEntries = request.getParameterValues( MARK_CONFIG_SELECTED_ENTRY );
-    	}
-    	
-    	for ( String strSelectedEntry : tSelectedEntries )
-        {
-    		config.addSelectedEntry( Integer.parseInt( strSelectedEntry ) );
-        }
-    	
-    	this.getTaskConfigService(  ).update( config );
+        TaskModifyTicketCategoryConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        String[] tSelectedEntries = new String[] {  };
+        config.clearSelectedEntries(  );
 
-    	return null;
+        if ( request.getParameterValues( MARK_CONFIG_SELECTED_ENTRY ) != null )
+        {
+            tSelectedEntries = request.getParameterValues( MARK_CONFIG_SELECTED_ENTRY );
+        }
+
+        for ( String strSelectedEntry : tSelectedEntries )
+        {
+            config.addSelectedEntry( Integer.parseInt( strSelectedEntry ) );
+        }
+
+        this.getTaskConfigService(  ).update( config );
+
+        return null;
     }
 
-	/**
-     * {@inheritDoc}
-     */
+    /**
+    * {@inheritDoc}
+    */
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
         Locale locale, ITask task )
@@ -170,5 +184,47 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM, locale, model );
 
         return template.getHtml(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
+        ITask task )
+    {
+        List<GenericAttributeError> listFormErrors = new ArrayList<GenericAttributeError>(  );
+        Ticket ticket = getTicket( nIdResource, strResourceType );
+        String strError = StringUtils.EMPTY;
+
+        String strNewCategoryId = request.getParameter( PARAMETER_ID_CATEGORY );
+        int nNewCategoryId = Integer.parseInt( strNewCategoryId );
+
+        if ( nNewCategoryId > 0 )
+        {
+            TaskModifyTicketCategoryConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+            List<Entry> listEntry = TicketFormService.getFilterInputs( nNewCategoryId, config.getSelectedEntries(  ) );
+
+            for ( Entry entry : listEntry )
+            {
+                listFormErrors.addAll( _ticketFormService.getResponseEntry( request, entry.getIdEntry(  ),
+                        request.getLocale(  ), ticket ) );
+            }
+        }
+
+        if ( !listFormErrors.isEmpty(  ) )
+        {
+            for ( GenericAttributeError formError : listFormErrors )
+            {
+                strError += ( formError.getErrorMessage(  ) + "<br/>" );
+            }
+
+            String[] arrErrors = { strError };
+
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ATTRIBUTE_ERROR, arrErrors,
+                AdminMessage.TYPE_STOP );
+        }
+
+        return null;
     }
 }

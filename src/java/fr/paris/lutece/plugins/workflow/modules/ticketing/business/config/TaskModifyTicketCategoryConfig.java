@@ -33,50 +33,49 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.config;
 
+import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 /**
  *
  */
 public class TaskModifyTicketCategoryConfig extends TaskConfig
 {
-	private List<Integer> _listSelectedEntries;
-	
-	
+    private List<Integer> _listSelectedEntries;
 
-	/**
-	 * Default constructor, init list
-	 */
+    /**
+     * Default constructor, init list
+     */
     public TaskModifyTicketCategoryConfig(  )
     {
-	    super(  );
-	    this._listSelectedEntries = new ArrayList<Integer>(  );
+        super(  );
+        this._listSelectedEntries = new ArrayList<Integer>(  );
     }
 
-	/**
-	 * @return the _lSelectedEntries
-	 */
-	public List<Integer> getSelectedEntries()
-	{
-		return _listSelectedEntries;
-	}
+    /**
+     * @return the _lSelectedEntries
+     */
+    public List<Integer> getSelectedEntries(  )
+    {
+        return _listSelectedEntries;
+    }
 
-	/**
-	 * @param _listSelectedEntries
-	 */
-	public void addSelectedEntry( Integer _nSelectedEntry )
-	{
-		this._listSelectedEntries.add( _nSelectedEntry );
-	}
-	
-	/**
-	 * remove all selected entries
-	 */
-	public void clearSelectedEntries(  )
-	{
-		this._listSelectedEntries = new ArrayList<Integer>(  );
-	}
+    /**
+     * @param _listSelectedEntries
+     */
+    public void addSelectedEntry( Integer _nSelectedEntry )
+    {
+        this._listSelectedEntries.add( _nSelectedEntry );
+    }
+
+    /**
+     * remove all selected entries
+     */
+    public void clearSelectedEntries(  )
+    {
+        this._listSelectedEntries = new ArrayList<Integer>(  );
+    }
 }

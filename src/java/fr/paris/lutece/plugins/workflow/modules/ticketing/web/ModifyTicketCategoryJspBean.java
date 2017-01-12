@@ -33,10 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
-
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.service.TicketResourceIdService;
@@ -51,6 +47,11 @@ import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.constants.Messages;
+
+import org.apache.commons.lang.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+
 
 @Controller( controllerJsp = "ModifyTicketCategory.jsp", controllerPath = TicketingConstants.ADMIN_CONTROLLLER_PATH, right = "TICKETING_TICKETS_MANAGEMENT" )
 public class ModifyTicketCategoryJspBean extends MVCAdminJspBean
@@ -67,7 +68,6 @@ public class ModifyTicketCategoryJspBean extends MVCAdminJspBean
 
     // Beans
     private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE = "workflow-ticketing.taskModifyTicketCategoryConfigService";
-
     private final TicketFormService _ticketFormService = SpringContextService.getBean( TicketFormService.BEAN_NAME );
     private final ITaskConfigService _taskModifyTicketCategoryConfigService = SpringContextService.getBean( BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE );
 
@@ -87,16 +87,19 @@ public class ModifyTicketCategoryJspBean extends MVCAdminJspBean
             return redirect( request,
                 AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP ) );
         }
+
         String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
-        if ( !StringUtils.isEmpty( strIdCategory ) && StringUtils.isNumeric( strIdCategory ) 
-        		&& !StringUtils.isEmpty( strIdTask ) && StringUtils.isNumeric( strIdTask ) )
+
+        if ( !StringUtils.isEmpty( strIdCategory ) && StringUtils.isNumeric( strIdCategory ) &&
+                !StringUtils.isEmpty( strIdTask ) && StringUtils.isNumeric( strIdTask ) )
         {
             int nIdCategory = Integer.parseInt( strIdCategory );
             int nIdTask = Integer.parseInt( strIdTask );
             TaskModifyTicketCategoryConfig config = _taskModifyTicketCategoryConfigService.findByPrimaryKey( nIdTask );
-            
-            return _ticketFormService.getHtmlFormInputs( getLocale(  ), false, nIdCategory, config.getSelectedEntries(  ), request );
+
+            return _ticketFormService.getHtmlFormInputs( getLocale(  ), false, nIdCategory,
+                config.getSelectedEntries(  ), request );
         }
 
         return StringUtils.EMPTY;

@@ -50,14 +50,15 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -68,7 +69,10 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 {
     // Messages
     private static final String MESSAGE_MODIFY_TICKET_CATEGORY = "module.workflow.ticketing.task_modify_ticket_category.labelModifyTicketCategory";
+    private static final String MESSAGE_MODIFY_TICKET_TYPE_INFORMATION = "module.workflow.ticketing.task_modify_ticket_type.information";
+    private static final String MESSAGE_MODIFY_TICKET_DOMAIN_INFORMATION = "module.workflow.ticketing.task_modify_ticket_domain.information";
     private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION = "module.workflow.ticketing.task_modify_ticket_category.information";
+    private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION = "module.workflow.ticketing.task_modify_ticket_attribute.information";
 
     // PARAMETERS
     public static final String PARAMETER_TICKET_CATEGORY_ID = "id_ticket_category";
@@ -78,10 +82,8 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
     // Beans
     private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE = "workflow-ticketing.taskModifyTicketCategoryConfigService";
-
     @Inject
     private TicketFormService _ticketFormService;
-
     @Inject
     @Named( BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE )
     private ITaskConfigService _taskModifyTicketCategoryConfigService;
@@ -95,39 +97,32 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            String strNewCategoryId = request.getParameter( PARAMETER_TICKET_CATEGORY_ID );
-            int nNewCategoryId = Integer.parseInt( strNewCategoryId );
             String strNewTypeId = request.getParameter( PARAMETER_TICKET_TYPE_ID );
             int nNewTypeId = Integer.parseInt( strNewTypeId );
             String strNewDomainId = request.getParameter( PARAMETER_TICKET_DOMAIN_ID );
             int nNewDomainId = Integer.parseInt( strNewDomainId );
-
-            String strNewTypeLabel = TicketTypeHome.findByPrimaryKey( nNewTypeId ).getLabel(  );
-            String strNewDomainLabel = TicketDomainHome.findByPrimaryKey( nNewDomainId ).getLabel(  );
-
+            String strNewCategoryId = request.getParameter( PARAMETER_TICKET_CATEGORY_ID );
+            int nNewCategoryId = Integer.parseInt( strNewCategoryId );
             TicketCategory newTicketCategory = TicketCategoryHome.findByPrimaryKey( nNewCategoryId );
             TicketCategory previousTicketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getTicketCategory(  )
                                                                                                .getId(  ) );
+
+            String strNewTypeLabel = TicketTypeHome.findByPrimaryKey( nNewTypeId ).getLabel(  );
+            String strPreviousTypeLabel = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType(  ) ).getLabel(  );
+            String strNewDomainLabel = TicketDomainHome.findByPrimaryKey( nNewDomainId ).getLabel(  );
+            String strPreviousDomainLabel = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain(  ) ).getLabel(  );
             String strNewCategoryLabel = newTicketCategory.getLabel(  );
             String strPreviousCategoryLabel = previousTicketCategory.getLabel(  );
 
-            StringBuilder sb = new StringBuilder(  );
-
             if ( StringUtils.isNotEmpty( newTicketCategory.getPrecision(  ) ) )
             {
-                sb.append( strNewCategoryLabel ).append( SEPARATOR ).append( newTicketCategory.getPrecision(  ) );
-                strNewCategoryLabel = sb.toString(  );
+                strNewCategoryLabel += ( SEPARATOR + newTicketCategory.getPrecision(  ) );
             }
 
             if ( StringUtils.isNotEmpty( previousTicketCategory.getPrecision(  ) ) )
             {
-                sb = new StringBuilder(  );
-                sb.append( strPreviousCategoryLabel ).append( SEPARATOR ).append( previousTicketCategory.getPrecision(  ) );
-                strPreviousCategoryLabel = sb.toString(  );
+                strPreviousCategoryLabel += ( SEPARATOR + previousTicketCategory.getPrecision(  ) );
             }
-
-            String strPreviousDomainLabel = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain(  ) ).getLabel(  );
-            String strPreviousTypeLabel = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType(  ) ).getLabel(  );
 
             ticket.setIdTicketType( nNewTypeId );
             ticket.setIdTicketDomain( nNewDomainId );
@@ -138,47 +133,101 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
             TicketHome.update( ticket );
 
+            if ( !strPreviousTypeLabel.equals( strNewTypeLabel ) )
+            {
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
+                            MESSAGE_MODIFY_TICKET_TYPE_INFORMATION, Locale.FRENCH ), strPreviousTypeLabel,
+                        strNewTypeLabel );
+            }
+
+            if ( !strPreviousDomainLabel.equals( strNewDomainLabel ) )
+            {
+                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( 
+                        MESSAGE_MODIFY_TICKET_DOMAIN_INFORMATION, Locale.FRENCH ), strPreviousDomainLabel,
+                    strNewDomainLabel );
+            }
+
+            if ( !strPreviousCategoryLabel.equals( strNewCategoryLabel ) )
+            {
+                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( 
+                        MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ), strPreviousCategoryLabel,
+                    strNewCategoryLabel );
+            }
+
             if ( ticket.getTicketCategory(  ).getId(  ) > 0 )
             {
                 TaskModifyTicketCategoryConfig config = _taskModifyTicketCategoryConfigService.findByPrimaryKey( getId(  ) );
-                List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory(  ).getId(  ), config.getSelectedEntries() );
+                List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory(  ).getId(  ),
+                        config.getSelectedEntries(  ) );
 
                 for ( Entry entry : listEntry )
                 {
+                    String strPreviousAttributeValue = StringUtils.EMPTY;
+                    String strNewAttributeValue = StringUtils.EMPTY;
+
                     Iterator<Response> iterator = ticket.getListResponse(  ).iterator(  );
+
                     while ( iterator.hasNext(  ) )
                     {
                         Response response = iterator.next(  );
+
                         if ( response.getEntry(  ).getIdEntry(  ) == entry.getIdEntry(  ) )
                         {
+                            if ( response.getResponseValue(  ) != null )
+                            {
+                                strPreviousAttributeValue += ( " " + response.getResponseValue(  ) );
+                            }
+                            else if ( ( response.getFile(  ) != null ) && ( response.getFile(  ).getTitle(  ) != null ) )
+                            {
+                                strPreviousAttributeValue += ( " " + response.getFile(  ).getTitle(  ) );
+                            }
+
                             iterator.remove(  );
                         }
                     }
+
                     _ticketFormService.getResponseEntry( request, entry.getIdEntry(  ), locale, ticket );
+
+                    for ( Response response : ticket.getListResponse(  ) )
+                    {
+                        if ( response.getEntry(  ).getIdEntry(  ) == entry.getIdEntry(  ) )
+                        {
+                            if ( response.getResponseValue(  ) != null )
+                            {
+                                strNewAttributeValue += ( " " + response.getResponseValue(  ) );
+                            }
+                            else if ( ( response.getFile(  ) != null ) && ( response.getFile(  ).getTitle(  ) != null ) )
+                            {
+                                strNewAttributeValue += ( " " + response.getFile(  ).getTitle(  ) );
+                            }
+                        }
+                    }
+
+                    if ( !strPreviousAttributeValue.equals( strNewAttributeValue ) )
+                    {
+                        strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( 
+                                MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION, Locale.FRENCH ), entry.getTitle(  ),
+                            strPreviousAttributeValue, strNewAttributeValue );
+                    }
                 }
 
-	            // remove and add generic attributes responses
-	            TicketHome.removeTicketResponse( ticket.getId(  ) );
+                // remove and add generic attributes responses
+                TicketHome.removeTicketResponse( ticket.getId(  ) );
 
-	            if ( ( ticket.getListResponse(  ) != null ) && !ticket.getListResponse(  ).isEmpty(  ) )
-	            {
-	                for ( Response response : ticket.getListResponse(  ) )
-	                {
-	                    ResponseHome.create( response );
-	                    TicketHome.insertTicketResponse( ticket.getId(  ), response.getIdResponse(  ) );
-	                }
-	            }
+                if ( ( ticket.getListResponse(  ) != null ) && !ticket.getListResponse(  ).isEmpty(  ) )
+                {
+                    for ( Response response : ticket.getListResponse(  ) )
+                    {
+                        ResponseHome.create( response );
+                        TicketHome.insertTicketResponse( ticket.getId(  ), response.getIdResponse(  ) );
+                    }
+                }
             }
+        }
 
-            if ( !strPreviousTypeLabel.equals( strNewTypeLabel ) ||
-                    !strPreviousDomainLabel.equals( strNewDomainLabel ) ||
-                    !strPreviousCategoryLabel.equals( strNewCategoryLabel ) )
-            {
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ), strPreviousTypeLabel,
-                        strPreviousDomainLabel, strPreviousCategoryLabel, strNewTypeLabel, strNewDomainLabel,
-                        strNewCategoryLabel );
-            }
+        if ( !strTaskInformation.equals( StringUtils.EMPTY ) )
+        {
+            strTaskInformation = strTaskInformation.substring( 0, strTaskInformation.length(  ) - 5 );
         }
 
         return strTaskInformation;
