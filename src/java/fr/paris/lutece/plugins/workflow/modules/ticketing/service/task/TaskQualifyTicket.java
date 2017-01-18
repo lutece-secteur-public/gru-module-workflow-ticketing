@@ -47,7 +47,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to qualify the ticket
  *
@@ -70,7 +69,7 @@ public class TaskQualifyTicket extends AbstractTicketingTask
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
-        StringBuilder sb = new StringBuilder(  );
+        StringBuilder sb = new StringBuilder( );
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
@@ -81,13 +80,13 @@ public class TaskQualifyTicket extends AbstractTicketingTask
 
             String strPriority = request.getParameter( PARAMETER_TICKET_PRIORITY );
             int nPriority = Integer.parseInt( strPriority );
-            TicketPriority priorityBefore = TicketPriority.valueOf( ticket.getPriority(  ) );
+            TicketPriority priorityBefore = TicketPriority.valueOf( ticket.getPriority( ) );
             TicketPriority priorityAfter = TicketPriority.valueOf( nPriority );
             ticket.setPriority( nPriority );
 
             String strCriticality = request.getParameter( PARAMETER_TICKET_CRITICALITY );
             int nCriticality = Integer.parseInt( strCriticality );
-            TicketCriticality criticalityBefore = TicketCriticality.valueOf( ticket.getCriticality(  ) );
+            TicketCriticality criticalityBefore = TicketCriticality.valueOf( ticket.getCriticality( ) );
             TicketCriticality criticalityAfter = TicketCriticality.valueOf( nCriticality );
             ticket.setCriticality( nCriticality );
 
@@ -95,10 +94,8 @@ public class TaskQualifyTicket extends AbstractTicketingTask
 
             if ( priorityBefore != priorityAfter )
             {
-                sb.append( MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY, Locale.FRENCH ),
-                        priorityBefore.getLocalizedMessage( Locale.FRENCH ),
-                        priorityAfter.getLocalizedMessage( Locale.FRENCH ) ) );
+                sb.append( MessageFormat.format( I18nService.getLocalizedString( MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY, Locale.FRENCH ),
+                        priorityBefore.getLocalizedMessage( Locale.FRENCH ), priorityAfter.getLocalizedMessage( Locale.FRENCH ) ) );
 
                 bPriorityChanged = true;
             }
@@ -110,13 +107,11 @@ public class TaskQualifyTicket extends AbstractTicketingTask
                     sb.append( NEW_LINE );
                 }
 
-                sb.append( MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_QUALIFY_TICKET_INFORMATION_CRITICALITY, Locale.FRENCH ),
-                        criticalityBefore.getLocalizedMessage( Locale.FRENCH ),
-                        criticalityAfter.getLocalizedMessage( Locale.FRENCH ) ) );
+                sb.append( MessageFormat.format( I18nService.getLocalizedString( MESSAGE_QUALIFY_TICKET_INFORMATION_CRITICALITY, Locale.FRENCH ),
+                        criticalityBefore.getLocalizedMessage( Locale.FRENCH ), criticalityAfter.getLocalizedMessage( Locale.FRENCH ) ) );
             }
 
-            strTaskInformation = sb.toString(  );
+            strTaskInformation = sb.toString( );
         }
 
         return strTaskInformation;

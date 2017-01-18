@@ -60,7 +60,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to modify the ticket category and so, its domain and type
  *
@@ -104,30 +103,29 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
             String strNewCategoryId = request.getParameter( PARAMETER_TICKET_CATEGORY_ID );
             int nNewCategoryId = Integer.parseInt( strNewCategoryId );
             TicketCategory newTicketCategory = TicketCategoryHome.findByPrimaryKey( nNewCategoryId );
-            TicketCategory previousTicketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getTicketCategory(  )
-                                                                                               .getId(  ) );
+            TicketCategory previousTicketCategory = TicketCategoryHome.findByPrimaryKey( ticket.getTicketCategory( ).getId( ) );
 
-            String strNewTypeLabel = TicketTypeHome.findByPrimaryKey( nNewTypeId ).getLabel(  );
-            String strPreviousTypeLabel = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType(  ) ).getLabel(  );
-            String strNewDomainLabel = TicketDomainHome.findByPrimaryKey( nNewDomainId ).getLabel(  );
-            String strPreviousDomainLabel = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain(  ) ).getLabel(  );
-            String strNewCategoryLabel = newTicketCategory.getLabel(  );
-            String strPreviousCategoryLabel = previousTicketCategory.getLabel(  );
+            String strNewTypeLabel = TicketTypeHome.findByPrimaryKey( nNewTypeId ).getLabel( );
+            String strPreviousTypeLabel = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType( ) ).getLabel( );
+            String strNewDomainLabel = TicketDomainHome.findByPrimaryKey( nNewDomainId ).getLabel( );
+            String strPreviousDomainLabel = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain( ) ).getLabel( );
+            String strNewCategoryLabel = newTicketCategory.getLabel( );
+            String strPreviousCategoryLabel = previousTicketCategory.getLabel( );
 
-            if ( StringUtils.isNotEmpty( newTicketCategory.getPrecision(  ) ) )
+            if ( StringUtils.isNotEmpty( newTicketCategory.getPrecision( ) ) )
             {
-                strNewCategoryLabel += ( SEPARATOR + newTicketCategory.getPrecision(  ) );
+                strNewCategoryLabel += ( SEPARATOR + newTicketCategory.getPrecision( ) );
             }
 
-            if ( StringUtils.isNotEmpty( previousTicketCategory.getPrecision(  ) ) )
+            if ( StringUtils.isNotEmpty( previousTicketCategory.getPrecision( ) ) )
             {
-                strPreviousCategoryLabel += ( SEPARATOR + previousTicketCategory.getPrecision(  ) );
+                strPreviousCategoryLabel += ( SEPARATOR + previousTicketCategory.getPrecision( ) );
             }
 
             ticket.setIdTicketType( nNewTypeId );
             ticket.setIdTicketDomain( nNewDomainId );
 
-            TicketCategory ticketCategory = new TicketCategory(  );
+            TicketCategory ticketCategory = new TicketCategory( );
             ticketCategory.setId( nNewCategoryId );
             ticket.setTicketCategory( ticketCategory );
 
@@ -135,91 +133,89 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
             if ( !strPreviousTypeLabel.equals( strNewTypeLabel ) )
             {
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_MODIFY_TICKET_TYPE_INFORMATION, Locale.FRENCH ), strPreviousTypeLabel,
-                        strNewTypeLabel );
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_TYPE_INFORMATION, Locale.FRENCH ),
+                        strPreviousTypeLabel, strNewTypeLabel );
             }
 
             if ( !strPreviousDomainLabel.equals( strNewDomainLabel ) )
             {
-                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( 
-                        MESSAGE_MODIFY_TICKET_DOMAIN_INFORMATION, Locale.FRENCH ), strPreviousDomainLabel,
-                    strNewDomainLabel );
+                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_DOMAIN_INFORMATION, Locale.FRENCH ),
+                        strPreviousDomainLabel, strNewDomainLabel );
             }
 
             if ( !strPreviousCategoryLabel.equals( strNewCategoryLabel ) )
             {
-                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( 
-                        MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ), strPreviousCategoryLabel,
-                    strNewCategoryLabel );
+                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ),
+                        strPreviousCategoryLabel, strNewCategoryLabel );
             }
 
-            if ( ticket.getTicketCategory(  ).getId(  ) > 0 )
+            if ( ticket.getTicketCategory( ).getId( ) > 0 )
             {
-                TaskModifyTicketCategoryConfig config = _taskModifyTicketCategoryConfigService.findByPrimaryKey( getId(  ) );
-                List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory(  ).getId(  ),
-                        config.getSelectedEntries(  ) );
+                TaskModifyTicketCategoryConfig config = _taskModifyTicketCategoryConfigService.findByPrimaryKey( getId( ) );
+                List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), config.getSelectedEntries( ) );
 
                 for ( Entry entry : listEntry )
                 {
                     String strPreviousAttributeValue = StringUtils.EMPTY;
                     String strNewAttributeValue = StringUtils.EMPTY;
 
-                    Iterator<Response> iterator = ticket.getListResponse(  ).iterator(  );
+                    Iterator<Response> iterator = ticket.getListResponse( ).iterator( );
 
-                    while ( iterator.hasNext(  ) )
+                    while ( iterator.hasNext( ) )
                     {
-                        Response response = iterator.next(  );
+                        Response response = iterator.next( );
 
-                        if ( response.getEntry(  ).getIdEntry(  ) == entry.getIdEntry(  ) )
+                        if ( response.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) )
                         {
-                            if ( response.getResponseValue(  ) != null )
+                            if ( response.getResponseValue( ) != null )
                             {
-                                strPreviousAttributeValue += ( " " + response.getResponseValue(  ) );
+                                strPreviousAttributeValue += ( " " + response.getResponseValue( ) );
                             }
-                            else if ( ( response.getFile(  ) != null ) && ( response.getFile(  ).getTitle(  ) != null ) )
-                            {
-                                strPreviousAttributeValue += ( " " + response.getFile(  ).getTitle(  ) );
-                            }
+                            else
+                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                                {
+                                    strPreviousAttributeValue += ( " " + response.getFile( ).getTitle( ) );
+                                }
 
-                            iterator.remove(  );
+                            iterator.remove( );
                         }
                     }
 
-                    _ticketFormService.getResponseEntry( request, entry.getIdEntry(  ), locale, ticket );
+                    _ticketFormService.getResponseEntry( request, entry.getIdEntry( ), locale, ticket );
 
-                    for ( Response response : ticket.getListResponse(  ) )
+                    for ( Response response : ticket.getListResponse( ) )
                     {
-                        if ( response.getEntry(  ).getIdEntry(  ) == entry.getIdEntry(  ) )
+                        if ( response.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) )
                         {
-                            if ( response.getResponseValue(  ) != null )
+                            if ( response.getResponseValue( ) != null )
                             {
-                                strNewAttributeValue += ( " " + response.getResponseValue(  ) );
+                                strNewAttributeValue += ( " " + response.getResponseValue( ) );
                             }
-                            else if ( ( response.getFile(  ) != null ) && ( response.getFile(  ).getTitle(  ) != null ) )
-                            {
-                                strNewAttributeValue += ( " " + response.getFile(  ).getTitle(  ) );
-                            }
+                            else
+                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                                {
+                                    strNewAttributeValue += ( " " + response.getFile( ).getTitle( ) );
+                                }
                         }
                     }
 
                     if ( !strPreviousAttributeValue.equals( strNewAttributeValue ) )
                     {
-                        strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( 
-                                MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION, Locale.FRENCH ), entry.getTitle(  ),
-                            strPreviousAttributeValue, strNewAttributeValue );
+                        strTaskInformation += MessageFormat.format(
+                                I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION, Locale.FRENCH ), entry.getTitle( ),
+                                strPreviousAttributeValue, strNewAttributeValue );
                     }
                 }
 
                 // remove and add generic attributes responses
-                TicketHome.removeTicketResponse( ticket.getId(  ) );
+                TicketHome.removeTicketResponse( ticket.getId( ) );
 
-                if ( ( ticket.getListResponse(  ) != null ) && !ticket.getListResponse(  ).isEmpty(  ) )
+                if ( ( ticket.getListResponse( ) != null ) && !ticket.getListResponse( ).isEmpty( ) )
                 {
-                    for ( Response response : ticket.getListResponse(  ) )
+                    for ( Response response : ticket.getListResponse( ) )
                     {
                         ResponseHome.create( response );
-                        TicketHome.insertTicketResponse( ticket.getId(  ), response.getIdResponse(  ) );
+                        TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
                     }
                 }
             }
@@ -227,7 +223,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
         if ( !strTaskInformation.equals( StringUtils.EMPTY ) )
         {
-            strTaskInformation = strTaskInformation.substring( 0, strTaskInformation.length(  ) - 5 );
+            strTaskInformation = strTaskInformation.substring( 0, strTaskInformation.length( ) - 5 );
         }
 
         return strTaskInformation;

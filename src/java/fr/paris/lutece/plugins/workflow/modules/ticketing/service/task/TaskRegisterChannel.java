@@ -48,7 +48,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to register the channel on ticket creation
  *
@@ -73,12 +72,12 @@ public class TaskRegisterChannel extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            idChannel = ticket.getChannel(  ).getId(  );
+            idChannel = ticket.getChannel( ).getId( );
 
-            ResourceHistory resourceHistory = new ResourceHistory(  );
+            ResourceHistory resourceHistory = new ResourceHistory( );
             resourceHistory.setIdHistory( nIdResourceHistory );
             resourceHistory.setIdChannel( idChannel );
-            _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin(  ) );
+            _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin( ) );
         }
 
         return strChannel;

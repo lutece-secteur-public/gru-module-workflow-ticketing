@@ -39,7 +39,6 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.List;
 
-
 /**
  *
  * ResourceHistoryDAO
@@ -47,10 +46,9 @@ import java.util.List;
  */
 public class ResourceHistoryDAO implements IResourceHistoryDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_channel  " +
-        "FROM workflow_resource_history_ticketing WHERE id_history=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_history_ticketing " +
-        "(id_history,id_channel ) VALUES( ?, ? )";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_channel  "
+            + "FROM workflow_resource_history_ticketing WHERE id_history=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_history_ticketing " + "(id_history,id_channel ) VALUES( ?, ? )";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_resource_history_ticketing WHERE id_history=?";
     private static final String SQL_QUERY_DELETE_BY_RESOURCE = "DELETE wrht FROM workflow_resource_history wrh, workflow_resource_history_ticketing wrht WHERE wrh.id_history = wrht.id_history AND wrh.id_resource = ? AND wrh.resource_type = ?";
 
@@ -62,11 +60,11 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
 
-        daoUtil.setInt( 1, resourceHistory.getIdHistory(  ) );
-        daoUtil.setInt( 2, resourceHistory.getIdChannel(  ) );
+        daoUtil.setInt( 1, resourceHistory.getIdHistory( ) );
+        daoUtil.setInt( 2, resourceHistory.getIdChannel( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -81,16 +79,16 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
 
         daoUtil.setInt( 1, nIdHistory );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            resourceHistory = new ResourceHistory(  );
+            resourceHistory = new ResourceHistory( );
             resourceHistory.setIdHistory( daoUtil.getInt( 1 ) );
             resourceHistory.setIdChannel( daoUtil.getInt( 2 ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return resourceHistory;
     }
@@ -105,8 +103,8 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
 
         daoUtil.setInt( 1, nIdHistory );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -120,7 +118,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
         daoUtil.setInt( 1, nIdResource );
         daoUtil.setString( 2, strResourceType );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

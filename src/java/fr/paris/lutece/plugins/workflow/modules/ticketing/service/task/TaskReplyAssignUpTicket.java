@@ -57,7 +57,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to respond to assigner after assigning up
  *
@@ -71,10 +70,8 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
     private static final String MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND = "module.workflow.ticketing.task_reply_assign_up_ticket.no_user_found";
     private static final String PROPERTY_ASSIGN_UP_ACTION_ID = "workflow-ticketing.workflow.action.id.assignUp";
     private static final String PROPERTY_ASSIGN_TO_UNIT_ACTION_ID = "workflow-ticketing.workflow.action.id.assignToUnit";
-    private static final int ASSIGN_UP_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID,
-            304 );
-    private static final int ASSIGN_TO_UNIT_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_TO_UNIT_ACTION_ID,
-            305 );
+    private static final int ASSIGN_UP_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID, 304 );
+    private static final int ASSIGN_TO_UNIT_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_TO_UNIT_ACTION_ID, 305 );
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -86,39 +83,39 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
-            AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
+            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit( );
+            AssigneeUser assigneeUser = ticket.getAssigneeUser( );
             String strCurrentUnit = null;
 
             if ( assigneeUnit != null )
             {
-                strCurrentUnit = assigneeUnit.getName(  );
+                strCurrentUnit = assigneeUnit.getName( );
             }
 
             if ( assigneeUser == null )
             {
-                assigneeUser = new AssigneeUser(  );
+                assigneeUser = new AssigneeUser( );
             }
 
             AdminUser user = getAssigner( nIdResourceHistory );
 
-            if ( ( user != null ) && ( user.getUserId(  ) != assigneeUser.getAdminUserId(  ) ) )
+            if ( ( user != null ) && ( user.getUserId( ) != assigneeUser.getAdminUserId( ) ) )
             {
-                assigneeUser.setAdminUserId( user.getUserId(  ) );
-                assigneeUser.setEmail( user.getEmail(  ) );
-                assigneeUser.setFirstname( user.getFirstName(  ) );
-                assigneeUser.setLastname( user.getLastName(  ) );
+                assigneeUser.setAdminUserId( user.getUserId( ) );
+                assigneeUser.setEmail( user.getEmail( ) );
+                assigneeUser.setFirstname( user.getFirstName( ) );
+                assigneeUser.setLastname( user.getLastName( ) );
                 ticket.setAssigneeUser( assigneeUser );
 
-                if ( ticket.getAssignerUnit(  ) != null )
+                if ( ticket.getAssignerUnit( ) != null )
                 {
-                    ticket.setAssigneeUnit( ticket.getAssignerUnit(  ) );
+                    ticket.setAssigneeUnit( ticket.getAssignerUnit( ) );
                 }
                 else
                 {
-                    List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId(  ) );
+                    List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
 
-                    if ( ( unitsList != null ) && ( unitsList.size(  ) > 0 ) )
+                    if ( ( unitsList != null ) && ( unitsList.size( ) > 0 ) )
                     {
                         assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
                         ticket.setAssigneeUnit( assigneeUnit );
@@ -130,20 +127,15 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
 
                 TicketHome.update( ticket );
 
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_REPLY_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
                         ( strCurrentUnit != null ) ? strCurrentUnit : StringUtils.EMPTY,
-                        ( ticket.getAssigneeUser(  ) != null )
-                        ? ( ticket.getAssigneeUser(  ).getFirstname(  ) + " " +
-                        ticket.getAssigneeUser(  ).getLastname(  ) )
-                        : I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER, Locale.FRENCH ),
-                        ( ticket.getAssigneeUnit(  ) != null ) ? ticket.getAssigneeUnit(  ).getName(  )
-                                                               : StringUtils.EMPTY );
+                        ( ticket.getAssigneeUser( ) != null ) ? ( ticket.getAssigneeUser( ).getFirstname( ) + " " + ticket.getAssigneeUser( ).getLastname( ) )
+                                : I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER, Locale.FRENCH ),
+                        ( ticket.getAssigneeUnit( ) != null ) ? ticket.getAssigneeUnit( ).getName( ) : StringUtils.EMPTY );
             }
             else
             {
-                strTaskInformation = I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND,
-                        Locale.FRENCH );
+                strTaskInformation = I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND, Locale.FRENCH );
             }
         }
 
@@ -154,34 +146,35 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
 
     /**
      * Get the user assigning up the ticket corresponding to the resource of the resourceHistory id
-     * @param nIdResourceHistory the resourceHistory id
+     * 
+     * @param nIdResourceHistory
+     *            the resourceHistory id
      * @return the user assigning up the ticket corresponding to the resource of the resourceHistory id , {@code null} otherwise
      */
     protected AdminUser getAssigner( int nIdResourceHistory )
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
 
-        List<Integer> listIdResource = new ArrayList<Integer>(  );
-        listIdResource.add( resourceHistory.getIdResource(  ) );
+        List<Integer> listIdResource = new ArrayList<Integer>( );
+        listIdResource.add( resourceHistory.getIdResource( ) );
 
-        List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource,
-                resourceHistory.getResourceType(  ), resourceHistory.getWorkflow(  ).getId(  ) );
+        List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource, resourceHistory.getResourceType( ),
+                resourceHistory.getWorkflow( ).getId( ) );
 
         boolean isAssignUpActionFound = false;
-        ListIterator<Integer> iterator = listIdHistory.listIterator( listIdHistory.size(  ) );
+        ListIterator<Integer> iterator = listIdHistory.listIterator( listIdHistory.size( ) );
 
-        while ( !isAssignUpActionFound && iterator.hasPrevious(  ) )
+        while ( !isAssignUpActionFound && iterator.hasPrevious( ) )
         {
-            resourceHistory = _resourceHistoryService.findByPrimaryKey( iterator.previous(  ) );
+            resourceHistory = _resourceHistoryService.findByPrimaryKey( iterator.previous( ) );
 
-            if ( ( resourceHistory.getAction(  ).getId(  ) == ASSIGN_UP_ACTION_ID ) ||
-                    ( resourceHistory.getAction(  ).getId(  ) == ASSIGN_TO_UNIT_ACTION_ID ) )
+            if ( ( resourceHistory.getAction( ).getId( ) == ASSIGN_UP_ACTION_ID ) || ( resourceHistory.getAction( ).getId( ) == ASSIGN_TO_UNIT_ACTION_ID ) )
             {
                 isAssignUpActionFound = true;
             }
         }
 
-        return ( isAssignUpActionFound ? AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode(  ) ) : null );
+        return ( isAssignUpActionFound ? AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) ) : null );
     }
 
     @Override

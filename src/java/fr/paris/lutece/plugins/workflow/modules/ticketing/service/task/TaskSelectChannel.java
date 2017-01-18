@@ -50,7 +50,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to reply to a ticket
  *
@@ -79,23 +78,21 @@ public class TaskSelectChannel extends AbstractTicketingTask
         int idChannel = TicketingConstants.NO_ID_CHANNEL;
 
         AdminUser user = AdminUserService.getAdminUser( request );
-        int nIdUserFront = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ADMINUSER_ID_FRONT,
-                TicketingConstants.PROPERTY_UNSET_INT );
+        int nIdUserFront = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ADMINUSER_ID_FRONT, TicketingConstants.PROPERTY_UNSET_INT );
 
-        if ( ( user != null ) && ( user.getUserId(  ) != nIdUserFront ) )
+        if ( ( user != null ) && ( user.getUserId( ) != nIdUserFront ) )
         {
             idChannel = Integer.parseInt( request.getParameter( TicketingConstants.PARAMETER_ID_CHANNEL ) );
         }
         else
         {
-            idChannel = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_CHANNEL_ID_FRONT,
-                    TicketingConstants.PROPERTY_UNSET_INT );
+            idChannel = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_CHANNEL_ID_FRONT, TicketingConstants.PROPERTY_UNSET_INT );
         }
 
-        ResourceHistory resourceHistory = new ResourceHistory(  );
+        ResourceHistory resourceHistory = new ResourceHistory( );
         resourceHistory.setIdHistory( nIdResourceHistory );
         resourceHistory.setIdChannel( idChannel );
-        _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin(  ) );
+        _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin( ) );
 
         return strTaskInformation;
     }

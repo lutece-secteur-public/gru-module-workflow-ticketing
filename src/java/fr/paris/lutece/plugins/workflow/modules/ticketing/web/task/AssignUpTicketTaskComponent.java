@@ -50,7 +50,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TaskAssignUpTicket}
  *
@@ -60,7 +59,7 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
     // TEMPLATES
     private static final String TEMPLATE_TASK_ASSIGN_UP_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_up_ticket_form.html";
 
-    //MESSAGE
+    // MESSAGE
     private static final String MESSAGE_NO_SUPPORT_ENTITY_FOUND = "module.workflow.ticketing.task_assign_up_ticket.labelNoSupportEntiesFound";
 
     // MARKS
@@ -70,24 +69,23 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
-        ReferenceList lstRefSupportEntities = new ReferenceList(  );
+        ReferenceList lstRefSupportEntities = new ReferenceList( );
 
         AdminUser adminUser = AdminUserService.getAdminUser( request );
         List<SupportEntity> lstSupportEntity = SupportEntityHome.getEligibleSupportEntities( adminUser );
 
         for ( SupportEntity supportEntity : lstSupportEntity )
         {
-            ReferenceItem refItem = new ReferenceItem(  );
-            refItem.setName( supportEntity.getName(  ) );
-            refItem.setCode( String.valueOf( supportEntity.getUnit(  ).getUnitId(  ) ) );
+            ReferenceItem refItem = new ReferenceItem( );
+            refItem.setName( supportEntity.getName( ) );
+            refItem.setCode( String.valueOf( supportEntity.getUnit( ).getUnitId( ) ) );
             lstRefSupportEntities.add( refItem );
         }
 
-        if ( ( lstRefSupportEntities == null ) || ( lstRefSupportEntities.size(  ) == 0 ) )
+        if ( ( lstRefSupportEntities == null ) || ( lstRefSupportEntities.size( ) == 0 ) )
         {
             request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
             addError( I18nService.getLocalizedString( MESSAGE_NO_SUPPORT_ENTITY_FOUND, locale ) );
@@ -99,6 +97,6 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGN_UP_TICKET_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 }

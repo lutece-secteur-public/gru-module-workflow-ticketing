@@ -65,7 +65,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskEditTicket}
  *
@@ -93,7 +92,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
     private static final String PARAMETER_AGENT_SLOTS = "agent_slots";
     private static final String PARAMETER_TASK_ID = "id_task";
 
-    //action type
+    // action type
     private static final String ACTION_CONFIRM_REMOVE_ASSIGNMENT = "confirm_remove_assignment";
     private static final String ACTION_REMOVE_ASSIGNMENT = "remove_assignment";
     private static final String ACTION_SAVE_ASSIGNMENT = "save_user_assignment";
@@ -108,7 +107,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
 
     // Other constants
     private static final String SEPARATOR = "<hr>";
-    private List<ErrorMessage> _listInfos = new ArrayList<ErrorMessage>(  );
+    private List<ErrorMessage> _listInfos = new ArrayList<ErrorMessage>( );
     private String _strRoleKey = AppPropertiesService.getProperty( PROPERTY_AUTOMATIC_ASSIGNMENT_DOMAIN_RBAC_CODE );
 
     // SERVICES
@@ -125,32 +124,36 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        if ( !StringUtils.isEmpty( request.getParameter( PARAMETER_ACTION ) ) &&
-                request.getParameter( PARAMETER_ACTION ).equals( ACTION_DISPLAY_USER_CONFIG ) )
+        if ( !StringUtils.isEmpty( request.getParameter( PARAMETER_ACTION ) ) && request.getParameter( PARAMETER_ACTION ).equals( ACTION_DISPLAY_USER_CONFIG ) )
         {
             return getDisplayUserConfigForm( request, task, locale );
         }
-        else if ( !StringUtils.isEmpty( request.getParameter( PARAMETER_ACTION ) ) &&
-                request.getParameter( PARAMETER_ACTION ).equals( ACTION_ADD_NEW_USERCONFIG ) )
-        {
-            return getDisplayNewUserConfigForm( request, task, locale );
-        }
         else
-        {
-            return getDisplayGlobalConfigForm( task, locale );
-        }
+            if ( !StringUtils.isEmpty( request.getParameter( PARAMETER_ACTION ) )
+                    && request.getParameter( PARAMETER_ACTION ).equals( ACTION_ADD_NEW_USERCONFIG ) )
+            {
+                return getDisplayNewUserConfigForm( request, task, locale );
+            }
+            else
+            {
+                return getDisplayGlobalConfigForm( task, locale );
+            }
     }
 
     /**
      * return automatic assignment user config form
-     * @param request http request
-     * @param task task
-     * @param locale locale
+     * 
+     * @param request
+     *            http request
+     * @param task
+     *            task
+     * @param locale
+     *            locale
      * @return html content of user config form
      */
     private String getDisplayUserConfigForm( HttpServletRequest request, ITask task, Locale locale )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         List<AdminUser> listAdminUser = new ArrayList<AdminUser>( AdminUserHome.findByRole( _strRoleKey ) );
         String strSelectedUserAccessCode = request.getParameter( PARAMETER_USER_ACCESS_CODE );
         AdminUser adminUserSelected = null;
@@ -159,7 +162,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
         {
             for ( AdminUser adminUser : listAdminUser )
             {
-                if ( adminUser.getAccessCode(  ).equals( strSelectedUserAccessCode ) )
+                if ( adminUser.getAccessCode( ).equals( strSelectedUserAccessCode ) )
                 {
                     adminUserSelected = adminUser;
 
@@ -170,32 +173,33 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
 
         model.put( MARK_DOMAIN_USER_LIST, listAdminUser );
         model.put( MARK_SELECTED_AGENT, adminUserSelected );
-        model.put( MARK_AVAILABLE_SLOTS,
-            _automaticAssignmentService.getAvailableAutoAssignementList( task.getId(  ) ).getAssignedSuffix(  ) );
+        model.put( MARK_AVAILABLE_SLOTS, _automaticAssignmentService.getAvailableAutoAssignementList( task.getId( ) ).getAssignedSuffix( ) );
         model.put( MARK_INFOS, _listInfos );
 
         if ( adminUserSelected != null )
         {
-            model.put( MARK_AGENT_SLOTS,
-                _automaticAssignmentService.getUserAssignments( task.getId(  ), adminUserSelected ).getAssignedSuffix(  ) );
+            model.put( MARK_AGENT_SLOTS, _automaticAssignmentService.getUserAssignments( task.getId( ), adminUserSelected ).getAssignedSuffix( ) );
         }
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_AUTOMATIC_ASSIGNMENT_USER_CONFIG, locale,
-                model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_AUTOMATIC_ASSIGNMENT_USER_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * return automatic assignment user config form for unassigned users only
-     * @param request http request
-     * @param task task
-     * @param locale locale
+     * 
+     * @param request
+     *            http request
+     * @param task
+     *            task
+     * @param locale
+     *            locale
      * @return html content of user config form
      */
     private String getDisplayNewUserConfigForm( HttpServletRequest request, ITask task, Locale locale )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         List<AdminUser> listAdminUser = new ArrayList<AdminUser>( AdminUserHome.findByRole( _strRoleKey ) );
         String strSelectedUserAccessCode = request.getParameter( PARAMETER_USER_ACCESS_CODE );
         AdminUser adminUserSelected = null;
@@ -204,7 +208,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
         {
             for ( AdminUser adminUser : listAdminUser )
             {
-                if ( adminUser.getAccessCode(  ).equals( strSelectedUserAccessCode ) )
+                if ( adminUser.getAccessCode( ).equals( strSelectedUserAccessCode ) )
                 {
                     adminUserSelected = adminUser;
 
@@ -214,16 +218,15 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
         }
 
         List<AdminUser> listAdminUserUnassigned = new ArrayList<AdminUser>( listAdminUser );
-        List<UserAutomaticAssignmentConfig> listAdminUserAssigmentConfig = _automaticAssignmentService.getAllAutoAssignementConf( task.getId(  ) );
+        List<UserAutomaticAssignmentConfig> listAdminUserAssigmentConfig = _automaticAssignmentService.getAllAutoAssignementConf( task.getId( ) );
 
         for ( AdminUser adminUser : listAdminUser )
         {
             for ( UserAutomaticAssignmentConfig userConf : listAdminUserAssigmentConfig )
             {
-                if ( ( userConf.getAdminUser(  ) != null ) &&
-                        StringUtils.isNotEmpty( userConf.getAdminUser(  ).getAccessCode(  ) ) &&
-                        adminUser.getAccessCode(  ).equals( userConf.getAdminUser(  ).getAccessCode(  ) ) &&
-                        ( userConf.getAssignedSuffix(  ) != null ) && ( userConf.getAssignedSuffix(  ).size(  ) > 0 ) )
+                if ( ( userConf.getAdminUser( ) != null ) && StringUtils.isNotEmpty( userConf.getAdminUser( ).getAccessCode( ) )
+                        && adminUser.getAccessCode( ).equals( userConf.getAdminUser( ).getAccessCode( ) ) && ( userConf.getAssignedSuffix( ) != null )
+                        && ( userConf.getAssignedSuffix( ).size( ) > 0 ) )
                 {
                     listAdminUserUnassigned.remove( adminUser );
 
@@ -237,26 +240,27 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
         model.put( MARK_DOMAIN_USER_LIST, listAdminUser );
         model.put( MARK_SELECTED_AGENT, adminUserSelected );
         model.put( MARK_ADD_NEW_AGENT_CONFIG, true );
-        model.put( MARK_AVAILABLE_SLOTS,
-            _automaticAssignmentService.getAvailableAutoAssignementList( task.getId(  ) ).getAssignedSuffix(  ) );
+        model.put( MARK_AVAILABLE_SLOTS, _automaticAssignmentService.getAvailableAutoAssignementList( task.getId( ) ).getAssignedSuffix( ) );
         model.put( MARK_INFOS, _listInfos );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_AUTOMATIC_ASSIGNMENT_USER_CONFIG, locale,
-                model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_AUTOMATIC_ASSIGNMENT_USER_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * return automatic assignment global config form
-     * @param task task
-     * @param locale locale
+     * 
+     * @param task
+     *            task
+     * @param locale
+     *            locale
      * @return html content of global config form
      */
     private String getDisplayGlobalConfigForm( ITask task, Locale locale )
     {
-        List<UserAutomaticAssignmentConfig> listAdminUserAssigmentConfig = _automaticAssignmentService.getAllAutoAssignementConf( task.getId(  ) );
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        List<UserAutomaticAssignmentConfig> listAdminUserAssigmentConfig = _automaticAssignmentService.getAllAutoAssignementConf( task.getId( ) );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_USER_ASSIGNMENT_LIST, listAdminUserAssigmentConfig );
 
         List<AdminUser> listAdminUserDomain = new ArrayList<AdminUser>( AdminUserHome.findByRole( _strRoleKey ) );
@@ -264,8 +268,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
 
         for ( UserAutomaticAssignmentConfig userAssignmentConf : listAdminUserAssigmentConfig )
         {
-            if ( ( userAssignmentConf.getAdminUser(  ) == null ) ||
-                    StringUtils.isEmpty( userAssignmentConf.getAdminUser(  ).getAccessCode(  ) ) )
+            if ( ( userAssignmentConf.getAdminUser( ) == null ) || StringUtils.isEmpty( userAssignmentConf.getAdminUser( ).getAccessCode( ) ) )
             {
                 hasUnassignedSlots = true;
 
@@ -273,15 +276,14 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
             }
         }
 
-        int nbAssignedAgent = listAdminUserAssigmentConfig.size(  );
+        int nbAssignedAgent = listAdminUserAssigmentConfig.size( );
 
         if ( hasUnassignedSlots )
         {
             nbAssignedAgent--;
         }
 
-        if ( ( listAdminUserDomain != null ) && ( listAdminUserAssigmentConfig != null ) &&
-                ( nbAssignedAgent < listAdminUserDomain.size(  ) ) )
+        if ( ( listAdminUserDomain != null ) && ( listAdminUserAssigmentConfig != null ) && ( nbAssignedAgent < listAdminUserDomain.size( ) ) )
         {
             model.put( MARK_HAS_UNASSIGNED_AGENT, true );
         }
@@ -290,17 +292,20 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_AUTOMATIC_ASSIGNMENT_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * unassign all assignment for given user
-     * @param task task
-     * @param strUserAccessCode user access code
+     * 
+     * @param task
+     *            task
+     * @param strUserAccessCode
+     *            user access code
      */
     private void deleteUserAssignement( ITask task, String strUserAccessCode )
     {
-        _automaticAssignmentService.unassignByUser( task.getId(  ), strUserAccessCode );
+        _automaticAssignmentService.unassignByUser( task.getId( ), strUserAccessCode );
     }
 
     /**
@@ -311,8 +316,8 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
     {
         String strAction = request.getParameter( PARAMETER_ACTION );
         String strUserAccessCode = request.getParameter( PARAMETER_USER_ACCESS_CODE );
-        HashMap<String, String> mapParameters = new HashMap<String, String>(  );
-        _listInfos = new ArrayList<ErrorMessage>(  );
+        HashMap<String, String> mapParameters = new HashMap<String, String>( );
+        _listInfos = new ArrayList<ErrorMessage>( );
 
         if ( StringUtils.isNotBlank( strAction ) )
         {
@@ -320,40 +325,45 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
             {
                 return getConfirmRemoveUserAssignement( request, locale, task, strUserAccessCode );
             }
-            else if ( strAction.equals( ACTION_REMOVE_ASSIGNMENT ) )
-            {
-                deleteUserAssignement( task, strUserAccessCode );
-                addInfo( I18nService.getLocalizedString( MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_SUCCESSFUL_REMOVED, locale ) );
+            else
+                if ( strAction.equals( ACTION_REMOVE_ASSIGNMENT ) )
+                {
+                    deleteUserAssignement( task, strUserAccessCode );
+                    addInfo( I18nService.getLocalizedString( MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_SUCCESSFUL_REMOVED, locale ) );
 
-                return getDisplayConfigFormUrl( task, null );
-            }
-            else if ( strAction.equals( ACTION_SAVE_ASSIGNMENT ) )
-            {
-                storeUserAssignments( request, task, strUserAccessCode );
-                mapParameters.put( PARAMETER_ACTION, ACTION_DISPLAY_USER_CONFIG );
-                mapParameters.put( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
-                addInfo( I18nService.getLocalizedString( MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_SUCCESSFUL_SAVED, locale ) );
+                    return getDisplayConfigFormUrl( task, null );
+                }
+                else
+                    if ( strAction.equals( ACTION_SAVE_ASSIGNMENT ) )
+                    {
+                        storeUserAssignments( request, task, strUserAccessCode );
+                        mapParameters.put( PARAMETER_ACTION, ACTION_DISPLAY_USER_CONFIG );
+                        mapParameters.put( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
+                        addInfo( I18nService.getLocalizedString( MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_SUCCESSFUL_SAVED, locale ) );
 
-                return getDisplayConfigFormUrl( task, mapParameters );
-            }
-            else if ( strAction.equals( ACTION_DISPLAY_USER_CONFIG ) )
-            {
-                mapParameters.put( PARAMETER_ACTION, ACTION_DISPLAY_USER_CONFIG );
-                mapParameters.put( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
+                        return getDisplayConfigFormUrl( task, mapParameters );
+                    }
+                    else
+                        if ( strAction.equals( ACTION_DISPLAY_USER_CONFIG ) )
+                        {
+                            mapParameters.put( PARAMETER_ACTION, ACTION_DISPLAY_USER_CONFIG );
+                            mapParameters.put( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
 
-                return getDisplayConfigFormUrl( task, mapParameters );
-            }
-            else if ( strAction.equals( ACTION_DISPLAY_GLOBAL_CONFIG ) )
-            {
-                return getDisplayConfigFormUrl( task, null );
-            }
-            else if ( strAction.equals( ACTION_ADD_NEW_USERCONFIG ) )
-            {
-                mapParameters.put( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
-                mapParameters.put( PARAMETER_ACTION, ACTION_ADD_NEW_USERCONFIG );
+                            return getDisplayConfigFormUrl( task, mapParameters );
+                        }
+                        else
+                            if ( strAction.equals( ACTION_DISPLAY_GLOBAL_CONFIG ) )
+                            {
+                                return getDisplayConfigFormUrl( task, null );
+                            }
+                            else
+                                if ( strAction.equals( ACTION_ADD_NEW_USERCONFIG ) )
+                                {
+                                    mapParameters.put( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
+                                    mapParameters.put( PARAMETER_ACTION, ACTION_ADD_NEW_USERCONFIG );
 
-                return getDisplayConfigFormUrl( task, mapParameters );
-            }
+                                    return getDisplayConfigFormUrl( task, mapParameters );
+                                }
         }
 
         return null;
@@ -361,72 +371,82 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
 
     /**
      * build remove confirmation message
-     * @param request request
-     * @param locale locae
-     * @param task task
-     * @param strUserAccessCode userAccessCode
+     * 
+     * @param request
+     *            request
+     * @param locale
+     *            locae
+     * @param task
+     *            task
+     * @param strUserAccessCode
+     *            userAccessCode
      * @return url
      */
-    private String getConfirmRemoveUserAssignement( HttpServletRequest request, Locale locale, ITask task,
-        String strUserAccessCode )
+    private String getConfirmRemoveUserAssignement( HttpServletRequest request, Locale locale, ITask task, String strUserAccessCode )
     {
         UrlItem url = new UrlItem( URL_DO_REMOVE_CONFIG );
         url.addParameter( PARAMETER_USER_ACCESS_CODE, strUserAccessCode );
         url.addParameter( PARAMETER_ACTION, ACTION_REMOVE_ASSIGNMENT );
-        url.addParameter( PARAMETER_TASK_ID, task.getId(  ) );
+        url.addParameter( PARAMETER_TASK_ID, task.getId( ) );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request,
-                MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_CONFIRMATION_REMOVE, url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_TASK_AUTOMATIC_ASSIGNMENT_CONFIRMATION_REMOVE, url.getUrl( ),
+                AdminMessage.TYPE_CONFIRMATION );
 
         return strMessageUrl;
     }
 
     /**
      * store user assignment configuration
-     * @param request request
-     * @param task task
-     * @param strUserAccessCode user access code
+     * 
+     * @param request
+     *            request
+     * @param task
+     *            task
+     * @param strUserAccessCode
+     *            user access code
      */
     private void storeUserAssignments( HttpServletRequest request, ITask task, String strUserAccessCode )
     {
-        _automaticAssignmentService.unassignByUser( task.getId(  ), strUserAccessCode );
+        _automaticAssignmentService.unassignByUser( task.getId( ), strUserAccessCode );
 
         List<String> listAssignedSuffix = RequestUtils.extractValueList( request, PARAMETER_AGENT_SLOTS );
 
         for ( String strSuffix : listAssignedSuffix )
         {
-            _automaticAssignmentService.assign( task.getId(  ), strUserAccessCode, strSuffix );
+            _automaticAssignmentService.assign( task.getId( ), strUserAccessCode, strSuffix );
         }
     }
 
     /**
      * build and return display Config Form Url
-     * @param task task
-     * @param mapParams map of parameters to add to redirect url
+     * 
+     * @param task
+     *            task
+     * @param mapParams
+     *            map of parameters to add to redirect url
      * @return display Config Form Url
      */
     private static String getDisplayConfigFormUrl( ITask task, HashMap<String, String> mapParams )
     {
         UrlItem url = new UrlItem( URL_DISPLAY_CONFIG_FORM );
-        url.addParameter( PARAMETER_TASK_ID, task.getId(  ) );
+        url.addParameter( PARAMETER_TASK_ID, task.getId( ) );
 
-        if ( ( mapParams != null ) && ( mapParams.size(  ) > 0 ) )
+        if ( ( mapParams != null ) && ( mapParams.size( ) > 0 ) )
         {
-            for ( Map.Entry<String, String> entry : mapParams.entrySet(  ) )
+            for ( Map.Entry<String, String> entry : mapParams.entrySet( ) )
             {
-                url.addParameter( entry.getKey(  ), entry.getValue(  ) );
+                url.addParameter( entry.getKey( ), entry.getValue( ) );
             }
         }
 
-        return url.toString(  );
+        return url.toString( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         return null;
     }
@@ -435,8 +455,7 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         return null;
     }
@@ -449,12 +468,11 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
     {
         String strTaskInformation = StringUtils.EMPTY;
 
-        TaskInformation taskInformation = _taskInformationService.findByPrimaryKey( nIdHistory, task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskInformation taskInformation = _taskInformationService.findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
 
         if ( taskInformation != null )
         {
-            strTaskInformation = taskInformation.getValue(  ) + SEPARATOR;
+            strTaskInformation = taskInformation.getValue( ) + SEPARATOR;
         }
 
         return strTaskInformation;
@@ -473,7 +491,9 @@ public class AutomaticAssignmentTaskComponent extends NoFormTaskComponent
 
     /**
      * Add an info message
-     * @param strMessage The message
+     * 
+     * @param strMessage
+     *            The message
      */
     protected void addInfo( String strMessage )
     {

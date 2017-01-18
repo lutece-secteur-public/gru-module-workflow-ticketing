@@ -38,7 +38,6 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 
 import java.util.List;
 
-
 /**
  *
  * Automatic assignment service interface
@@ -48,53 +47,70 @@ public interface IAutomaticAssignmentService
 {
     /**
      * insert automaticAssignement
-     * @param idTask id of task
-     * @param strUserAccessCode user access code
-     * @param strSuffix suffix to add
+     * 
+     * @param idTask
+     *            id of task
+     * @param strUserAccessCode
+     *            user access code
+     * @param strSuffix
+     *            suffix to add
      */
     void assign( int idTask, String strUserAccessCode, String strSuffix );
 
     /**
      * return adminUser assigned to the suffix
-     * @param nIdTask task id
-     * @param strSuffix suffix
+     * 
+     * @param nIdTask
+     *            task id
+     * @param strSuffix
+     *            suffix
      * @return adminUser assigned to the suffix
      */
     AdminUser getAssignedUser( int nIdTask, String strSuffix );
 
     /**
      * returns user assignment conf
-     * @param nIdTask id of task
-     * @param adminUser  admin user
+     * 
+     * @param nIdTask
+     *            id of task
+     * @param adminUser
+     *            admin user
      * @return user assignment conf
      */
     UserAutomaticAssignmentConfig getUserAssignments( int nIdTask, AdminUser adminUser );
 
     /**
      *
-     * @param nIdTask task id
-     * @return map containing all of automatic assignement config
-     * unassigned conf is put on StringUtils.Empty entry of map
+     * @param nIdTask
+     *            task id
+     * @return map containing all of automatic assignement config unassigned conf is put on StringUtils.Empty entry of map
      */
     List<UserAutomaticAssignmentConfig> getAllAutoAssignementConf( int nIdTask );
 
     /**
      * return AutomaticAssignment which are not linked to user
-     * @param nIdTask id task
+     * 
+     * @param nIdTask
+     *            id task
      * @return AutomaticAssignment which are not linked to user
      */
     UserAutomaticAssignmentConfig getAvailableAutoAssignementList( int nIdTask );
 
     /**
      * remove all assignement for a user
-     * @param nIdtask id of task
-     * @param strUserAccessCode user access code who will no longer have autoassignment
+     * 
+     * @param nIdtask
+     *            id of task
+     * @param strUserAccessCode
+     *            user access code who will no longer have autoassignment
      */
     void unassignByUser( int nIdtask, String strUserAccessCode );
 
     /**
      * remove all configuration for a task
-     * @param nIdtask task id
+     * 
+     * @param nIdtask
+     *            task id
      */
     void removeConfig( int nIdtask );
 }

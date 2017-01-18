@@ -38,7 +38,6 @@ import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
-
 /**
  *
  * TaskEditTicketConfigDAO
@@ -46,12 +45,12 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, message_direction, id_user_edition_action FROM workflow_task_ticketing_edit_ticket_config " +
-        " WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_edit_ticket_config ( id_task, message_direction, id_user_edition_action ) " +
-        " VALUES ( ?,?,? ) ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_edit_ticket_config SET message_direction = ?, id_user_edition_action = ? " +
-        " WHERE id_task = ? ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, message_direction, id_user_edition_action FROM workflow_task_ticketing_edit_ticket_config "
+            + " WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_edit_ticket_config ( id_task, message_direction, id_user_edition_action ) "
+            + " VALUES ( ?,?,? ) ";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_edit_ticket_config SET message_direction = ?, id_user_edition_action = ? "
+            + " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_edit_ticket_config WHERE id_task = ? ";
 
     /**
@@ -64,12 +63,12 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
 
         int nIndex = 1;
 
-        daoUtil.setInt( nIndex++, config.getIdTask(  ) );
-        daoUtil.setInt( nIndex++, config.getMessageDirection(  ).ordinal(  ) );
-        daoUtil.setInt( nIndex++, config.getIdUserEditionAction(  ) );
+        daoUtil.setInt( nIndex++, config.getIdTask( ) );
+        daoUtil.setInt( nIndex++, config.getMessageDirection( ).ordinal( ) );
+        daoUtil.setInt( nIndex++, config.getIdUserEditionAction( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -82,12 +81,12 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
 
         int nIndex = 1;
 
-        daoUtil.setInt( nIndex++, config.getMessageDirection(  ).ordinal(  ) );
-        daoUtil.setInt( nIndex++, config.getIdUserEditionAction(  ) );
+        daoUtil.setInt( nIndex++, config.getMessageDirection( ).ordinal( ) );
+        daoUtil.setInt( nIndex++, config.getIdUserEditionAction( ) );
 
-        daoUtil.setInt( nIndex++, config.getIdTask(  ) );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.setInt( nIndex++, config.getIdTask( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -97,24 +96,23 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
     public TaskEditTicketConfig load( int nIdTask )
     {
         TaskEditTicketConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY,
-                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
 
         daoUtil.setInt( 1, nIdTask );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         int nIndex = 1;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            config = new TaskEditTicketConfig(  );
+            config = new TaskEditTicketConfig( );
             config.setIdTask( daoUtil.getInt( nIndex++ ) );
             config.setMessageDirection( MessageDirection.valueOf( daoUtil.getInt( nIndex++ ) ) );
             config.setIdUserEditionAction( daoUtil.getInt( nIndex++ ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return config;
     }
@@ -128,7 +126,7 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
 
         daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

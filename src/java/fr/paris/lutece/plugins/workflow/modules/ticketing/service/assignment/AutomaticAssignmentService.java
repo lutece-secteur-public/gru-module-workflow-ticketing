@@ -43,7 +43,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-
 /**
  *
  * AutomaticAssignmentService
@@ -58,9 +57,9 @@ public class AutomaticAssignmentService implements IAutomaticAssignmentService
     /**
      * constructor
      */
-    public AutomaticAssignmentService(  )
+    public AutomaticAssignmentService( )
     {
-        super(  );
+        super( );
     }
 
     /**
@@ -69,8 +68,7 @@ public class AutomaticAssignmentService implements IAutomaticAssignmentService
     @Override
     public void assign( int idTask, String strUserAccessCode, String strSuffix )
     {
-        _dao.assign( idTask, strUserAccessCode, strSuffix,
-            PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        _dao.assign( idTask, strUserAccessCode, strSuffix, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
     }
 
     /**
@@ -90,7 +88,7 @@ public class AutomaticAssignmentService implements IAutomaticAssignmentService
     {
         List<UserAutomaticAssignmentConfig> listAutoAssConfig = _dao.getAllAutoAssignementConf( nIdTask );
 
-        if ( _dao.getAllAutoAssignementConf( nIdTask ).size(  ) == 0 )
+        if ( _dao.getAllAutoAssignementConf( nIdTask ).size( ) == 0 )
         {
             listAutoAssConfig = _dao.initializeAssignementConf( nIdTask );
         }
@@ -128,7 +126,6 @@ public class AutomaticAssignmentService implements IAutomaticAssignmentService
     @Override
     public UserAutomaticAssignmentConfig getUserAssignments( int nIdTask, AdminUser adminUser )
     {
-        return _dao.getUserAssignemnt( nIdTask, adminUser,
-            PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        return _dao.getUserAssignemnt( nIdTask, adminUser, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
     }
 }

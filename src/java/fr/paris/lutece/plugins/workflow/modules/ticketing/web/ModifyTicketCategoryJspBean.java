@@ -52,13 +52,12 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 @Controller( controllerJsp = "ModifyTicketCategory.jsp", controllerPath = TicketingConstants.ADMIN_CONTROLLLER_PATH, right = "TICKETING_TICKETS_MANAGEMENT" )
 public class ModifyTicketCategoryJspBean extends MVCAdminJspBean
 {
     private static final long serialVersionUID = 1L;
 
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
     // Constants
 
     // Parameters
@@ -81,25 +80,23 @@ public class ModifyTicketCategoryJspBean extends MVCAdminJspBean
     @View( VIEW_TICKET_FORM )
     public String getTicketForm( HttpServletRequest request )
     {
-        //Check user rights
-        if ( !RBACService.isAuthorized( new Ticket(  ), TicketResourceIdService.PERMISSION_VIEW, getUser(  ) ) )
+        // Check user rights
+        if ( !RBACService.isAuthorized( new Ticket( ), TicketResourceIdService.PERMISSION_VIEW, getUser( ) ) )
         {
-            return redirect( request,
-                AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP ) );
+            return redirect( request, AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP ) );
         }
 
         String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
 
-        if ( !StringUtils.isEmpty( strIdCategory ) && StringUtils.isNumeric( strIdCategory ) &&
-                !StringUtils.isEmpty( strIdTask ) && StringUtils.isNumeric( strIdTask ) )
+        if ( !StringUtils.isEmpty( strIdCategory ) && StringUtils.isNumeric( strIdCategory ) && !StringUtils.isEmpty( strIdTask )
+                && StringUtils.isNumeric( strIdTask ) )
         {
             int nIdCategory = Integer.parseInt( strIdCategory );
             int nIdTask = Integer.parseInt( strIdTask );
             TaskModifyTicketCategoryConfig config = _taskModifyTicketCategoryConfigService.findByPrimaryKey( nIdTask );
 
-            return _ticketFormService.getHtmlFormInputs( getLocale(  ), false, nIdCategory,
-                config.getSelectedEntries(  ), request );
+            return _ticketFormService.getHtmlFormInputs( getLocale( ), false, nIdCategory, config.getSelectedEntries( ), request );
         }
 
         return StringUtils.EMPTY;

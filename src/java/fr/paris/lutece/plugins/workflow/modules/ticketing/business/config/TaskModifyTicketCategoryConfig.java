@@ -38,7 +38,6 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  */
@@ -49,16 +48,16 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
     /**
      * Default constructor, init list
      */
-    public TaskModifyTicketCategoryConfig(  )
+    public TaskModifyTicketCategoryConfig( )
     {
-        super(  );
-        this._listSelectedEntries = new ArrayList<Integer>(  );
+        super( );
+        this._listSelectedEntries = new ArrayList<Integer>( );
     }
 
     /**
      * @return the _lSelectedEntries
      */
-    public List<Integer> getSelectedEntries(  )
+    public List<Integer> getSelectedEntries( )
     {
         return _listSelectedEntries;
     }
@@ -74,8 +73,8 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
     /**
      * remove all selected entries
      */
-    public void clearSelectedEntries(  )
+    public void clearSelectedEntries( )
     {
-        this._listSelectedEntries = new ArrayList<Integer>(  );
+        this._listSelectedEntries = new ArrayList<Integer>( );
     }
 }

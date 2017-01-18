@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.information;
 
-
 /**
  *
  * TaskInformation
@@ -49,14 +48,16 @@ public class TaskInformation
      *
      * @return the resource history id
      */
-    public int getIdResourceHistory(  )
+    public int getIdResourceHistory( )
     {
         return _nIdResourceHistory;
     }
 
     /**
      * the resource history id
-     * @param nIdResourceHistory the resource history id
+     * 
+     * @param nIdResourceHistory
+     *            the resource history id
      */
     public void setIdResourceHistory( int nIdResourceHistory )
     {
@@ -67,14 +68,16 @@ public class TaskInformation
      *
      * @return the task id
      */
-    public int getIdTask(  )
+    public int getIdTask( )
     {
         return _nIdTask;
     }
 
     /**
      * the task id
-     * @param nIdTask the task id
+     * 
+     * @param nIdTask
+     *            the task id
      */
     public void setIdTask( int nIdTask )
     {
@@ -83,16 +86,19 @@ public class TaskInformation
 
     /**
      * return the value
+     * 
      * @return the value
      */
-    public String getValue(  )
+    public String getValue( )
     {
         return _strValue;
     }
 
     /**
      * set the value
-     * @param strValue the value
+     * 
+     * @param strValue
+     *            the value
      */
     public void setValue( String strValue )
     {

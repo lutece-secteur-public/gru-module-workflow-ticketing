@@ -51,7 +51,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUser}
  *
@@ -61,22 +60,21 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
     // TEMPLATES
     private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_USER_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_user_form.html";
 
-    //MESSAGE
+    // MESSAGE
     private static final String MESSAGE_NO_USER_FOUND = "module.workflow.ticketing.task_assign_ticket_to_user.labelNoUserFound";
 
     // MARKS
     private static final String MARK_USERS_LIST = "users_list";
     private static final String MARK_CURRENT_USER = "current_user";
 
-    //Constantes
+    // Constantes
     private static final String EMPTY_CHOICE_IN_LIST = "-1";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Ticket ticket = getTicket( nIdResource, strResourceType );
         Map<String, Object> model = getModel( ticket );
@@ -85,20 +83,19 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
 
         if ( ticket != null )
         {
-            if ( ticket.getAssigneeUnit(  ) != null )
+            if ( ticket.getAssigneeUnit( ) != null )
             {
-                usersList = getUsersList( ticket.getAssigneeUnit(  ).getUnitId(  ) );
-                strCurrentUserId = ( ticket.getAssigneeUser(  ) == null ) ? EMPTY_CHOICE_IN_LIST
-                                                                          : ( String.valueOf( ticket.getAssigneeUser(  )
-                                                                                                    .getAdminUserId(  ) ) );
+                usersList = getUsersList( ticket.getAssigneeUnit( ).getUnitId( ) );
+                strCurrentUserId = ( ticket.getAssigneeUser( ) == null ) ? EMPTY_CHOICE_IN_LIST : ( String
+                        .valueOf( ticket.getAssigneeUser( ).getAdminUserId( ) ) );
 
-                if ( usersList.toMap(  ).containsKey( strCurrentUserId ) )
+                if ( usersList.toMap( ).containsKey( strCurrentUserId ) )
                 {
                     model.put( MARK_CURRENT_USER, strCurrentUserId );
                 }
             }
 
-            if ( ( usersList == null ) || ( usersList.size(  ) <= 1 ) )
+            if ( ( usersList == null ) || ( usersList.size( ) <= 1 ) )
             {
                 request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
                 addError( I18nService.getLocalizedString( MESSAGE_NO_USER_FOUND, locale ) );
@@ -111,25 +108,26 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGN_TICKET_TO_USER_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * Load the data of the user objects linked to the unit passed in parameter and returns them in form of a collection
      *
-     * @param idUnit id unit
+     * @param idUnit
+     *            id unit
      * @return the list which contains the data of the user objects
      */
     protected static ReferenceList getUsersList( int idUnit )
     {
         List<Integer> lstIdUsers = UnitHome.findIdsUser( idUnit );
-        ReferenceList lstRef = new ReferenceList( lstIdUsers.size(  ) );
+        ReferenceList lstRef = new ReferenceList( lstIdUsers.size( ) );
         lstRef.addItem( EMPTY_CHOICE_IN_LIST, StringUtils.EMPTY );
 
         for ( int idUser : lstIdUsers )
         {
             AdminUser user = AdminUserHome.findByPrimaryKey( idUser );
-            lstRef.addItem( idUser, user.getFirstName(  ) + " " + user.getLastName(  ) );
+            lstRef.addItem( idUser, user.getFirstName( ) + " " + user.getLastName( ) );
         }
 
         return lstRef;

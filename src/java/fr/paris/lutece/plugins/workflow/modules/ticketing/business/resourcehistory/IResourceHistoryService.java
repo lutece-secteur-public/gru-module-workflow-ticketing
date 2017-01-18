@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehist
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-
 /**
  *
  * ITaskInformationService
@@ -44,23 +43,32 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 public interface IResourceHistoryService
 {
     /**
-    * Creation of a resource history
-    * @param resourceHistory The resource history
-    * @param plugin the plugin
-    */
+     * Creation of a resource history
+     * 
+     * @param resourceHistory
+     *            The resource history
+     * @param plugin
+     *            the plugin
+     */
     void create( ResourceHistory resourceHistory, Plugin plugin );
 
     /**
      * Remove the resource history by history
-     * @param nIdHistory the history key
-     * @param plugin the Plugin
+     * 
+     * @param nIdHistory
+     *            the history key
+     * @param plugin
+     *            the Plugin
      */
     void removeByHistory( int nIdHistory, Plugin plugin );
 
     /**
      * Load the ResourceHistory Object
-     * @param nIdHistory the history id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the history id
+     * @param plugin
+     *            the plugin
      * @return the ResourceHistory Object
      */
     ResourceHistory findByPrimaryKey( int nIdHistory, Plugin plugin );

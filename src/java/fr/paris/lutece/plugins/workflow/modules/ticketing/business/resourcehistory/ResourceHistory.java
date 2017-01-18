@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory;
 
-
 /**
  *
  * ResourceHistory
@@ -48,14 +47,16 @@ public class ResourceHistory
      *
      * @return the resource history id
      */
-    public int getIdHistory(  )
+    public int getIdHistory( )
     {
         return _nIdHistory;
     }
 
     /**
      * the resource history id
-     * @param nIdHistory the resource history id
+     * 
+     * @param nIdHistory
+     *            the resource history id
      */
     public void setIdHistory( int nIdHistory )
     {
@@ -66,14 +67,16 @@ public class ResourceHistory
      *
      * @return the channel id
      */
-    public int getIdChannel(  )
+    public int getIdChannel( )
     {
         return _nIdChannel;
     }
 
     /**
      * the channel id
-     * @param nIdChannel the channel id
+     * 
+     * @param nIdChannel
+     *            the channel id
      */
     public void setIdChannel( int nIdChannel )
     {

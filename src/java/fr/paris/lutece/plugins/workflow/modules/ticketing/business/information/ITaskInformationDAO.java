@@ -35,42 +35,55 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.information;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-
 /**
  *
- *  ITaskInformationDAO
+ * ITaskInformationDAO
  *
  */
 public interface ITaskInformationDAO
 {
     /**
      * Insert new record
-     * @param taskInformation the TaskInformation Object
-     * @param plugin the plugin
+     * 
+     * @param taskInformation
+     *            the TaskInformation Object
+     * @param plugin
+     *            the plugin
      */
     void insert( TaskInformation taskInformation, Plugin plugin );
 
     /**
      * Load a record by primary key
-     * @param nIdHistory the action history id
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the action history id
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      * @return TaskInformation Object
      */
     TaskInformation load( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Remove information by history
-     * @param nIdHistory the History id
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the History id
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      */
     void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Remove information by task
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      */
     void deleteByTask( int nIdTask, Plugin plugin );
 }

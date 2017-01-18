@@ -64,7 +64,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskEditTicket}
  *
@@ -103,8 +102,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        TaskEditTicketConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        TaskEditTicketConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         ReferenceList listMessageDirections = MessageDirection.getReferenceList( locale );
 
@@ -112,7 +111,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         if ( config != null )
         {
-            model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection(  ).ordinal(  ) );
+            model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection( ).ordinal( ) );
         }
         else
         {
@@ -125,7 +124,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_EDIT_TICKET_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -137,13 +136,13 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         int nMessageDirectionId = Integer.parseInt( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
         int nIdUserEditionAction = Integer.parseInt( request.getParameter( PARAMETER_ID_USER_EDITION_ACTION ) );
 
-        TaskEditTicketConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskEditTicketConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bConfigToCreate = false;
 
         if ( config == null )
         {
-            config = new TaskEditTicketConfig(  );
-            config.setIdTask( task.getId(  ) );
+            config = new TaskEditTicketConfig( );
+            config.setIdTask( task.getId( ) );
             bConfigToCreate = true;
         }
 
@@ -152,11 +151,11 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         if ( bConfigToCreate )
         {
-            this.getTaskConfigService(  ).create( config );
+            this.getTaskConfigService( ).create( config );
         }
         else
         {
-            this.getTaskConfigService(  ).update( config );
+            this.getTaskConfigService( ).update( config );
         }
 
         return null;
@@ -166,20 +165,18 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskEditTicketConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskEditTicketConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         if ( config == null )
         {
-            return AdminMessageService.getMessageUrl( request, TaskEditTicketConstants.MESSAGE_NO_CONFIGURATION,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, TaskEditTicketConstants.MESSAGE_NO_CONFIGURATION, AdminMessage.TYPE_STOP );
         }
 
-        MessageDirection messageDirection = config.getMessageDirection(  );
+        MessageDirection messageDirection = config.getMessageDirection( );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_CONFIG, config );
         model.put( MARK_AGENT_VIEW, messageDirection == MessageDirection.AGENT_TO_USER );
 
@@ -187,12 +184,12 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         if ( messageDirection == MessageDirection.AGENT_TO_USER )
         {
-            List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory(  ).getId(  ), null );
-            List<Entry> listEntryWithoutComment = new ArrayList<Entry>(  );
+            List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), null );
+            List<Entry> listEntryWithoutComment = new ArrayList<Entry>( );
 
             for ( Entry entry : listEntry )
             {
-                if ( !entry.getEntryType(  ).getComment(  ) )
+                if ( !entry.getEntryType( ).getComment( ) )
                 {
                     listEntryWithoutComment.add( entry );
                 }
@@ -205,12 +202,11 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         }
         else
         {
-            EditableTicket editableTicket = _editableTicketService.findByIdTicket( ticket.getId(  ) );
+            EditableTicket editableTicket = _editableTicketService.findByIdTicket( ticket.getId( ) );
 
-            List<Entry> listEntries = _editableTicketService.buildListEntriesToEdit( request,
-                    editableTicket.getListEditableTicketFields(  ) );
+            List<Entry> listEntries = _editableTicketService.buildListEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
 
-            String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale(  ), false, request );
+            String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), false, request );
 
             model.put( TaskEditTicketConstants.MARK_EDITABLE_TICKET, editableTicket );
             model.put( TaskEditTicketConstants.MARK_ENTRIES_HTML_FORM, htmlForm );
@@ -218,32 +214,30 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_EDIT_TICKET_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + task.getId(  ) );
-        TaskEditTicketConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + task.getId( ) );
+        TaskEditTicketConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         if ( config == null )
         {
-            return AdminMessageService.getMessageUrl( request, TaskEditTicketConstants.MESSAGE_NO_CONFIGURATION,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, TaskEditTicketConstants.MESSAGE_NO_CONFIGURATION, AdminMessage.TYPE_STOP );
         }
 
-        if ( ( MessageDirection.AGENT_TO_USER == config.getMessageDirection(  ) ) &&
-                StringUtils.isEmpty( strAgentMessage ) )
+        if ( ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) ) && StringUtils.isEmpty( strAgentMessage ) )
         {
-            Object[] tabRequiredFields = { FIELD_MESSAGE };
+            Object [ ] tabRequiredFields = {
+                FIELD_MESSAGE
+            };
 
-            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, tabRequiredFields,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
         return null;

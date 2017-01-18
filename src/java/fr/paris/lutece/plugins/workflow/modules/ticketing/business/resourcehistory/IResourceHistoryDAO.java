@@ -35,41 +35,53 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehist
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-
 /**
  *
- *  IResourceHistoryDAO
+ * IResourceHistoryDAO
  *
  */
 public interface IResourceHistoryDAO
 {
     /**
      * Insert new record
-     * @param resourceHistory the ResourceHistory Object
-     * @param plugin the plugin
+     * 
+     * @param resourceHistory
+     *            the ResourceHistory Object
+     * @param plugin
+     *            the plugin
      */
     void insert( ResourceHistory resourceHistory, Plugin plugin );
 
     /**
      * Load a record by primary key
-     * @param nIdHistory the history id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the history id
+     * @param plugin
+     *            the plugin
      * @return ResourceHistory Object
      */
     ResourceHistory load( int nIdHistory, Plugin plugin );
 
     /**
      * Remove resourceHistory by history
-     * @param nIdHistory the History id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the History id
+     * @param plugin
+     *            the plugin
      */
     void deleteByHistory( int nIdHistory, Plugin plugin );
 
     /**
      * Remove resourceHistory by resource
-     * @param nIdResource the resource id
-     * @param strResourceType the resource type
-     * @param plugin the plugin
+     * 
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param plugin
+     *            the plugin
      */
     void deleteByResource( int nIdResource, String strResourceType, Plugin plugin );
 }

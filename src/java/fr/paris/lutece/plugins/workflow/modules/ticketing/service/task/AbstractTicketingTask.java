@@ -52,7 +52,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a Task for Ticketing
  *
@@ -77,16 +76,15 @@ public abstract class AbstractTicketingTask extends SimpleTask
         {
             try
             {
-                TaskInformation taskInformation = new TaskInformation(  );
+                TaskInformation taskInformation = new TaskInformation( );
                 taskInformation.setIdResourceHistory( nIdResourceHistory );
-                taskInformation.setIdTask( this.getId(  ) );
+                taskInformation.setIdTask( this.getId( ) );
                 taskInformation.setValue( strTaskInformation );
-                _taskInformationService.create( taskInformation, WorkflowUtils.getPlugin(  ) );
+                _taskInformationService.create( taskInformation, WorkflowUtils.getPlugin( ) );
             }
-            catch ( Exception e )
+            catch( Exception e )
             {
-                String strErrorMessage = MessageFormat.format( LOG_ERROR_SAVE_INFORMATION, strTaskInformation,
-                        nIdResourceHistory, this.getId(  ) );
+                String strErrorMessage = MessageFormat.format( LOG_ERROR_SAVE_INFORMATION, strTaskInformation, nIdResourceHistory, this.getId( ) );
                 AppLogService.error( strErrorMessage );
             }
         }
@@ -98,21 +96,23 @@ public abstract class AbstractTicketingTask extends SimpleTask
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
-        _taskInformationService.removeByHistory( nIdHistory, this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        _taskInformationService.removeByHistory( nIdHistory, this.getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        _taskInformationService.removeByTask( this.getId(  ), WorkflowUtils.getPlugin(  ) );
+        _taskInformationService.removeByTask( this.getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
      * Gives the ticket from resourceHistory
-     * @param nIdResourceHistory the resourceHistory id
+     * 
+     * @param nIdResourceHistory
+     *            the resourceHistory id
      * @return the ticket if the resourceHistory corresponds to a ticket, {@code null} otherwise
      */
     protected Ticket getTicket( int nIdResourceHistory )
@@ -122,9 +122,13 @@ public abstract class AbstractTicketingTask extends SimpleTask
 
     /**
      * Process the Ticketing task
-     * @param nIdResourceHistory the resource history id
-     * @param request the request
-     * @param locale locale
+     * 
+     * @param nIdResourceHistory
+     *            the resource history id
+     * @param request
+     *            the request
+     * @param locale
+     *            locale
      * @return the message to save
      */
     protected abstract String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale );

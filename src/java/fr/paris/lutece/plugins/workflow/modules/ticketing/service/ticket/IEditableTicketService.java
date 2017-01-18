@@ -45,7 +45,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * This class provides methods to manage {@link fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket}
@@ -57,67 +56,89 @@ public interface IEditableTicketService
 
     /**
      * Create an editable ticket
-     * @param editableTicket the editable ticket
+     * 
+     * @param editableTicket
+     *            the editable ticket
      */
     @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
     void create( EditableTicket editableTicket );
 
     /**
      * Update an editable ticket
-     * @param editableTicket the editable ticket
+     * 
+     * @param editableTicket
+     *            the editable ticket
      */
     @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
     void update( EditableTicket editableTicket );
 
     /**
      * Find an editable ticket
-     * @param nIdHistory the id history
-     * @param nIdTask the id task
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the id task
      * @return the editable ticket
      */
     EditableTicket find( int nIdHistory, int nIdTask );
 
     /**
      * Get the non edited editable ticket from a given id ticket
-     * @param nIdTicket the id ticket
+     * 
+     * @param nIdTicket
+     *            the id ticket
      * @return the editable ticket
      */
     EditableTicket findByIdTicket( int nIdTicket );
 
     /**
      * Find editable tickets by a given id task
-     * @param nIdTask the id task
+     * 
+     * @param nIdTask
+     *            the id task
      * @return the list of editable tickets
      */
     List<EditableTicket> findByIdTask( int nIdTask );
 
     /**
      * Remove an editable ticket
-     * @param nIdHistory the id history
-     * @param nIdTask the id task
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the id task
      */
     @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
     void removeByIdHistory( int nIdHistory, int nIdTask );
 
     /**
      * Remove an editable ticket by id task
-     * @param nIdTask the id task
+     * 
+     * @param nIdTask
+     *            the id task
      */
     @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
     void removeByIdTask( int nIdTask );
 
     /**
      * Get the list of entries to edit
-     * @param request the HTTP request
-     * @param listEditableTicketFields the list of editable ticket fields
+     * 
+     * @param request
+     *            the HTTP request
+     * @param listEditableTicketFields
+     *            the list of editable ticket fields
      * @return a list of entries
      */
     List<Entry> buildListEntriesToEdit( HttpServletRequest request, List<EditableTicketField> listEditableTicketFields );
 
     /**
      * Check if the ticket has the same state before executing the action
-     * @param editableTicket the editable ticket
-     * @param locale the locale
+     * 
+     * @param editableTicket
+     *            the editable ticket
+     * @param locale
+     *            the locale
      * @return {@code true} if the ticket has a valid state, {@code false} otherwise
      */
     boolean isStateValid( EditableTicket editableTicket, Locale locale );

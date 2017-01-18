@@ -38,7 +38,6 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  * user automatic assignement config
@@ -46,19 +45,20 @@ import java.util.List;
  */
 public class UserAutomaticAssignmentConfig
 {
-    private List<String> _listAssignedSuffix = new ArrayList<String>(  );
+    private List<String> _listAssignedSuffix = new ArrayList<String>( );
     private AdminUser _adminUser;
 
     /**
      * @return the _listAssignedSuffix
      */
-    public List<String> getAssignedSuffix(  )
+    public List<String> getAssignedSuffix( )
     {
         return _listAssignedSuffix;
     }
 
     /**
-     * @param listAssignedSuffix the suffix list to set
+     * @param listAssignedSuffix
+     *            the suffix list to set
      */
     public void setAssignedSuffix( List<String> listAssignedSuffix )
     {
@@ -68,13 +68,14 @@ public class UserAutomaticAssignmentConfig
     /**
      * @return the _adminUser
      */
-    public AdminUser getAdminUser(  )
+    public AdminUser getAdminUser( )
     {
         return _adminUser;
     }
 
     /**
-     * @param adminUser the adminUser to set
+     * @param adminUser
+     *            the adminUser to set
      */
     public void setAdminUser( AdminUser adminUser )
     {

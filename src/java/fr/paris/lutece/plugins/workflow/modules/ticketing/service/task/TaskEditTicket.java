@@ -73,7 +73,6 @@ import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to edit a ticket
  *
@@ -122,15 +121,14 @@ public class TaskEditTicket extends AbstractTicketingTask
     {
         String strTaskInformation = StringUtils.EMPTY;
 
-        TaskEditTicketConfig config = _taskEditableTicketConfigService.findByPrimaryKey( getId(  ) );
+        TaskEditTicketConfig config = _taskEditableTicketConfigService.findByPrimaryKey( getId( ) );
 
         if ( config == null )
         {
-            return AdminMessageService.getMessageUrl( request, TaskEditTicketConstants.MESSAGE_NO_CONFIGURATION,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, TaskEditTicketConstants.MESSAGE_NO_CONFIGURATION, AdminMessage.TYPE_STOP );
         }
 
-        MessageDirection messageDirection = config.getMessageDirection(  );
+        MessageDirection messageDirection = config.getMessageDirection( );
 
         if ( messageDirection == MessageDirection.AGENT_TO_USER )
         {
@@ -146,38 +144,42 @@ public class TaskEditTicket extends AbstractTicketingTask
 
     /**
      * Process the task for agent side
-     * @param nIdResourceHistory the ResourceHistory id
-     * @param request the request
-     * @param locale the locale
-     * @param config the task configuration
+     * 
+     * @param nIdResourceHistory
+     *            the ResourceHistory id
+     * @param request
+     *            the request
+     * @param locale
+     *            the locale
+     * @param config
+     *            the task configuration
      * @return the information message to store
      */
-    private String processAgentTask( int nIdResourceHistory, HttpServletRequest request, Locale locale,
-        TaskEditTicketConfig config )
+    private String processAgentTask( int nIdResourceHistory, HttpServletRequest request, Locale locale, TaskEditTicketConfig config )
     {
         String strTaskInformation = StringUtils.EMPTY;
 
-        String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId(  ) );
-        String[] listIdsEntry = request.getParameterValues( PARAMETER_IDS_ENTRY + UNDERSCORE + getId(  ) );
+        String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
+        String [ ] listIdsEntry = request.getParameterValues( PARAMETER_IDS_ENTRY + UNDERSCORE + getId( ) );
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
         boolean bCreate = false;
-        List<EditableTicketField> listEditableTicketFields = new ArrayList<EditableTicketField>(  );
+        List<EditableTicketField> listEditableTicketFields = new ArrayList<EditableTicketField>( );
 
-        EditableTicket editableTicket = _editableTicketService.find( nIdResourceHistory, getId(  ) );
+        EditableTicket editableTicket = _editableTicketService.find( nIdResourceHistory, getId( ) );
 
         if ( editableTicket == null )
         {
-            editableTicket = new EditableTicket(  );
+            editableTicket = new EditableTicket( );
             editableTicket.setIdHistory( nIdResourceHistory );
-            editableTicket.setIdTask( getId(  ) );
-            editableTicket.setIdTicket( ticket.getId(  ) );
+            editableTicket.setIdTask( getId( ) );
+            editableTicket.setIdTicket( ticket.getId( ) );
             bCreate = true;
         }
 
-        StringBuilder sbEntries = new StringBuilder(  );
+        StringBuilder sbEntries = new StringBuilder( );
 
         if ( listIdsEntry != null )
         {
@@ -186,19 +188,19 @@ public class TaskEditTicket extends AbstractTicketingTask
                 if ( StringUtils.isNotBlank( strIdEntry ) && StringUtils.isNumeric( strIdEntry ) )
                 {
                     int nIdEntry = Integer.parseInt( strIdEntry );
-                    EditableTicketField editableTicketField = new EditableTicketField(  );
+                    EditableTicketField editableTicketField = new EditableTicketField( );
                     editableTicketField.setIdEntry( nIdEntry );
 
                     listEditableTicketFields.add( editableTicketField );
 
                     Entry entry = EntryHome.findByPrimaryKey( nIdEntry );
-                    sbEntries.append( entry.getTitle(  ) ).append( SEPARATOR );
+                    sbEntries.append( entry.getTitle( ) ).append( SEPARATOR );
                 }
             }
 
-            if ( sbEntries.length(  ) != 0 )
+            if ( sbEntries.length( ) != 0 )
             {
-                sbEntries.delete( sbEntries.length(  ) - SEPARATOR.length(  ), sbEntries.length(  ) );
+                sbEntries.delete( sbEntries.length( ) - SEPARATOR.length( ), sbEntries.length( ) );
             }
         }
 
@@ -217,20 +219,19 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            ticket.setUrl( buildEditUrl( request, nIdResourceHistory, getId(  ), config.getIdUserEditionAction(  ) ) );
+            ticket.setUrl( buildEditUrl( request, nIdResourceHistory, getId( ), config.getIdUserEditionAction( ) ) );
             TicketHome.update( ticket );
         }
 
-        if ( sbEntries.length(  ) == 0 )
+        if ( sbEntries.length( ) == 0 )
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                        MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED, Locale.FRENCH ), strAgentMessage );
+            strTaskInformation = MessageFormat.format(
+                    I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED, Locale.FRENCH ), strAgentMessage );
         }
         else
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                        MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT, Locale.FRENCH ), sbEntries.toString(  ),
-                    strAgentMessage );
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT, Locale.FRENCH ),
+                    sbEntries.toString( ), strAgentMessage );
         }
 
         return strTaskInformation;
@@ -238,61 +239,64 @@ public class TaskEditTicket extends AbstractTicketingTask
 
     /**
      * Process the task for user side
-     * @param nIdResourceHistory the ResourceHistory id
-     * @param request the request
-     * @param locale the locale
-     * @param config the task configuration
+     * 
+     * @param nIdResourceHistory
+     *            the ResourceHistory id
+     * @param request
+     *            the request
+     * @param locale
+     *            the locale
+     * @param config
+     *            the task configuration
      * @return the information message to store
      */
-    private String processUserTask( int nIdResourceHistory, HttpServletRequest request, Locale locale,
-        TaskEditTicketConfig config )
+    private String processUserTask( int nIdResourceHistory, HttpServletRequest request, Locale locale, TaskEditTicketConfig config )
     {
         String strTaskInformation = StringUtils.EMPTY;
-        StringBuilder sbEntries = new StringBuilder(  );
+        StringBuilder sbEntries = new StringBuilder( );
 
         String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        EditableTicket editableTicket = _editableTicketService.findByIdTicket( ticket.getId(  ) );
+        EditableTicket editableTicket = _editableTicketService.findByIdTicket( ticket.getId( ) );
 
-        List<Entry> listEntriesToEdit = _editableTicketService.buildListEntriesToEdit( request,
-                editableTicket.getListEditableTicketFields(  ) );
+        List<Entry> listEntriesToEdit = _editableTicketService.buildListEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
 
         for ( Entry entry : listEntriesToEdit )
         {
-            Iterator<Response> iterator = ticket.getListResponse(  ).iterator(  );
+            Iterator<Response> iterator = ticket.getListResponse( ).iterator( );
 
-            while ( iterator.hasNext(  ) )
+            while ( iterator.hasNext( ) )
             {
-                Response response = iterator.next(  );
+                Response response = iterator.next( );
 
-                if ( response.getEntry(  ).getIdEntry(  ) == entry.getIdEntry(  ) )
+                if ( response.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) )
                 {
-                    iterator.remove(  );
+                    iterator.remove( );
                 }
             }
 
-            _ticketFormService.getResponseEntry( request, entry.getIdEntry(  ), request.getLocale(  ), ticket );
-            sbEntries.append( entry.getTitle(  ) ).append( SEPARATOR );
+            _ticketFormService.getResponseEntry( request, entry.getIdEntry( ), request.getLocale( ), ticket );
+            sbEntries.append( entry.getTitle( ) ).append( SEPARATOR );
         }
 
         // remove and add generic attributes responses
-        TicketHome.removeTicketResponse( ticket.getId(  ) );
+        TicketHome.removeTicketResponse( ticket.getId( ) );
 
-        if ( ( ticket.getListResponse(  ) != null ) && !ticket.getListResponse(  ).isEmpty(  ) )
+        if ( ( ticket.getListResponse( ) != null ) && !ticket.getListResponse( ).isEmpty( ) )
         {
-            for ( Response response : ticket.getListResponse(  ) )
+            for ( Response response : ticket.getListResponse( ) )
             {
                 ResponseHome.create( response );
-                TicketHome.insertTicketResponse( ticket.getId(  ), response.getIdResponse(  ) );
+                TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             }
         }
 
-        if ( sbEntries.length(  ) != 0 )
+        if ( sbEntries.length( ) != 0 )
         {
-            sbEntries.delete( sbEntries.length(  ) - SEPARATOR.length(  ), sbEntries.length(  ) );
+            sbEntries.delete( sbEntries.length( ) - SEPARATOR.length( ), sbEntries.length( ) );
         }
 
         ticket.setUserMessage( strUserMessage );
@@ -306,16 +310,15 @@ public class TaskEditTicket extends AbstractTicketingTask
             strUserMessage = I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_NO_MESSAGE, Locale.FRENCH );
         }
 
-        if ( sbEntries.length(  ) == 0 )
+        if ( sbEntries.length( ) == 0 )
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                        MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED, Locale.FRENCH ), strUserMessage );
+            strTaskInformation = MessageFormat.format(
+                    I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED, Locale.FRENCH ), strUserMessage );
         }
         else
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                        MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER, Locale.FRENCH ), sbEntries.toString(  ),
-                    strUserMessage );
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER, Locale.FRENCH ),
+                    sbEntries.toString( ), strUserMessage );
         }
 
         return strTaskInformation;
@@ -323,10 +326,15 @@ public class TaskEditTicket extends AbstractTicketingTask
 
     /**
      * Builds the URL to permit to the user to edit the ticket
-     * @param request the request
-     * @param nIdHistory the history id
-     * @param nIdTask the task id
-     * @param nIdAction the action id
+     * 
+     * @param request
+     *            the request
+     * @param nIdHistory
+     *            the history id
+     * @param nIdTask
+     *            the task id
+     * @param nIdAction
+     *            the action id
      * @return the URL
      */
     private String buildEditUrl( HttpServletRequest request, int nIdHistory, int nIdTask, int nIdAction )
@@ -336,17 +344,16 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         if ( resourceHistory != null )
         {
-            List<String> listElements = new ArrayList<String>(  );
+            List<String> listElements = new ArrayList<String>( );
             listElements.add( Integer.toString( nIdHistory ) );
             listElements.add( Integer.toString( nIdTask ) );
             listElements.add( Integer.toString( nIdAction ) );
 
-            String strTimestamp = Long.toString( new Date(  ).getTime(  ) );
-            String strSignature = EditTicketRequestAuthenticationService.getRequestAuthenticator(  )
-                                                                        .buildSignature( listElements, strTimestamp );
+            String strTimestamp = Long.toString( new Date( ).getTime( ) );
+            String strSignature = EditTicketRequestAuthenticationService.getRequestAuthenticator( ).buildSignature( listElements, strTimestamp );
             StringBuilder sbUrl = new StringBuilder( AppPathService.getBaseUrl( request ) );
 
-            UrlItem url = new UrlItem( sbUrl.toString(  ) + AppPathService.getPortalUrl(  ) );
+            UrlItem url = new UrlItem( sbUrl.toString( ) + AppPathService.getPortalUrl( ) );
             url.addParameter( XPageAppService.PARAM_XPAGE_APP, EditTicketXPage.XPAGE );
             url.addParameter( TaskEditTicketConstants.PARAMETER_ID_HISTORY, nIdHistory );
             url.addParameter( TaskEditTicketConstants.PARAMETER_ID_TASK, nIdTask );
@@ -354,7 +361,7 @@ public class TaskEditTicket extends AbstractTicketingTask
             url.addParameter( TicketingConstants.PARAMETER_SIGNATURE, strSignature );
             url.addParameter( TicketingConstants.PARAMETER_TIMESTAMP, strTimestamp );
 
-            strInfo = url.getUrl(  );
+            strInfo = url.getUrl( );
         }
 
         return strInfo;
@@ -367,17 +374,17 @@ public class TaskEditTicket extends AbstractTicketingTask
     public void doRemoveTaskInformation( int nIdHistory )
     {
         super.doRemoveTaskInformation( nIdHistory );
-        _editableTicketService.removeByIdHistory( nIdHistory, getId(  ) );
+        _editableTicketService.removeByIdHistory( nIdHistory, getId( ) );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        super.doRemoveConfig(  );
-        _editableTicketService.removeByIdTask( getId(  ) );
-        _taskEditableTicketConfigService.remove( getId(  ) );
+        super.doRemoveConfig( );
+        _editableTicketService.removeByIdTask( getId( ) );
+        _taskEditableTicketConfigService.remove( getId( ) );
     }
 }

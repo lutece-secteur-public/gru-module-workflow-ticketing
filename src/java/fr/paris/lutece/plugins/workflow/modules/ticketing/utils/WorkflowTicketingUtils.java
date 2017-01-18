@@ -40,7 +40,6 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistorySer
 import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-
 /**
  * This class provides utility methods for the module-workflow-ticketing
  *
@@ -52,13 +51,15 @@ public final class WorkflowTicketingUtils
     /**
      * Private constructor
      */
-    private WorkflowTicketingUtils(  )
+    private WorkflowTicketingUtils( )
     {
     }
 
     /**
      * Get the ticket from a given id history
-     * @param nIdHistory the id history
+     * 
+     * @param nIdHistory
+     *            the id history
      * @return the ticket
      */
     public static Ticket findTicketByIdHistory( int nIdHistory )
@@ -66,9 +67,9 @@ public final class WorkflowTicketingUtils
         Ticket ticket = null;
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
 
-        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType(  ) ) )
+        if ( ( resourceHistory != null ) && Ticket.TICKET_RESOURCE_TYPE.equals( resourceHistory.getResourceType( ) ) )
         {
-            ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource(  ) );
+            ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource( ) );
         }
 
         return ticket;

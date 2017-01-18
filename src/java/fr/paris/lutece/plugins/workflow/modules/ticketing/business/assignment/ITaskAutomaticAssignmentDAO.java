@@ -39,7 +39,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 
-
 /**
  *
  * interface ITaskAutomaticAssignmentDAO
@@ -49,64 +48,90 @@ public interface ITaskAutomaticAssignmentDAO extends ITaskConfigDAO<TaskAutomati
 {
     /**
      * insert automaticAssignement
-     * @param idTask id of task
-     * @param strUserAccessCode user access code
-     * @param strSuffix suffix to add
-     * @param plugin plugin
+     * 
+     * @param idTask
+     *            id of task
+     * @param strUserAccessCode
+     *            user access code
+     * @param strSuffix
+     *            suffix to add
+     * @param plugin
+     *            plugin
      */
     void assign( int idTask, String strUserAccessCode, String strSuffix, Plugin plugin );
 
     /**
      * update automaticAssignement
-     * @param nIdTask task id
-     * @param strSuffix suffix
-     * @param plugin plugin
+     * 
+     * @param nIdTask
+     *            task id
+     * @param strSuffix
+     *            suffix
+     * @param plugin
+     *            plugin
      */
     void unassign( int nIdTask, String strSuffix, Plugin plugin );
 
     /**
      * return adminUser assigned to the suffix
-     * @param nIdTask task id
-     * @param strSuffix suffix
-     * @param plugin plugin
+     * 
+     * @param nIdTask
+     *            task id
+     * @param strSuffix
+     *            suffix
+     * @param plugin
+     *            plugin
      * @return adminUser assigned to the suffix
      */
     AdminUser getAssignedUser( int nIdTask, String strSuffix, Plugin plugin );
 
     /**
      *
-     * @param nIdTask task id
+     * @param nIdTask
+     *            task id
      * @return list containing all of automatic assignement config
      */
     List<UserAutomaticAssignmentConfig> getAllAutoAssignementConf( int nIdTask );
 
     /**
      * return AutomaticAssignment which are not linked to user
-     * @param nIdTask id task
+     * 
+     * @param nIdTask
+     *            id task
      * @return AutomaticAssignment which are not linked to user
      */
     UserAutomaticAssignmentConfig getAvailableAutoAssignementList( int nIdTask );
 
     /**
      * remove all assignement for a user
-     * @param nIdtask id of task
-     * @param strUserAccessCode user access code who will no longer have autoassignment
-     * @param plugin plugin
+     * 
+     * @param nIdtask
+     *            id of task
+     * @param strUserAccessCode
+     *            user access code who will no longer have autoassignment
+     * @param plugin
+     *            plugin
      */
     void unassignByUser( int nIdtask, String strUserAccessCode, Plugin plugin );
 
     /**
-    * initialize config table with default records
-    * @param nIdTask task id
-    * @return list containing all of automatic assignement config initialization
-    */
+     * initialize config table with default records
+     * 
+     * @param nIdTask
+     *            task id
+     * @return list containing all of automatic assignement config initialization
+     */
     List<UserAutomaticAssignmentConfig> initializeAssignementConf( int nIdTask );
 
     /**
      * returns user assignment conf
-     * @param nIdTask id of task
-     * @param adminUser  admin user
-     * @param plugin plugin
+     * 
+     * @param nIdTask
+     *            id of task
+     * @param adminUser
+     *            admin user
+     * @param plugin
+     *            plugin
      * @return user assignment conf
      */
     UserAutomaticAssignmentConfig getUserAssignemnt( int nIdTask, AdminUser adminUser, Plugin plugin );

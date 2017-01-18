@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 
 import java.util.List;
 
-
 /**
  *
  * This class represents an editable ticket
@@ -52,7 +51,9 @@ public class EditableTicket
 
     /**
      * Set the id editable ticket
-     * @param nIdHistory the id of the editable ticket
+     * 
+     * @param nIdHistory
+     *            the id of the editable ticket
      */
     public void setIdHistory( int nIdHistory )
     {
@@ -61,25 +62,29 @@ public class EditableTicket
 
     /**
      * Get the id of the editable ticket
+     * 
      * @return the id of the editable ticket
      */
-    public int getIdHistory(  )
+    public int getIdHistory( )
     {
         return _nIdHistory;
     }
 
     /**
      * Get the id task
+     * 
      * @return the task id
      */
-    public int getIdTask(  )
+    public int getIdTask( )
     {
         return _nIdTask;
     }
 
     /**
      * Set the task id
-     * @param nIdTask the task id
+     * 
+     * @param nIdTask
+     *            the task id
      */
     public void setIdTask( int nIdTask )
     {
@@ -88,16 +93,19 @@ public class EditableTicket
 
     /**
      * Get the id task
+     * 
      * @return the ticket id
      */
-    public int getIdTicket(  )
+    public int getIdTicket( )
     {
         return _nIdTicket;
     }
 
     /**
      * Set the ticket id
-     * @param nIdTicket the ticket id
+     * 
+     * @param nIdTicket
+     *            the ticket id
      */
     public void setIdTicket( int nIdTicket )
     {
@@ -106,7 +114,9 @@ public class EditableTicket
 
     /**
      * Set the message
-     * @param strMessage the message
+     * 
+     * @param strMessage
+     *            the message
      */
     public void setMessage( String strMessage )
     {
@@ -115,16 +125,19 @@ public class EditableTicket
 
     /**
      * Get the message
+     * 
      * @return the message
      */
-    public String getMessage(  )
+    public String getMessage( )
     {
         return _strMessage;
     }
 
     /**
      * Set the list of editable ticket field
-     * @param listEditableTicketField of editable ticket field
+     * 
+     * @param listEditableTicketField
+     *            of editable ticket field
      */
     public void setListEditableTicketFields( List<EditableTicketField> listEditableTicketField )
     {
@@ -133,16 +146,19 @@ public class EditableTicket
 
     /**
      * Get the list of editable ticket field
+     * 
      * @return the list of editable ticket field
      */
-    public List<EditableTicketField> getListEditableTicketFields(  )
+    public List<EditableTicketField> getListEditableTicketFields( )
     {
         return _listEditableTicketFields;
     }
 
     /**
      * Set {@code true} if the ticket is edited, {@code false} otherwise
-     * @param bIsEdited {@code true} if the ticket is edited, {@code false} otherwise
+     * 
+     * @param bIsEdited
+     *            {@code true} if the ticket is edited, {@code false} otherwise
      */
     public void setIsEdited( boolean bIsEdited )
     {
@@ -151,9 +167,10 @@ public class EditableTicket
 
     /**
      * Check if the ticket is edited
+     * 
      * @return {@code true} if the ticket is edited, {@code false} otherwise
      */
-    public boolean isEdited(  )
+    public boolean isEdited( )
     {
         return _bIsEdited;
     }

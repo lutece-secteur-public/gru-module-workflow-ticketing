@@ -49,56 +49,50 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketNomenclature}
  *
  */
 public class ModifyTicketNomenclatureTaskComponent extends TicketingTaskComponent
 {
-    //template
+    // template
     private static final String TEMPLATE_TASK_MODIFY_TICKET_NOMENCLATURE_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_nomenclature_form.html";
 
-    //list
+    // list
     private static final String MARK_TICKET_NOMENCLATURE = "ticket_nomenclature";
 
-    //Parameter
+    // Parameter
     private static final String PARAMETER_TICKET_NOMENCLATURE = "nomenclature";
 
     // Message reply
     private static final String MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR = "module.workflow.ticketing.task_modify_ticket_nomenclature.error";
 
-    //Property
+    // Property
     private static final String PROPERTY_NOMENCLATURE_REGEXP = "workflow-ticketing.workflow.nomenclature.regexp";
 
     @Override
-    public String getDisplayTaskForm( int nIdHistory, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdHistory, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Ticket ticket = getTicket( nIdHistory, strResourceType );
-        String strNomenclature = ticket.getNomenclature(  );
+        String strNomenclature = ticket.getNomenclature( );
 
-        Map<String, String> model = new HashMap<String, String>(  );
+        Map<String, String> model = new HashMap<String, String>( );
 
         model.put( MARK_TICKET_NOMENCLATURE, strNomenclature );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_NOMENCLATURE_FORM, locale,
-                model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_NOMENCLATURE_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         String strNewNomenclature = request.getParameter( PARAMETER_TICKET_NOMENCLATURE );
 
-        if ( StringUtils.isNotEmpty( strNewNomenclature ) &&
-                !strNewNomenclature.matches( AppPropertiesService.getProperty( PROPERTY_NOMENCLATURE_REGEXP ) ) )
+        if ( StringUtils.isNotEmpty( strNewNomenclature ) && !strNewNomenclature.matches( AppPropertiesService.getProperty( PROPERTY_NOMENCLATURE_REGEXP ) ) )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR,
-                AdminMessage.TYPE_STOP );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR, AdminMessage.TYPE_STOP );
         }
 
         return null;

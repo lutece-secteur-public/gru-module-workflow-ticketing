@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 
 import java.util.List;
 
-
 /**
  *
  * This class is a data access object for {@link EditableTicketField}
@@ -45,20 +44,26 @@ public interface IEditableTicketFieldDAO
 {
     /**
      * Insert new editable ticket field
-     * @param editableTicketField the EditableTicketField Object
+     * 
+     * @param editableTicketField
+     *            the EditableTicketField Object
      */
     void insert( EditableTicketField editableTicketField );
 
     /**
      * Load a EditableTicketField by id of the editable ticket
-     * @param nIdHistory the id history
+     * 
+     * @param nIdHistory
+     *            the id history
      * @return a list of EditableTicketField
      */
     List<EditableTicketField> load( int nIdHistory );
 
     /**
      * Remove by id editable ticket field
-     * @param nIdHistory the id history
+     * 
+     * @param nIdHistory
+     *            the id history
      */
     void delete( int nIdHistory );
 }

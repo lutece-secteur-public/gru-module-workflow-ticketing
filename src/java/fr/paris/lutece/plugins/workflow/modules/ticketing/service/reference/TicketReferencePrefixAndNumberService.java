@@ -44,7 +44,6 @@ import java.text.SimpleDateFormat;
 
 import java.util.Date;
 
-
 /**
  * This class manages ticket reference in the following format : <prefix><date><sequence>
  *
@@ -59,7 +58,9 @@ public class TicketReferencePrefixAndNumberService implements ITicketReferenceSe
 
     /**
      * Constructor of a TicketReferencePrefixAndNumberService
-     * @param ticketReferenceDAO the dao to access the ticket reference
+     * 
+     * @param ticketReferenceDAO
+     *            the dao to access the ticket reference
      */
     public TicketReferencePrefixAndNumberService( ITicketReferenceDAO ticketReferenceDAO )
     {
@@ -69,10 +70,10 @@ public class TicketReferencePrefixAndNumberService implements ITicketReferenceSe
     @Override
     public String generateReference( Ticket ticket )
     {
-        TicketType ticketType = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType(  ) );
+        TicketType ticketType = TicketTypeHome.findByPrimaryKey( ticket.getIdTicketType( ) );
 
-        Date dateToday = new Date(  );
-        String strPrefixWithDate = ticketType.getReferencePrefix(  ) + _simpleDateFormat.format( dateToday );
+        Date dateToday = new Date( );
+        String strPrefixWithDate = ticketType.getReferencePrefix( ) + _simpleDateFormat.format( dateToday );
 
         String strSequence = _dao.findLastTicketReference( strPrefixWithDate );
         int nSequence = SEQUENCE_INITIAL_VALUE;

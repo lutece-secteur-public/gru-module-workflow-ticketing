@@ -43,7 +43,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-
 /**
  *
  * Implementation of {@link IEditableTicketFieldService}

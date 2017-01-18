@@ -46,23 +46,25 @@ import java.util.Map;
  *
  */
 public enum MessageDirection
-{USER_TO_AGENT,
-    AGENT_TO_USER;
+{
+    USER_TO_AGENT, AGENT_TO_USER;
 
     private static final String MESSAGE_PREFIX = "module.workflow.ticketing.task_reply_config.message.direction.";
-    private static Map<Integer,MessageDirection> _mapMessageDirection = new HashMap<Integer,MessageDirection>(  );
+    private static Map<Integer, MessageDirection> _mapMessageDirection = new HashMap<Integer, MessageDirection>( );
 
     static
     {
         for ( MessageDirection enumMessageDirection : EnumSet.allOf( MessageDirection.class ) )
         {
-            _mapMessageDirection.put( enumMessageDirection.ordinal(  ), enumMessageDirection );
+            _mapMessageDirection.put( enumMessageDirection.ordinal( ), enumMessageDirection );
         }
     }
 
     /**
      * returns MessageDirection enum from id
-     * @param nMessageDirectionId level value
+     * 
+     * @param nMessageDirectionId
+     *            level value
      * @return MessageDirection enum
      */
     public static MessageDirection valueOf( int nMessageDirectionId )
@@ -72,26 +74,30 @@ public enum MessageDirection
 
     /**
      * Gives the localized message
-     * @param locale the locale to use
+     * 
+     * @param locale
+     *            the locale to use
      * @return the message
      */
     public String getLocalizedMessage( Locale locale )
     {
-        return I18nService.getLocalizedString( MESSAGE_PREFIX + this.name(  ).toLowerCase(  ), locale );
+        return I18nService.getLocalizedString( MESSAGE_PREFIX + this.name( ).toLowerCase( ), locale );
     }
 
     /**
      * Builds a RefenrenceList object containing all the MessageDirection objects
-     * @param locale the locale used to retrieve the localized messages
+     * 
+     * @param locale
+     *            the locale used to retrieve the localized messages
      * @return the ReferenceList object
      */
     public static ReferenceList getReferenceList( Locale locale )
     {
-        ReferenceList listMessageDirection = new ReferenceList(  );
+        ReferenceList listMessageDirection = new ReferenceList( );
 
-        for ( MessageDirection messageDirection : MessageDirection.values(  ) )
+        for ( MessageDirection messageDirection : MessageDirection.values( ) )
         {
-            listMessageDirection.addItem( messageDirection.ordinal(  ), messageDirection.getLocalizedMessage( locale ) );
+            listMessageDirection.addItem( messageDirection.ordinal( ), messageDirection.getLocalizedMessage( locale ) );
         }
 
         return listMessageDirection;

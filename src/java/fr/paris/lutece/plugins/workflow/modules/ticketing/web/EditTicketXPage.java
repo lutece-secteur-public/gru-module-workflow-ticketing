@@ -72,7 +72,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
  * This class represents a controller to edit a ticket
@@ -110,7 +109,7 @@ public class EditTicketXPage implements XPageApplication
 
     // ACTIONS
     private static final String ACTION_DO_MODIFY_TICKET = "do_modify_ticket";
-    private static transient WorkflowService _workflowService = WorkflowService.getInstance(  );
+    private static transient WorkflowService _workflowService = WorkflowService.getInstance( );
 
     // SERVICES
     private transient IEditableTicketService _editableTicketService = SpringContextService.getBean( EditableTicketService.BEAN_NAME );
@@ -120,8 +119,7 @@ public class EditTicketXPage implements XPageApplication
      * {@inheritDoc}
      */
     @Override
-    public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin )
-        throws UserNotSignedException, SiteMessageException
+    public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin ) throws UserNotSignedException, SiteMessageException
     {
         XPage page = null;
 
@@ -133,9 +131,8 @@ public class EditTicketXPage implements XPageApplication
             String strIdTask = request.getParameter( TaskEditTicketConstants.PARAMETER_ID_TASK );
             String strIdAction = request.getParameter( TicketingConstants.PARAMETER_WORKFLOW_ID_ACTION );
 
-            if ( StringUtils.isNotBlank( strIdHistory ) && StringUtils.isNumeric( strIdHistory ) &&
-                    StringUtils.isNotBlank( strIdTask ) && StringUtils.isNumeric( strIdTask ) &&
-                    StringUtils.isNotBlank( strIdAction ) && StringUtils.isNumeric( strIdAction ) )
+            if ( StringUtils.isNotBlank( strIdHistory ) && StringUtils.isNumeric( strIdHistory ) && StringUtils.isNotBlank( strIdTask )
+                    && StringUtils.isNumeric( strIdTask ) && StringUtils.isNotBlank( strIdAction ) && StringUtils.isNumeric( strIdAction ) )
             {
                 int nIdHistory = Integer.parseInt( strIdHistory );
                 int nIdTask = Integer.parseInt( strIdTask );
@@ -158,24 +155,30 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Get the page
-     * @param request teh request
-     * @param nIdHistory the history id
-     * @param nIdTask the task id
-     * @param nIdAction the action id
-     * @param strUrlReturn the URL to return
+     * 
+     * @param request
+     *            teh request
+     * @param nIdHistory
+     *            the history id
+     * @param nIdTask
+     *            the task id
+     * @param nIdAction
+     *            the action id
+     * @param strUrlReturn
+     *            the URL to return
      * @return the page
-     * @throws SiteMessageException if there is an exception
+     * @throws SiteMessageException
+     *             if there is an exception
      */
-    private XPage getPage( HttpServletRequest request, int nIdHistory, int nIdTask, int nIdAction, String strUrlReturn )
-        throws SiteMessageException
+    private XPage getPage( HttpServletRequest request, int nIdHistory, int nIdTask, int nIdAction, String strUrlReturn ) throws SiteMessageException
     {
         XPage page = null;
 
         EditableTicket editableTicket = _editableTicketService.find( nIdHistory, nIdTask );
 
-        if ( ( editableTicket != null ) && !editableTicket.isEdited(  ) )
+        if ( ( editableTicket != null ) && !editableTicket.isEdited( ) )
         {
-            if ( _editableTicketService.isStateValid( editableTicket, request.getLocale(  ) ) )
+            if ( _editableTicketService.isStateValid( editableTicket, request.getLocale( ) ) )
             {
                 try
                 {
@@ -189,11 +192,10 @@ public class EditTicketXPage implements XPageApplication
                         page = getEditTicketPage( request, editableTicket );
                     }
                 }
-                catch ( RuntimeException e )
+                catch( RuntimeException e )
                 {
                     AppLogService.error( e );
-                    setSiteMessage( request, WorkflowCapableXPage.ERROR_WORKFLOW_ACTION_ABORTED, SiteMessage.TYPE_STOP,
-                        strUrlReturn );
+                    setSiteMessage( request, WorkflowCapableXPage.ERROR_WORKFLOW_ACTION_ABORTED, SiteMessage.TYPE_STOP, strUrlReturn );
                 }
             }
             else
@@ -211,24 +213,26 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Get the page to edit the ticket
-     * @param request the HTTP request
-     * @param editableTicket the editable ticket
+     * 
+     * @param request
+     *            the HTTP request
+     * @param editableTicket
+     *            the editable ticket
      * @return a XPage
-     * @throws SiteMessageException a site message if there is a problem
+     * @throws SiteMessageException
+     *             a site message if there is a problem
      */
-    private XPage getEditTicketPage( HttpServletRequest request, EditableTicket editableTicket )
-        throws SiteMessageException
+    private XPage getEditTicketPage( HttpServletRequest request, EditableTicket editableTicket ) throws SiteMessageException
     {
-        XPage page = new XPage(  );
+        XPage page = new XPage( );
 
-        List<Entry> listEntries = _editableTicketService.buildListEntriesToEdit( request,
-                editableTicket.getListEditableTicketFields(  ) );
-        Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory(  ) );
+        List<Entry> listEntries = _editableTicketService.buildListEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
+        Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
 
-        String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale(  ), true, request );
-        TicketAsynchronousUploadHandler.getHandler(  ).removeSessionFiles( request.getSession(  ).getId(  ) );
+        String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), true, request );
+        TicketAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( TaskEditTicketConstants.MARK_EDITABLE_TICKET, editableTicket );
         model.put( TicketingConstants.MARK_TICKET, ticket );
         model.put( MARK_ID_ACTION, request.getParameter( TicketingConstants.PARAMETER_WORKFLOW_ID_ACTION ) );
@@ -238,20 +242,24 @@ public class EditTicketXPage implements XPageApplication
 
         ModelUtils.storeReadOnlyHtmlResponses( request, model, ticket );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_EDIT_TICKET, request.getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_EDIT_TICKET, request.getLocale( ), model );
 
-        page.setTitle( I18nService.getLocalizedString( PROPERTY_XPAGE_EDIT_TICKET_PAGETITLE, request.getLocale(  ) ) );
-        page.setPathLabel( I18nService.getLocalizedString( PROPERTY_XPAGE_EDIT_TICKET_PATHLABEL, request.getLocale(  ) ) );
-        page.setContent( template.getHtml(  ) );
+        page.setTitle( I18nService.getLocalizedString( PROPERTY_XPAGE_EDIT_TICKET_PAGETITLE, request.getLocale( ) ) );
+        page.setPathLabel( I18nService.getLocalizedString( PROPERTY_XPAGE_EDIT_TICKET_PATHLABEL, request.getLocale( ) ) );
+        page.setContent( template.getHtml( ) );
 
         return page;
     }
 
     /**
      * Do process the workflow action
-     * @param request HttpServletRequest
-     * @param nIdAction the action id
-     * @param editableTicket editable ticket
+     * 
+     * @param request
+     *            HttpServletRequest
+     * @param nIdAction
+     *            the action id
+     * @param editableTicket
+     *            editable ticket
      * @return {@code true} if the action is processed, {@code false} otherwise
      */
     private boolean doProcessWorkflowAction( HttpServletRequest request, int nIdAction, EditableTicket editableTicket )
@@ -267,11 +275,11 @@ public class EditTicketXPage implements XPageApplication
 
                 try
                 {
-                    Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory(  ) );
-                    TicketCategory ticketCategory = ticket.getTicketCategory(  );
+                    Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
+                    TicketCategory ticketCategory = ticket.getTicketCategory( );
 
-                    _workflowService.doProcessAction( ticket.getId(  ), Ticket.TICKET_RESOURCE_TYPE, nIdAction,
-                        ticketCategory.getId(  ), request, request.getLocale(  ), false );
+                    _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdAction, ticketCategory.getId( ), request,
+                            request.getLocale( ), false );
 
                     bIsActionProccessed = true;
                 }
@@ -287,14 +295,19 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Set the site message
-     * @param request the HTTP request
-     * @param strMessage the message
-     * @param nTypeMessage the message type
-     * @param strUrlReturn the url return
-     * @throws SiteMessageException the site message
+     * 
+     * @param request
+     *            the HTTP request
+     * @param strMessage
+     *            the message
+     * @param nTypeMessage
+     *            the message type
+     * @param strUrlReturn
+     *            the url return
+     * @throws SiteMessageException
+     *             the site message
      */
-    private void setSiteMessage( HttpServletRequest request, String strMessage, int nTypeMessage, String strUrlReturn )
-        throws SiteMessageException
+    private void setSiteMessage( HttpServletRequest request, String strMessage, int nTypeMessage, String strUrlReturn ) throws SiteMessageException
     {
         if ( StringUtils.isNotBlank( strUrlReturn ) )
         {
@@ -308,11 +321,13 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Checks if the request is authenticated or not
-     * @param request the HTTP request
+     * 
+     * @param request
+     *            the HTTP request
      * @return {@code true} if the request is authenticated, {@code false} otherwise
      */
     private boolean isRequestAuthenticated( HttpServletRequest request )
     {
-        return EditTicketRequestAuthenticationService.getRequestAuthenticator(  ).isRequestAuthenticated( request );
+        return EditTicketRequestAuthenticationService.getRequestAuthenticator( ).isRequestAuthenticated( request );
     }
 }

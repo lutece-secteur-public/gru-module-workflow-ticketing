@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.authenticatio
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.signrequest.AbstractAuthenticator;
 
-
 /**
  *
  * EditTicketRequestAuthenticationService
@@ -49,15 +48,16 @@ public final class EditTicketRequestAuthenticationService
     /**
      * Private constructor
      */
-    private EditTicketRequestAuthenticationService(  )
+    private EditTicketRequestAuthenticationService( )
     {
     }
 
     /**
      * Get the instance of {@link AbstractAuthenticator} defined in the context.xml
+     * 
      * @return the instance of {@link AbstractAuthenticator}
      */
-    public static AbstractAuthenticator getRequestAuthenticator(  )
+    public static AbstractAuthenticator getRequestAuthenticator( )
     {
         return (AbstractAuthenticator) SpringContextService.getBean( BEAN_EDIT_TICKET_REQUEST_AUTHENTICATION );
     }

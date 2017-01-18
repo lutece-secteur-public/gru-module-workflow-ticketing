@@ -48,7 +48,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to assign a unit
  *
@@ -74,18 +73,17 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
+            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit( );
             String strCurrentUnit = null;
 
             if ( assigneeUnit == null )
             {
-                assigneeUnit = new AssigneeUnit(  );
-                strCurrentUnit = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT,
-                        Locale.FRENCH );
+                assigneeUnit = new AssigneeUnit( );
+                strCurrentUnit = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT, Locale.FRENCH );
             }
             else
             {
-                strCurrentUnit = assigneeUnit.getName(  );
+                strCurrentUnit = assigneeUnit.getName( );
             }
 
             Unit unit = null;
@@ -97,17 +95,16 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
 
             if ( unit != null )
             {
-                if ( unit.getIdUnit(  ) != assigneeUnit.getUnitId(  ) )
+                if ( unit.getIdUnit( ) != assigneeUnit.getUnitId( ) )
                 {
-                    assigneeUnit.setUnitId( unit.getIdUnit(  ) );
-                    assigneeUnit.setName( unit.getLabel(  ) );
+                    assigneeUnit.setUnitId( unit.getIdUnit( ) );
+                    assigneeUnit.setName( unit.getLabel( ) );
                     ticket.setAssigneeUnit( assigneeUnit );
                     ticket.setAssigneeUser( null );
                     TicketHome.update( ticket );
 
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ), strCurrentUnit,
-                            assigneeUnit.getName(  ) );
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ),
+                            strCurrentUnit, assigneeUnit.getName( ) );
                 }
             }
         }

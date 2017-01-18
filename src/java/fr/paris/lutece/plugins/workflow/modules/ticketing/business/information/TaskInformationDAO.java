@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.information;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
-
 /**
  *
  * TaskInformationDAO
@@ -44,10 +43,10 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskInformationDAO implements ITaskInformationDAO
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_task,information_value  " +
-        "FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_ticketing_information " +
-        "(id_history,id_task,information_value ) VALUES( ?, ?, ? )";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_task,information_value  "
+            + "FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_ticketing_information "
+            + "(id_history,id_task,information_value ) VALUES( ?, ?, ? )";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
     private static final String SQL_QUERY_DELETE_BY_TASK = "DELETE FROM workflow_task_ticketing_information WHERE id_task=?";
 
@@ -59,12 +58,12 @@ public class TaskInformationDAO implements ITaskInformationDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
 
-        daoUtil.setInt( 1, taskInformation.getIdResourceHistory(  ) );
-        daoUtil.setInt( 2, taskInformation.getIdTask(  ) );
-        daoUtil.setString( 3, taskInformation.getValue(  ) );
+        daoUtil.setInt( 1, taskInformation.getIdResourceHistory( ) );
+        daoUtil.setInt( 2, taskInformation.getIdTask( ) );
+        daoUtil.setString( 3, taskInformation.getValue( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -80,17 +79,17 @@ public class TaskInformationDAO implements ITaskInformationDAO
         daoUtil.setInt( 1, nIdHistory );
         daoUtil.setInt( 2, nIdTask );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            taskInformation = new TaskInformation(  );
+            taskInformation = new TaskInformation( );
             taskInformation.setIdResourceHistory( daoUtil.getInt( 1 ) );
             taskInformation.setIdTask( daoUtil.getInt( 2 ) );
             taskInformation.setValue( daoUtil.getString( 3 ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return taskInformation;
     }
@@ -106,8 +105,8 @@ public class TaskInformationDAO implements ITaskInformationDAO
         daoUtil.setInt( 1, nIdHistory );
         daoUtil.setInt( 2, nIdTask );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -119,7 +118,7 @@ public class TaskInformationDAO implements ITaskInformationDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
 
         daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

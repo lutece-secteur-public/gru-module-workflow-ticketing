@@ -40,7 +40,6 @@ import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  * Implementation of {@link IEditableTicketFieldDAO}
@@ -48,10 +47,9 @@ import java.util.List;
  */
 public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
 {
-    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_entry " +
-        " FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_editable_ticket_field (id_history, id_entry ) " +
-        " VALUES ( ?,? ) ";
+    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_entry "
+            + " FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_editable_ticket_field (id_history, id_entry ) " + " VALUES ( ?,? ) ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
 
     /**
@@ -63,11 +61,11 @@ public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
         int nIndex = 1;
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( nIndex++, editableTicketField.getIdHistory(  ) );
-        daoUtil.setInt( nIndex++, editableTicketField.getIdEntry(  ) );
+        daoUtil.setInt( nIndex++, editableTicketField.getIdHistory( ) );
+        daoUtil.setInt( nIndex++, editableTicketField.getIdEntry( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -76,25 +74,25 @@ public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
     @Override
     public List<EditableTicketField> load( int nIdHistory )
     {
-        List<EditableTicketField> listEditableTicketFields = new ArrayList<EditableTicketField>(  );
+        List<EditableTicketField> listEditableTicketFields = new ArrayList<EditableTicketField>( );
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
         daoUtil.setInt( 1, nIdHistory );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        while ( daoUtil.next(  ) )
+        while ( daoUtil.next( ) )
         {
             int nIndex = 1;
 
-            EditableTicketField editableTicketField = new EditableTicketField(  );
+            EditableTicketField editableTicketField = new EditableTicketField( );
             editableTicketField.setIdHistory( daoUtil.getInt( nIndex++ ) );
             editableTicketField.setIdEntry( daoUtil.getInt( nIndex++ ) );
 
             listEditableTicketFields.add( editableTicketField );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return listEditableTicketFields;
     }
@@ -108,7 +106,7 @@ public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
         daoUtil.setInt( 1, nIdHistory );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

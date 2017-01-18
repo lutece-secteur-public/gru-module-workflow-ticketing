@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicket
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
-
 /**
  * This class accesses a ticket reference in the following format: <prefix><sequence>
  *
@@ -51,20 +50,19 @@ public class TicketReferencePrefixAndNumberDAO implements ITicketReferenceDAO
     @Override
     public String findLastTicketReference( String strPrefix )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE,
-                PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, strPrefix.length(  ) + 1 );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_TICKET_REFERENCE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        daoUtil.setInt( 1, strPrefix.length( ) + 1 );
         daoUtil.setString( 2, strPrefix + SQL_LIKE_WILDCARD );
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
         String lastTicketReference = null;
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
             lastTicketReference = daoUtil.getString( 1 );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return lastTicketReference;
     }

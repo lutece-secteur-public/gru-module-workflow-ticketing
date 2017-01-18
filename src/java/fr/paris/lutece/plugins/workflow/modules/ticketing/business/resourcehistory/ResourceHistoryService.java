@@ -45,7 +45,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-
 /**
  *
  * ResourceHistoryService
@@ -95,33 +94,36 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
     @Override
     public void removeByResource( int nIdResource, String strResourceType )
     {
-        _dao.deleteByResource( nIdResource, strResourceType, WorkflowUtils.getPlugin(  ) );
+        _dao.deleteByResource( nIdResource, strResourceType, WorkflowUtils.getPlugin( ) );
     }
 
     /**
      * returns the list of id_history/channel associated to a ticket resource.
      *
-     * @param nIdResource the resource id
-     * @param strResourceType the resource type
-     * @param nIdWorkflow the workflow id
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
      * @return the list of id_history/channel associated to a ticket resource
      */
     public Map<String, Channel> getChannelHistoryMap( int nIdResource, String strResourceType, int nIdWorkflow )
     {
-        Map<String, Channel> mapHistoryChannel = new HashMap<String, Channel>(  );
+        Map<String, Channel> mapHistoryChannel = new HashMap<String, Channel>( );
 
-        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource,
-                strResourceType, nIdWorkflow );
+        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource(
+                nIdResource, strResourceType, nIdWorkflow );
 
         for ( fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory resourceHistory : listResourceHistory )
         {
-            fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryChannel =
-                findByPrimaryKey( resourceHistory.getId(  ), WorkflowUtils.getPlugin(  ) );
+            fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryChannel = findByPrimaryKey(
+                    resourceHistory.getId( ), WorkflowUtils.getPlugin( ) );
 
             if ( resourceHistoryChannel != null )
             {
-                Channel channel = ChannelHome.findByPrimaryKey( resourceHistoryChannel.getIdChannel(  ) );
-                mapHistoryChannel.put( Integer.toString( resourceHistoryChannel.getIdHistory(  ) ), channel );
+                Channel channel = ChannelHome.findByPrimaryKey( resourceHistoryChannel.getIdChannel( ) );
+                mapHistoryChannel.put( Integer.toString( resourceHistoryChannel.getIdHistory( ) ), channel );
             }
         }
 
@@ -131,23 +133,26 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
     /**
      * remove all the list of ticketing history resource associated to a ticket resource.
      *
-     * @param nIdResource the resource id
-     * @param strResourceType the resource type
-     * @param nIdWorkflow the workflow id
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @param nIdWorkflow
+     *            the workflow id
      */
     public void removeResourceHistory( int nIdResource, String strResourceType, int nIdWorkflow )
     {
-        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource,
-                strResourceType, nIdWorkflow );
+        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource(
+                nIdResource, strResourceType, nIdWorkflow );
 
         for ( fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory resourceHistory : listResourceHistory )
         {
-            fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryTicketing =
-                findByPrimaryKey( resourceHistory.getId(  ), WorkflowUtils.getPlugin(  ) );
+            fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryTicketing = findByPrimaryKey(
+                    resourceHistory.getId( ), WorkflowUtils.getPlugin( ) );
 
             if ( resourceHistoryTicketing != null )
             {
-                removeByHistory( resourceHistory.getId(  ), WorkflowUtils.getPlugin(  ) );
+                removeByHistory( resourceHistory.getId( ), WorkflowUtils.getPlugin( ) );
             }
         }
     }

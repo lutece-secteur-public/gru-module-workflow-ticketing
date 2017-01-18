@@ -47,7 +47,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReply}
  *
@@ -72,17 +71,17 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskReplyConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskReplyConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         ReferenceList listMessageDirections = MessageDirection.getReferenceList( locale );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
 
         model.put( MARK_MESSAGE_DIRECTIONS_LIST, listMessageDirections );
 
         if ( config != null )
         {
-            model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection(  ).ordinal(  ) );
+            model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection( ).ordinal( ) );
         }
         else
         {
@@ -91,7 +90,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_REPLY_CONFIG, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
@@ -102,13 +101,13 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     {
         int nMessageDirectionId = Integer.parseInt( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
 
-        TaskReplyConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskReplyConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bConfigToCreate = false;
 
         if ( config == null )
         {
-            config = new TaskReplyConfig(  );
-            config.setIdTask( task.getId(  ) );
+            config = new TaskReplyConfig( );
+            config.setIdTask( task.getId( ) );
             bConfigToCreate = true;
         }
 
@@ -116,11 +115,11 @@ public class ReplyTaskComponent extends TicketingTaskComponent
 
         if ( bConfigToCreate )
         {
-            this.getTaskConfigService(  ).create( config );
+            this.getTaskConfigService( ).create( config );
         }
         else
         {
-            this.getTaskConfigService(  ).update( config );
+            this.getTaskConfigService( ).update( config );
         }
 
         return null;
@@ -130,14 +129,13 @@ public class ReplyTaskComponent extends TicketingTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
-        TaskReplyConfig config = this.getTaskConfigService(  ).findByPrimaryKey( task.getId(  ) );
+        TaskReplyConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         boolean bIsAgentView = false;
 
-        if ( config.getMessageDirection(  ) == MessageDirection.AGENT_TO_USER )
+        if ( config.getMessageDirection( ) == MessageDirection.AGENT_TO_USER )
         {
             bIsAgentView = true;
 
@@ -150,6 +148,6 @@ public class ReplyTaskComponent extends TicketingTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_REPLY_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 }

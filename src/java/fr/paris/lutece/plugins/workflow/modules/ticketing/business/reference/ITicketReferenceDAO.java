@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference;
 
-
 /**
  * Interface to access the ticket reference
  *
@@ -42,7 +41,9 @@ public interface ITicketReferenceDAO
 {
     /**
      * Find the last ticket reference which begins with the specified prefix
-     * @param strPrefix the prefix
+     * 
+     * @param strPrefix
+     *            the prefix
      * @return the last ticket reference
      */
     String findLastTicketReference( String strPrefix );

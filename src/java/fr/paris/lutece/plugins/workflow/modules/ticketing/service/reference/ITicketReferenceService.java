@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 
-
 /**
  * Interface to manage ticket reference
  *
@@ -44,7 +43,9 @@ public interface ITicketReferenceService
 {
     /**
      * Generates a reference for the specified ticket
-     * @param ticket the ticket
+     * 
+     * @param ticket
+     *            the ticket
      * @return the reference
      */
     String generateReference( Ticket ticket );

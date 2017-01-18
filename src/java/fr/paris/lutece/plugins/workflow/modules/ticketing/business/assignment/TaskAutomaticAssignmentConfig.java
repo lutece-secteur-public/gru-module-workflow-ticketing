@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 import java.util.List;
 
-
 /**
  *
  * Automatic a
@@ -50,13 +49,14 @@ public class TaskAutomaticAssignmentConfig extends TaskConfig
     /**
      * @return the _listAutomaticAssignmentConf
      */
-    public List<UserAutomaticAssignmentConfig> getAutomaticAssignmentConf(  )
+    public List<UserAutomaticAssignmentConfig> getAutomaticAssignmentConf( )
     {
         return _listAutomaticAssignmentConf;
     }
 
     /**
-     * @param listAutomaticAssignmentConf the _listAutomaticAssignmentConf to set
+     * @param listAutomaticAssignmentConf
+     *            the _listAutomaticAssignmentConf to set
      */
     public void setAutomaticAssignmentConf( List<UserAutomaticAssignmentConfig> listAutomaticAssignmentConf )
     {

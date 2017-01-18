@@ -57,7 +57,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a TaskComponent for Ticketing
  *
@@ -83,12 +82,11 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     {
         String strTaskInformation = StringUtils.EMPTY;
 
-        TaskInformation taskInformation = _taskInformationService.findByPrimaryKey( nIdHistory, task.getId(  ),
-                WorkflowUtils.getPlugin(  ) );
+        TaskInformation taskInformation = _taskInformationService.findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
 
         if ( taskInformation != null )
         {
-            strTaskInformation = taskInformation.getValue(  ) + SEPARATOR;
+            strTaskInformation = taskInformation.getValue( ) + SEPARATOR;
         }
 
         return strTaskInformation;
@@ -101,8 +99,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     }
 
     @Override
-    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale,
-        ITask task )
+    public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         return null;
     }
@@ -115,7 +112,9 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
     /**
      * Add an error message
-     * @param strMessage The message
+     * 
+     * @param strMessage
+     *            The message
      */
     protected void addError( String strMessage )
     {
@@ -124,8 +123,11 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
     /**
      * Add an error message
-     * @param strMessageKey The message
-     * @param locale The locale
+     * 
+     * @param strMessageKey
+     *            The message
+     * @param locale
+     *            The locale
      */
     protected void addError( String strMessageKey, Locale locale )
     {
@@ -133,23 +135,27 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     }
 
     /**
-    * Fill the model with commons objects used in templates
-    * @param model The model
-    */
+     * Fill the model with commons objects used in templates
+     * 
+     * @param model
+     *            The model
+     */
     protected void fillCommons( Map<String, Object> model )
     {
-        _listErrors = new ArrayList<ErrorMessage>(  );
+        _listErrors = new ArrayList<ErrorMessage>( );
         model.put( MARK_ERRORS, _listErrors );
     }
 
     /**
      * Get a model Object filled with default values
-     * @param ticket the ticket used to fill the model
+     * 
+     * @param ticket
+     *            the ticket used to fill the model
      * @return The model
      */
     protected Map<String, Object> getModel( Ticket ticket )
     {
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<String, Object>( );
         fillCommons( model );
 
         if ( ticket != null )
@@ -162,8 +168,11 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
     /**
      * Gives the ticket from resource
-     * @param nIdResource the resource id
-     * @param strResourceType the resource type
+     * 
+     * @param nIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
      * @return the ticket if the resource corresponds to a ticket, {@code null} otherwise
      */
     protected Ticket getTicket( int nIdResource, String strResourceType )

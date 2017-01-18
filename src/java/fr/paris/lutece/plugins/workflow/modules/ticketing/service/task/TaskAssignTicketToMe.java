@@ -52,7 +52,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to assign to me
  *
@@ -74,33 +73,32 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
+            AssigneeUser assigneeUser = ticket.getAssigneeUser( );
             String strCurrentUser = null;
 
             if ( assigneeUser == null )
             {
-                assigneeUser = new AssigneeUser(  );
-                strCurrentUser = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_NO_CURRENT_USER,
-                        Locale.FRENCH );
+                assigneeUser = new AssigneeUser( );
+                strCurrentUser = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_NO_CURRENT_USER, Locale.FRENCH );
             }
             else
             {
-                strCurrentUser = assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  );
+                strCurrentUser = assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( );
             }
 
             AdminUser user = AdminUserService.getAdminUser( request );
 
-            if ( ( user != null ) && ( user.getUserId(  ) != assigneeUser.getAdminUserId(  ) ) )
+            if ( ( user != null ) && ( user.getUserId( ) != assigneeUser.getAdminUserId( ) ) )
             {
-                assigneeUser.setAdminUserId( user.getUserId(  ) );
-                assigneeUser.setEmail( user.getEmail(  ) );
-                assigneeUser.setFirstname( user.getFirstName(  ) );
-                assigneeUser.setLastname( user.getLastName(  ) );
+                assigneeUser.setAdminUserId( user.getUserId( ) );
+                assigneeUser.setEmail( user.getEmail( ) );
+                assigneeUser.setFirstname( user.getFirstName( ) );
+                assigneeUser.setLastname( user.getLastName( ) );
                 ticket.setAssigneeUser( assigneeUser );
 
-                List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId(  ) );
+                List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
 
-                if ( ( unitsList != null ) && ( unitsList.size(  ) > 0 ) )
+                if ( ( unitsList != null ) && ( unitsList.size( ) > 0 ) )
                 {
                     AssigneeUnit assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
                     ticket.setAssigneeUnit( assigneeUnit );
@@ -108,9 +106,8 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
 
                 TicketHome.update( ticket );
 
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION, Locale.FRENCH ), strCurrentUser,
-                        assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION, Locale.FRENCH ),
+                        strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
             }
         }
 

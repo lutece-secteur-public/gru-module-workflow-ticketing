@@ -48,7 +48,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUser}
  *
@@ -62,18 +61,16 @@ public class SelectChannelTaskComponent extends TicketingTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Ticket ticket = getTicket( nIdResource, strResourceType );
         Map<String, Object> model = getModel( ticket );
 
         boolean bIsAgentView = false;
         AdminUser user = AdminUserService.getAdminUser( request );
-        int nIdUserFront = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ADMINUSER_ID_FRONT,
-                TicketingConstants.PROPERTY_UNSET_INT );
+        int nIdUserFront = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ADMINUSER_ID_FRONT, TicketingConstants.PROPERTY_UNSET_INT );
 
-        if ( ( user != null ) && ( user.getUserId(  ) != nIdUserFront ) )
+        if ( ( user != null ) && ( user.getUserId( ) != nIdUserFront ) )
         {
             bIsAgentView = true;
         }
@@ -84,6 +81,6 @@ public class SelectChannelTaskComponent extends TicketingTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_SELECT_CHANNEL_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 }

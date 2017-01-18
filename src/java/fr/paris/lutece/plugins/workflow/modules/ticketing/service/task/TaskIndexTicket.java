@@ -49,7 +49,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to assign to me
  *
@@ -67,16 +66,14 @@ public class TaskIndexTicket extends AbstractTicketingTask
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
-        TicketCategory ticketCategory = ticket.getTicketCategory(  );
-        int nIdWorkflow = ticketCategory.getIdWorkflow(  );
-        State state = WorkflowService.getInstance(  )
-                                     .getState( ticket.getId(  ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null );
+        TicketCategory ticketCategory = ticket.getTicketCategory( );
+        int nIdWorkflow = ticketCategory.getIdWorkflow( );
+        State state = WorkflowService.getInstance( ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null );
 
-        IndexerAction indexerAction = new IndexerAction(  );
-        indexerAction.setIdTicket( ticket.getId(  ) );
+        IndexerAction indexerAction = new IndexerAction( );
+        indexerAction.setIdTicket( ticket.getId( ) );
 
-        if ( ( state == null ) ||
-                ( state.getId(  ) == AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ACTION_ID_NEW, 301 ) ) )
+        if ( ( state == null ) || ( state.getId( ) == AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ACTION_ID_NEW, 301 ) ) )
         {
             indexerAction.setIdTask( IndexerAction.TASK_CREATE );
         }

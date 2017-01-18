@@ -38,7 +38,6 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-
 /**
  *
  * This class represents a configuration for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskEditTicket}
@@ -56,16 +55,19 @@ public class TaskEditTicketConfig extends TaskConfig
 
     /**
      * Gives the message direction
+     * 
      * @return the message direction
      */
-    public MessageDirection getMessageDirection(  )
+    public MessageDirection getMessageDirection( )
     {
         return _messageDirection;
     }
 
     /**
      * Sets the message direction
-     * @param messageDirection the message direction to set
+     * 
+     * @param messageDirection
+     *            the message direction to set
      */
     public void setMessageDirection( MessageDirection messageDirection )
     {
@@ -74,7 +76,9 @@ public class TaskEditTicketConfig extends TaskConfig
 
     /**
      * Set the id of the user edition action
-     * @param nIdUserEditionAction the id of the user edition action
+     * 
+     * @param nIdUserEditionAction
+     *            the id of the user edition action
      */
     public void setIdUserEditionAction( int nIdUserEditionAction )
     {
@@ -83,9 +87,10 @@ public class TaskEditTicketConfig extends TaskConfig
 
     /**
      * Get the id of the user edition action
+     * 
      * @return the id of the user edition action
      */
-    public int getIdUserEditionAction(  )
+    public int getIdUserEditionAction( )
     {
         return _nIdUserEditionAction;
     }

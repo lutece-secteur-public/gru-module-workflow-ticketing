@@ -58,10 +58,9 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  *
- * This class provides methods to manage {@link  fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket}
+ * This class provides methods to manage {@link fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket}
  *
  */
 public class EditableTicketService implements IEditableTicketService
@@ -95,9 +94,9 @@ public class EditableTicketService implements IEditableTicketService
         {
             _editableTicketDAO.insert( editableTicket );
 
-            for ( EditableTicketField editableTicketField : editableTicket.getListEditableTicketFields(  ) )
+            for ( EditableTicketField editableTicketField : editableTicket.getListEditableTicketFields( ) )
             {
-                editableTicketField.setIdHistory( editableTicket.getIdHistory(  ) );
+                editableTicketField.setIdHistory( editableTicket.getIdHistory( ) );
                 _editableTicketFieldService.create( editableTicketField );
             }
         }
@@ -114,11 +113,11 @@ public class EditableTicketService implements IEditableTicketService
         {
             _editableTicketDAO.store( editableTicket );
             // Remove its editable ticket fields first
-            _editableTicketFieldService.remove( editableTicket.getIdHistory(  ) );
+            _editableTicketFieldService.remove( editableTicket.getIdHistory( ) );
 
-            for ( EditableTicketField editableTicketField : editableTicket.getListEditableTicketFields(  ) )
+            for ( EditableTicketField editableTicketField : editableTicket.getListEditableTicketFields( ) )
             {
-                editableTicketField.setIdHistory( editableTicket.getIdHistory(  ) );
+                editableTicketField.setIdHistory( editableTicket.getIdHistory( ) );
                 _editableTicketFieldService.create( editableTicketField );
             }
         }
@@ -134,8 +133,7 @@ public class EditableTicketService implements IEditableTicketService
 
         if ( editableTicket != null )
         {
-            editableTicket.setListEditableTicketFields( _editableTicketFieldService.find( 
-                    editableTicket.getIdHistory(  ) ) );
+            editableTicket.setListEditableTicketFields( _editableTicketFieldService.find( editableTicket.getIdHistory( ) ) );
         }
 
         return editableTicket;
@@ -151,8 +149,7 @@ public class EditableTicketService implements IEditableTicketService
 
         if ( editableTicket != null )
         {
-            editableTicket.setListEditableTicketFields( _editableTicketFieldService.find( 
-                    editableTicket.getIdHistory(  ) ) );
+            editableTicket.setListEditableTicketFields( _editableTicketFieldService.find( editableTicket.getIdHistory( ) ) );
         }
 
         return editableTicket;
@@ -178,7 +175,7 @@ public class EditableTicketService implements IEditableTicketService
 
         if ( editableTicket != null )
         {
-            _editableTicketFieldService.remove( editableTicket.getIdHistory(  ) );
+            _editableTicketFieldService.remove( editableTicket.getIdHistory( ) );
             _editableTicketDAO.deleteByIdHistory( nIdHistory, nIdTask );
         }
     }
@@ -192,7 +189,7 @@ public class EditableTicketService implements IEditableTicketService
     {
         for ( EditableTicket editableTicket : findByIdTask( nIdTask ) )
         {
-            _editableTicketFieldService.remove( editableTicket.getIdHistory(  ) );
+            _editableTicketFieldService.remove( editableTicket.getIdHistory( ) );
         }
 
         _editableTicketDAO.deleteByIdTask( nIdTask );
@@ -202,16 +199,15 @@ public class EditableTicketService implements IEditableTicketService
      * {@inheritDoc}
      */
     @Override
-    public List<Entry> buildListEntriesToEdit( HttpServletRequest request,
-        List<EditableTicketField> listEditableTicketFields )
+    public List<Entry> buildListEntriesToEdit( HttpServletRequest request, List<EditableTicketField> listEditableTicketFields )
     {
-        List<Entry> listEntries = new ArrayList<Entry>(  );
+        List<Entry> listEntries = new ArrayList<Entry>( );
 
         for ( EditableTicketField editableTicketField : listEditableTicketFields )
         {
-            Entry entry = EntryHome.findByPrimaryKey( editableTicketField.getIdEntry(  ) );
+            Entry entry = EntryHome.findByPrimaryKey( editableTicketField.getIdEntry( ) );
 
-            if ( !entry.getEntryType(  ).getComment(  ) )
+            if ( !entry.getEntryType( ).getComment( ) )
             {
                 listEntries.add( entry );
             }
@@ -228,21 +224,21 @@ public class EditableTicketService implements IEditableTicketService
     {
         boolean bIsValid = false;
 
-        ITask task = _taskService.findByPrimaryKey( editableTicket.getIdTask(  ), locale );
+        ITask task = _taskService.findByPrimaryKey( editableTicket.getIdTask( ), locale );
 
         if ( task != null )
         {
-            Action action = _actionService.findByPrimaryKey( task.getAction(  ).getId(  ) );
+            Action action = _actionService.findByPrimaryKey( task.getAction( ).getId( ) );
 
-            if ( ( action != null ) && ( action.getStateAfter(  ) != null ) )
+            if ( ( action != null ) && ( action.getStateAfter( ) != null ) )
             {
-                Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory(  ) );
+                Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
 
-                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( ticket.getId(  ),
-                        Ticket.TICKET_RESOURCE_TYPE, action.getWorkflow(  ).getId(  ) );
+                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, action
+                        .getWorkflow( ).getId( ) );
 
-                if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState(  ) != null ) &&
-                        ( resourceWorkflow.getState(  ).getId(  ) == action.getStateAfter(  ).getId(  ) ) )
+                if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState( ) != null )
+                        && ( resourceWorkflow.getState( ).getId( ) == action.getStateAfter( ).getId( ) ) )
                 {
                     bIsValid = true;
                 }

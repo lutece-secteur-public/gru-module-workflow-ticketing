@@ -40,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 /**
  * This class provides methods to manage {@link fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField}
  *
@@ -48,22 +47,28 @@ import java.util.List;
 public interface IEditableTicketFieldService
 {
     /**
-    * Create a new editable ticket field
-    * @param editableTicketField the editable ticket field
-    */
+     * Create a new editable ticket field
+     * 
+     * @param editableTicketField
+     *            the editable ticket field
+     */
     @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
     void create( EditableTicketField editableTicketField );
 
     /**
      * Find editable ticket fields from a given id history
-     * @param nIdHistory the id history
+     * 
+     * @param nIdHistory
+     *            the id history
      * @return a list of EditableTicketField
      */
     List<EditableTicketField> find( int nIdHistory );
 
     /**
      * Remove EditableTicketField from a given id editable ticket
-     * @param nIdHistory the id history
+     * 
+     * @param nIdHistory
+     *            the id history
      */
     @Transactional( WorkflowTicketingPlugin.BEAN_TRANSACTION_MANAGER )
     void remove( int nIdHistory );

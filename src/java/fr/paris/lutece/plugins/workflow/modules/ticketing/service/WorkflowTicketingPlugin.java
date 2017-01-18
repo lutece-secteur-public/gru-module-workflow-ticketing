@@ -38,7 +38,6 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 
 import java.util.Locale;
 
-
 /**
  * Ticketing POC GRU module
  */
@@ -58,13 +57,15 @@ public class WorkflowTicketingPlugin extends Plugin
      * {@inheritDoc}
      */
     @Override
-    public void init(  )
+    public void init( )
     {
     }
 
     /**
      * Get the locale used by this plugin
-     * @param locale The locale preferred by the user
+     * 
+     * @param locale
+     *            The locale preferred by the user
      * @return The locale used by this plugin
      */
     public static Locale getPluginLocale( Locale locale )
@@ -77,7 +78,7 @@ public class WorkflowTicketingPlugin extends Plugin
      *
      * @return The ticketing POC GRU module
      */
-    public static Plugin getPlugin(  )
+    public static Plugin getPlugin( )
     {
         return PluginService.getPlugin( PLUGIN_NAME );
     }

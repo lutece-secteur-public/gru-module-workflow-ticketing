@@ -37,19 +37,17 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
 
-
 /**
  * This class is a data access object for {@link fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig}
  *
  */
 public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task, message_direction" +
-        " FROM workflow_task_ticketing_reply_config WHERE id_task = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_ticketing_reply_config" +
-        " (id_task, message_direction) VALUES (?, ?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_reply_config" +
-        " SET id_task = ?, message_direction = ?" + " WHERE id_task = ?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task, message_direction"
+            + " FROM workflow_task_ticketing_reply_config WHERE id_task = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_ticketing_reply_config" + " (id_task, message_direction) VALUES (?, ?)";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_reply_config" + " SET id_task = ?, message_direction = ?"
+            + " WHERE id_task = ?";
     private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_ticketing_reply_config  WHERE id_task = ?";
 
     /**
@@ -58,11 +56,11 @@ public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
     @Override
     public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -71,13 +69,13 @@ public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
     @Override
     public void insert( TaskReplyConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
 
-        daoUtil.setInt( 1, config.getIdTask(  ) );
-        daoUtil.setInt( 2, config.getMessageDirection(  ).ordinal(  ) );
+        daoUtil.setInt( 1, config.getIdTask( ) );
+        daoUtil.setInt( 2, config.getMessageDirection( ).ordinal( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 
     /**
@@ -87,20 +85,20 @@ public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
     public TaskReplyConfig load( int nIdTask )
     {
         TaskReplyConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdTask );
 
-        daoUtil.executeQuery(  );
+        daoUtil.executeQuery( );
 
-        if ( daoUtil.next(  ) )
+        if ( daoUtil.next( ) )
         {
-            config = new TaskReplyConfig(  );
+            config = new TaskReplyConfig( );
             config.setIdTask( daoUtil.getInt( 1 ) );
             config.setMessageDirection( MessageDirection.valueOf( daoUtil.getInt( 2 ) ) );
         }
 
-        daoUtil.free(  );
+        daoUtil.free( );
 
         return config;
     }
@@ -111,13 +109,13 @@ public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
     @Override
     public void store( TaskReplyConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin(  ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
 
-        daoUtil.setInt( 1, config.getIdTask(  ) );
-        daoUtil.setInt( 2, config.getMessageDirection(  ).ordinal(  ) );
-        daoUtil.setInt( 3, config.getIdTask(  ) );
+        daoUtil.setInt( 1, config.getIdTask( ) );
+        daoUtil.setInt( 2, config.getMessageDirection( ).ordinal( ) );
+        daoUtil.setInt( 3, config.getIdTask( ) );
 
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

@@ -52,7 +52,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUnit}
  *
@@ -62,7 +61,7 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
     // TEMPLATES
     private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_form.html";
 
-    //MESSAGE
+    // MESSAGE
     private static final String MESSAGE_NO_UNIT_FOUND = "module.workflow.ticketing.task_assign_ticket_to_unit.labelNoUnitFound";
 
     // MARKS
@@ -73,8 +72,7 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
      * {@inheritDoc}
      */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request,
-        Locale locale, ITask task )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Ticket ticket = getTicket( nIdResource, strResourceType );
         Map<String, Object> model = getModel( ticket );
@@ -86,17 +84,17 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
             AdminUser user = AdminUserService.getAdminUser( request );
             unitsList = getUnitsList( user );
 
-            if ( ticket.getAssigneeUnit(  ) != null )
+            if ( ticket.getAssigneeUnit( ) != null )
             {
-                strCurrentUnitId = String.valueOf( ticket.getAssigneeUnit(  ).getUnitId(  ) );
+                strCurrentUnitId = String.valueOf( ticket.getAssigneeUnit( ).getUnitId( ) );
 
-                if ( unitsList.toMap(  ).containsKey( strCurrentUnitId ) )
+                if ( unitsList.toMap( ).containsKey( strCurrentUnitId ) )
                 {
                     model.put( MARK_CURRENT_UNIT, strCurrentUnitId );
                 }
             }
 
-            if ( ( unitsList == null ) || ( unitsList.size(  ) == 0 ) )
+            if ( ( unitsList == null ) || ( unitsList.size( ) == 0 ) )
             {
                 request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
                 addError( I18nService.getLocalizedString( MESSAGE_NO_UNIT_FOUND, locale ) );
@@ -109,19 +107,20 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_FORM, locale, model );
 
-        return template.getHtml(  );
+        return template.getHtml( );
     }
 
     /**
-     * Load the data of all the unit objects allowed for assignment
-     * and returns them in form of a collection
-     * @param user connected admin user
+     * Load the data of all the unit objects allowed for assignment and returns them in form of a collection
+     * 
+     * @param user
+     *            connected admin user
      * @return the list which contains the data of all the unit objects
      */
     protected static ReferenceList getUnitsList( AdminUser user )
     {
-        List<Unit> lstUnits = UnitHome.findAll(  );
-        ReferenceList lstRef = new ReferenceList( lstUnits.size(  ) );
+        List<Unit> lstUnits = UnitHome.findAll( );
+        ReferenceList lstRef = new ReferenceList( lstUnits.size( ) );
 
         for ( Unit unit : lstUnits )
         {
@@ -129,7 +128,7 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
 
             if ( RBACService.isAuthorized( assigneeUnit, AssigneeUnit.PERMISSION_ASSIGN, user ) )
             {
-                lstRef.addItem( unit.getIdUnit(  ), unit.getLabel(  ) );
+                lstRef.addItem( unit.getIdUnit( ), unit.getLabel( ) );
             }
         }
 

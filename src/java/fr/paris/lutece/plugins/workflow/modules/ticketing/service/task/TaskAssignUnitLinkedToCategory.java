@@ -50,7 +50,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to assign a unit from the category selected
  *
@@ -71,28 +70,28 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit(  );
+            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit( );
 
             if ( assigneeUnit == null )
             {
-                assigneeUnit = new AssigneeUnit(  );
+                assigneeUnit = new AssigneeUnit( );
             }
 
-            TicketCategory ticketCategory = ticket.getTicketCategory(  );
+            TicketCategory ticketCategory = ticket.getTicketCategory( );
 
-            Unit unit = UnitHome.findByPrimaryKey( ticketCategory.getAssigneeUnit(  ).getUnitId(  ) );
+            Unit unit = UnitHome.findByPrimaryKey( ticketCategory.getAssigneeUnit( ).getUnitId( ) );
 
             if ( unit != null )
             {
-                assigneeUnit.setUnitId( unit.getIdUnit(  ) );
-                assigneeUnit.setName( unit.getLabel(  ) );
+                assigneeUnit.setUnitId( unit.getIdUnit( ) );
+                assigneeUnit.setName( unit.getLabel( ) );
                 ticket.setAssigneeUnit( assigneeUnit );
                 ticket.setAssigneeUser( null );
                 TicketHome.update( ticket );
 
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                            MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY_INFORMATION, Locale.FRENCH ),
-                        assigneeUnit.getName(  ), ticketCategory.getLabel(  ) );
+                strTaskInformation = MessageFormat.format(
+                        I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY_INFORMATION, Locale.FRENCH ), assigneeUnit.getName( ),
+                        ticketCategory.getLabel( ) );
             }
         }
 

@@ -38,7 +38,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import org.springframework.transaction.annotation.Transactional;
 
-
 /**
  *
  * ITaskInformationService
@@ -47,35 +46,49 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ITaskInformationService
 {
     /**
-    * Creation of a task information
-    * @param taskInformation The task informations
-    * @param plugin the plugin
-    */
+     * Creation of a task information
+     * 
+     * @param taskInformation
+     *            The task informations
+     * @param plugin
+     *            the plugin
+     */
     @Transactional( "workflow.transactionManager" )
     void create( TaskInformation taskInformation, Plugin plugin );
 
     /**
      * Remove the task information by history
-     * @param nIdHistory the history key
-     * @param nIdTask The task key
-     * @param plugin the Plugin
+     * 
+     * @param nIdHistory
+     *            the history key
+     * @param nIdTask
+     *            The task key
+     * @param plugin
+     *            the Plugin
      */
     @Transactional( "workflow.transactionManager" )
     void removeByHistory( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
      * Remove task information by task
-     * @param nIdTask The task key
-     * @param plugin the Plugin
+     * 
+     * @param nIdTask
+     *            The task key
+     * @param plugin
+     *            the Plugin
      */
     @Transactional( "workflow.transactionManager" )
     void removeByTask( int nIdTask, Plugin plugin );
 
     /**
      * Load the TaskInformation Object
-     * @param nIdHistory the history id
-     * @param nIdTask the task id
-     * @param plugin the plugin
+     * 
+     * @param nIdHistory
+     *            the history id
+     * @param nIdTask
+     *            the task id
+     * @param plugin
+     *            the plugin
      * @return the Config Object
      */
     TaskInformation findByPrimaryKey( int nIdHistory, int nIdTask, Plugin plugin );

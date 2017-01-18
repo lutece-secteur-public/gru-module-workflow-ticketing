@@ -51,7 +51,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to reply to a ticket
  *
@@ -85,12 +84,12 @@ public class TaskReply extends AbstractTicketingTask
             String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
             ticket.setUserMessage( strUserMessage );
 
-            TaskReplyConfig config = _taskConfigService.findByPrimaryKey( this.getId(  ) );
+            TaskReplyConfig config = _taskConfigService.findByPrimaryKey( this.getId( ) );
 
-            if ( MessageDirection.AGENT_TO_USER == config.getMessageDirection(  ) )
+            if ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) )
             {
                 ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
-                ticket.setDateClose( new Timestamp( new java.util.Date(  ).getTime(  ) ) );
+                ticket.setDateClose( new Timestamp( new java.util.Date( ).getTime( ) ) );
             }
 
             TicketHome.update( ticket );
@@ -100,8 +99,9 @@ public class TaskReply extends AbstractTicketingTask
                 strUserMessage = I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_NO_MESSAGE, Locale.FRENCH );
             }
 
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX +
-                        config.getMessageDirection(  ).toString(  ).toLowerCase(  ), Locale.FRENCH ), strUserMessage );
+            strTaskInformation = MessageFormat
+                    .format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ),
+                            Locale.FRENCH ), strUserMessage );
         }
 
         return strTaskInformation;
@@ -111,24 +111,27 @@ public class TaskReply extends AbstractTicketingTask
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        _taskConfigService.remove( this.getId(  ) );
-        super.doRemoveConfig(  );
+        _taskConfigService.remove( this.getId( ) );
+        super.doRemoveConfig( );
     }
 
     /**
      * Gives the task config service
+     * 
      * @return the task config service
      */
-    public ITaskConfigService getTaskConfigService(  )
+    public ITaskConfigService getTaskConfigService( )
     {
         return _taskConfigService;
     }
 
     /**
      * Sets the task config service
-     * @param taskConfigService the task config service
+     * 
+     * @param taskConfigService
+     *            the task config service
      */
     public void setTaskConfigService( ITaskConfigService taskConfigService )
     {

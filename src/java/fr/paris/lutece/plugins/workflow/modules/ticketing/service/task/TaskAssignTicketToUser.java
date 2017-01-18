@@ -48,7 +48,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to assign a user
  *
@@ -75,18 +74,17 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            AssigneeUser assigneeUser = ticket.getAssigneeUser(  );
+            AssigneeUser assigneeUser = ticket.getAssigneeUser( );
             String strCurrentUser = null;
 
             if ( assigneeUser == null )
             {
-                assigneeUser = new AssigneeUser(  );
-                strCurrentUser = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER,
-                        Locale.FRENCH );
+                assigneeUser = new AssigneeUser( );
+                strCurrentUser = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER, Locale.FRENCH );
             }
             else
             {
-                strCurrentUser = assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  );
+                strCurrentUser = assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( );
             }
 
             AdminUser user = null;
@@ -98,18 +96,17 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
 
             if ( user != null )
             {
-                if ( user.getUserId(  ) != assigneeUser.getAdminUserId(  ) )
+                if ( user.getUserId( ) != assigneeUser.getAdminUserId( ) )
                 {
-                    assigneeUser.setAdminUserId( user.getUserId(  ) );
-                    assigneeUser.setEmail( user.getEmail(  ) );
-                    assigneeUser.setFirstname( user.getFirstName(  ) );
-                    assigneeUser.setLastname( user.getLastName(  ) );
+                    assigneeUser.setAdminUserId( user.getUserId( ) );
+                    assigneeUser.setEmail( user.getEmail( ) );
+                    assigneeUser.setFirstname( user.getFirstName( ) );
+                    assigneeUser.setLastname( user.getLastName( ) );
                     ticket.setAssigneeUser( assigneeUser );
                     TicketHome.update( ticket );
 
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ), strCurrentUser,
-                            assigneeUser.getFirstname(  ) + " " + assigneeUser.getLastname(  ) );
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ),
+                            strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
                 }
             }
             else
@@ -118,11 +115,10 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
                 ticket.setAssigneeUser( null );
                 TicketHome.update( ticket );
 
-                if ( assigneeUser.getAdminUserId(  ) != 0 )
+                if ( assigneeUser.getAdminUserId( ) != 0 )
                 {
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ),
-                            strCurrentUser );
+                    strTaskInformation = MessageFormat.format(
+                            I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ), strCurrentUser );
                 }
             }
         }

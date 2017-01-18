@@ -60,7 +60,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to edit a ticket
  *
@@ -91,26 +90,25 @@ public class TaskAutomaticAssignment extends AbstractTicketingTask
     {
         String strTaskInformation = null;
         Ticket ticket = getTicket( nIdResourceHistory );
-        TicketDomain domain = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain(  ) );
+        TicketDomain domain = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain( ) );
 
-        if ( ( domain != null ) &&
-                domain.getLabel(  ).equals( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_DOMAIN_LABEL ) ) )
+        if ( ( domain != null ) && domain.getLabel( ).equals( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_DOMAIN_LABEL ) ) )
         {
             String strSuffix = getTicketAssignCriteria( ticket );
 
             if ( StringUtils.isNotBlank( strSuffix ) )
             {
-                AdminUser adminUser = _automaticAssignmentService.getAssignedUser( getId(  ), strSuffix );
+                AdminUser adminUser = _automaticAssignmentService.getAssignedUser( getId( ), strSuffix );
 
                 if ( adminUser != null )
                 {
                     AssigneeUser assigneeUser = new AssigneeUser( adminUser );
                     ticket.setAssigneeUser( assigneeUser );
 
-                    List<Unit> listUnit = UnitHome.findByIdUser( adminUser.getUserId(  ) );
+                    List<Unit> listUnit = UnitHome.findByIdUser( adminUser.getUserId( ) );
                     AssigneeUnit assigneeUnit = null;
 
-                    if ( ( listUnit != null ) && ( listUnit.size(  ) > 0 ) )
+                    if ( ( listUnit != null ) && ( listUnit.size( ) > 0 ) )
                     {
                         assigneeUnit = new AssigneeUnit( listUnit.get( 0 ) );
                     }
@@ -122,10 +120,8 @@ public class TaskAutomaticAssignment extends AbstractTicketingTask
 
                     TicketHome.update( ticket );
 
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( 
-                                MESSAGE_AUTOMATIC_ASSIGN_TICKET_INFORMATION, Locale.FRENCH ),
-                            adminUser.getFirstName(  ) + " " + adminUser.getLastName(  ),
-                            ticket.getAssigneeUnit(  ).getName(  ) );
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AUTOMATIC_ASSIGN_TICKET_INFORMATION, Locale.FRENCH ),
+                            adminUser.getFirstName( ) + " " + adminUser.getLastName( ), ticket.getAssigneeUnit( ).getName( ) );
                 }
             }
         }
@@ -135,31 +131,30 @@ public class TaskAutomaticAssignment extends AbstractTicketingTask
 
     /**
      * returns suffix from ticket account number
-     * @param ticket ticket
+     * 
+     * @param ticket
+     *            ticket
      * @return suffix load from ticket account number
      */
     private String getTicketAssignCriteria( Ticket ticket )
     {
         String strSuffix = null;
 
-        if ( ( ticket.getListResponse(  ) != null ) && !ticket.getListResponse(  ).isEmpty(  ) )
+        if ( ( ticket.getListResponse( ) != null ) && !ticket.getListResponse( ).isEmpty( ) )
         {
-            for ( Response response : ticket.getListResponse(  ) )
+            for ( Response response : ticket.getListResponse( ) )
             {
-                if ( ( response.getEntry(  ) != null ) && StringUtils.isNotBlank( response.getEntry(  ).getCode(  ) ) &&
-                        response.getEntry(  ).getCode(  )
-                                    .equals( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_FIELD_CODE ) ) )
+                if ( ( response.getEntry( ) != null ) && StringUtils.isNotBlank( response.getEntry( ).getCode( ) )
+                        && response.getEntry( ).getCode( ).equals( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_FIELD_CODE ) ) )
                 {
-                    //field ff account number
-                    if ( StringUtils.isNotBlank( response.getResponseValue(  ) ) &&
-                            response.getResponseValue(  )
-                                        .matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ) )
+                    // field ff account number
+                    if ( StringUtils.isNotBlank( response.getResponseValue( ) )
+                            && response.getResponseValue( ).matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ) )
                     {
-                        Pattern pattern = Pattern.compile( AppPropertiesService.getProperty( 
-                                    PROPERTY_ACCOUNT_NUMBER_REGEXP ) );
-                        Matcher matcher = pattern.matcher( response.getResponseValue(  ) );
+                        Pattern pattern = Pattern.compile( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) );
+                        Matcher matcher = pattern.matcher( response.getResponseValue( ) );
 
-                        if ( matcher.find(  ) )
+                        if ( matcher.find( ) )
                         {
                             strSuffix = matcher.group( 1 );
                         }
@@ -186,9 +181,9 @@ public class TaskAutomaticAssignment extends AbstractTicketingTask
      * {@inheritDoc}
      */
     @Override
-    public void doRemoveConfig(  )
+    public void doRemoveConfig( )
     {
-        _automaticAssignmentService.removeConfig( getId(  ) );
-        super.doRemoveConfig(  );
+        _automaticAssignmentService.removeConfig( getId( ) );
+        super.doRemoveConfig( );
     }
 }

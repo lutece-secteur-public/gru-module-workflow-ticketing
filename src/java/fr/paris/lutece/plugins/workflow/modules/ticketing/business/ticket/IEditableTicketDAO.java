@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 
 import java.util.List;
 
-
 /**
  *
  * This class is a data access object for {@link EditableTicket}
@@ -45,48 +44,64 @@ public interface IEditableTicketDAO
 {
     /**
      * Insert new editable ticket
-     * @param editableTicket the EditableTicket Object
+     * 
+     * @param editableTicket
+     *            the EditableTicket Object
      */
     void insert( EditableTicket editableTicket );
 
     /**
      * Insert new editable ticket
-     * @param editableTicket the EditableTicket Object
+     * 
+     * @param editableTicket
+     *            the EditableTicket Object
      */
     void store( EditableTicket editableTicket );
 
     /**
      * Load a EditableTicket by id history
-     * @param nIdHistory the id history
-     * @param nIdTask the task id
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the task id
      * @return EditableTicket Object
      */
     EditableTicket load( int nIdHistory, int nIdTask );
 
     /**
      * Load the non edited EditableTicket by id ticket
-     * @param nIdTicket the id ticket
+     * 
+     * @param nIdTicket
+     *            the id ticket
      * @return EditableTicket Object
      */
     EditableTicket loadByIdTicket( int nIdTicket );
 
     /**
      * Load a list of EditableTicket by id task
-     * @param nIdTask the id task
+     * 
+     * @param nIdTask
+     *            the id task
      * @return a list of EditableTicket
      */
     List<EditableTicket> loadByIdTask( int nIdTask );
 
     /**
      * Remove EditableTicket by id history
-     * @param nIdHistory the id history
-     * @param nIdTask the task id
+     * 
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the task id
      */
     void deleteByIdHistory( int nIdHistory, int nIdTask );
 
     /**
      * Remove EditableTicket by id task
-     * @param nIdTask the task id
+     * 
+     * @param nIdTask
+     *            the task id
      */
     void deleteByIdTask( int nIdTask );
 }

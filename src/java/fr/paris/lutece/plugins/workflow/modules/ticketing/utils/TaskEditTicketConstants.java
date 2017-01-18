@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.utils;
 
-
 /**
  *
  * This class provides constants for the task to edit a ticket
@@ -55,7 +54,7 @@ public final class TaskEditTicketConstants
     /**
      * Private constructor
      */
-    private TaskEditTicketConstants(  )
+    private TaskEditTicketConstants( )
     {
     }
 }

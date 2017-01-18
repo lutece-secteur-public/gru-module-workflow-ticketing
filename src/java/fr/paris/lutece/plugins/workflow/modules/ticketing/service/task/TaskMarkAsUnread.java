@@ -41,7 +41,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to mark a ticket as unread
  *

@@ -48,7 +48,6 @@ import javax.inject.Inject;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class represents a task to generate the ticket reference
  *
@@ -73,7 +72,7 @@ public class TaskGenerateTicketReference extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            synchronized ( _ticketReferenceService )
+            synchronized( _ticketReferenceService )
             {
                 strReference = _ticketReferenceService.generateReference( ticket );
                 ticket.setReference( strReference );
@@ -81,8 +80,7 @@ public class TaskGenerateTicketReference extends AbstractTicketingTask
             }
         }
 
-        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION,
-                Locale.FRENCH ), strReference );
+        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION, Locale.FRENCH ), strReference );
     }
 
     @Override
