@@ -51,6 +51,8 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -214,6 +216,27 @@ public class EditableTicketService implements IEditableTicketService
         }
 
         return listEntries;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Integer> buildListIdEntriesToEdit( HttpServletRequest request, List<EditableTicketField> listEditableTicketFields )
+    {
+        List<Integer> listIdEntries = new ArrayList<Integer>( );
+
+        for ( EditableTicketField editableTicketField : listEditableTicketFields )
+        {
+            Entry entry = EntryHome.findByPrimaryKey( editableTicketField.getIdEntry( ) );
+
+            if ( !entry.getEntryType( ).getComment( ) )
+            {
+                listIdEntries.add( entry.getIdEntry( ) );
+            }
+        }
+
+        return listIdEntries;
     }
 
     /**

@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.web;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
@@ -66,6 +67,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -226,8 +228,11 @@ public class EditTicketXPage implements XPageApplication
     {
         XPage page = new XPage( );
 
-        List<Entry> listEntries = _editableTicketService.buildListEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
+        List<Integer> listIdEntries = _editableTicketService.buildListIdEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
+
         Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
+
+        List<Entry> listEntries = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), listIdEntries );
 
         String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), true, request );
         TicketAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
