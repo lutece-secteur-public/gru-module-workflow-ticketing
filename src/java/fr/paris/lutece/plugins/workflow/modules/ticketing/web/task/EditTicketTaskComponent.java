@@ -44,6 +44,7 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.Editab
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.IEditableTicketService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.TaskEditTicketConstants;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -204,7 +205,9 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         {
             EditableTicket editableTicket = _editableTicketService.findByIdTicket( ticket.getId( ) );
 
-            List<Entry> listEntries = _editableTicketService.buildListEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
+            List<Integer> listIdEntries = _editableTicketService.buildListIdEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
+
+            List<Entry> listEntries = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), listIdEntries );
 
             String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), false, request );
 
