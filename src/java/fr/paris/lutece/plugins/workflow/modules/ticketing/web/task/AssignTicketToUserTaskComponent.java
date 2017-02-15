@@ -127,7 +127,10 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
         for ( int idUser : lstIdUsers )
         {
             AdminUser user = AdminUserHome.findByPrimaryKey( idUser );
-            lstRef.addItem( idUser, user.getFirstName( ) + " " + user.getLastName( ) );
+            if ( user != null )
+            {
+                lstRef.addItem( idUser, user.getFirstName( ) + " " + user.getLastName( ) );
+            }
         }
 
         return lstRef;
