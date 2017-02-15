@@ -133,6 +133,17 @@ public interface IEditableTicketService
     List<Entry> buildListEntriesToEdit( HttpServletRequest request, List<EditableTicketField> listEditableTicketFields );
 
     /**
+     * Get the id list of entries to edit
+     * 
+     * @param request
+     *            the HTTP request
+     * @param listIdEditableTicketFields
+     *            the id list of editable ticket fields
+     * @return a list of id entries
+     */
+    List<Integer> buildListIdEntriesToEdit( HttpServletRequest request, List<EditableTicketField> listEditableTicketFields );
+
+    /**
      * Check if the ticket has the same state before executing the action
      * 
      * @param editableTicket
