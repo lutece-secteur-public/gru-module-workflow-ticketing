@@ -351,7 +351,7 @@ public class TaskEditTicket extends AbstractTicketingTask
 
             String strTimestamp = Long.toString( new Date( ).getTime( ) );
             String strSignature = EditTicketRequestAuthenticationService.getRequestAuthenticator( ).buildSignature( listElements, strTimestamp );
-            StringBuilder sbUrl = new StringBuilder( AppPathService.getBaseUrl( request ) );
+            StringBuilder sbUrl = new StringBuilder( AppPathService.getProdUrl( request ) );
 
             UrlItem url = new UrlItem( sbUrl.toString( ) + AppPathService.getPortalUrl( ) );
             url.addParameter( XPageAppService.PARAM_XPAGE_APP, EditTicketXPage.XPAGE );
