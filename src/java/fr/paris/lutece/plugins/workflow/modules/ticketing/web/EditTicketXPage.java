@@ -290,7 +290,7 @@ public class EditTicketXPage implements XPageApplication
                             request.getLocale( ), false );
 
                     bIsActionProccessed = true;
-                    
+
                     // Immediate indexation of the Ticket
                     immediateTicketIndexing( ticket.getId( ), request );
                 }
@@ -341,25 +341,28 @@ public class EditTicketXPage implements XPageApplication
     {
         return EditTicketRequestAuthenticationService.getRequestAuthenticator( ).isRequestAuthenticated( request );
     }
-    
+
     /**
      * Immediate indexation of a Ticket for the Frontoffice
      * 
-     * @param idTicket the id of the Ticket to index
-     * @param request the HttpServletRequest
-     * @throws SiteMessageException 
+     * @param idTicket
+     *            the id of the Ticket to index
+     * @param request
+     *            the HttpServletRequest
+     * @throws SiteMessageException
      */
     protected void immediateTicketIndexing( int idTicket, HttpServletRequest request )
     {
         Ticket ticket = TicketHome.findByPrimaryKey( idTicket );
-        if ( ticket != null ){
+        if ( ticket != null )
+        {
             try
             {
                 TicketIndexer ticketIndexer = new TicketIndexer( );
                 ticketIndexer.indexTicket( ticket );
             }
-            catch ( TicketIndexerException ticketIndexerException )
-            {            
+            catch( TicketIndexerException ticketIndexerException )
+            {
                 // The indexation of the Ticket fail, we will store the Ticket in the table for the daemon
                 IndexerActionHome.create( TicketIndexerActionUtil.createIndexerActionFromTicket( ticket ) );
             }
