@@ -34,13 +34,11 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
 			(302,'taskTicketingAssignUnitLinkedToCategory',301,2),
 			(303, 'taskAutomaticAssignment',301,3),
 			-- 304 is reserved by module ticketing gru 	(304,'taskTicketingCreateCustomer',301,4)
-			(305, 'taskTicketingIndexTicket',301,5),
-            (307, 'taskTicketingRegisterChannel',301,7),
+            (307, 'taskTicketingRegisterChannel',301,5),
             (341,'taskTicketingQualifyTicket',303,1), -- Qualify
             (342,'taskTicketingModifyTicketCategory',303,2),
             (343, 'taskTypeComment', 303,3),
-            (344, 'taskTicketingIndexTicket',303,4),
-            (345, 'taskTicketingMarkAsUnread', 303,5),
+            (345, 'taskTicketingMarkAsUnread', 303,4),
             (351,'taskTicketingAssignTicketToUnit',306,1), -- Assign to unit
             (352, 'taskTypeComment', 306,2),
             (353, 'taskTicketingMarkAsUnread', 306,3),
@@ -56,17 +54,13 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
 			(387, 'taskTypeComment', 305,2),
 			(388, 'taskTicketingMarkAsUnread', 305,3),
             (390, 'taskTicketingEditTicket', 309,1), -- Ask for user information
-            (391, 'taskTicketingIndexTicket',309,2),
             (400, 'taskTicketingEditTicket', 310,1), -- Reply to info request from agent to agent
             (401, 'taskTicketingSelectChannel', 310,2),
-            (403, 'taskTicketingIndexTicket', 310,4),
-            (404, 'taskTicketingMarkAsUnread', 310,5),
+            (404, 'taskTicketingMarkAsUnread', 310,3),
             (410, 'taskTicketingEditTicket',311,1), -- Reply to info request from user to agent
             (411, 'taskTicketingSelectChannel',311,2),
-            (413, 'taskTicketingIndexTicket', 311,4),
-            (414, 'taskTicketingMarkAsUnread', 311,5),
+            (414, 'taskTicketingMarkAsUnread', 311,3),
 			(420, 'taskTicketingReply', 312,1), -- Reply to user
-            (423, 'taskTicketingIndexTicket', 312,3),
             (441, 'taskTicketingReplyAssignUpTicket',313,1), -- Reply to assign up
             (442, 'taskTypeComment', 313,2),
             (443, 'taskTicketingMarkAsUnread', 313,3),

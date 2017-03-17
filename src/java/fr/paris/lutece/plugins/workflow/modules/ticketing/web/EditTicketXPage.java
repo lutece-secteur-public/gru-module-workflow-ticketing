@@ -33,14 +33,26 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
+import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
+import fr.paris.lutece.plugins.ticketing.business.search.TicketIndexer;
+import fr.paris.lutece.plugins.ticketing.business.search.TicketIndexerException;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
+import fr.paris.lutece.plugins.ticketing.web.util.TicketIndexerActionUtil;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketUtils;
 import fr.paris.lutece.plugins.ticketing.web.workflow.WorkflowCapableXPage;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
@@ -64,15 +76,6 @@ import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -287,6 +290,9 @@ public class EditTicketXPage implements XPageApplication
                             request.getLocale( ), false );
 
                     bIsActionProccessed = true;
+                    
+                    // Immediate indexation of the Ticket
+                    immediateTicketIndexing( ticket.getId( ), request );
                 }
                 finally
                 {
@@ -334,5 +340,29 @@ public class EditTicketXPage implements XPageApplication
     private boolean isRequestAuthenticated( HttpServletRequest request )
     {
         return EditTicketRequestAuthenticationService.getRequestAuthenticator( ).isRequestAuthenticated( request );
+    }
+    
+    /**
+     * Immediate indexation of a Ticket for the Frontoffice
+     * 
+     * @param idTicket the id of the Ticket to index
+     * @param request the HttpServletRequest
+     * @throws SiteMessageException 
+     */
+    protected void immediateTicketIndexing( int idTicket, HttpServletRequest request )
+    {
+        Ticket ticket = TicketHome.findByPrimaryKey( idTicket );
+        if ( ticket != null ){
+            try
+            {
+                TicketIndexer ticketIndexer = new TicketIndexer( );
+                ticketIndexer.indexTicket( ticket );
+            }
+            catch ( TicketIndexerException ticketIndexerException )
+            {            
+                // The indexation of the Ticket fail, we will store the Ticket in the table for the daemon
+                IndexerActionHome.create( TicketIndexerActionUtil.createIndexerActionFromTicket( ticket ) );
+            }
+        }
     }
 }
