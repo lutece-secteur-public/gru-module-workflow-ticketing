@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Module workflow ticketing</title>
+    </properties>
+    <body>
+        <section name="Module workflow ticketing">
+            <subsection name="Introduction">
+                <p>Dans le cadre de la Gestion Relation Usagers, ce module d&#233;finie et g&#232;re le workflow permettant le traitement complet des sollicitations par des utilisateurs back office de la cr&#233;ation&#160;&#224;&#160;la cl&#244;ture d'une sollicitation.</p>
+            </subsection>
+            <subsection name="Configuration">
+            </subsection>
+            <subsection name="Usage">
+            </subsection>
+        </section>
+    </body>
+</document>
