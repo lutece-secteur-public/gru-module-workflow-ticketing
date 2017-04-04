@@ -1,6 +1,7 @@
 <input name="redirect" id="redirect" value="" type="hidden">
 <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <input type="hidden" id="label_category" name="label_category" value="${ticket.ticketCategory.label!''}">
+<input type="hidden" id="ticket_precision" name="ticket_precision" value="${(ticket.ticketCategory.precision)!''}"/>
 <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType" inputName="id_ticket_type" items=ticket_types_list value="${ticket.idTicketType!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType.help" />
 <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain" inputName="id_ticket_domain" items=ticket_domains_list value="${ticket.idTicketDomain!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain.help" />
 
