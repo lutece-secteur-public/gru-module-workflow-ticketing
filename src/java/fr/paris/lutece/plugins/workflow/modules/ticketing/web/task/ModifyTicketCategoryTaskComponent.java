@@ -88,7 +88,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     private static final String MESSAGE_MODIFY_TICKET_ERROR_DOMAIN_NOT_SELECTED = "module.workflow.ticketing.task_modify_ticket_category.error.notSelected.domain";
     private static final String MESSAGE_MODIFY_TICKET_ERROR_CATEGORY_NOT_SELECTED = "module.workflow.ticketing.task_modify_ticket_category.error.notSelected.category";
     private static final String MESSAGE_MODIFY_TICKET_ERROR_PRECISION_NOT_SELECTED = "module.workflow.ticketing.task_modify_ticket_category.error.notSelected.precision";
-    
+
     @Inject
     private TicketFormService _ticketFormService;
 
@@ -210,8 +210,8 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         }
 
         // Validate the selection of items
-        validateItemSelection( request, listErrors, locale);
-        
+        validateItemSelection( request, listErrors, locale );
+
         if ( !listFormErrors.isEmpty( ) )
         {
             for ( GenericAttributeError formError : listFormErrors )
@@ -221,7 +221,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
 
             listErrors.add( strError );
         }
-        
+
         if ( !listErrors.isEmpty( ) )
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ATTRIBUTE_ERROR, listErrors.toArray( ), AdminMessage.TYPE_STOP );
@@ -229,7 +229,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
 
         return null;
     }
-    
+
     /**
      * Validate the selection made by the user
      * 
@@ -242,19 +242,19 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         // Retrive the selected id from the request
         String strNewDomainId = request.getParameter( TicketingConstants.PARAMETER_TICKET_DOMAIN_ID );
         String strNewCategoryId = request.getParameter( TicketingConstants.PARAMETER_TICKET_CATEGORY_ID );
-        
+
         // Control if a Domain has been selected or not
-        if ( StringUtils.isNotBlank( strNewDomainId ) && strNewDomainId.equals( TicketingConstants.NO_ID_STRING ) )  
+        if ( StringUtils.isNotBlank( strNewDomainId ) && strNewDomainId.equals( TicketingConstants.NO_ID_STRING ) )
         {
             listErrors.add( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ERROR_DOMAIN_NOT_SELECTED, locale ) );
         }
-        
+
         // Control if a Category has been selected
         if ( StringUtils.isNotBlank( strNewCategoryId ) && strNewCategoryId.equals( TicketingConstants.NO_ID_STRING ) )
         {
             listErrors.add( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ERROR_CATEGORY_NOT_SELECTED, locale ) );
         }
-        
+
         // Control if a precision has been selected or not
         if ( StringUtils.isNumeric( strNewCategoryId ) )
         {
@@ -265,6 +265,6 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             {
                 listErrors.add( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ERROR_PRECISION_NOT_SELECTED, locale ) );
             }
-        }       
+        }
     }
 }
