@@ -33,26 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import com.drew.lang.StringUtil;
-
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
-import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
-import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
-import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.portal.service.message.AdminMessage;
-import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.util.ReferenceItem;
-import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.html.HtmlTemplate;
-
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,8 +40,28 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
+import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
+import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceItem;
+import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketCategory}
@@ -83,11 +83,12 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     private static final String MARK_TICKET_PRECISIONS_LIST = "ticket_precisions_list";
     private static final String MARK_ID_TASK = "id_task";
 
-    // Parameter
-    private static final String PARAMETER_ID_CATEGORY = "id_ticket_category";
-
     // Message reply
     private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_ERROR = "module.workflow.ticketing.task_modify_ticket_attribute.error";
+    private static final String MESSAGE_MODIFY_TICKET_ERROR_DOMAIN_NOT_SELECTED = "module.workflow.ticketing.task_modify_ticket_category.error.notSelected.domain";
+    private static final String MESSAGE_MODIFY_TICKET_ERROR_CATEGORY_NOT_SELECTED = "module.workflow.ticketing.task_modify_ticket_category.error.notSelected.category";
+    private static final String MESSAGE_MODIFY_TICKET_ERROR_PRECISION_NOT_SELECTED = "module.workflow.ticketing.task_modify_ticket_category.error.notSelected.precision";
+    
     @Inject
     private TicketFormService _ticketFormService;
 
@@ -192,8 +193,9 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         List<GenericAttributeError> listFormErrors = new ArrayList<GenericAttributeError>( );
         Ticket ticket = getTicket( nIdResource, strResourceType );
         String strError = StringUtils.EMPTY;
+        List<String> listErrors = new ArrayList<>( );
 
-        String strNewCategoryId = request.getParameter( PARAMETER_ID_CATEGORY );
+        String strNewCategoryId = request.getParameter( TicketingConstants.PARAMETER_TICKET_CATEGORY_ID );
         int nNewCategoryId = Integer.parseInt( strNewCategoryId );
 
         if ( nNewCategoryId > 0 )
@@ -207,6 +209,9 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             }
         }
 
+        // Validate the selection of items
+        validateItemSelection( request, listErrors, locale);
+        
         if ( !listFormErrors.isEmpty( ) )
         {
             for ( GenericAttributeError formError : listFormErrors )
@@ -214,13 +219,52 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
                 strError += ( formError.getErrorMessage( ) + "<br/>" );
             }
 
-            String [ ] arrErrors = {
-                strError
-            };
-
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ATTRIBUTE_ERROR, arrErrors, AdminMessage.TYPE_STOP );
+            listErrors.add( strError );
+        }
+        
+        if ( !listErrors.isEmpty( ) )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ATTRIBUTE_ERROR, listErrors.toArray( ), AdminMessage.TYPE_STOP );
         }
 
         return null;
+    }
+    
+    /**
+     * Validate the selection made by the user
+     * 
+     * @param request
+     * @param listErrors
+     * @param locale
+     */
+    protected void validateItemSelection( HttpServletRequest request, List<String> listErrors, Locale locale )
+    {
+        // Retrive the selected id from the request
+        String strNewDomainId = request.getParameter( TicketingConstants.PARAMETER_TICKET_DOMAIN_ID );
+        String strNewCategoryId = request.getParameter( TicketingConstants.PARAMETER_TICKET_CATEGORY_ID );
+        
+        // Control if a Domain has been selected or not
+        if ( StringUtils.isNotBlank( strNewDomainId ) && strNewDomainId.equals( TicketingConstants.NO_ID_STRING ) )  
+        {
+            listErrors.add( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ERROR_DOMAIN_NOT_SELECTED, locale ) );
+        }
+        
+        // Control if a Category has been selected
+        if ( StringUtils.isNotBlank( strNewCategoryId ) && strNewCategoryId.equals( TicketingConstants.NO_ID_STRING ) )
+        {
+            listErrors.add( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ERROR_CATEGORY_NOT_SELECTED, locale ) );
+        }
+        
+        // Control if a precision has been selected or not
+        if ( StringUtils.isNumeric( strNewCategoryId ) )
+        {
+            TicketCategory ticketCategoryTemp = TicketCategoryHome.findByPrimaryKey( Integer.parseInt( strNewCategoryId ) );
+            if ( ticketCategoryTemp != null && StringUtils.isNotBlank( ticketCategoryTemp.getPrecision( ) )
+                    && StringUtils.isNotBlank( request.getParameter( TicketingConstants.PARAMETER_TICKET_PRECISION_ID ) )
+                    && request.getParameter( TicketingConstants.PARAMETER_TICKET_PRECISION_ID ).equals( TicketingConstants.NO_ID_STRING ) )
+            {
+                listErrors.add( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ERROR_PRECISION_NOT_SELECTED, locale ) );
+            }
+        }       
     }
 }
