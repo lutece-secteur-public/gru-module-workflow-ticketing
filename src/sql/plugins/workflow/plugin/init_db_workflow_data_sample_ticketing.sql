@@ -23,7 +23,7 @@ INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state
 			(309,'Demander compléments','Demande d''informations complémentaires à l''usager',301,303,304,1,0,0,8,0),
 			(310,'Répondre pour l''usager','Réponse à la place de l''usager',301,304,303,1,0,0,9,0),
 			(311,'Répondre (usager)','Réponse de l''usager à une demande d''informations',301,304,303,1,0,0,10,0),
-            (312,'Répondre à l''usager','Réponse finale à l''usager',301,303,306,1,0,0,11,0),
+            (312,'Répondre à l''usager','Réponse finale à l''usager',301,303,306,1,0,1,11,0),
             (313,'Répondre à l''escalade', 'Réponse à l''escalade', 301, 305, 303, 1, 0, 0, 12, 0),
             (314,'Assigner à un autre agent','Assignation de la sollicitation à un autre agent',301,305,305,1,0,0,4,0), -- assignation a autre agent pour tickets escaladés
 			(315,'Me l''assigner','Prise en charge de la sollicitation',301,305,305,1,0,0,3,0) -- auto assignation pour tickets escaladés
