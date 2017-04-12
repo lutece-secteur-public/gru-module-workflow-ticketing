@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
@@ -61,6 +62,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     private static final String MARK_AGENT_VIEW = "agent_view";
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
+    private static final String MARK_LIST_ID_TICKETS = "list_id_tickets";
 
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
@@ -143,6 +145,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         }
 
         model.put( MARK_AGENT_VIEW, bIsAgentView );
+        model.put( MARK_LIST_ID_TICKETS, request.getParameterValues( TicketingConstants.PARAMETER_ID_TICKET ) );
 
         ModelUtils.storeRichText( request, model );
 
