@@ -83,7 +83,7 @@ public final class WorkflowTicketingUtils
 
         return ticket;
     }
-    
+
     /**
      * Check if a list of emails (as string) is valid
      * 

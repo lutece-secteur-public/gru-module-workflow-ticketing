@@ -84,22 +84,22 @@ public class TaskAutomaticAssignmentDirection extends AbstractTicketingTask
         Ticket ticket = getTicket( nIdResourceHistory );
         TicketDomain domain = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain( ) );
 
-        if ( true )//( domain != null ) && domain.getLabel( ).equals( AppPropertiesService.getProperty( PROPERTY_DIRECTION_DOMAIN_LABEL ) ) )
+        if ( true )// ( domain != null ) && domain.getLabel( ).equals( AppPropertiesService.getProperty( PROPERTY_DIRECTION_DOMAIN_LABEL ) ) )
         {
             String strGuid = ticket.getGuid( );
             IdentityService identityService = TicketingIdentityService.getInstance( ).getIdentityService( );
             IdentityDto identity = identityService.getIdentityByConnectionId( strGuid, TicketingConstants.APPLICATION_CODE );
             String strDirectionAttribute = AppPropertiesService.getProperty( PROPERTY_USER_ATTRIBUTE_DIRECTION, PROPERTY_USER_ATTRIBUTE_DEFAULT_DIRECTION );
             String strDirection = identity.getAttributes( ).get( strDirectionAttribute ).getValue( );
-            
-            //TODO maybe replace this with a backoffice admin page
-            int nIdUnit = AppPropertiesService.getPropertyInt( PROPERTY_DIRECTION_ID_UNIT + "." + strDirection , -1);
+
+            // TODO maybe replace this with a backoffice admin page
+            int nIdUnit = AppPropertiesService.getPropertyInt( PROPERTY_DIRECTION_ID_UNIT + "." + strDirection, -1 );
             Unit unit = UnitHome.findByPrimaryKey( nIdUnit );
-            
+
             ticket.setAssigneeUnit( new AssigneeUnit( unit ) );
             TicketHome.update( ticket );
             strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AUTOMATIC_ASSIGN_DIRECTION_TICKET_INFORMATION, Locale.FRENCH ),
-                            ticket.getAssigneeUnit( ).getName( ) );
+                    ticket.getAssigneeUnit( ).getName( ) );
         }
 
         return strTaskInformation;

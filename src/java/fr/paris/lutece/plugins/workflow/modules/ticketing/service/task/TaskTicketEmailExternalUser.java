@@ -82,23 +82,23 @@ public class TaskTicketEmailExternalUser extends SimpleTask
 
     // Messages
     private static final String MESSAGE_TICKET = "module.workflow.ticketing.task_ticket_email_external_user.label";
-    
+
     @Inject
     @Named( BEAN_TICKET_CONFIG_SERVICE )
     private ITaskConfigService _taskTicketConfigService;
-    
+
     @Inject
     @Named( ITicketEmailExternalUserHistoryDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO;
-    
+
     @Inject
     @Named( ITicketEmailExternalUserRecipientDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserRecipientDAO _ticketEmailExternalUserRecipientDAO;
-    
+
     @Inject
     @Named( ITicketEmailExternalUserCcDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserCcDAO _ticketEmailExternalUserCcDAO;
-    
+
     @Inject
     @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserDemandDAO;
@@ -232,7 +232,8 @@ public class TaskTicketEmailExternalUser extends SimpleTask
      * @param config
      *            configuration of the current task
      */
-    private void processAgentRecontactTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, Locale locale, TaskTicketEmailExternalUserConfig config )
+    private void processAgentRecontactTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, Locale locale,
+            TaskTicketEmailExternalUserConfig config )
     {
         String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
         TicketEmailExternalUserMessage firstEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadFirstByIdTicket( ticket.getId( ) );
@@ -270,7 +271,8 @@ public class TaskTicketEmailExternalUser extends SimpleTask
      * @param config
      *            configuration of the current task
      */
-    private void processExternalUserTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, Locale locale, TaskTicketEmailExternalUserConfig config )
+    private void processExternalUserTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, Locale locale,
+            TaskTicketEmailExternalUserConfig config )
     {
         String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
 

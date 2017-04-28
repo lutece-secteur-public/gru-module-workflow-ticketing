@@ -108,30 +108,30 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Inject
     @Named( TaskTicketEmailExternalUser.BEAN_TICKET_CONFIG_SERVICE )
     private ITaskConfigService _taskTicketConfigService;
-    
+
     @Inject
     @Named( ITicketEmailExternalUserHistoryDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO;
-    
+
     @Inject
     @Named( ITicketEmailExternalUserRecipientDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserRecipientDAO _ticketEmailExternalUserRecipientDAO;
-    
+
     @Inject
     @Named( ITicketEmailExternalUserCcDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserCcDAO _ticketEmailExternalUserCcDAO;
-    
+
     @Inject
     @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserMessageDAO;
-    
+
     @Inject
     private IResourceHistoryService _resourceHistoryService;
-    
+
     @Inject
     @Named( ActionService.BEAN_SERVICE )
     private ActionService _actionService;
-    
+
     @Inject
     @Named( IExternalUserDAO.BEAN_SERVICE )
     private IExternalUserDAO _ExternalUserDAO;
@@ -143,7 +143,8 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
         TicketEmailExternalUserHistory emailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
-        TicketEmailExternalUserMessage mailExternalUserMessage = _ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( emailExternalUserHistory.getIdMessageExternalUser( ) );
+        TicketEmailExternalUserMessage mailExternalUserMessage = _ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( emailExternalUserHistory
+                .getIdMessageExternalUser( ) );
         TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         Map<String, Object> model = new HashMap<String, Object>( );
@@ -151,7 +152,8 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         if ( config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER )
         {
             model.put( MARK_TICKETING_MESSAGE, mailExternalUserMessage.getMessageQuestion( ) );
-            List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = _ticketEmailExternalUserRecipientDAO.loadByIdHistory( nIdHistory, task.getId( ) );
+            List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = _ticketEmailExternalUserRecipientDAO.loadByIdHistory( nIdHistory,
+                    task.getId( ) );
             List<TicketEmailExternalUserCc> listCcEmailExternalUser = _ticketEmailExternalUserCcDAO.loadByIdHistory( nIdHistory, task.getId( ) );
 
             StringBuilder sbInfosCc = new StringBuilder( );
@@ -228,13 +230,14 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
-        String strEmailRecipients = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS + TaskTicketEmailExternalUser.UNDERSCORE + task.getId( ) );
-        String strEmailRecipientsCc = request
-                .getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS_CC + TaskTicketEmailExternalUser.UNDERSCORE + task.getId( ) );
+        String strEmailRecipients = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS + TaskTicketEmailExternalUser.UNDERSCORE
+                + task.getId( ) );
+        String strEmailRecipientsCc = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS_CC + TaskTicketEmailExternalUser.UNDERSCORE
+                + task.getId( ) );
 
         String strError = null;
         int nLevelError = -1;
-        Object [ ] errorParams = new Object [ 1 ];
+        Object [ ] errorParams = new Object [ 1];
 
         if ( config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER )
         {
@@ -279,7 +282,8 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
             ResourceHistory history = _resourceHistoryService.getLastHistoryResource( nIdResource, strResourceType, action.getWorkflow( ).getId( ) );
             TicketEmailExternalUserHistory emailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( history.getId( ) );
 
-            if ( ( emailExternalUserHistory == null ) || ( !_ticketEmailExternalUserMessageDAO.isLastQuestion( nIdResource, emailExternalUserHistory.getIdMessageExternalUser( ) ) ) )
+            if ( ( emailExternalUserHistory == null )
+                    || ( !_ticketEmailExternalUserMessageDAO.isLastQuestion( nIdResource, emailExternalUserHistory.getIdMessageExternalUser( ) ) ) )
             {
                 strError = MESSAGE_ALREADY_ANSWER;
                 nLevelError = AdminMessage.TYPE_WARNING;
@@ -319,7 +323,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         }
         else
         {
-            model.put( MARK_MESSAGE_DIRECTION, MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER);
+            model.put( MARK_MESSAGE_DIRECTION, MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER );
         }
 
         model.put( MARK_CONFIG, config );

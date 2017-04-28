@@ -172,7 +172,8 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                 return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_ALREADY_ANSWER, SiteMessage.TYPE_WARNING );
             }
 
-            for ( TicketEmailExternalUserMessage emailExternalUserMessage : _ticketEmailExternalUserMessageDAO.loadByIdTicketNotClosed( requiredEmailExternalUserMessage.getIdTicket( ) ) )
+            for ( TicketEmailExternalUserMessage emailExternalUserMessage : _ticketEmailExternalUserMessageDAO
+                    .loadByIdTicketNotClosed( requiredEmailExternalUserMessage.getIdTicket( ) ) )
             {
                 TicketEmailExternalUserMessageDisplay emailExternalUserMessageDisplay = new TicketEmailExternalUserMessageDisplay( );
                 emailExternalUserMessageDisplay.setMessageQuestion( emailExternalUserMessage.getMessageQuestion( ) );
@@ -193,7 +194,8 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                     externalUserConfig = _taskTicketExternalUserConfigService.findByPrimaryKey( externalUserHistory.getIdTask( ) );
                 }
 
-                List<UploadFile> listFileUploadTemp = FactoryDOA.getUploadFileDAO( ).load( externalUserHistory.getIdResourceHistory( ), WorkflowUtils.getPlugin( ) );
+                List<UploadFile> listFileUploadTemp = FactoryDOA.getUploadFileDAO( ).load( externalUserHistory.getIdResourceHistory( ),
+                        WorkflowUtils.getPlugin( ) );
 
                 emailExternalUserMessageDisplay.setUploadedFiles( listFileUploadTemp );
                 listFileUpload.addAll( listFileUploadTemp );
@@ -237,8 +239,8 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_USER_ADMIN, userAdmin );
         model.put(
                 MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM,
-                WorkflowService.getInstance( ).getDisplayTasksForm( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, externalUserConfig.getIdFollowingAction( ), request,
-                        getLocale( ) ) );
+                WorkflowService.getInstance( ).getDisplayTasksForm( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, externalUserConfig.getIdFollowingAction( ),
+                        request, getLocale( ) ) );
         model.put( TicketingConstants.MARK_FORM_ACTION, getActionUrl( TicketingConstants.ACTION_DO_PROCESS_WORKFLOW_ACTION ) );
         model.put( MARK_ID_ACTION, externalUserConfig.getIdFollowingAction( ) );
         model.put( MARK_ID_TICKET, ticket.getId( ) );
@@ -255,14 +257,14 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     {
         try
         {
-            if ( !_ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( Integer.parseInt( 
-                    request.getParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER ) ) ).getIsAnswered( ) )
+            if ( !_ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser(
+                    Integer.parseInt( request.getParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER ) ) ).getIsAnswered( ) )
             {
                 return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_NOT_DONE, SiteMessage.TYPE_WARNING );
             }
             else
             {
-                return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_OK, SiteMessage.TYPE_INFO );              
+                return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_OK, SiteMessage.TYPE_INFO );
             }
         }
         catch( Exception e )
