@@ -318,6 +318,16 @@
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AutomaticAssignmentTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeAutomaticAssignment"
 		p:taskConfigService-ref="workflow-ticketing.taskAutomaticAssignmentConfigService" />
+
+	<!-- Task Auto assignment Direction -->
+	<bean id="workflow-ticketing.taskAutomaticAssignmentDirection"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAutomaticAssignmentDirection"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAutomaticAssignmentDirection"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskAutomaticAssignmentDirection" p:titleI18nKey="module.workflow.ticketing.task_automatic_assignment_direction_title"
+		p:beanName="workflow-ticketing.taskAutomaticAssignmentDirection"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
 		
 	<!-- Task Mark as unread -->
     <bean id="workflow-ticketing.taskMarkAsUnread"
