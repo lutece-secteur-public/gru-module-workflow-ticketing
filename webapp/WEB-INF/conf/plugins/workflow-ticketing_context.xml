@@ -10,6 +10,13 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
+    <!-- Site properties for External User task-->    
+    <bean id="workflow-ticketing.sitePropertiesGroup" class="fr.paris.lutece.portal.service.site.properties.SitePropertiesGroup" >
+        <property name="nameKey"><value>module.workflow.ticketing.site_properties.externaluser.name</value></property>
+        <property name="descriptionKey"><value>module.workflow.ticketing.site_properties.externaluser.description</value></property>
+        <property name="keysPrefix"><value>module.workflow.ticketing.site_property.externaluser.</value></property>
+    </bean>
+    
 	<!-- Transaction Manager -->
     <bean id="workflow-ticketing.transactionManager" class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager"
         p:pluginName="workflow-ticketing" />
@@ -31,8 +38,24 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.assignment.TaskAutomaticAssignmentDAO" />
     <bean id="workflow-ticketing.taskModifyTicketCategoryConfigDAO"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfigDAO" />
-    
+    <bean id="workflow-ticketing.ExternalUserDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.ExternalUserDAO" />
+    <bean id="workflow-ticketing.ticketEmailExternalUserHistoryDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.TicketEmailExternalUserHistoryDAO" />
+    <bean id="workflow-ticketing.ticketEmailExternalUserMessageDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.TicketEmailExternalUserMessageDAO" />
+    <bean id="workflow-ticketing.taskTicketEmailExternalUserConfigDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.TaskTicketEmailExternalUserConfigDAO" />
+    <bean id="workflow-ticketing.ticketEmailExternalUserRecipientDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.TicketEmailExternalUserRecipientDAO" />
+    <bean id="workflow-ticketing.ticketEmailExternalUserCcDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCcDAO" />
 
+    <!-- NotifyGRU Provider -->
+    <bean id="workflow-ticketing.provider-manager" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager">
+        <constructor-arg type="java.lang.String" value="workflow-ticketing.provider-manager"/>
+    </bean>
+    
 	<!-- Services -->
 	<bean id="workflow-ticketing.taskInformationService"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.information.TaskInformationService" />
@@ -48,6 +71,9 @@
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.EditableTicketService" />
     <bean id="workflow-ticketing.resourceHistoryService"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistoryService" />
+    <bean id="workflow-ticketing.taskTicketEmailExternalUserConfigService"
+        class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+        p:taskConfigDAO-ref="workflow-ticketing.taskTicketEmailExternalUserConfigDAO" />
 		
 	<bean id="workflow-ticketing.taskAutomaticAssignmentConfigService"
 		class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
@@ -71,7 +97,10 @@
 		scope="prototype" />
     <bean id="workflow-ticketing.taskModifyTicketCategoryConfig"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig"
-        scope="prototype" />  
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTicketEmailExternalUserConfig"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.TaskTicketEmailExternalUserConfig"
+        scope="prototype" />    
 
 	<!-- Task Generate ticket reference -->
 	<bean id="workflow-ticketing.ticketReferenceService"
@@ -299,7 +328,20 @@
         p:key="taskTicketingMarkAsUnread" p:titleI18nKey="module.workflow.ticketing.task_mark_as_unread.title"
         p:beanName="workflow-ticketing.taskMarkAsUnread" />
 
-		
+	<!-- Task Sollicitation ExternalUser -->
+    <bean id="workflow-ticketing.taskTicketEmailExternalUser"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskTicketEmailExternalUser"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeTicketEmailExternalUser"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskTicketEmailExternalUser" p:titleI18nKey="module.workflow.ticketing.task_ticket_email_external_user.title"
+        p:beanName="workflow-ticketing.taskTicketEmailExternalUser" p:configBeanName="workflow-ticketing.taskTicketEmailExternalUserConfig"
+        p:configRequired="true" p:formTaskRequired="true" />
+    <bean id="workflow-ticketing.ticketEmailExternalUserTaskComponent"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketEmailExternalUserTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeTicketEmailExternalUser"
+        p:taskConfigService-ref="workflow-ticketing.taskTicketEmailExternalUserConfigService" /> 
+        
 	<!-- SignRequest -->
 	<bean id="workflow-ticketing.hashService"
 		class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
@@ -317,4 +359,18 @@
 			<value>change me</value>
 		</property>
 	</bean>
+	
+	<!-- SignRequest for ExternalUser -->
+   <bean id="workflow-ticketing.externaluser.requestAuthentication"
+      class="fr.paris.lutece.util.signrequest.RequestHashAuthenticator">
+      <property name="hashService" ref="workflow-ticketing.hashService" />
+      <property name="signatureElements">
+         <list>
+            <value>id_message_external_user</value>
+         </list>
+      </property>
+      <property name="privateKey">
+         <value>wkFFemailAgent</value>
+      </property>
+   </bean>
 </beans>

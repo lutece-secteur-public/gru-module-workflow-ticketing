@@ -1,0 +1,63 @@
+<br/>
+<div class="col-xs-12">
+	<div class="row form-group">
+		<label class="col-xs-12 col-sm-3 control-label">#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.entity}&nbsp;:&nbsp;</label>
+		<div class="col-xs-11 col-sm-8">
+	    	<input type="text" class="form-control input_search_${config.idTask}" id="contact_entity_${config.idTask}" maxlength="255">
+		</div>
+		<div class="col-xs-1 col-sm-1 input-group-btn">
+			<br/>
+			<div class="btn btn-default" id="search_contact_button_${config.idTask}" disabled="disabled">
+				<i class="fa fa-search"></i>
+			</div>
+		</div>
+	</div>
+	<div class="row form-group">
+		<label class="col-xs-12 col-sm-3 control-label">#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.lastname}&nbsp;:&nbsp;</label>
+		<div class="col-xs-11 col-sm-8">
+	    	<input type="text" class="form-control input_search_${config.idTask}" id="contact_lastname_${config.idTask}" maxlength="255">
+		</div>
+	</div>
+	<div id="contact_results_${config.idTask}" class="row form-group">
+	</div>
+</div>
+
+<script>
+  $( function(){
+	  $("#search_contact_button_${config.idTask}").click(function(){
+		  var targetUrl="servlet/plugins/workflow/ticketing/externaluser/externalusersearch";
+		  var dataToSend={
+					"input_email":"${inputEmail}",
+					"id_task":"${config.idTask}",
+					"lastname":$("#contact_lastname_${config.idTask}").val(),
+					"entity":$("#contact_entity_${config.idTask}").val()
+				};
+		  $.ajax({
+			  url: targetUrl,
+			  type: "POST",
+			  data: dataToSend,
+			  dataType : "html",
+			  success: function( response ) {
+					$('#contact_results_${config.idTask}').html( response );
+			  }
+		  });
+	  });
+	  
+	  $(".input_search_${config.idTask}").keyup( enableSearchButton_${config.idTask} ).blur( enableSearchButton_${config.idTask} );
+  });
+  
+  function enableSearchButton_${config.idTask}()
+  {
+	var allLength = 0;
+	$(".input_search_${config.idTask}").each(function(){
+		allLength = allLength + $(this).val().length;
+	});
+	if(allLength>0) {
+	  $("#search_contact_button_${config.idTask}").removeAttr("disabled");
+	}
+	else {
+	  $("#search_contact_button_${config.idTask}").attr("disabled", "disabled" );
+	}
+  }
+
+</script>

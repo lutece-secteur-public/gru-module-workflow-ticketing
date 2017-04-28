@@ -1,0 +1,24 @@
+<#if list_email_infos?exists && list_email_infos?has_content>
+	<div style="border-bottom: 1px solid #f4f4f4;">
+		<span>
+			#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_history}
+			<br/><br/>
+			<#list list_email_infos as email_info>
+				<i class="fa fa-arrow-right" aria-hidden="true"></i> ${email_info.firstName!} ${email_info.name!} (${email_info.email!}<#if email_info.field?exists> - ${email_info.field}</#if>)<br/>
+			</#list>
+		</span>
+		
+		<#if email_infos_cc?has_content>
+			<br/>
+			<span>
+				#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_cc} : ${email_infos_cc} 
+			</span>
+			<br/>
+		</#if>
+		<br/>
+	</div>
+</#if>
+
+<#if external_user_message?exists>
+	<span>${external_user_message}</span>  
+</#if>

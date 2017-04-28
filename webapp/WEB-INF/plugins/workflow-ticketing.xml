@@ -23,6 +23,14 @@
 
     <!-- Admin features parameters -->
     <admin-features>
+    	<admin-feature>
+            <feature-id>TICKETING_EXTERNAL_USER</feature-id>
+            <feature-title>module.workflow.ticketing.externalUserResponse.page.name</feature-title>
+            <feature-description>module.workflow.ticketing.externalUserResponse.page.description</feature-description>
+            <feature-level>3</feature-level>
+            <feature-url>jsp/admin/plugins/ticketing/TicketExternalUserResponse.jsp</feature-url>
+            <feature-icon-url/>
+        </admin-feature>
     </admin-features>    
     
     
@@ -38,6 +46,19 @@
     <portlets>
    	</portlets>
     
+    <!-- Servlets -->
+    <servlets>
+        <servlet>
+            <servlet-name>ExternalUserSearchServlet</servlet-name>
+            <url-pattern>/servlet/plugins/workflow/ticketing/externaluser/externalusersearch</url-pattern>
+            <servlet-class>fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.search.ExternalUserSearchServlet</servlet-class>
+        </servlet>
+        <servlet>
+            <servlet-name>ExternalUseEmailValidationServlet</servlet-name>
+            <url-pattern>servlet/plugins/workflow/ticketing/externaluser/externaluseremailvalidation</url-pattern>
+            <servlet-class>fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.search.ExternalUserEmailValidationServlet</servlet-class>
+        </servlet>
+    </servlets>
     
 	<!-- Specific plugin Javascript files -->
     <javascript-files>

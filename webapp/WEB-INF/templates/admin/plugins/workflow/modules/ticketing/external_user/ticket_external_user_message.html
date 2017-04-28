@@ -1,0 +1,28 @@
+<script>$(".content-header").toggle();</script>
+<div class="gru-wrapper">
+  <div id="customer-panel" class="row ticket-head bg-gru-light">
+    <div class="col-xs-12 col-sm-offset-1 col-sm-10">
+      <h2>#i18n{module.workflow.ticketing.externalUserResponse.pageTitle}</h2>
+    </div>
+  </div>
+  <br/>
+  <div id="demand-panel" class="row ticket-content">
+    <div class="col-xs-6 col-xs-offset-3">
+      <#-- info message -->
+      <#if type_message == 0 >
+        <h3 class="alert alert-info" >
+          <i class="fa fa-check"></i>
+          #i18n{${key_message}}
+        </h3>
+      </#if>
+      
+      <#-- warning message -->
+      <#if type_message == 3 >
+        <h3 class="alert alert-warning" >
+          <i class="fa fa-exclamation-circle"></i>
+          #i18n{${key_message}}
+        </h3>
+      </#if>
+    </div>
+  </div>
+</div>
