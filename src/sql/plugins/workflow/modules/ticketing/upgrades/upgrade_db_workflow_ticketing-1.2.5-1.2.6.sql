@@ -29,7 +29,7 @@ CREATE TABLE workflow_ticketing_email_external_user
     message_question LONG VARCHAR DEFAULT NULL,
     message_response LONG VARCHAR DEFAULT NULL,
     is_answered INT DEFAULT 0,
-    PRIMARY KEY (id_message_agent)
+    PRIMARY KEY (id_message_external_user)
 );
 
 /*===================================================================================*/
