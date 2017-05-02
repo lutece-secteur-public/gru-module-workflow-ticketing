@@ -52,8 +52,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCcDAO" />
 
     <!-- NotifyGRU Provider -->
-    <bean id="workflow-ticketing.provider-manager" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager">
-        <constructor-arg type="java.lang.String" value="workflow-ticketing.provider-manager"/>
+    <bean id="workflow-ticketing.externaluser.provider-manager" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager">
+        <constructor-arg type="java.lang.String" value="workflow-ticketing.externaluser.provider-manager"/>
     </bean>
     
 	<!-- Services -->
