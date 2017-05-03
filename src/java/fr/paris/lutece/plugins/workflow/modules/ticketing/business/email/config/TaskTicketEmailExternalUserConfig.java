@@ -45,10 +45,8 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
     @NotNull
     private MessageDirectionExternalUser _messageDirectionExternalUser;
 
-    @NotNull
     private Integer _nIdFollowingAction;
 
-    @NotNull
     private Integer _nIdContactAttribute;
 
     /**
