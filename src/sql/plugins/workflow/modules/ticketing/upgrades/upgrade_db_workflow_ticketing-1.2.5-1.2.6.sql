@@ -41,9 +41,9 @@ CREATE TABLE workflow_task_ticketing_email_external_user_config
     id_task INT DEFAULT 0 NOT NULL,
     message_direction INT DEFAULT NULL,
     id_following_action INT DEFAULT NULL,
+    id_contact_attribute INT DEFAULT NULL,
     PRIMARY KEY (id_task)
 );
-
 /*================================================================================*/
 /* Table struture for table ticket_email_external_user_recipient */
 /*================================================================================*/
