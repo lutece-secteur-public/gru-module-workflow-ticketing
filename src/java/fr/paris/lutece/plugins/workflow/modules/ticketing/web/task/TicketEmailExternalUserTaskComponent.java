@@ -364,10 +364,10 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
 
-        Integer nMessageDirectionId = getParameterAsInteger(request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
-        Integer nIdFollowingAction = getParameterAsInteger(request.getParameter( PARAMETER_FOLLOW_ACTION_ID ) );
-        Integer nIdContactAttribute = getParameterAsInteger(request.getParameter( PARAMETER_CONTACT_ATTRIBUTE ) );
-        
+        Integer nMessageDirectionId = getParameterAsInteger( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
+        Integer nIdFollowingAction = getParameterAsInteger( request.getParameter( PARAMETER_FOLLOW_ACTION_ID ) );
+        Integer nIdContactAttribute = getParameterAsInteger( request.getParameter( PARAMETER_CONTACT_ATTRIBUTE ) );
+
         TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bConfigToCreate = false;
 
@@ -407,13 +407,13 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
      * @param strParameter
      * @return the parameter value parsed as Integer
      */
-	private Integer getParameterAsInteger( String strParameter )
-	{
+    private Integer getParameterAsInteger( String strParameter )
+    {
         if ( StringUtils.isNotBlank( strParameter ) && StringUtils.isNumeric( strParameter ) )
         {
             return Integer.parseInt( strParameter );
         }
         return null;
-	}
+    }
 
 }
