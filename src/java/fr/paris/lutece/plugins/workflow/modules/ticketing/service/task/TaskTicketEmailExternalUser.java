@@ -75,6 +75,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
     public static final String PARAMETER_MESSAGE = "message";
     public static final String PARAMETER_EMAIL_RECIPIENTS = "email_recipients";
     public static final String PARAMETER_EMAIL_RECIPIENTS_CC = "email_recipients_cc";
+    public static final String PARAM_NEXT_ACTION_ID = "next_action_id";
 
     // Other constants
     public static final String UNDERSCORE = "_";
@@ -190,11 +191,12 @@ public class TaskTicketEmailExternalUser extends SimpleTask
                 infosEmailExternalUser.setIdTask( getId( ) );
                 infosEmailExternalUser.setEmail( user.getEmail( ) );
 
-                List<ExternalUser> listUsers = _externalUserDAO.findExternalUser( user.getLastName( ), user.getEmail( ), null );
+                List<ExternalUser> listUsers = _externalUserDAO.findExternalUser( user.getLastName( ), user.getEmail( ),
+                        String.valueOf( config.getIdContactAttribute( ) ), null, null );
 
                 if ( listUsers != null && listUsers.size( ) > 0 )
                 {
-                    infosEmailExternalUser.setField( listUsers.iterator( ).next( ).getEntite( ) );
+                    infosEmailExternalUser.setField( listUsers.iterator( ).next( ).getAdditionalAttribute( ) );
                 }
 
                 infosEmailExternalUser.setName( user.getLastName( ) );

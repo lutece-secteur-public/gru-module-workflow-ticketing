@@ -5,7 +5,7 @@
 		<table class="table table-hover">
 			<thead>
 				<tr>
-					<th>#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.entity}</th>
+					<th>${attribute_label!''}</th>
 					<th>#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.lastname}</th>
 					<th>#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.firstname}</th>
 				</tr>
@@ -13,7 +13,7 @@
 			<tbody>
 				<#list result_user as user>
 				<tr class="result_user_${id_task}" data-email="${user.email!}">
-					<td>${user.entite!}</td>
+					<td>${user.additionalAttribute!}</td>
 					<td>${user.lastname!}</td>
 					<td>${user.firstname!}</td>
 				</tr>

@@ -53,6 +53,7 @@ import fr.paris.lutece.portal.service.admin.AdminAuthenticationService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.user.attribute.AttributeService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.utils.MVCMessage;
@@ -84,12 +85,15 @@ public class ExternalUserSearchServlet extends HttpServlet
     private static final String MARK_LIST_USERS = "result_user";
     private static final String MARK_INPUT_EMAIL = "input_email";
     private static final String MARK_ID_TASK = "id_task";
+    private static final String MARK_ATTRIBUTE_LABEL = "attribute_label";
 
     // Request parameter
     private static final String PARAM_INPUT_EMAIL = "input_email";
     private static final String PARAM_ID_TASK = "id_task";
     private static final String PARAM_LASTNAME = "lastname";
-    private static final String PARAM_ENTITY = "entity";
+    private static final String PARAM_ID_ATTRIBUTE = "id_attribute";
+    private static final String PARAM_ATTRIBUTE_VALUE = "attribute_value";
+    private static final String PARAM_NEXT_ACTION_ID = "next_action_id";
 
     // message
     private static final String LOG_UNAUTHENTICATED_USER = "Calling ExternalUserSearchServlet with unauthenticated user";
@@ -98,6 +102,9 @@ public class ExternalUserSearchServlet extends HttpServlet
 
     // BEAN
     private IExternalUserDAO _externalUserDAO = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
+
+    // SERVICE
+    private static final AttributeService _attributeService = AttributeService.getInstance( );
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -125,7 +132,9 @@ public class ExternalUserSearchServlet extends HttpServlet
         String strInputEmail = request.getParameter( PARAM_INPUT_EMAIL );
         String strIdTask = request.getParameter( PARAM_ID_TASK );
         String strLastname = request.getParameter( PARAM_LASTNAME );
-        String strEntity = request.getParameter( PARAM_ENTITY );
+        String strIdAttribute = request.getParameter( PARAM_ID_ATTRIBUTE );
+        String strAttributeValue = request.getParameter( PARAM_ATTRIBUTE_VALUE );
+        String strNextActionId = request.getParameter( PARAM_NEXT_ACTION_ID );
 
         Locale locale = user.getLocale( );
         int searchLimit = _externalUserDAO.getSearchLimit( );
@@ -134,7 +143,8 @@ public class ExternalUserSearchServlet extends HttpServlet
         List<ErrorMessage> listInfos = new ArrayList<ErrorMessage>( );
 
         // TMP
-        List<ExternalUser> listExternalUsers = _externalUserDAO.findExternalUser( strLastname, null, strEntity );
+        List<ExternalUser> listExternalUsers = _externalUserDAO.findExternalUser( strLastname, null, strIdAttribute, strAttributeValue, strNextActionId );
+        String strLabelContactAttribute = _attributeService.getAttributeWithFields( Integer.parseInt( strIdAttribute ), locale ).getTitle( );
 
         // error no result
         if ( listExternalUsers.isEmpty( ) )
@@ -155,6 +165,7 @@ public class ExternalUserSearchServlet extends HttpServlet
         model.put( MARK_LIST_USERS, listExternalUsers );
         model.put( MARK_INPUT_EMAIL, strInputEmail );
         model.put( MARK_ID_TASK, strIdTask );
+        model.put( MARK_ATTRIBUTE_LABEL, strLabelContactAttribute );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_SEARCH_RESULT, locale, model );
         ServletOutputStream outStream = httpResponse.getOutputStream( );

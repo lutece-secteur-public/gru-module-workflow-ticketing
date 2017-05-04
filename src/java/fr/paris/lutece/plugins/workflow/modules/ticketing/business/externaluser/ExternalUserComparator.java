@@ -49,7 +49,7 @@ public class ExternalUserComparator implements Comparator<ExternalUser>
     public int compare( ExternalUser o1, ExternalUser o2 )
     {
         int nCompare = 0;
-        nCompare = compareAlphaNumeric( o1.getEntite( ), o2.getEntite( ), nCompare );
+        nCompare = compareAlphaNumeric( o1.getAdditionalAttribute( ), o2.getAdditionalAttribute( ), nCompare );
         nCompare = compareAlphaNumeric( o1.getLastname( ), o2.getLastname( ), nCompare );
         nCompare = compareAlphaNumeric( o1.getFirstname( ), o2.getFirstname( ), nCompare );
         nCompare = compareAlphaNumeric( o1.getEmail( ), o2.getEmail( ), nCompare );

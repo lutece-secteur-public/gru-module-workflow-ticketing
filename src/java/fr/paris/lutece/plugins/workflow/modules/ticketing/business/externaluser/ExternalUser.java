@@ -41,7 +41,7 @@ public class ExternalUser
     private String _strFirstname;
     private String _strLastname;
     private String _strEmail;
-    private String _strEntite;
+    private String _strAdditionalAttribute;
 
     /**
      * @return the strFirstname
@@ -95,19 +95,19 @@ public class ExternalUser
     }
 
     /**
-     * @return the entite
+     * @return the additional attribute value
      */
-    public String getEntite( )
+    public String getAdditionalAttribute( )
     {
-        return _strEntite;
+        return _strAdditionalAttribute;
     }
 
     /**
-     * @param strEntite
-     *            the entite to set
+     * @param strAdditionalAttribute
+     *            the additional attribute value to set
      */
-    public void setEntite( String strEntite )
+    public void setAdditionalAttribute( String strAdditionalAttribute )
     {
-        this._strEntite = strEntite;
+        this._strAdditionalAttribute = strAdditionalAttribute;
     }
 }

@@ -49,7 +49,8 @@
         var targetUrl="servlet/plugins/workflow/ticketing/externaluser/externaluseremailvalidation";
         var dataToSend={
         	    "email_recipients":$("#email_recipients_${config.idTask}").val(),
-        	    "email_recipients_cc":$("#email_recipients_cc_${config.idTask}").val()
+        	    "email_recipients_cc":$("#email_recipients_cc_${config.idTask}").val(),
+				"next_action_id":"${config.idFollowingAction}"
         	    };
         var bResult = true;
         $.ajax({

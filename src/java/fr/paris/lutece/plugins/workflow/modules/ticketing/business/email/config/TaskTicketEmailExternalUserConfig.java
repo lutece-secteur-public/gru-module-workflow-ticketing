@@ -111,4 +111,5 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
     {
         this._nIdContactAttribute = nIdContactAttribute;
     }
+
 }

@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.TaskTicketEmailExternalUserConfig;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.IExternalUserDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskTicketEmailExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
@@ -116,6 +117,7 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
         // request param
         String strEmailRecipients = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS );
         String strEmailRecipientsCc = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS_CC );
+        String strNextActionId = request.getParameter( TaskTicketEmailExternalUser.PARAM_NEXT_ACTION_ID );
 
         if ( StringUtils.isEmpty( strEmailRecipients ) )
         {
@@ -123,7 +125,7 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
         }
         else
         {
-            List<String> listErrorRecipients = WorkflowTicketingUtils.validEmailList( strEmailRecipients, _externalUserDAO );
+            List<String> listErrorRecipients = WorkflowTicketingUtils.validEmailList( strEmailRecipients, _externalUserDAO, strNextActionId );
             if ( !listErrorRecipients.isEmpty( ) )
             {
                 String strErrorRecipients;
@@ -142,7 +144,7 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
 
         if ( StringUtils.isNotEmpty( strEmailRecipientsCc ) )
         {
-            List<String> listErrorRecipientsCc = WorkflowTicketingUtils.validEmailList( strEmailRecipientsCc, null );
+            List<String> listErrorRecipientsCc = WorkflowTicketingUtils.validEmailList( strEmailRecipientsCc, null, null );
             if ( !listErrorRecipientsCc.isEmpty( ) )
             {
                 String strErrorRecipientsCc;

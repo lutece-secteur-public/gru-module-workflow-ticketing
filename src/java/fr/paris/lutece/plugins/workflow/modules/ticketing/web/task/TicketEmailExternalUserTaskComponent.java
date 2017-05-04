@@ -72,6 +72,7 @@ import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.user.attribute.AttributeService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -99,6 +100,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
     private static final String MARK_CONFIG_CONTACT_ATTRIBUTE = "contact_attribute_id";
+    private static final String MARK_CONFIG_LABEL_ATTRIBUTE = "label_contact_attribute";
 
     // Parameters config
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
@@ -114,6 +116,8 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 
     // Constant
     private static final String DISPLAY_SEMICOLON = " ; ";
+
+    private static final AttributeService _attributeService = AttributeService.getInstance( );
 
     @Inject
     @Named( TaskTicketEmailExternalUser.BEAN_TICKET_CONFIG_SERVICE )
@@ -207,6 +211,9 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_CONFIG, config );
 
+        String strLabelContactAttribute = _attributeService.getAttributeWithFields( config.getIdContactAttribute( ), locale ).getTitle( );
+        model.put( MARK_CONFIG_LABEL_ATTRIBUTE, strLabelContactAttribute );
+
         ModelUtils.storeRichText( request, model );
         ModelUtils.storeUserSignature( request, model );
 
@@ -248,6 +255,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        String strNextActionId = String.valueOf( config.getIdFollowingAction( ) );
         String strEmailRecipients = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS + TaskTicketEmailExternalUser.UNDERSCORE
                 + task.getId( ) );
         String strEmailRecipientsCc = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS_CC + TaskTicketEmailExternalUser.UNDERSCORE
@@ -266,7 +274,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
             }
             else
             {
-                List<String> listErrorRecipients = WorkflowTicketingUtils.validEmailList( strEmailRecipients, _ExternalUserDAO );
+                List<String> listErrorRecipients = WorkflowTicketingUtils.validEmailList( strEmailRecipients, _ExternalUserDAO, strNextActionId );
                 if ( !listErrorRecipients.isEmpty( ) )
                 {
                     strError = listErrorRecipients.get( 0 );
@@ -281,7 +289,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 
             if ( strError == null && StringUtils.isNotEmpty( strEmailRecipientsCc ) )
             {
-                List<String> listErrorRecipientsCc = WorkflowTicketingUtils.validEmailList( strEmailRecipientsCc, null );
+                List<String> listErrorRecipientsCc = WorkflowTicketingUtils.validEmailList( strEmailRecipientsCc, null, null );
                 if ( !listErrorRecipientsCc.isEmpty( ) )
                 {
                     strError = listErrorRecipientsCc.get( 0 );

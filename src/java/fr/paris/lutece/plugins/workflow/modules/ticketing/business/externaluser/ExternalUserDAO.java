@@ -41,7 +41,6 @@ import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
@@ -51,27 +50,27 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public class ExternalUserDAO implements IExternalUserDAO
 {
     // PROPERTIES
-    private static final String DSKEY_ENTITEATTRIBUT_ID = "workflow-ticketing.site_property.externaluser.entiteattribut";
     private static final String PROP_SEARCH_LIMIT = "workflow-ticketing.workflow.externaluser.search.limit";
 
     // constants
     private static final String CONSTANT_PERCENT = "%";
 
     // SQL
-    private static final String SQL_SELECT_USER_ADMIN = "SELECT u.last_name, u.first_name, u.email, f.user_field_value FROM core_admin_user u INNER JOIN core_user_right r ON u.id_user = r.id_user LEFT JOIN core_admin_user_field f ON u.id_user = f.id_user AND f.id_attribute = ? WHERE r.id_right = 'TICKETING_EXTERNAL_USER' ";
-    private static final String SQL_VALID_EMAIL_USER_ADMIN = "SELECT u.first_name, u.email FROM core_admin_user u INNER JOIN core_user_right r ON u.id_user = r.id_user LEFT JOIN core_admin_user_field f ON u.id_user = f.id_user AND f.id_attribute = ? WHERE r.id_right = 'TICKETING_EXTERNAL_USER' AND u.email = ?";
+    private static final String SQL_SELECT_USER_ADMIN = "SELECT u.last_name, u.first_name, u.email, f.user_field_value FROM core_admin_user u "
+            + "INNER JOIN core_user_role ur ON ur.id_user = u.id_user INNER JOIN core_admin_role role ON role.role_key = ur.role_key INNER JOIN core_admin_role_resource rr ON rr.role_key = role.role_key "
+            + "INNER JOIN core_user_right r ON u.id_user = r.id_user " + "LEFT JOIN core_admin_user_field f ON u.id_user = f.id_user AND f.id_attribute = ? "
+            + "WHERE u.status = 0 AND r.id_right = 'TICKETING_EXTERNAL_USER' AND rr.resource_type = 'WORKFLOW_ACTION_TYPE' ";
+    private static final String SQL_SELECT_USER_ADMIN_WITHOUT_ATTRIBUTE = "SELECT u.last_name, u.first_name, u.email, NULL FROM core_admin_user u INNER JOIN core_user_right r ON u.id_user = r.id_user "
+            + "INNER JOIN core_user_role ur ON ur.id_user = u.id_user INNER JOIN core_admin_role role ON role.role_key = ur.role_key INNER JOIN core_admin_role_resource rr ON rr.role_key = role.role_key "
+            + "WHERE u.status = 0 AND r.id_right = 'TICKETING_EXTERNAL_USER' ";
+    private static final String SQL_VALID_EMAIL_USER_ADMIN = "SELECT u.first_name, u.email FROM core_admin_user u INNER JOIN core_user_right r ON u.id_user = r.id_user "
+            + "INNER JOIN core_user_role ur ON ur.id_user = u.id_user INNER JOIN core_admin_role role ON role.role_key = ur.role_key INNER JOIN core_admin_role_resource rr ON rr.role_key = role.role_key "
+            + " WHERE u.status = 0 AND r.id_right = 'TICKETING_EXTERNAL_USER' AND u.email = ? ";
     private static final String SQL_WHERE_LASTNAME_CLAUSE = " u.last_name LIKE ? ";
     private static final String SQL_WHERE_EMAIL_CLAUSE = " u.email LIKE ? ";
-    private static final String SQL_WHERE_ENTITY_CLAUSE = " f.user_field_value LIKE ? ";
+    private static final String SQL_WHERE_ADDITIONAL_ATTRIBUTE_CLAUSE = " f.user_field_value LIKE ? ";
+    private static final String SQL_WHERE_ACTION_RBAC_CLAUSE = " (rr.resource_id = ? OR rr.resource_id = '*') ";
     private static final String SQL_SEPARATOR_AND = " AND ";
-
-    /**
-     * @return the value store in properties or empty string
-     */
-    private String getEntiteAttributID( )
-    {
-        return DatastoreService.getDataValue( DSKEY_ENTITEATTRIBUT_ID, StringUtils.EMPTY );
-    }
 
     /**
      * {@inheritDoc}
@@ -94,15 +93,25 @@ public class ExternalUserDAO implements IExternalUserDAO
      * {@inheritDoc}
      */
     @Override
-    public boolean isValidEmail( String strEmail )
+    public boolean isValidEmail( String strEmail, String strActionId )
     {
         StringBuilder strQuery = new StringBuilder( SQL_VALID_EMAIL_USER_ADMIN );
+        if ( StringUtils.isNotEmpty( strActionId ) )
+        {
+            strQuery.append( SQL_SEPARATOR_AND );
+            strQuery.append( SQL_WHERE_ACTION_RBAC_CLAUSE );
+        }
 
         DAOUtil daoUtil = new DAOUtil( strQuery.toString( ), WorkflowTicketingPlugin.getPlugin( ) );
 
         int nIndex = 1;
-        daoUtil.setString( nIndex++, getEntiteAttributID( ) );
         daoUtil.setString( nIndex++, strEmail );
+
+        if ( StringUtils.isNotEmpty( strActionId ) )
+        {
+            daoUtil.setString( nIndex++, strActionId );
+        }
+
         daoUtil.executeQuery( );
 
         boolean bEmailOk = daoUtil.next( );
@@ -116,9 +125,18 @@ public class ExternalUserDAO implements IExternalUserDAO
      * {@inheritDoc}
      */
     @Override
-    public List<ExternalUser> findExternalUser( String strLastname, String strEmail, String strEntity )
+    public List<ExternalUser> findExternalUser( String strLastname, String strEmail, String strIdAttribute, String strAttributeValue, String strActionId )
     {
-        StringBuilder strQuery = new StringBuilder( SQL_SELECT_USER_ADMIN );
+        StringBuilder strQuery = null;
+
+        if ( StringUtils.isEmpty( strIdAttribute ) )
+        {
+            strQuery = new StringBuilder( SQL_SELECT_USER_ADMIN_WITHOUT_ATTRIBUTE );
+        }
+        else
+        {
+            strQuery = new StringBuilder( SQL_SELECT_USER_ADMIN );
+        }
 
         if ( StringUtils.isNotEmpty( strLastname ) )
         {
@@ -132,16 +150,26 @@ public class ExternalUserDAO implements IExternalUserDAO
             strQuery.append( SQL_WHERE_EMAIL_CLAUSE );
         }
 
-        if ( StringUtils.isNotEmpty( strEntity ) )
+        if ( StringUtils.isNotEmpty( strIdAttribute ) && StringUtils.isNotEmpty( strAttributeValue ) )
         {
             strQuery.append( SQL_SEPARATOR_AND );
-            strQuery.append( SQL_WHERE_ENTITY_CLAUSE );
+            strQuery.append( SQL_WHERE_ADDITIONAL_ATTRIBUTE_CLAUSE );
+        }
+
+        if ( StringUtils.isNotEmpty( strActionId ) )
+        {
+            strQuery.append( SQL_SEPARATOR_AND );
+            strQuery.append( SQL_WHERE_ACTION_RBAC_CLAUSE );
         }
 
         DAOUtil daoUtil = new DAOUtil( strQuery.toString( ), WorkflowTicketingPlugin.getPlugin( ) );
 
         int nIndex = 1;
-        daoUtil.setString( nIndex++, getEntiteAttributID( ) );
+
+        if ( StringUtils.isNotEmpty( strIdAttribute ) )
+        {
+            daoUtil.setString( nIndex++, strIdAttribute );
+        }
 
         if ( StringUtils.isNotEmpty( strLastname ) )
         {
@@ -153,9 +181,15 @@ public class ExternalUserDAO implements IExternalUserDAO
             daoUtil.setString( nIndex++, CONSTANT_PERCENT + strEmail + CONSTANT_PERCENT );
         }
 
-        if ( StringUtils.isNotEmpty( strEntity ) )
+        if ( StringUtils.isNotEmpty( strIdAttribute ) && StringUtils.isNotEmpty( strAttributeValue ) )
         {
-            daoUtil.setString( nIndex++, CONSTANT_PERCENT + strEntity + CONSTANT_PERCENT );
+            daoUtil.setString( nIndex++, CONSTANT_PERCENT + strAttributeValue + CONSTANT_PERCENT );
+
+        }
+
+        if ( StringUtils.isNotEmpty( strActionId ) )
+        {
+            daoUtil.setString( nIndex++, strActionId );
         }
 
         daoUtil.executeQuery( );
@@ -168,7 +202,7 @@ public class ExternalUserDAO implements IExternalUserDAO
             externalUser.setLastname( daoUtil.getString( 1 ) );
             externalUser.setFirstname( daoUtil.getString( 2 ) );
             externalUser.setEmail( daoUtil.getString( 3 ) );
-            externalUser.setEntite( daoUtil.getString( 4 ) );
+            externalUser.setAdditionalAttribute( daoUtil.getString( 4 ) );
             lstExternalUser.add( externalUser );
         }
 

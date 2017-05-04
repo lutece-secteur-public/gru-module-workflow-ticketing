@@ -107,7 +107,7 @@ public class ExternalUserComparatorTest extends TestCase
     private ExternalUser createExternalUser( String strEntite, String strLastname, String strFirstname, String strEmail )
     {
         ExternalUser externalUser = new ExternalUser( );
-        externalUser.setEntite( strEntite );
+        externalUser.setAdditionalAttribute( strEntite );
         externalUser.setLastname( strLastname );
         externalUser.setFirstname( strFirstname );
         externalUser.setEmail( strEmail );
@@ -124,7 +124,7 @@ public class ExternalUserComparatorTest extends TestCase
     private String fieldAgentUserToString( ExternalUser externalUser )
     {
         StringBuilder strLog = new StringBuilder( );
-        strLog.append( externalUser.getEntite( ) );
+        strLog.append( externalUser.getAdditionalAttribute( ) );
         strLog.append( ";" );
         strLog.append( externalUser.getLastname( ) );
         strLog.append( ";" );

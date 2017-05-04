@@ -94,7 +94,7 @@ public final class WorkflowTicketingUtils
      * 
      * @return Empty list if no error, else a list with first element is the message key, and following element are parameters
      */
-    public static List<String> validEmailList( String strEmails, IExternalUserDAO externalUserUserDAO )
+    public static List<String> validEmailList( String strEmails, IExternalUserDAO externalUserUserDAO, String strNextActionId )
     {
         List<String> listForError = new ArrayList<String>( );
         if ( StringUtils.isBlank( strEmails ) )
@@ -128,7 +128,7 @@ public final class WorkflowTicketingUtils
                             break;
                         }
                         else
-                            if ( externalUserUserDAO != null && !externalUserUserDAO.isValidEmail( strEmail ) )
+                            if ( externalUserUserDAO != null && !externalUserUserDAO.isValidEmail( strEmail, strNextActionId ) )
                             {
                                 listForError.add( TicketEmailExternalUserTaskComponent.MESSAGE_INVALID_EMAIL_OR_NOT_AUTHORIZED );
                                 listForError.add( strEmail );

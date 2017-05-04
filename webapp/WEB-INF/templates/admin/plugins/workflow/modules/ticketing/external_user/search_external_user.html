@@ -1,9 +1,9 @@
 <br/>
 <div class="col-xs-12">
 	<div class="row form-group">
-		<label class="col-xs-12 col-sm-3 control-label">#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.entity}&nbsp;:&nbsp;</label>
+		<label class="col-xs-12 col-sm-3 control-label">${label_contact_attribute!}&nbsp;:&nbsp;</label>
 		<div class="col-xs-11 col-sm-8">
-	    	<input type="text" class="form-control input_search_${config.idTask}" id="contact_entity_${config.idTask}" maxlength="255">
+	    	<input type="text" class="form-control input_search_${config.idTask}" id="contact_attribute_${config.idTask}" maxlength="255">
 		</div>
 		<div class="col-xs-1 col-sm-1 input-group-btn">
 			<br/>
@@ -30,7 +30,9 @@
 					"input_email":"${inputEmail}",
 					"id_task":"${config.idTask}",
 					"lastname":$("#contact_lastname_${config.idTask}").val(),
-					"entity":$("#contact_entity_${config.idTask}").val()
+					"id_attribute":"${config.idContactAttribute}",
+					"attribute_value":$("#contact_attribute_${config.idTask}").val(),
+					"next_action_id":"${config.idFollowingAction}"
 				};
 		  $.ajax({
 			  url: targetUrl,
