@@ -37,10 +37,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -71,10 +73,15 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * Class for the TicketEmailExternalUser task
+ */
+/**
+ * @author a120274
+ *
  */
 public class TicketEmailExternalUserTaskComponent extends TaskComponent
 {
@@ -91,16 +98,19 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     private static final String MARK_TICKETING_LIST_EMAIL_INFOS = "list_email_infos";
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
+    private static final String MARK_CONFIG_CONTACT_ATTRIBUTE = "contact_attribute_id";
 
     // Parameters config
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
     private static final String PARAMETER_FOLLOW_ACTION_ID = "following_action_id";
+    private static final String PARAMETER_CONTACT_ATTRIBUTE = "contact_attribute_id";
 
     // Error message
     public static final String MESSAGE_EMPTY_EMAIL = "module.workflow.ticketing.task_ticket_email_external_user.error.email.empty";
     public static final String MESSAGE_INVALID_EMAIL_OR_NOT_AUTHORIZED = "module.workflow.ticketing.task_ticket_email_external_user.error.email.invalid.not_authorized";
     public static final String MESSAGE_INVALID_EMAIL = "module.workflow.ticketing.task_ticket_email_external_user.error.email.invalid";
     private static final String MESSAGE_ALREADY_ANSWER = "module.workflow.ticketing.externalUserResponse.message.already_answer";
+    private static final String MESSAGE_EMPTY_FIELD = "module.workflow.ticketing.task_ticket_email_external_user.error.field.empty";
 
     // Constant
     private static final String DISPLAY_SEMICOLON = " ; ";
@@ -220,7 +230,15 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Override
     public String validateConfig( ITaskConfig config, HttpServletRequest request )
     {
+        Set<ConstraintViolation<ITaskConfig>> setConstraintErrors = BeanValidationUtil.validate( config );
+
+        if ( !setConstraintErrors.isEmpty( ) )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_EMPTY_FIELD, AdminMessage.TYPE_ERROR );
+        }
+
         return null;
+
     }
 
     /**
@@ -311,6 +329,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 
         model.put( MARK_MESSAGE_DIRECTIONS_LIST, listMessageDirections );
         model.put( MARK_CONFIG_FOLLOW_ACTION_ID, StringUtils.EMPTY );
+        model.put( MARK_CONFIG_CONTACT_ATTRIBUTE, StringUtils.EMPTY );
 
         if ( config != null )
         {
@@ -319,6 +338,11 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
             if ( config.getIdFollowingAction( ) != null )
             {
                 model.put( MARK_CONFIG_FOLLOW_ACTION_ID, config.getIdFollowingAction( ) );
+            }
+
+            if ( config.getIdContactAttribute( ) != null )
+            {
+                model.put( MARK_CONFIG_CONTACT_ATTRIBUTE, config.getIdContactAttribute( ) );
             }
         }
         else
@@ -339,15 +363,11 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
-        int nMessageDirectionId = Integer.parseInt( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
-        String strFollowActionId = request.getParameter( PARAMETER_FOLLOW_ACTION_ID );
-        Integer nIdFollowingAction = null;
 
-        if ( StringUtils.isNotEmpty( strFollowActionId ) )
-        {
-            nIdFollowingAction = Integer.parseInt( strFollowActionId );
-        }
-
+        Integer nMessageDirectionId = getParameterAsInteger(request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
+        Integer nIdFollowingAction = getParameterAsInteger(request.getParameter( PARAMETER_FOLLOW_ACTION_ID ) );
+        Integer nIdContactAttribute = getParameterAsInteger(request.getParameter( PARAMETER_CONTACT_ATTRIBUTE ) );
+        
         TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bConfigToCreate = false;
 
@@ -360,6 +380,14 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 
         config.setMessageDirectionExternalUser( MessageDirectionExternalUser.valueOf( nMessageDirectionId ) );
         config.setIdFollowingAction( nIdFollowingAction );
+        config.setIdContactAttribute( nIdContactAttribute );
+
+        String strJspError = this.validateConfig( config, request );
+
+        if ( StringUtils.isNotBlank( strJspError ) )
+        {
+            return strJspError;
+        }
 
         if ( bConfigToCreate )
         {
@@ -371,5 +399,21 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         }
 
         return null;
+
     }
+
+    /**
+     * 
+     * @param strParameter
+     * @return the parameter value parsed as Integer
+     */
+	private Integer getParameterAsInteger( String strParameter )
+	{
+        if ( StringUtils.isNotBlank( strParameter ) && StringUtils.isNumeric( strParameter ) )
+        {
+            return Integer.parseInt( strParameter );
+        }
+        return null;
+	}
+
 }

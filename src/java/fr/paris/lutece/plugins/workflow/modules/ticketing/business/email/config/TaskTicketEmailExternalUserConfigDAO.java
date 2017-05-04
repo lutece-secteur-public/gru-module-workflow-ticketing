@@ -44,9 +44,9 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskTicketEmailExternalUserConfigDAO implements ITaskConfigDAO<TaskTicketEmailExternalUserConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, message_direction, id_following_action FROM workflow_task_ticketing_email_external_user_config WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_email_external_user_config ( id_task, message_direction, id_following_action ) VALUES ( ?,?,? ) ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_email_external_user_config SET message_direction = ?, id_following_action = ? WHERE id_task = ? ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, message_direction, id_following_action, id_contact_attribute FROM workflow_task_ticketing_email_external_user_config WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_email_external_user_config ( id_task, message_direction, id_following_action, id_contact_attribute ) VALUES ( ?,?,?,? ) ";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_email_external_user_config SET message_direction = ?, id_following_action = ?, id_contact_attribute = ? WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_email_external_user_config WHERE id_task = ? ";
 
     /**
@@ -69,6 +69,15 @@ public class TaskTicketEmailExternalUserConfigDAO implements ITaskConfigDAO<Task
         else
         {
             daoUtil.setInt( nIndex++, config.getIdFollowingAction( ) );
+        }
+
+        if ( config.getIdContactAttribute( ) == null )
+        {
+            daoUtil.setIntNull( nIndex++ );
+        }
+        else
+        {
+            daoUtil.setInt( nIndex++, config.getIdContactAttribute( ) );
         }
 
         daoUtil.executeUpdate( );
@@ -96,6 +105,14 @@ public class TaskTicketEmailExternalUserConfigDAO implements ITaskConfigDAO<Task
             daoUtil.setInt( nIndex++, config.getIdFollowingAction( ) );
         }
 
+        if ( config.getIdContactAttribute( ) == null )
+        {
+            daoUtil.setIntNull( nIndex++ );
+        }
+        else
+        {
+            daoUtil.setInt( nIndex++, config.getIdContactAttribute( ) );
+        }
         daoUtil.setInt( nIndex++, config.getIdTask( ) );
         daoUtil.executeUpdate( );
         daoUtil.free( );
@@ -127,6 +144,13 @@ public class TaskTicketEmailExternalUserConfigDAO implements ITaskConfigDAO<Task
             if ( StringUtils.isNotEmpty( strIdFollowingAction ) )
             {
                 config.setIdFollowingAction( Integer.parseInt( strIdFollowingAction ) );
+            }
+
+            String strIdContactAttribute = daoUtil.getString( nIndex++ );
+
+            if ( StringUtils.isNotEmpty( strIdContactAttribute ) )
+            {
+                config.setIdContactAttribute( Integer.parseInt( strIdContactAttribute ) );
             }
         }
 

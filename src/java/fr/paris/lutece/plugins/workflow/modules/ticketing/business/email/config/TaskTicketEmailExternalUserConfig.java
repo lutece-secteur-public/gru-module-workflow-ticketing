@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config;
 
+import javax.validation.constraints.NotNull;
+
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 /**
@@ -40,8 +42,12 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
  */
 public class TaskTicketEmailExternalUserConfig extends TaskConfig
 {
+    @NotNull
     private MessageDirectionExternalUser _messageDirectionExternalUser;
+
     private Integer _nIdFollowingAction;
+
+    private Integer _nIdContactAttribute;
 
     /**
      * Gives the message direction
@@ -87,5 +93,22 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
     public boolean isMessageToExternalUser( )
     {
         return MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER.equals( this._messageDirectionExternalUser );
+    }
+
+    /**
+     * @return the idContactAttribute
+     */
+    public Integer getIdContactAttribute( )
+    {
+        return _nIdContactAttribute;
+    }
+
+    /**
+     * @param the
+     *            nIdContactAttribute the idContactAttribute to set
+     */
+    public void setIdContactAttribute( Integer nIdContactAttribute )
+    {
+        this._nIdContactAttribute = nIdContactAttribute;
     }
 }
