@@ -38,6 +38,10 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provid
  */
 public final class TicketEmailExternalUserConstants
 {
+    // Path for JspBean
+    public static final String ADMIN_EXTERNAL_USER_CONTROLLLER_PATH = "jsp/admin/plugins/workflow/modules/ticketing/";
+    
+    // Mark
     public static final String MARK_GUID = "identification_guid";
     public static final String MARK_USER_TITLE = "civility";
     public static final String MARK_USER_FIRSTNAME = "firstname";

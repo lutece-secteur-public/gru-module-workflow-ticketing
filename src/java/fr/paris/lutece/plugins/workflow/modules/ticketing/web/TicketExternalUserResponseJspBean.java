@@ -42,7 +42,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
-import fr.paris.lutece.plugins.ticketing.service.authentication.RequestAuthenticationService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.user.UserFactory;
 import fr.paris.lutece.plugins.ticketing.web.workflow.WorkflowCapableJspBean;
@@ -52,6 +51,7 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.TicketEmailExternalUserMessage;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserConstants;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.service.RequestAuthenticationService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskTicketEmailExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.upload.business.file.UploadFile;
 import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
@@ -77,7 +77,7 @@ import fr.paris.lutece.portal.web.constants.Messages;
 /**
  * TicketExternalUserResponse JSP Bean abstract class for JSP Bean
  */
-@Controller( controllerJsp = "TicketExternalUserResponse.jsp", controllerPath = TicketingConstants.ADMIN_CONTROLLLER_PATH, right = "TICKETING_EXTERNAL_USER" )
+@Controller( controllerJsp = "TicketExternalUserResponse.jsp", controllerPath = TicketEmailExternalUserConstants.ADMIN_EXTERNAL_USER_CONTROLLLER_PATH, right = "TICKETING_EXTERNAL_USER" )
 public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 {
     // Right
