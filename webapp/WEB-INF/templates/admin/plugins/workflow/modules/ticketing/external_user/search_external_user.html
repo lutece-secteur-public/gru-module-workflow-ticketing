@@ -1,6 +1,7 @@
 <br/>
 <div class="col-xs-12">
-	<div class="row form-group">
+	<#if label_contact_attribute?has_content >
+		<div class="row form-group">
 		<label class="col-xs-12 col-sm-3 control-label">${label_contact_attribute!}&nbsp;:&nbsp;</label>
 		<div class="col-xs-11 col-sm-8">
 	    	<input type="text" class="form-control input_search_${config.idTask}" id="contact_attribute_${config.idTask}" maxlength="255">
@@ -11,13 +12,27 @@
 				<i class="fa fa-search"></i>
 			</div>
 		</div>
-	</div>
-	<div class="row form-group">
-		<label class="col-xs-12 col-sm-3 control-label">#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.lastname}&nbsp;:&nbsp;</label>
-		<div class="col-xs-11 col-sm-8">
-	    	<input type="text" class="form-control input_search_${config.idTask}" id="contact_lastname_${config.idTask}" maxlength="255">
 		</div>
-	</div>
+		<div class="row form-group">
+			<label class="col-xs-12 col-sm-3 control-label">#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.lastname}&nbsp;:&nbsp;</label>
+			<div class="col-xs-11 col-sm-8">
+				<input type="text" class="form-control input_search_${config.idTask}" id="contact_lastname_${config.idTask}" maxlength="255">
+			</div>
+		</div>
+	<#else>
+		<div class="row form-group">
+			<label class="col-xs-12 col-sm-3 control-label">#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.lastname}&nbsp;:&nbsp;</label>
+			<div class="col-xs-11 col-sm-8">
+				<input type="text" class="form-control input_search_${config.idTask}" id="contact_lastname_${config.idTask}" maxlength="255">
+			</div>
+			<div class="col-xs-1 col-sm-1 input-group-btn">
+				<br/>
+				<div class="btn btn-default" id="search_contact_button_${config.idTask}" disabled="disabled">
+					<i class="fa fa-search"></i>
+				</div>
+			</div>
+		</div>
+	</#if>
 	<div id="contact_results_${config.idTask}" class="row form-group">
 	</div>
 </div>
