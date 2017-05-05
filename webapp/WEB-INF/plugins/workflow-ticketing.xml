@@ -55,7 +55,7 @@
         </servlet>
         <servlet>
             <servlet-name>ExternalUseEmailValidationServlet</servlet-name>
-            <url-pattern>servlet/plugins/workflow/ticketing/externaluser/externaluseremailvalidation</url-pattern>
+            <url-pattern>/servlet/plugins/workflow/ticketing/externaluser/externaluseremailvalidation</url-pattern>
             <servlet-class>fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.search.ExternalUserEmailValidationServlet</servlet-class>
         </servlet>
     </servlets>
