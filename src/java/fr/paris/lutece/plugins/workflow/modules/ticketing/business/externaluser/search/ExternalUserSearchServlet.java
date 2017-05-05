@@ -46,9 +46,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.ExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.IExternalUserDAO;
 import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.business.user.attribute.IAttribute;
 import fr.paris.lutece.portal.service.admin.AdminAuthenticationService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -144,7 +147,16 @@ public class ExternalUserSearchServlet extends HttpServlet
 
         // TMP
         List<ExternalUser> listExternalUsers = _externalUserDAO.findExternalUser( strLastname, null, strIdAttribute, strAttributeValue, strNextActionId );
-        String strLabelContactAttribute = _attributeService.getAttributeWithFields( Integer.parseInt( strIdAttribute ), locale ).getTitle( );
+        
+    	String strLabelContactAttribute = StringUtils.EMPTY;
+    	if ( StringUtils.isNotBlank( strIdAttribute ) && StringUtils.isNumeric( strIdAttribute ) )
+    	{
+    		IAttribute attribute = _attributeService.getAttributeWithFields( Integer.parseInt( strIdAttribute ), locale );
+    		if (attribute != null)
+    		{
+    			strLabelContactAttribute = attribute.getTitle( );
+    		}
+    	}
 
         // error no result
         if ( listExternalUsers.isEmpty( ) )

@@ -69,6 +69,7 @@ import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
+import fr.paris.lutece.portal.business.user.attribute.IAttribute;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -206,20 +207,29 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+    	TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
-        model.put( MARK_CONFIG, config );
+    	Map<String, Object> model = new HashMap<String, Object>( );
+    	model.put( MARK_CONFIG, config );
 
-        String strLabelContactAttribute = _attributeService.getAttributeWithFields( config.getIdContactAttribute( ), locale ).getTitle( );
-        model.put( MARK_CONFIG_LABEL_ATTRIBUTE, strLabelContactAttribute );
+    	String strLabelContactAttribute = StringUtils.EMPTY;
+    	if ( config.getIdContactAttribute( ) != null )
+    	{
+    		IAttribute attribute = _attributeService.getAttributeWithFields( config.getIdContactAttribute( ), locale );
+    		if (attribute != null)
+    		{
+    			strLabelContactAttribute = attribute.getTitle( );
+    		}
+    	}
 
-        ModelUtils.storeRichText( request, model );
-        ModelUtils.storeUserSignature( request, model );
+    	model.put( MARK_CONFIG_LABEL_ATTRIBUTE, strLabelContactAttribute );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_TICKET_FORM, locale, model );
+    	ModelUtils.storeRichText( request, model );
+    	ModelUtils.storeUserSignature( request, model );
 
-        return template.getHtml( );
+    	HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_TICKET_FORM, locale, model );
+
+    	return template.getHtml( );
     }
 
     /**
