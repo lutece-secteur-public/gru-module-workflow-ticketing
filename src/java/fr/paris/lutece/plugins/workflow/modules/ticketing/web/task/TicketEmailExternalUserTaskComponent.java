@@ -343,7 +343,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         Map<String, Object> model = new HashMap<String, Object>( );
         TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        ReferenceList listMessageDirections = MessageDirection.getReferenceList( locale );
+        ReferenceList listMessageDirections = MessageDirectionExternalUser.getReferenceList( locale );
 
         model.put( MARK_MESSAGE_DIRECTIONS_LIST, listMessageDirections );
         model.put( MARK_CONFIG_FOLLOW_ACTION_ID, StringUtils.EMPTY );
