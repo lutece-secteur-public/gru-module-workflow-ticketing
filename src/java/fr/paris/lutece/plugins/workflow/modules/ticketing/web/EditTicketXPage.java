@@ -247,6 +247,8 @@ public class EditTicketXPage implements XPageApplication
         model.put( TaskEditTicketConstants.MARK_ENTRIES_HTML_FORM, htmlForm );
         model.put( MARK_SIGNATURE, request.getParameter( TicketingConstants.PARAMETER_SIGNATURE ) );
         model.put( MARK_TIMESTAMP, request.getParameter( TicketingConstants.PARAMETER_TIMESTAMP ) );
+        
+        request.setAttribute(TicketingConstants.ATTRIBUTE_IS_DISPLAY_FRONT, true);
 
         ModelUtils.storeReadOnlyHtmlResponses( request, model, ticket );
 
