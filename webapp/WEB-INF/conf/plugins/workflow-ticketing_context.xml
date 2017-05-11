@@ -10,12 +10,6 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
-    <!-- Site properties for External User task-->    
-    <bean id="workflow-ticketing.sitePropertiesGroup" class="fr.paris.lutece.portal.service.site.properties.SitePropertiesGroup" >
-        <property name="nameKey"><value>module.workflow.ticketing.site_properties.externaluser.name</value></property>
-        <property name="descriptionKey"><value>module.workflow.ticketing.site_properties.externaluser.description</value></property>
-        <property name="keysPrefix"><value>module.workflow.ticketing.site_property.externaluser.</value></property>
-    </bean>
     
 	<!-- Transaction Manager -->
     <bean id="workflow-ticketing.transactionManager" class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager"
