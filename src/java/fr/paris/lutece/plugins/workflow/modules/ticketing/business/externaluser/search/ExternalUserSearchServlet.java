@@ -147,16 +147,16 @@ public class ExternalUserSearchServlet extends HttpServlet
 
         // TMP
         List<ExternalUser> listExternalUsers = _externalUserDAO.findExternalUser( strLastname, null, strIdAttribute, strAttributeValue, strNextActionId );
-        
-    	String strLabelContactAttribute = StringUtils.EMPTY;
-    	if ( StringUtils.isNotBlank( strIdAttribute ) && StringUtils.isNumeric( strIdAttribute ) )
-    	{
-    		IAttribute attribute = _attributeService.getAttributeWithFields( Integer.parseInt( strIdAttribute ), locale );
-    		if (attribute != null)
-    		{
-    			strLabelContactAttribute = attribute.getTitle( );
-    		}
-    	}
+
+        String strLabelContactAttribute = StringUtils.EMPTY;
+        if ( StringUtils.isNotBlank( strIdAttribute ) && StringUtils.isNumeric( strIdAttribute ) )
+        {
+            IAttribute attribute = _attributeService.getAttributeWithFields( Integer.parseInt( strIdAttribute ), locale );
+            if ( attribute != null )
+            {
+                strLabelContactAttribute = attribute.getTitle( );
+            }
+        }
 
         // error no result
         if ( listExternalUsers.isEmpty( ) )
