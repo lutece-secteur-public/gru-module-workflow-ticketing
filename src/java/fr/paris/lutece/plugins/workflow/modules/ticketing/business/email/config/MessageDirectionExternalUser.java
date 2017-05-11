@@ -49,7 +49,7 @@ public enum MessageDirectionExternalUser
 {
     EXTERNAL_USER_TO_AGENT, AGENT_TO_EXTERNAL_USER, RE_AGENT_TO_EXTERNAL_USER;
 
-    private static final String MESSAGE_PREFIX = "module.workflow.ticketing.task_email_external_user.message.direction.";
+    private static final String MESSAGE_PREFIX = "module.workflow.ticketing.task_ticket_email_external_user.message.direction.";
     private static Map<Integer, MessageDirectionExternalUser> _mapMessageDirection = new HashMap<Integer, MessageDirectionExternalUser>( );
 
     static
