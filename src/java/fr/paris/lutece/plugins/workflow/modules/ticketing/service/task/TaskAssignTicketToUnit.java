@@ -92,7 +92,7 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
 
             if ( strUnitId != null )
             {
-            	unit = UnitHome.findByPrimaryKey( Integer.parseInt( strUnitId ) );
+                unit = UnitHome.findByPrimaryKey( Integer.parseInt( strUnitId ) );
             }
 
             if ( unit != null )
@@ -104,8 +104,8 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
                     ticket.setAssigneeUnit( assigneeUnit );
                     ticket.setAssigneeUser( null );
                     TicketHome.update( ticket );
-                    
-                    request.setAttribute(TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true);
+
+                    request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
 
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ),
                             strCurrentUnit, assigneeUnit.getName( ) );

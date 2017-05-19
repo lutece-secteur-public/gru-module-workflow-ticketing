@@ -106,16 +106,16 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
                 assigneeUser.setFirstname( user.getFirstName( ) );
                 assigneeUser.setLastname( user.getLastName( ) );
                 ticket.setAssigneeUser( assigneeUser );
-                
-                if ( ticket.getAssignerUnit( ).getUnitId() !=  ticket.getAssigneeUnit().getUnitId()) 
+
+                if ( ticket.getAssignerUnit( ).getUnitId( ) != ticket.getAssigneeUnit( ).getUnitId( ) )
                 {
-                	request.setAttribute(TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true);
+                    request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                 }
 
                 if ( ticket.getAssignerUnit( ) != null )
                 {
                     ticket.setAssigneeUnit( ticket.getAssignerUnit( ) );
-                   
+
                 }
                 else
                 {

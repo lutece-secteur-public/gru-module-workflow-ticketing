@@ -116,10 +116,11 @@ public class TaskAutomaticAssignment extends AbstractTicketingTask
 
                     if ( assigneeUnit != null )
                     {
-                    	if( ( ticket.getAssigneeUnit().getUnitId() != assigneeUnit.getUnitId())){
-                            request.setAttribute(TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true);
+                        if ( ( ticket.getAssigneeUnit( ).getUnitId( ) != assigneeUnit.getUnitId( ) ) )
+                        {
+                            request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                         }
-                    	
+
                         ticket.setAssigneeUnit( assigneeUnit );
                     }
 
