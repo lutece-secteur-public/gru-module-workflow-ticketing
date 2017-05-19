@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomain;
 import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomainHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.assignment.IAutomaticAssignmentService;
@@ -115,6 +116,10 @@ public class TaskAutomaticAssignment extends AbstractTicketingTask
 
                     if ( assigneeUnit != null )
                     {
+                    	if( ( ticket.getAssigneeUnit().getUnitId() != assigneeUnit.getUnitId())){
+                            request.setAttribute(TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true);
+                        }
+                    	
                         ticket.setAssigneeUnit( assigneeUnit );
                     }
 

@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provid
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.AbstractProviderManager;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.ProviderDescription;
@@ -93,7 +95,7 @@ public class TicketEmailExternalUserProviderManager extends AbstractProviderMana
      * {@inheritDoc}
      */
     @Override
-    public IProvider createProvider( String strProviderId, ResourceHistory resourceHistory )
+    public IProvider createProvider( String strProviderId, ResourceHistory resourceHistory, HttpServletRequest request )
     {
         return new TicketEmailExternalUserProvider( resourceHistory );
     }

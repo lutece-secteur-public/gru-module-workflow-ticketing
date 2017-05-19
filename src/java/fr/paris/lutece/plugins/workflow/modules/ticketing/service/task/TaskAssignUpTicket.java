@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -85,6 +86,11 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
 
             if ( unit != null )
             {
+            	if ( ticket.getAssigneeUnit().getUnitId() != unit.getIdUnit() )
+            	{
+            		request.setAttribute(TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true);
+            	}
+            	
                 AssigneeUser assigneeUser = ticket.getAssigneeUser( );
 
                 String strFormerUserInfos = ( assigneeUser == null ) ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER,
