@@ -38,14 +38,19 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
+import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomain;
 import fr.paris.lutece.plugins.ticketing.business.domain.TicketDomainHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.tickettype.TicketTypeHome;
+import fr.paris.lutece.plugins.ticketing.service.TicketDomainResourceIdService;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -78,6 +83,9 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
     public static final String PARAMETER_TICKET_DOMAIN_ID = "id_ticket_domain";
     public static final String PARAMETER_TICKET_TYPE_ID = "id_ticket_type";
     public static final String SEPARATOR = " - ";
+
+    // Other constants
+    private static final String REDIRECT_LIST = "list";
 
     // Beans
     private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE = "workflow-ticketing.taskModifyTicketCategoryConfigService";
@@ -218,6 +226,13 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                         TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
                     }
                 }
+            }
+
+            TicketDomain ticketDomain = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain( ) );
+            
+            if ( !RBACService.isAuthorized( ticketDomain, TicketDomainResourceIdService.PERMISSION_VIEW_DETAIL, AdminUserService.getAdminUser( request ) ) )
+            {
+                request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_LIST );
             }
         }
 
