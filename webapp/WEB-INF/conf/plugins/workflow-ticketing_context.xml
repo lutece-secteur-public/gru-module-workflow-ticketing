@@ -346,6 +346,18 @@
         p:taskType-ref="workflow-ticketing.taskTypeTicketEmailExternalUser"
         p:taskConfigService-ref="workflow-ticketing.taskTicketEmailExternalUserConfigService" /> 
         
+    <!-- Task Modify ticket -->
+	<bean id="workflow-ticketing.taskModifyTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeModifyTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskModifyTicket" p:titleI18nKey="module.workflow.ticketing.task_modify_ticket.title"
+		p:beanName="workflow-ticketing.taskModifyTicket" p:formTaskRequired="true" />
+	<bean id="workflow-ticketing.modifyTicketTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeModifyTicket" />
+		
 	<!-- SignRequest -->
 	<bean id="workflow-ticketing.hashService"
 		class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />

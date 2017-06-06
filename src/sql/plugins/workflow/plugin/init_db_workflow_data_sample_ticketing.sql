@@ -26,7 +26,8 @@ INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state
             (312,'Répondre à l''usager','Réponse finale à l''usager',301,303,306,1,0,1,11,0),
             (313,'Répondre à l''escalade', 'Réponse à l''escalade', 301, 305, 303, 1, 0, 0, 12, 0),
             (314,'Assigner à un autre agent','Assignation de la sollicitation à un autre agent',301,305,305,1,0,0,4,0), -- assignation a autre agent pour tickets escaladés
-			(315,'Me l''assigner','Prise en charge de la sollicitation',301,305,305,1,0,0,3,0) -- auto assignation pour tickets escaladés
+			(315,'Me l''assigner','Prise en charge de la sollicitation',301,305,305,1,0,0,3,0), -- auto assignation pour tickets escaladés
+			(316,'Modifier la sollicitation','Modification de la sollicitation',301,303,303,1,0,0,13,0)
 ;
 		
 INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order) 
@@ -68,7 +69,8 @@ INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order)
             (462, 'taskTypeComment', 314,2),
             (463, 'taskTicketingMarkAsUnread', 314,3),
             (471,'taskTicketingAssignTicketToMe',315,1), -- Assign to me LEVEL3
-            (472, 'taskTypeComment', 315,2)
+            (472, 'taskTypeComment', 315,2),
+            (473, 'taskModifyTicket', 316,1) -- Modify ticket
 ;
 
 
