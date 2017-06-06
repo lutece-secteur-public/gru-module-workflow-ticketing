@@ -1,13 +1,13 @@
+![](http://dev.lutece.paris.fr/jenkins/buildStatus/icon?job=gru-module-workflow-ticketing-deploy)
+# Module workflow ticketing
 
-#Module workflow ticketing
+## Introduction
 
-##Introduction
+Dans le cadre de la Gestion Relation Usagers, ce module dÃ©finie et gÃ¨re le workflow permettant le traitement complet des sollicitations par des utilisateurs back office de la crÃ©ationÂ Ã Â la clÃ´ture d'une sollicitation.
 
-Dans le cadre de la Gestion Relation Usagers, ce module définie et gère le workflow permettant le traitement complet des sollicitations par des utilisateurs back office (agents MDP) de la crU+00e9ation à la clôture d'une sollicitation.
+## Configuration
 
-##Configuration
-
-##Usage
+## Usage
 
 
 [Maven documentation and reports](http://dev.lutece.paris.fr/plugins/module-workflow-ticketing/)
