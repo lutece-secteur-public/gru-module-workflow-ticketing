@@ -229,7 +229,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
             }
 
             TicketDomain ticketDomain = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain( ) );
-            
+
             if ( !RBACService.isAuthorized( ticketDomain, TicketDomainResourceIdService.PERMISSION_VIEW_DETAIL, AdminUserService.getAdminUser( request ) ) )
             {
                 request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_LIST );

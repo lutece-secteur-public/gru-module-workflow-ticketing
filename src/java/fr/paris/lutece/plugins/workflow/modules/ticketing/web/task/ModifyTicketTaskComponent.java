@@ -63,14 +63,14 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class ModifyTicketTaskComponent extends TicketingTaskComponent
 {
-    
+
     // Templates
     private static final String TEMPLATE_TASK_MODIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket.html";
 
     // Marks
     private static final String MARK_USER_TITLE_LIST = "user_titles_list";
     private static final String MARK_CONTACT_MODE_LIST = "contact_modes_list";
-    
+
     // Messages
     private static final String MESSAGE_MODIFY_TICKET_ERROR = "module.workflow.ticketing.task_modify_ticket.error";
     private static final String MESSAGE_ERROR_COMMENT_VALIDATION = "ticketing.validation.ticket.TicketComment.size";
@@ -92,13 +92,13 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
 
         return template.getHtml( );
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
-    {       
+    {
         // Validate the selection of items
         List<ErrorMessage> listErrors = valideTicket( request );
 
@@ -116,15 +116,15 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
     private List<ErrorMessage> valideTicket( HttpServletRequest request )
     {
         List<ErrorMessage> listErrors = new ArrayList<>( );
-        
+
         // Populate the Ticket
         Ticket ticketToValidate = new Ticket( );
         ticketToValidate.setTicketCategory( new TicketCategory( ) ); // -- to not generate validation error on this field
         BeanUtil.populate( ticketToValidate, request );
-        
+
         // Update the ticket adress
         TicketAddress ticketAdressToValidate = new TicketAddress( );
-        BeanUtil.populate( ticketAdressToValidate, request );       
+        BeanUtil.populate( ticketAdressToValidate, request );
         ticketToValidate.setTicketAddress( ticketAdressToValidate );
 
         // Validate the ticket
@@ -136,20 +136,19 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
         {
             listErrors.add( new MVCMessage( strContactModeFilled ) );
         }
-        
+
         // The validation for the ticket comment size
         String strNewComment = ticketToValidate.getTicketComment( );
         if ( FormValidator.countCharTicketComment( strNewComment ) > 5000 )
         {
             listErrors.add( new MVCMessage( I18nService.getLocalizedString( MESSAGE_ERROR_COMMENT_VALIDATION, request.getLocale( ) ) ) );
         }
-        
+
         return listErrors;
     }
 
     /**
-     * Validate a bean. his method convert the String result of the validateBean 
-     * method of the TicketValidator to MVCMessage
+     * Validate a bean. his method convert the String result of the validateBean method of the TicketValidator to MVCMessage
      * 
      * @param request
      * @param bean

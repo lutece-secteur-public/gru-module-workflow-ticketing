@@ -72,7 +72,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
 
     // Constant
     private static final String NOT_FILLED_INFORMATION = "module.workflow.ticketing.task_modify_ticket.no_information";
-    
+
     @Override
     public String getTitle( Locale locale )
     {
@@ -84,12 +84,12 @@ public class TaskModifyTicket extends AbstractTicketingTask
     {
         String strTaskInformation = StringUtils.EMPTY;
         Ticket ticket = getTicket( nIdResourceHistory );
-        
+
         // Populate the Ticket
         Ticket ticketWithNewData = new Ticket( );
         ticketWithNewData.setTicketCategory( new TicketCategory( ) ); // -- to not generate validation error on this field
         BeanUtil.populate( ticketWithNewData, request );
-        
+
         // Update the ticket adress
         TicketAddress ticketAdressToValidate = new TicketAddress( );
         BeanUtil.populate( ticketAdressToValidate, request );
@@ -106,7 +106,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
                 ticket.setUserTitle( strNewUserTitle );
                 strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_USER_TITLE_INFORMATION, strCurrentUserTitle, strNewUserTitle, locale );
             }
-            
+
             // Update the lastname
             String strNewLatsname = ticketWithNewData.getLastname( );
             String strCurrentLastname = ticket.getLastname( );
@@ -115,7 +115,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
                 ticket.setLastname( strNewLatsname );
                 strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_LASTNAME_INFORMATION, strCurrentLastname, strNewLatsname, locale );
             }
-            
+
             // Update the firstname
             String strNewFirstname = ticketWithNewData.getFirstname( );
             String strCurrentFirstname = ticket.getFirstname( );
@@ -124,7 +124,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
                 ticket.setFirstname( strNewFirstname );
                 strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_FIRSTNAME_INFORMATION, strCurrentFirstname, strNewFirstname, locale );
             }
-            
+
             // Update the email
             String strNewEmail = ticketWithNewData.getEmail( );
             String strCurrentEmail = ticket.getEmail( );
@@ -133,25 +133,27 @@ public class TaskModifyTicket extends AbstractTicketingTask
                 ticket.setEmail( strNewEmail );
                 strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_EMAIL_INFORMATION, strCurrentEmail, strNewEmail, locale );
             }
-            
+
             // Update the fixed phone number
             String strNewFixedPhoneNumer = ticketWithNewData.getFixedPhoneNumber( );
             String strCurrentFixedPhoneNumber = ticket.getFixedPhoneNumber( );
             if ( strNewFixedPhoneNumer != null && !strNewFixedPhoneNumer.equals( strCurrentFixedPhoneNumber ) )
             {
                 ticket.setFixedPhoneNumber( strNewFixedPhoneNumer );
-                strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_FIXED_PHONE_NUMBER_INFORMATION, strCurrentFixedPhoneNumber, strNewFixedPhoneNumer, locale );
+                strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_FIXED_PHONE_NUMBER_INFORMATION, strCurrentFixedPhoneNumber,
+                        strNewFixedPhoneNumer, locale );
             }
-            
+
             // Update the mobile phone number
             String strNewMobilePhoneNumber = ticketWithNewData.getMobilePhoneNumber( );
-            String strCurrentMobilePhoneNumber = ticket.getMobilePhoneNumber( ); 
+            String strCurrentMobilePhoneNumber = ticket.getMobilePhoneNumber( );
             if ( strNewMobilePhoneNumber != null && !strNewMobilePhoneNumber.equals( strCurrentMobilePhoneNumber ) )
             {
                 ticket.setMobilePhoneNumber( strNewMobilePhoneNumber );
-                strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_MOBILE_PHONE_NUMBER_INFORMATION, strCurrentMobilePhoneNumber, strNewMobilePhoneNumber, locale );
+                strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_MOBILE_PHONE_NUMBER_INFORMATION, strCurrentMobilePhoneNumber,
+                        strNewMobilePhoneNumber, locale );
             }
-            
+
             // Update the Address
             String strNewAdress = ticketAdressToValidate.getAddress( );
             String strNewAdressDetail = ticketAdressToValidate.getAddressDetail( );
@@ -172,7 +174,8 @@ public class TaskModifyTicket extends AbstractTicketingTask
                 {
                     String strCurrentAddressDetail = currentTicketAddress.getAddressDetail( );
                     currentTicketAddress.setAddressDetail( strNewAdressDetail );
-                    strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION, strCurrentAddressDetail, strNewAdressDetail, locale );
+                    strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION, strCurrentAddressDetail, strNewAdressDetail,
+                            locale );
                 }
                 // Update the city
                 if ( !currentTicketAddress.getCity( ).isEmpty( ) && !currentTicketAddress.getCity( ).equals( strNewCity ) )
@@ -192,43 +195,44 @@ public class TaskModifyTicket extends AbstractTicketingTask
             }
             else
             {
-                if ( StringUtils.isNotBlank( strNewAdress ) || StringUtils.isNotBlank( strNewAdressDetail ) 
-                        || StringUtils.isNotBlank( strNewPostalCode ) || StringUtils.isNotBlank( strNewCity ) )
+                if ( StringUtils.isNotBlank( strNewAdress ) || StringUtils.isNotBlank( strNewAdressDetail ) || StringUtils.isNotBlank( strNewPostalCode )
+                        || StringUtils.isNotBlank( strNewCity ) )
                 {
                     TicketAddress newTicketAddress = new TicketAddress( );
-                    
+
                     // Update the address
                     newTicketAddress.setAddress( strNewAdress );
                     if ( StringUtils.isNotBlank( strNewAdress ) )
                     {
                         strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_INFORMATION, StringUtils.EMPTY, strNewAdress, locale );
                     }
-                    
+
                     // Update the address detail
                     newTicketAddress.setAddressDetail( strNewAdressDetail );
                     if ( StringUtils.isNotBlank( strNewAdressDetail ) )
                     {
-                        strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION, StringUtils.EMPTY, strNewAdressDetail, locale );
+                        strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION, StringUtils.EMPTY, strNewAdressDetail,
+                                locale );
                     }
-                    
+
                     // Update the city
                     newTicketAddress.setCity( strNewCity );
                     if ( StringUtils.isNotBlank( strNewCity ) )
                     {
                         strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_CITY_INFORMATION, StringUtils.EMPTY, strNewCity, locale );
                     }
-                    
+
                     // Update the postal code
                     newTicketAddress.setPostalCode( strNewPostalCode );
                     if ( StringUtils.isNotBlank( strNewPostalCode ) )
                     {
                         strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_POSTAL_CODE_INFORMATION, StringUtils.EMPTY, strNewPostalCode, locale );
                     }
-                    
+
                     ticket.setTicketAddress( newTicketAddress );
                 }
             }
-            
+
             // Update the contact mode
             int nNewContactModeId = ticketWithNewData.getIdContactMode( );
             if ( ticket.getIdContactMode( ) != nNewContactModeId )
@@ -239,7 +243,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
                 ticket.setContactMode( strNewContactMode );
                 strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_CONTACT_MODE_INFORMATION, strCurrentContactMode, strNewContactMode, locale );
             }
-            
+
             // Update the comment
             String strNewComment = ticketWithNewData.getTicketComment( );
             String strCurrentTicketComment = ticket.getTicketComment( );
@@ -248,38 +252,43 @@ public class TaskModifyTicket extends AbstractTicketingTask
                 ticket.setTicketComment( strNewComment );
                 strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_COMMENT_INFORMATION, strCurrentTicketComment, strNewComment, locale );
             }
-            
+
             // Update the ticket
             TicketHome.update( ticket );
         }
-        
+
         // In the case when there are no modifications
         if ( strTaskInformation.equals( StringUtils.EMPTY ) )
         {
             strTaskInformation = I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_NO_MODIFICATIONS_INFORMATION, locale );
         }
-        
+
         return strTaskInformation;
     }
-    
+
     /**
      * Return the message formated for the modification of informations of the ticket
      * 
-     * @param strKey: the key of the message
-     * @param strOldValue: the value which has been replaced
-     * @param strNewValue: the new value
+     * @param strKey
+     *            : the key of the message
+     * @param strOldValue
+     *            : the value which has been replaced
+     * @param strNewValue
+     *            : the new value
      * @param locale
      * @return the message formated
      */
     private String formatInfoMessage( String strKey, String strOldValue, String strNewValue, Locale locale )
     {
-        return MessageFormat.format( I18nService.getLocalizedString( strKey, locale ), evaluateValue( strOldValue, locale ), evaluateValue( strNewValue, locale ) );
+        return MessageFormat.format( I18nService.getLocalizedString( strKey, locale ), evaluateValue( strOldValue, locale ),
+                evaluateValue( strNewValue, locale ) );
     }
-    
+
     /**
      * Return the value if it's not empty otherwise return a default message
      * 
-     * @param strValue: the value to evaluate
+     * @param strValue
+     *            : the value to evaluate
      * @param locale
      * @return the value or the default message
      */
