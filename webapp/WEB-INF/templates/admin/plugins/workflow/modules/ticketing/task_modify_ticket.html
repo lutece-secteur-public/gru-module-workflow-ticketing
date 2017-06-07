@@ -23,5 +23,10 @@
 	</div>
 </div>
 
-<@fieldTextArea i18nLabelKey="ticketing.modify_ticket.labelTicketComment" inputName="ticket_comment" value="${ticket.ticketComment!''}" maxlength=5000 cssClass="ticketing form-control" i18nHelpBlockKey="" />
-
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="ticket_comment">#i18n{ticketing.modify_ticket.labelTicketComment} :</label>
+	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+		<textarea type="text" name="ticket_comment" id="ticket_comment" class="ticketing form-control" maxlength="5000">${ticket.ticketComment!''}</textarea>
+		<span class="help-block">#i18n{ticketing.create_ticket.labelTicketComment.help}</span>
+	</div>
+</div>
