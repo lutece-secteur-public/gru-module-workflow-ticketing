@@ -63,10 +63,10 @@ public final class WorkflowTicketingUtils
 {
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
     private static final String SEMICOLON = ";";
-    
+
     // Templates
     private static final String TEMPLATE_ERRORS_LIST = "admin/util/errors_list.html";
-    
+
     // Marks
     private static final String MARK_ERRORS_LIST = "errors_list";
 
@@ -153,7 +153,7 @@ public final class WorkflowTicketingUtils
         }
         return listForError;
     }
-    
+
     /**
      * {@link fr.paris.lutece.portal.service.message.AdminMessageService#formatValidationErrors}
      */

@@ -69,7 +69,7 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
 {
     // Constants
     private static final String JSP_VIEW_TICKET = TicketingConstants.ADMIN_CONTROLLLER_PATH + TicketingConstants.JSP_VIEW_TICKET;
-    
+
     // Templates
     private static final String TEMPLATE_TASK_MODIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket.html";
 
@@ -112,8 +112,9 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
         {
             UrlItem urlReturnFromErros = new UrlItem( JSP_VIEW_TICKET );
             urlReturnFromErros.addParameter( TicketingConstants.PARAMETER_ID_TICKET, nIdResource );
-            
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ERROR, WorkflowTicketingUtils.formatValidationErrors( request, listErrors ), urlReturnFromErros.getUrl( ), AdminMessage.TYPE_ERROR );
+
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ERROR,
+                    WorkflowTicketingUtils.formatValidationErrors( request, listErrors ), urlReturnFromErros.getUrl( ), AdminMessage.TYPE_ERROR );
         }
 
         return null;
@@ -182,5 +183,5 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
         }
         return listErrors;
     }
-    
+
 }
