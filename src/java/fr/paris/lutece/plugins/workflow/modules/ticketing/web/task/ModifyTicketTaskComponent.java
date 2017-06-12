@@ -45,16 +45,20 @@ import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.contactmode.ContactModeHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.usertitle.UserTitleHome;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.FormValidator;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketValidator;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.util.mvc.utils.MVCMessage;
 import fr.paris.lutece.util.ErrorMessage;
 import fr.paris.lutece.util.bean.BeanUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * 
@@ -63,7 +67,9 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class ModifyTicketTaskComponent extends TicketingTaskComponent
 {
-
+    // Constants
+    private static final String JSP_VIEW_TICKET = TicketingConstants.ADMIN_CONTROLLLER_PATH + TicketingConstants.JSP_VIEW_TICKET;
+    
     // Templates
     private static final String TEMPLATE_TASK_MODIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket.html";
 
@@ -104,7 +110,10 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
 
         if ( !listErrors.isEmpty( ) )
         {
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ERROR, listErrors );
+            UrlItem urlReturnFromErros = new UrlItem( JSP_VIEW_TICKET );
+            urlReturnFromErros.addParameter( TicketingConstants.PARAMETER_ID_TICKET, nIdResource );
+            
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ERROR, WorkflowTicketingUtils.formatValidationErrors( request, listErrors ), urlReturnFromErros.getUrl( ), AdminMessage.TYPE_ERROR );
         }
 
         return null;
@@ -173,4 +182,5 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
         }
         return listErrors;
     }
+    
 }

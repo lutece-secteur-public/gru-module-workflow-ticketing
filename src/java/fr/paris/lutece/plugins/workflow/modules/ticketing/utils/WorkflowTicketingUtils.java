@@ -34,7 +34,11 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -47,6 +51,9 @@ import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ErrorMessage;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * This class provides utility methods for the module-workflow-ticketing
@@ -56,6 +63,12 @@ public final class WorkflowTicketingUtils
 {
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
     private static final String SEMICOLON = ";";
+    
+    // Templates
+    private static final String TEMPLATE_ERRORS_LIST = "admin/util/errors_list.html";
+    
+    // Marks
+    private static final String MARK_ERRORS_LIST = "errors_list";
 
     /**
      * Private constructor
@@ -139,5 +152,21 @@ public final class WorkflowTicketingUtils
             }
         }
         return listForError;
+    }
+    
+    /**
+     * {@link fr.paris.lutece.portal.service.message.AdminMessageService#formatValidationErrors}
+     */
+    public static <T> Object [ ] formatValidationErrors( HttpServletRequest request, List<? extends ErrorMessage> errors )
+    {
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( MARK_ERRORS_LIST, errors );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ERRORS_LIST, request.getLocale( ), model );
+        String [ ] formatedErrors = {
+            template.getHtml( )
+        };
+
+        return formatedErrors;
     }
 }
