@@ -33,7 +33,7 @@ INSERT INTO workflow_action (id_action, name, description, id_workflow, id_state
 INSERT INTO workflow_task (id_task, task_type_key, id_action, display_order) 
 	VALUES 	(301,'taskTicketingGenerateTicketReference',301,1), -- Initialize
 			(302,'taskTicketingAssignUnitLinkedToCategory',301,2),
-			(303, 'taskAutomaticAssignment',301,3),
+			-- 303 is reserved by module ticketing ff (303, 'taskAutomaticAssignment',301,3),
 			-- 304 is reserved by module ticketing gru 	(304,'taskTicketingCreateCustomer',301,4)
             (307, 'taskTicketingRegisterChannel',301,5),
             (341,'taskTicketingQualifyTicket',303,1), -- Qualify
