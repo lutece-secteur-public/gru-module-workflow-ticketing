@@ -83,7 +83,7 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
 
             if ( unit != null )
             {
-                if ( assigneeUnit.getUnitId( ) != unit.getIdUnit( ) )
+                if ( assigneeUnit.getUnitId( ) != unit.getIdUnit( ) && request != null )
                 {
                     request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                 }
