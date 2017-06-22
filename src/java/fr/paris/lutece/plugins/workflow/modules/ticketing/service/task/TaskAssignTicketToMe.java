@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -46,7 +47,6 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -67,11 +67,12 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
+        boolean bPassAssignToMe = ( request != null ) && (Boolean) request.getAttribute( TicketingConstants.ATTRIBUTE_PASS_ASSSIGN_TO_ME );
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ticket != null )
+        if ( ticket != null && !bPassAssignToMe )
         {
             AssigneeUser assigneeUser = ticket.getAssigneeUser( );
             String strCurrentUser = null;
