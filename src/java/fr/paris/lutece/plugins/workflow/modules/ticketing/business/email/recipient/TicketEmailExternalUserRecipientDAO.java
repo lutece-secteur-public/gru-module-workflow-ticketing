@@ -52,6 +52,7 @@ public class TicketEmailExternalUserRecipientDAO implements ITicketEmailExternal
     private static final String SQL_QUERY_INSERT = " INSERT INTO ticket_email_external_user_recipient ( id_recipient, id_task, id_history, email, field, name, firstname  ) "
             + " VALUES ( ?,?,?,?,?,?,? ) ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM ticket_email_external_user_recipient WHERE id_recipient = ?";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY = " DELETE FROM ticket_email_external_user_recipient WHERE id_history = ?"; 
 
     /**
      * Generates a new primary key
@@ -148,6 +149,20 @@ public class TicketEmailExternalUserRecipientDAO implements ITicketEmailExternal
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdRecipient );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional( "workflow.transactionManager" )
+    public void deleteByIdHistory( int nIdHistory )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, WorkflowTicketingPlugin.getPlugin( ) );
+
+        daoUtil.setInt( 1, nIdHistory );
         daoUtil.executeUpdate( );
         daoUtil.free( );
     }

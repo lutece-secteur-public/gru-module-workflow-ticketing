@@ -52,7 +52,7 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
             + " WHERE id_message_external_user = ? ";
     private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_email_external_user_history ( id_task, id_history, id_message_external_user ) "
             + " VALUES ( ?,?,? ) ";
-    private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_email_external_user_history WHERE id_message_external_user = ? ";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY = " DELETE FROM workflow_task_ticketing_email_external_user_history WHERE id_history = ? ";
 
     /**
      * {@inheritDoc}
@@ -136,12 +136,11 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
      */
     @Override
     @Transactional( "workflow.transactionManager" )
-    public void deleteByHistory( int nIdHistory, int nIdTask )
+    public void deleteByHistory( int nIdHistory )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, WorkflowTicketingPlugin.getPlugin( ) );
 
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.setInt( 2, nIdHistory );
+        daoUtil.setInt( 1, nIdHistory );
         daoUtil.executeUpdate( );
         daoUtil.free( );
     }

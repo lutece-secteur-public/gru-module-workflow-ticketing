@@ -74,8 +74,6 @@ public interface ITicketEmailExternalUserHistoryDAO
      *
      * @param nIdHistory
      *            the n id emailExternalUser
-     * @param nIdTask
-     *            the n id of the task
      */
-    void deleteByHistory( int nIdHistory, int nIdTask );
+    void deleteByHistory( int nIdHistory );
 }

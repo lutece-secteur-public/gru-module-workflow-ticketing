@@ -52,6 +52,7 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
     private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_email_external_user_cc ( id_cc, id_task, id_history, email ) "
             + " VALUES ( ?,?,?,? ) ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_email_external_user_cc WHERE id_cc = ?";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY = " DELETE FROM workflow_task_ticketing_email_external_user_cc WHERE id_history = ?";
 
     /**
      * Generates a new primary key
@@ -142,6 +143,20 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) );
 
         daoUtil.setInt( 1, nIdCc );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional( "workflow.transactionManager" )
+    public void deleteByIdHistory( int nIdHistory )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, WorkflowTicketingPlugin.getPlugin( ) );
+
+        daoUtil.setInt( 1, nIdHistory );
         daoUtil.executeUpdate( );
         daoUtil.free( );
     }
