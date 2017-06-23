@@ -69,7 +69,7 @@ public interface ITicketEmailExternalUserRecipientDAO
      *            the n id recipient
      */
     void deleteByIdRecipient( int nIdRecipient );
-    
+
     /**
      * Delete recipient of a specific history
      *

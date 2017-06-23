@@ -302,7 +302,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
     {
         return I18nService.getLocalizedString( MESSAGE_TICKET, locale );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -310,7 +310,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
     public void doRemoveTaskInformation( int nIdHistory )
     {
         super.doRemoveTaskInformation( nIdHistory );
-        
+
         TicketEmailExternalUserHistory ticketEmailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
         if ( ticketEmailExternalUserHistory != null )
         {

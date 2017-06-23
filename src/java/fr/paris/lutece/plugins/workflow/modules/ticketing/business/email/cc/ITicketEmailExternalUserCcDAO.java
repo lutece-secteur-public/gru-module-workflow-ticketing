@@ -69,7 +69,7 @@ public interface ITicketEmailExternalUserCcDAO
      *            the n id cc
      */
     void deleteByIdCc( int nIdCc );
-    
+
     /**
      * Delete by id history.
      *
