@@ -103,6 +103,7 @@ public class EditTicketXPage implements XPageApplication
     // MESSAGES
     private static final String MESSAGE_TICKET_ALREADY_EDITED = "module.workflow.ticketing.edit_ticket.message.ticket_already_edited";
     private static final String MESSAGE_EDITION_COMPLETE = "module.workflow.ticketing.edit_ticket.message.edition_complete";
+    private static final String MESSAGE_TICKET_DELETED = "module.workflow.ticketing.externalUserResponse.message.ticket_closed";
 
     // Marks
     private static final String MARK_SIGNATURE = "signature";
@@ -209,9 +210,14 @@ public class EditTicketXPage implements XPageApplication
             }
         }
         else
-        {
-            setSiteMessage( request, MESSAGE_TICKET_ALREADY_EDITED, SiteMessage.TYPE_INFO, strUrlReturn );
-        }
+            if ( editableTicket != null )
+            {
+                setSiteMessage( request, MESSAGE_TICKET_ALREADY_EDITED, SiteMessage.TYPE_INFO, strUrlReturn );
+            }
+            else
+            {
+                setSiteMessage( request, MESSAGE_TICKET_DELETED, SiteMessage.TYPE_INFO, strUrlReturn );
+            }
 
         return page;
     }

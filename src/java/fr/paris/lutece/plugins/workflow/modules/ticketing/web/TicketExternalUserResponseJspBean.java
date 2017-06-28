@@ -96,6 +96,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     private static final String PROPERTY_EXTERNAL_USER_MESSAGE_OK = "module.workflow.ticketing.externalUserResponse.message.ok";
     private static final String PROPERTY_EXTERNAL_USER_MESSAGE_ALREADY_ANSWER = "module.workflow.ticketing.externalUserResponse.message.already_answer";
     private static final String PROPERTY_EXTERNAL_USER_MESSAGE_NOT_DONE = "module.workflow.ticketing.externalUserResponse.message.not_respond";
+    private static final String PROPERTY_TICKET_DELETED = "module.workflow.ticketing.externalUserResponse.message.ticket_closed";
 
     // Markers
     private static final String MARK_REFERENCE = "reference";
@@ -165,6 +166,11 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         try
         {
             requiredEmailExternalUserMessage = _ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( Integer.parseInt( strIdEmailExternalUser ) );
+
+            if ( requiredEmailExternalUserMessage == null )
+            {
+                return getMessagePage( PROPERTY_TICKET_DELETED, SiteMessage.TYPE_WARNING );
+            }
 
             // ticket status
             if ( requiredEmailExternalUserMessage.getIsAnswered( ) )
