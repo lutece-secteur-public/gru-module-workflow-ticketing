@@ -90,7 +90,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         }
         else
         {
-        	model.put( MARK_CLOSE_TICKET, false );
+            model.put( MARK_CLOSE_TICKET, false );
             model.put( MARK_MESSAGE_DIRECTION, MessageDirection.AGENT_TO_USER );
         }
 
