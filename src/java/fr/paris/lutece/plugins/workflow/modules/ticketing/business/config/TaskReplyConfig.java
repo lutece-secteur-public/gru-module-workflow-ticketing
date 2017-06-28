@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 public class TaskReplyConfig extends TaskConfig
 {
     private MessageDirection _messageDirection;
+    private boolean _bCloseTicket;
 
     /**
      * Gives the message direction
@@ -63,4 +64,26 @@ public class TaskReplyConfig extends TaskConfig
     {
         this._messageDirection = messageDirection;
     }
+
+    /**
+     * Gives the closeTicket
+     * 
+     * @return the closeTicket
+     */
+    public boolean isCloseTicket( )
+    {
+        return _bCloseTicket;
+    }
+
+    /**
+     * Sets the closeTicket
+     * 
+     * @param closeTicket
+     *            the closeTicket to set
+     */
+    public void setCloseTicket( boolean _bCloseTicket )
+    {
+        this._bCloseTicket = _bCloseTicket;
+    }
+
 }

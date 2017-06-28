@@ -18,6 +18,7 @@ CREATE TABLE workflow_task_ticketing_reply_config
 (
     id_task INT DEFAULT 0 NOT NULL,
     message_direction INT DEFAULT NULL,
+    close_ticket int(1) NOT NULL default '0',
     PRIMARY KEY (id_task)
 );
 

@@ -96,8 +96,8 @@ INSERT INTO workflow_task_ticketing_edit_ticket_config (id_task, message_directi
 			
 			
 DELETE FROM workflow_task_ticketing_reply_config;
-INSERT INTO workflow_task_ticketing_reply_config (id_task, message_direction) 
-    VALUES  (420, 1) -- Reply to user
+INSERT INTO workflow_task_ticketing_reply_config (id_task, message_direction, close_ticket) 
+    VALUES  (420, 1, 1) -- Reply to user
 ;
 
 DELETE FROM core_datastore WHERE entity_key LIKE 'ticketing.configuration.%';

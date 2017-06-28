@@ -62,10 +62,12 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     private static final String MARK_AGENT_VIEW = "agent_view";
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
+    private static final String MARK_CLOSE_TICKET = "close_ticket";
     private static final String MARK_LIST_ID_TICKETS = "list_id_tickets";
 
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
+    private static final String PARAMETER_CLOSE_TICKET = "close_ticket";
 
     /**
      * {@inheritDoc}
@@ -84,9 +86,11 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         if ( config != null )
         {
             model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection( ).ordinal( ) );
+            model.put( MARK_CLOSE_TICKET, config.isCloseTicket( ) );
         }
         else
         {
+        	model.put( MARK_CLOSE_TICKET, false );
             model.put( MARK_MESSAGE_DIRECTION, MessageDirection.AGENT_TO_USER );
         }
 
@@ -102,6 +106,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
         int nMessageDirectionId = Integer.parseInt( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
+        boolean bCloseTicket = Boolean.parseBoolean( request.getParameter( PARAMETER_CLOSE_TICKET ) );
 
         TaskReplyConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bConfigToCreate = false;
@@ -114,6 +119,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         }
 
         config.setMessageDirection( MessageDirection.valueOf( nMessageDirectionId ) );
+        config.setCloseTicket( bCloseTicket );
 
         if ( bConfigToCreate )
         {

@@ -86,7 +86,7 @@ public class TaskReply extends AbstractTicketingTask
 
             TaskReplyConfig config = _taskConfigService.findByPrimaryKey( this.getId( ) );
 
-            if ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) )
+            if ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) && config.isCloseTicket( ) )
             {
                 ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
                 ticket.setDateClose( new Timestamp( new java.util.Date( ).getTime( ) ) );
