@@ -44,6 +44,7 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
@@ -67,12 +68,12 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
-        boolean bPassAssignToMe = ( request != null ) && (Boolean) request.getAttribute( TicketingConstants.ATTRIBUTE_PASS_ASSSIGN_TO_ME );
+        boolean bBypassAssignToMe = ( request != null ) && BooleanUtils.isTrue( (Boolean)request.getAttribute( TicketingConstants.ATTRIBUTE_BYPASS_ASSSIGN_TO_ME ) );
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ticket != null && !bPassAssignToMe )
+        if ( ticket != null && !bBypassAssignToMe )
         {
             AssigneeUser assigneeUser = ticket.getAssigneeUser( );
             String strCurrentUser = null;
