@@ -90,6 +90,7 @@ public class TaskReply extends AbstractTicketingTask
             {
                 ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
                 ticket.setDateClose( new Timestamp( new java.util.Date( ).getTime( ) ) );
+                request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, TicketingConstants.REDIRECT_VIEW_LIST );
             }
 
             TicketHome.update( ticket );
@@ -102,6 +103,7 @@ public class TaskReply extends AbstractTicketingTask
             strTaskInformation = MessageFormat
                     .format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ),
                             Locale.FRENCH ), strUserMessage );
+
         }
 
         return strTaskInformation;

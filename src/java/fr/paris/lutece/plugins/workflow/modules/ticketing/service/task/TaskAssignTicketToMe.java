@@ -68,7 +68,8 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
-        boolean bBypassAssignToMe = ( request != null ) && BooleanUtils.isTrue( (Boolean)request.getAttribute( TicketingConstants.ATTRIBUTE_BYPASS_ASSSIGN_TO_ME ) );
+        boolean bBypassAssignToMe = ( request != null )
+                && BooleanUtils.isTrue( (Boolean) request.getAttribute( TicketingConstants.ATTRIBUTE_BYPASS_ASSSIGN_TO_ME ) );
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
