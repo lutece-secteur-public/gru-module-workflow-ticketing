@@ -86,13 +86,6 @@
         scope="prototype" />    
 
 	<!-- Task Generate ticket reference -->
-	<bean id="workflow-ticketing.ticketReferenceService"
-		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.reference.TicketReferencePrefixAndNumberService">
-		<constructor-arg>
-			<bean
-				class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.reference.TicketReferencePrefixAndNumberDAO" />
-		</constructor-arg>
-	</bean>
 	<bean id="workflow-ticketing.taskGenerateTicketReference"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskGenerateTicketReference"
 		scope="prototype" />
