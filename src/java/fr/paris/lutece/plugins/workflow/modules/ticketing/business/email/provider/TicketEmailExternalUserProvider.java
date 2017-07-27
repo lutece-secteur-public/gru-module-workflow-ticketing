@@ -147,6 +147,15 @@ public class TicketEmailExternalUserProvider implements IProvider
      * {@inheritDoc}
      */
     @Override
+    public String provideDemandSubtypeId( )
+    {
+        return String.valueOf( _ticket.getIdTicketDomain( ) );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String provideDemandReference( )
     {
         return _ticket.getReference( );
