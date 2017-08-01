@@ -47,7 +47,6 @@ import javax.validation.ConstraintViolation;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.ITicketEmailExternalUserCcDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCc;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.MessageDirectionExternalUser;
@@ -61,12 +60,9 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipie
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.IExternalUserDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskTicketEmailExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
-import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
 import fr.paris.lutece.portal.business.user.attribute.IAttribute;
@@ -139,9 +135,6 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Inject
     @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserMessageDAO;
-
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
 
     @Inject
     @Named( ActionService.BEAN_SERVICE )
@@ -314,12 +307,10 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 
         if ( ( config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.EXTERNAL_USER_TO_AGENT ) )
         {
-            Action action = _actionService.findByPrimaryKeyWithoutIcon( task.getAction( ).getId( ) );
-            ResourceHistory history = _resourceHistoryService.getLastHistoryResource( nIdResource, strResourceType, action.getWorkflow( ).getId( ) );
-            TicketEmailExternalUserHistory emailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( history.getId( ) );
+            TicketEmailExternalUserMessage lastExternalUserMessage = _ticketEmailExternalUserMessageDAO.loadLastByIdTicket( nIdResource );
 
-            if ( ( emailExternalUserHistory == null )
-                    || ( !_ticketEmailExternalUserMessageDAO.isLastQuestion( nIdResource, emailExternalUserHistory.getIdMessageExternalUser( ) ) ) )
+            if ( ( lastExternalUserMessage == null ) || ( lastExternalUserMessage.getIsAnswered( ) )
+                    || ( !_ticketEmailExternalUserMessageDAO.isLastQuestion( nIdResource, lastExternalUserMessage.getIdMessageExternalUser( ) ) ) )
             {
                 strError = MESSAGE_ALREADY_ANSWER;
                 nLevelError = AdminMessage.TYPE_WARNING;
