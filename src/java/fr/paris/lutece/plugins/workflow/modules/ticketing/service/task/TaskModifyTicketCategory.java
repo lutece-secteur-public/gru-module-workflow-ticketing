@@ -55,7 +55,7 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
-
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -161,14 +161,21 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
             {
                 TaskModifyTicketCategoryConfig config = _taskModifyTicketCategoryConfigService.findByPrimaryKey( getId( ) );
                 List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), config.getSelectedEntries( ) );
-
+                // save current values, clear ticket
+                List<Response> listCurrentResponse = ticket.getListResponse( );
+                ticket.setListResponse( new ArrayList<>( ) );
+                List<Response> listResponseToAdd = new ArrayList<>( );
+                List<Integer> listResponseIdToDelete = new ArrayList<>( );
+                
+                // loop on filtered entry
                 for ( Entry entry : listEntry )
                 {
                     String strPreviousAttributeValue = StringUtils.EMPTY;
                     String strNewAttributeValue = StringUtils.EMPTY;
+                    int nIdCurrentResponse = -1;
 
-                    Iterator<Response> iterator = ticket.getListResponse( ).iterator( );
-
+                    //current value
+                    Iterator<Response> iterator = listCurrentResponse.iterator( );
                     while ( iterator.hasNext( ) )
                     {
                         Response response = iterator.next( );
@@ -179,18 +186,20 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             {
                                 strPreviousAttributeValue += ( " " + response.getResponseValue( ) );
                             }
-                            else
-                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
-                                {
-                                    strPreviousAttributeValue += ( " " + response.getFile( ).getTitle( ) );
-                                }
-
+                            else if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                            {
+                                strPreviousAttributeValue += ( " " + response.getFile( ).getTitle( ) );
+                            }
+                            //clear the response
+                            nIdCurrentResponse = response.getIdResponse( );
                             iterator.remove( );
+                            break;
                         }
                     }
-
+                    
+                    //new value
                     _ticketFormService.getResponseEntry( request, entry.getIdEntry( ), locale, ticket );
-
+                    Response responseNew = null;
                     for ( Response response : ticket.getListResponse( ) )
                     {
                         if ( response.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) )
@@ -199,33 +208,44 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             {
                                 strNewAttributeValue += ( " " + response.getResponseValue( ) );
                             }
-                            else
-                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
-                                {
-                                    strNewAttributeValue += ( " " + response.getFile( ).getTitle( ) );
-                                }
+                            else if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                            {
+                                strNewAttributeValue += ( " " + response.getFile( ).getTitle( ) );
+                            }
+                            responseNew = response;
+                            break;
                         }
                     }
-
+                    
+                    //compare
                     if ( !strPreviousAttributeValue.equals( strNewAttributeValue ) )
                     {
                         strTaskInformation += MessageFormat.format(
                                 I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION, Locale.FRENCH ), entry.getTitle( ),
                                 strPreviousAttributeValue, strNewAttributeValue );
+                        if( nIdCurrentResponse != -1 )
+                        {
+                        	listResponseIdToDelete.add( nIdCurrentResponse );
+                        }
+                        if( responseNew != null )
+                        {
+                        	listResponseToAdd.add( responseNew );
+                        }                        	
                     }
                 }
 
-                // remove and add generic attributes responses
-                TicketHome.removeTicketResponse( ticket.getId( ) );
-
-                if ( ( ticket.getListResponse( ) != null ) && !ticket.getListResponse( ).isEmpty( ) )
+                // remove generic attributes responses updated
+                for( int nIdResponse : listResponseIdToDelete )
                 {
-                    for ( Response response : ticket.getListResponse( ) )
-                    {
-                        ResponseHome.create( response );
-                        TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
-                    }
+                	TicketHome.removeTicketResponse( ticket.getId( ), nIdResponse );
                 }
+
+                // add new responses
+                for ( Response response : listResponseToAdd )
+				{
+                	ResponseHome.create( response );
+                    TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
+				}
             }
 
             TicketDomain ticketDomain = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain( ) );
