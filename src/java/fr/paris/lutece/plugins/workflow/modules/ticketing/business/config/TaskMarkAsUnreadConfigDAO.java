@@ -13,14 +13,11 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, id_marking FROM workflow_task_ticketing_mark_unread_config "
             + " WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_mark_unread_config ( id_task, id_marking ) "
-            + " VALUES ( ?,? ) ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_mark_unread_config SET id_marking = ? "
-            + " WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_mark_unread_config ( id_task, id_marking ) " + " VALUES ( ?,? ) ";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_mark_unread_config SET id_marking = ? " + " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_mark_unread_config WHERE id_task = ? ";
-    
-    private static final String SQL_QUERY_FIND_BY_MARKING_ID = " SELECT id_task FROM workflow_task_ticketing_mark_unread_config "
-            + " WHERE id_marking = ? ";
+
+    private static final String SQL_QUERY_FIND_BY_MARKING_ID = " SELECT id_task FROM workflow_task_ticketing_mark_unread_config " + " WHERE id_marking = ? ";
 
     /**
      * {@inheritDoc}
@@ -62,7 +59,7 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
     @Override
     public TaskMarkAsUnreadConfig load( int nIdTask )
     {
-    	TaskMarkAsUnreadConfig config = null;
+        TaskMarkAsUnreadConfig config = null;
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
 
         daoUtil.setInt( 1, nIdTask );
@@ -82,7 +79,7 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
 
         return config;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -95,7 +92,7 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
         daoUtil.executeUpdate( );
         daoUtil.free( );
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -104,12 +101,12 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_MARKING_ID, plugin );
         daoUtil.setInt( 1, nIdMarking );
         daoUtil.executeQuery( );
-        
-        List<Integer> listIdTask = new ArrayList<Integer>();
+
+        List<Integer> listIdTask = new ArrayList<Integer>( );
 
         while ( daoUtil.next( ) )
         {
-        	listIdTask.add( daoUtil.getInt( 1 ) );
+            listIdTask.add( daoUtil.getInt( 1 ) );
         }
 
         daoUtil.free( );

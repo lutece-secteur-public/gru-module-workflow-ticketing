@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskMarkAsUnread extends AbstractTicketingTask
 {
     private static final String MESSAGE_TASK_TITLE = "module.workflow.ticketing.task_mark_as_unread.title";
-    
+
     private static final String BEAN_MARK_AS_UNREAD_CONFIG_SERVICE = "workflow-ticketing.taskMarkAsUnreadConfigService";
 
     @Inject

@@ -166,7 +166,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                 ticket.setListResponse( new ArrayList<>( ) );
                 List<Response> listResponseToAdd = new ArrayList<>( );
                 List<Integer> listResponseIdToDelete = new ArrayList<>( );
-                
+
                 // loop on filtered entry
                 for ( Entry entry : listEntry )
                 {
@@ -174,7 +174,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                     String strNewAttributeValue = StringUtils.EMPTY;
                     int nIdCurrentResponse = -1;
 
-                    //current value
+                    // current value
                     Iterator<Response> iterator = listCurrentResponse.iterator( );
                     while ( iterator.hasNext( ) )
                     {
@@ -186,18 +186,19 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             {
                                 strPreviousAttributeValue += ( " " + response.getResponseValue( ) );
                             }
-                            else if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
-                            {
-                                strPreviousAttributeValue += ( " " + response.getFile( ).getTitle( ) );
-                            }
-                            //clear the response
+                            else
+                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                                {
+                                    strPreviousAttributeValue += ( " " + response.getFile( ).getTitle( ) );
+                                }
+                            // clear the response
                             nIdCurrentResponse = response.getIdResponse( );
                             iterator.remove( );
                             break;
                         }
                     }
-                    
-                    //new value
+
+                    // new value
                     _ticketFormService.getResponseEntry( request, entry.getIdEntry( ), locale, ticket );
                     Response responseNew = null;
                     for ( Response response : ticket.getListResponse( ) )
@@ -208,44 +209,45 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             {
                                 strNewAttributeValue += ( " " + response.getResponseValue( ) );
                             }
-                            else if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
-                            {
-                                strNewAttributeValue += ( " " + response.getFile( ).getTitle( ) );
-                            }
+                            else
+                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                                {
+                                    strNewAttributeValue += ( " " + response.getFile( ).getTitle( ) );
+                                }
                             responseNew = response;
                             break;
                         }
                     }
-                    
-                    //compare
+
+                    // compare
                     if ( !strPreviousAttributeValue.equals( strNewAttributeValue ) )
                     {
                         strTaskInformation += MessageFormat.format(
                                 I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION, Locale.FRENCH ), entry.getTitle( ),
                                 strPreviousAttributeValue, strNewAttributeValue );
-                        if( nIdCurrentResponse != -1 )
+                        if ( nIdCurrentResponse != -1 )
                         {
-                        	listResponseIdToDelete.add( nIdCurrentResponse );
+                            listResponseIdToDelete.add( nIdCurrentResponse );
                         }
-                        if( responseNew != null )
+                        if ( responseNew != null )
                         {
-                        	listResponseToAdd.add( responseNew );
-                        }                        	
+                            listResponseToAdd.add( responseNew );
+                        }
                     }
                 }
 
                 // remove generic attributes responses updated
-                for( int nIdResponse : listResponseIdToDelete )
+                for ( int nIdResponse : listResponseIdToDelete )
                 {
-                	TicketHome.removeTicketResponse( ticket.getId( ), nIdResponse );
+                    TicketHome.removeTicketResponse( ticket.getId( ), nIdResponse );
                 }
 
                 // add new responses
                 for ( Response response : listResponseToAdd )
-				{
-                	ResponseHome.create( response );
+                {
+                    ResponseHome.create( response );
                     TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
-				}
+                }
             }
 
             TicketDomain ticketDomain = TicketDomainHome.findByPrimaryKey( ticket.getIdTicketDomain( ) );

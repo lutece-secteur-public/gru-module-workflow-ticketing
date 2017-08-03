@@ -5,12 +5,12 @@ import javax.validation.constraints.NotNull;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
-public class TaskMarkAsUnreadConfig extends TaskConfig 
+public class TaskMarkAsUnreadConfig extends TaskConfig
 {
     @NotNull
     @Min( 1 )
     private int _nIdMarking;
-    
+
     /**
      * Set the id of the marking
      * 
@@ -19,7 +19,7 @@ public class TaskMarkAsUnreadConfig extends TaskConfig
      */
     public void setIdMarking( int nIdMarking )
     {
-    	_nIdMarking = nIdMarking;
+        _nIdMarking = nIdMarking;
     }
 
     /**

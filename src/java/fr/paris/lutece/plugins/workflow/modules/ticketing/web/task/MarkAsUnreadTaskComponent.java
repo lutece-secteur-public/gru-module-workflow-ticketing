@@ -17,28 +17,28 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 
 public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
 {
-	// TEMPLATES
+    // TEMPLATES
     private static final String TEMPLATE_TASK_MARK_AS_UNREAD_CONFIG = "admin/plugins/workflow/modules/ticketing/task_mark_as_unread_config.html";
 
     // Marks
     private static final String MARK_CONFIG = "config";
     private static final String MARK_MARKINGS = "list_markings";
-    
+
     // Parameter
     private static final String PARAMETER_MARKING_ID = "marking_id";
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-    	Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<String, Object>( );
         TaskMarkAsUnreadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         List<Marking> listMarkings = new ArrayList<Marking>( );
-    	listMarkings = MarkingHome.getMarkingsList( ); 
-    	
+        listMarkings = MarkingHome.getMarkingsList( );
+
         model.put( MARK_CONFIG, config );
         model.put( MARK_MARKINGS, listMarkings );
 
@@ -46,7 +46,7 @@ public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
 
         return template.getHtml( );
     }
-    
+
     /**
      * {@inheritDoc}
      */
