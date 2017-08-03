@@ -35,10 +35,14 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskMarkAsUnreadConfig;
+import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -48,6 +52,12 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskMarkAsUnread extends AbstractTicketingTask
 {
     private static final String MESSAGE_TASK_TITLE = "module.workflow.ticketing.task_mark_as_unread.title";
+    
+    private static final String BEAN_MARK_AS_UNREAD_CONFIG_SERVICE = "workflow-ticketing.taskMarkAsUnreadConfigService";
+
+    @Inject
+    @Named( BEAN_MARK_AS_UNREAD_CONFIG_SERVICE )
+    private ITaskConfigService _taskConfigService;
 
     @Override
     public String getTitle( Locale locale )
@@ -60,10 +70,11 @@ public class TaskMarkAsUnread extends AbstractTicketingTask
     {
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
+        TaskMarkAsUnreadConfig config = _taskConfigService.findByPrimaryKey( this.getId( ) );
 
-        if ( ticket != null )
+        if ( ticket != null && config != null )
         {
-            TicketHome.markAsUnread( ticket );
+            TicketHome.setTicketMarkingId( ticket.getId( ), config.getIdMarking( ) );
         }
 
         // no information stored in the history

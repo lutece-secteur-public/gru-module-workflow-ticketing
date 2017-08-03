@@ -1,0 +1,14 @@
+<#assign idStateAfterEdition = -1>
+<#assign defaultMessage = ''>
+<#if config?exists>
+    <#assign idMarking = config.idMarking>
+</#if>
+<p class="lead">#i18n{module.workflow.ticketing.task_mark_as_unread.title}</p>
+<#if list_markings?? && list_markings?size &gt; 0>
+	<#list list_markings as marking>
+		<div class="radio" style="margin:0 0 0 50px;">
+			<input type="radio" style="margin-top: -1px;height: 100%;vertical-align: middle;" id="taskMarking_${marking.id}" <#if idMarking?exists && idMarking == marking.id >checked</#if> name="marking_id" value="${marking.id}" />
+			<div style="position: absolute;color:${marking.labelColor!};background-color:${marking.backgroundColor!};padding: 2px 5px;border-radius: 5px;" for="marking_id" title="${marking.title}">${marking.title}</div>
+		</div>
+	</#list>
+</#if>
