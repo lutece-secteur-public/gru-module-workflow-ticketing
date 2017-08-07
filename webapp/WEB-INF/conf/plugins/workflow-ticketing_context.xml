@@ -192,7 +192,7 @@
 		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
 		p:key="taskTicketingAssignTicketToMe" p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_me.title"
 		p:beanName="workflow-ticketing.taskAssignTicketToMe"
-		p:taskForAutomaticAction="false" />
+		p:taskForAutomaticAction="true" />
 	<bean id="workflow-ticketing.assignTicketToMeTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToMe" />

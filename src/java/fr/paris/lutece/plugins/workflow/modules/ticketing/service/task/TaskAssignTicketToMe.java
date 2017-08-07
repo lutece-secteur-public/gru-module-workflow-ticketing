@@ -89,28 +89,31 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
                 strCurrentUser = assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( );
             }
 
-            AdminUser user = AdminUserService.getAdminUser( request );
-
-            if ( ( user != null ) && ( user.getUserId( ) != assigneeUser.getAdminUserId( ) ) )
+            if ( request != null )
             {
-                assigneeUser.setAdminUserId( user.getUserId( ) );
-                assigneeUser.setEmail( user.getEmail( ) );
-                assigneeUser.setFirstname( user.getFirstName( ) );
-                assigneeUser.setLastname( user.getLastName( ) );
-                ticket.setAssigneeUser( assigneeUser );
+                AdminUser user = AdminUserService.getAdminUser( request );
 
-                List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
-
-                if ( ( unitsList != null ) && ( unitsList.size( ) > 0 ) )
+                if ( ( user != null ) && ( user.getUserId( ) != assigneeUser.getAdminUserId( ) ) )
                 {
-                    AssigneeUnit assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
-                    ticket.setAssigneeUnit( assigneeUnit );
-                }
+                    assigneeUser.setAdminUserId( user.getUserId( ) );
+                    assigneeUser.setEmail( user.getEmail( ) );
+                    assigneeUser.setFirstname( user.getFirstName( ) );
+                    assigneeUser.setLastname( user.getLastName( ) );
+                    ticket.setAssigneeUser( assigneeUser );
 
-                TicketHome.update( ticket );
+                    List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
 
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION, Locale.FRENCH ),
+                    if ( ( unitsList != null ) && ( unitsList.size( ) > 0 ) )
+                    {
+                        AssigneeUnit assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
+                        ticket.setAssigneeUnit( assigneeUnit );
+                    }
+                
+                    TicketHome.update( ticket );
+
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION, Locale.FRENCH ),
                         strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+                }
             }
         }
 
