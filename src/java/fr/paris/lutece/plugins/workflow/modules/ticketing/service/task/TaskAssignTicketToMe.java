@@ -108,11 +108,11 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
                         AssigneeUnit assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
                         ticket.setAssigneeUnit( assigneeUnit );
                     }
-                
+
                     TicketHome.update( ticket );
 
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION, Locale.FRENCH ),
-                        strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+                            strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
                 }
             }
         }
