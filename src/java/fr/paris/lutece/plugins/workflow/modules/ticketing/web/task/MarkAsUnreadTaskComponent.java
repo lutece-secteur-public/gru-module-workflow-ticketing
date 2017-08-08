@@ -8,10 +8,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.marking.Marking;
 import fr.paris.lutece.plugins.ticketing.business.marking.MarkingHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskMarkAsUnreadConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -26,6 +30,9 @@ public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
 
     // Parameter
     private static final String PARAMETER_MARKING_ID = "marking_id";
+    
+    //Errors
+    private static final String MESSAGE_EMPTY_MARKING = "module.workflow.ticketing.task_mark_as_unread_config.error.marking";
 
     /**
      * {@inheritDoc}
@@ -53,8 +60,15 @@ public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
-        int nMarkingId = Integer.parseInt( request.getParameter( PARAMETER_MARKING_ID ) );
-
+        
+    	String strMarkingId = request.getParameter( PARAMETER_MARKING_ID );
+        if ( StringUtils.isEmpty( strMarkingId ) )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_EMPTY_MARKING, AdminMessage.TYPE_ERROR );
+        }
+        
+        int nMarkingId = Integer.parseInt( strMarkingId );
+        
         TaskMarkAsUnreadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bConfigToCreate = false;
 
