@@ -301,12 +301,12 @@
 	<!-- Task Mark as unread -->
     <bean id="workflow-ticketing.taskMarkAsUnread"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskMarkAsUnread"
-        scope="prototype" />
+        scope="prototype"/>
     <bean id="workflow-ticketing.taskTypeMarkAsUnread"
         class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
         p:key="taskTicketingMarkAsUnread" p:titleI18nKey="module.workflow.ticketing.task_mark_as_unread.title"
         p:beanName="workflow-ticketing.taskMarkAsUnread" p:configBeanName="workflow-ticketing.taskMarkAsUnreadConfig"
-        p:configRequired="true" p:formTaskRequired="true" />
+        p:configRequired="true" p:formTaskRequired="true" p:taskForAutomaticAction="true" />
     <bean id="workflow-ticketing.markAsUnreadTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.MarkAsUnreadTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeMarkAsUnread"
