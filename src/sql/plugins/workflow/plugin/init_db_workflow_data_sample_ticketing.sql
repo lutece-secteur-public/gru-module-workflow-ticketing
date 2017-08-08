@@ -115,3 +115,8 @@ DELETE FROM workflow_task_ticketing_modify_config;
 INSERT INTO workflow_task_ticketing_modify_config (id_task, id_entry)
     VALUES  (342, 202) -- Allow Facil Famille account number
 ;
+
+DELETE FROM workflow_task_ticketing_mark_unread_config;
+INSERT INTO workflow_task_ticketing_mark_unread_config (id_task, id_marking) 
+	SELECT id_task, 1 FROM workflow_task WHERE task_type_key = 'taskTicketingMarkAsUnread';
+

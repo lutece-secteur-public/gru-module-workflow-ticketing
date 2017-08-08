@@ -160,3 +160,14 @@ CREATE TABLE workflow_task_ticketing_email_external_user_cc
 	email VARCHAR(255) NOT NULL,
 	PRIMARY KEY (id_cc)
 );
+
+/*==============================================================================*/
+/* Table struture for table workflow_task_ticketing_mark_unread_config */
+/*==============================================================================*/
+DROP TABLE IF EXISTS workflow_task_ticketing_mark_unread_config;
+CREATE TABLE workflow_task_ticketing_mark_unread_config
+(
+	id_task INT(11) NOT NULL,
+	id_marking INT(11) NOT NULL,
+	PRIMARY KEY (id_task)
+);
