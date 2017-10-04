@@ -64,7 +64,10 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 public class TicketEmailExternalUserProvider implements IProvider
 {
-    // MESSAGE KEY
+	// PROPERTY KEY
+	private static final String PROPERTY_SMS_SENDER_NAME = "workflow-ticketing.gruprovider.sms.sendername";
+    private static final String PROPERTY_RESPONSE_URL = "workflow-ticketing.workflow.task_ticket_email_external_user.url_response";
+	// MESSAGE KEY
     private static final String MESSAGE_MARKER_TICKET_REFERENCE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.reference";
     private static final String MESSAGE_MARKER_TICKET_DOMAIN = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticket_domain";
     private static final String MESSAGE_MARKER_TICKET_TYPE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticket_type";
@@ -85,9 +88,6 @@ public class TicketEmailExternalUserProvider implements IProvider
     private static final String MESSAGE_MARKER_EMAIL_RECIPIENTS_CC = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_recipients_cc";
     private static final String MESSAGE_MARKER_MESSAGE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.message";
     private static final String MESSAGE_MARKER_LINK = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticketing_ticket_link";
-
-    /** Parameter for response url */
-    private static final String RESPONSE_URL = "workflow-ticketing.workflow.task_ticket_email_external_user.url_response";
 
     /** The TicketEmailExternalUserHistoryDAO DAO. */
     private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO = SpringContextService
@@ -187,6 +187,15 @@ public class TicketEmailExternalUserProvider implements IProvider
     {
         return _ticket.getEmail( );
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String provideSmsSender()
+	{
+		return AppPropertiesService.getProperty( PROPERTY_SMS_SENDER_NAME );
+	}
 
     /**
      * {@inheritDoc}
@@ -339,7 +348,7 @@ public class TicketEmailExternalUserProvider implements IProvider
         String strTimestamp = Long.toString( new Date( ).getTime( ) );
         String strSignature = RequestAuthenticationService.getRequestAuthenticator( ).buildSignature( listElements, strTimestamp );
 
-        UrlItem urlTicketLink = new UrlItem( AppPathService.getBaseUrl( LocalVariables.getRequest( ) ) + AppPropertiesService.getProperty( RESPONSE_URL ) );
+        UrlItem urlTicketLink = new UrlItem( AppPathService.getBaseUrl( LocalVariables.getRequest( ) ) + AppPropertiesService.getProperty( PROPERTY_RESPONSE_URL ) );
         urlTicketLink.addParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER, nIdMessageExternalUser );
         urlTicketLink.addParameter( TicketEmailExternalUserConstants.PARAMETER_SIGNATURE, strSignature );
         urlTicketLink.addParameter( TicketEmailExternalUserConstants.PARAMETER_ID_TIMETAMP, strTimestamp );
