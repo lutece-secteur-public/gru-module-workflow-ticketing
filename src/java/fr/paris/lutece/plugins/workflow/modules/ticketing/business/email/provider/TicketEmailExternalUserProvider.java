@@ -42,7 +42,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
-import fr.paris.lutece.plugins.ticketing.business.tickettype.TicketTypeHome;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.ITicketEmailExternalUserHistoryDAO;
@@ -140,7 +139,7 @@ public class TicketEmailExternalUserProvider implements IProvider
     @Override
     public String provideDemandTypeId( )
     {
-        return String.valueOf( TicketTypeHome.findByPrimaryKey( _ticket.getIdTicketType( ) ).getDemandTypeId( ) );
+        return String.valueOf( _ticket.getTicketType( ).getDemandId( ) );
     }
 
     /**
@@ -149,7 +148,7 @@ public class TicketEmailExternalUserProvider implements IProvider
     @Override
     public String provideDemandSubtypeId( )
     {
-        return String.valueOf( _ticket.getIdTicketDomain( ) );
+        return String.valueOf( _ticket.getTicketDomain( ).getId( ) );
     }
 
     /**
@@ -229,15 +228,14 @@ public class TicketEmailExternalUserProvider implements IProvider
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_USER_EMAIL, _ticket.getEmail( ) ) );
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_USER_MESSAGE, _ticket.getUserMessage( ) ) );
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_REFERENCE, _ticket.getReference( ) ) );
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_TYPE, _ticket.getTicketType( ) ) );
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_DOMAIN, _ticket.getTicketDomain( ) ) );
+        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_TYPE, _ticket.getTicketType( ).getLabel( ) ) );
+        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_DOMAIN, _ticket.getTicketDomain( ).getLabel( ) ) );
 
         if ( _ticket.getTicketCategory( ) != null )
         {
             collectionNotifyGruMarkers
                     .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_CATEGORY, _ticket.getTicketCategory( ).getLabel( ) ) );
-            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_CATEGORY_PRECISION, _ticket.getTicketCategory( )
-                    .getPrecision( ) ) );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_CATEGORY_PRECISION, _ticket.getTicketPrecision( ).getLabel( ) ) );
         }
 
         if ( _ticket.getChannel( ) != null )

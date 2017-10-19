@@ -34,17 +34,14 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.IEditableTicketService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.TaskEditTicketConstants;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;

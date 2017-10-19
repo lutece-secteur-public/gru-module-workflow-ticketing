@@ -52,6 +52,7 @@ import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.service.category.TicketCategoryService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -77,10 +78,6 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     private static final String MARK_CONFIG = "config";
     private static final String MARK_CONFIG_ALL_ENTRY = "form_entries";
     private static final String MARK_CONFIG_SELECTED_ENTRY = "selected_form_entry";
-    private static final String MARK_TICKET_TYPES_LIST = "ticket_types_list";
-    private static final String MARK_TICKET_DOMAINS_LIST = "ticket_domains_list";
-    private static final String MARK_TICKET_CATEGORIES_LIST = "ticket_categories_list";
-    private static final String MARK_TICKET_PRECISIONS_LIST = "ticket_precisions_list";
     private static final String MARK_ID_TASK = "id_task";
 
     // Message reply
@@ -173,10 +170,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
 
         Map<String, Object> model = getModel( ticket );
 
-        model.put( MARK_TICKET_TYPES_LIST, new ReferenceList( ) );
-        model.put( MARK_TICKET_DOMAINS_LIST, new ReferenceList( ) );
-        model.put( MARK_TICKET_CATEGORIES_LIST, new ReferenceList( ) );
-        model.put( MARK_TICKET_PRECISIONS_LIST, new ReferenceList( ) );
+        model.put( TicketingConstants.MARK_TICKET_CATEGORIES_TREE, TicketCategoryService.getInstance( ).getCategoriesTree( ).getJSONObject( ) );
         model.put( MARK_ID_TASK, task.getId( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM, locale, model );
@@ -259,7 +253,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         if ( StringUtils.isNumeric( strNewCategoryId ) )
         {
             TicketCategory ticketCategoryTemp = TicketCategoryHome.findByPrimaryKey( Integer.parseInt( strNewCategoryId ) );
-            if ( ticketCategoryTemp != null && StringUtils.isNotBlank( ticketCategoryTemp.getPrecision( ) )
+            if ( ticketCategoryTemp != null && StringUtils.isNotBlank( ticketCategoryTemp.getLabel( ) )
                     && StringUtils.isNotBlank( request.getParameter( TicketingConstants.PARAMETER_TICKET_PRECISION_ID ) )
                     && request.getParameter( TicketingConstants.PARAMETER_TICKET_PRECISION_ID ).equals( TicketingConstants.NO_ID_STRING ) )
             {
