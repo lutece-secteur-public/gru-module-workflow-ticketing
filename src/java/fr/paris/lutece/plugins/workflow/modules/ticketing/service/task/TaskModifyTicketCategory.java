@@ -75,6 +75,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
     private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION = "module.workflow.ticketing.task_modify_ticket_category.information";
     private static final String MESSAGE_MODIFY_TICKET_PRECISION_INFORMATION = "module.workflow.ticketing.task_modify_ticket_precision.information";
     private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION = "module.workflow.ticketing.task_modify_ticket_attribute.information";
+    private static final String MESSAGE_NO_VALUE = "module.workflow.ticketing.task_modify_ticket_category.noValue";
 
     // PARAMETERS
     public static final String PARAMETER_TICKET_CATEGORY_ID = "id_ticket_category";
@@ -116,32 +117,34 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
             if ( !strPreviousTypeLabel.equals( ticket.getTicketType( ).getLabel( ) ) )
             {
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_TYPE_INFORMATION, Locale.FRENCH ),
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_TYPE_INFORMATION, locale ),
                         strPreviousTypeLabel, ticket.getTicketType( ).getLabel( ) );
             }
 
             if ( !strPreviousDomainLabel.equals( ticket.getTicketDomain( ).getLabel( ) ) )
             {
-                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_DOMAIN_INFORMATION, Locale.FRENCH ),
+                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_DOMAIN_INFORMATION, locale ),
                         strPreviousDomainLabel, ticket.getTicketDomain( ).getLabel( ) );
             }
 
             if ( !strPreviousCategoryLabel.equals( ticket.getTicketCategory( ).getLabel( ) ) )
             {
-                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, Locale.FRENCH ),
+                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ),
                         strPreviousCategoryLabel, ticket.getTicketCategory( ).getLabel( ) );
             }
 
-            if ( StringUtils.isNotEmpty( strPreviousPrecisionLabel ) && StringUtils.isNotEmpty( ticket.getTicketPrecision( ).getLabel( ) ) && !strPreviousPrecisionLabel.equals( ticket.getTicketPrecision( ).getLabel( ) ) )
+            if ( !strPreviousPrecisionLabel.equals( ticket.getTicketPrecision( ).getLabel( ) ) )
             {
-                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_PRECISION_INFORMATION, Locale.FRENCH ),
-                        strPreviousPrecisionLabel, ticket.getTicketPrecision( ).getLabel( ) );
+                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_PRECISION_INFORMATION, locale ),
+                        StringUtils.isNotEmpty( strPreviousPrecisionLabel ) ? strPreviousPrecisionLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ),
+                        StringUtils.isNotEmpty( ticket.getTicketPrecision( ).getLabel( ) ) ? ticket.getTicketPrecision( ).getLabel( ) : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
             }
 
             if ( ticket.getTicketCategory( ).getId( ) > 0 )
             {
                 TaskModifyTicketCategoryConfig config = _taskModifyTicketCategoryConfigService.findByPrimaryKey( getId( ) );
-                List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), config.getSelectedEntries( ) );
+                int nIdCategory = ( ticket.getTicketPrecision( ) != null && StringUtils.isNotBlank( ticket.getTicketPrecision( ).getLabel( ) ) )?ticket.getTicketPrecision( ).getId( ):ticket.getTicketCategory( ).getId( );
+                List<Entry> listEntry = TicketFormService.getFilterInputs( nIdCategory, config.getSelectedEntries( ) );
                 // save current values, clear ticket
                 List<Response> listCurrentResponse = ticket.getListResponse( );
                 ticket.setListResponse( new ArrayList<>( ) );

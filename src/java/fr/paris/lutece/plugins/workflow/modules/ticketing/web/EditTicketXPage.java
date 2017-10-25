@@ -241,7 +241,8 @@ public class EditTicketXPage implements XPageApplication
 
         Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
 
-        List<Entry> listEntries = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), listIdEntries );
+        int nIdCategory = ( ticket.getTicketPrecision( ) != null && StringUtils.isNotBlank( ticket.getTicketPrecision( ).getLabel( ) ) )?ticket.getTicketPrecision( ).getId( ):ticket.getTicketCategory( ).getId( );
+        List<Entry> listEntries = TicketFormService.getFilterInputs( nIdCategory, listIdEntries );
 
         String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), true, request );
         TicketAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
@@ -292,9 +293,8 @@ public class EditTicketXPage implements XPageApplication
                 try
                 {
                     Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
-                    TicketCategory ticketCategory = ticket.getTicketCategory( );
 
-                    _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdAction, ticketCategory.getId( ), request,
+                    _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdAction, null, request,
                             request.getLocale( ), false );
 
                     bIsActionProccessed = true;
