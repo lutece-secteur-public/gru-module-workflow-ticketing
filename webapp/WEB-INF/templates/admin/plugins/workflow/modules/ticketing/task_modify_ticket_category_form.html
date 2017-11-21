@@ -1,32 +1,15 @@
 <input name="redirect" id="redirect" value="" type="hidden">
 <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
-<input type="hidden" id="label_category" name="label_category" value="${ticket.ticketCategory.label!''}">
-<input type="hidden" id="ticket_precision" name="ticket_precision" value="${(ticket.ticketCategory.precision)!''}"/>
-<input type="hidden" id="ticket_type_id" name="ticket_type_id" value="${ticket.ticketType.id!''}"/>
-<input type="hidden" id="ticket_domain_id" name="ticket_domain_id" value="${ticket.ticketDomain.id!''}"/>
-<input type="hidden" id="ticket_category_id" name="ticket_category_id" value="${(ticket.ticketCategory.id)!''}"/>
-<input type="hidden" id="ticket_precision_id" name="ticket_precision_id" value="${(ticket.ticketPrecision.id)!''}"/>
-<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType" inputName="id_ticket_type" items=[] value="${ticket.ticketType.id!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketType.help" />
-<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain" inputName="id_ticket_domain" items=[] value="${ticket.ticketDomain.id!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_category.labelTicketDomain.help" />
 
-<div class="form-group">
-	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_ticket_category">#i18n{module.workflow.ticketing.task_modify_ticket_category.labelTicketCategory}&nbsp;:</label>
-	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
-		<#assign params = "class=form-control" >
-		<#assign i18nHelpBlockKey = "module.workflow.ticketing.task_modify_ticket_category.labelTicketCategoryPrecision.help" >
-		<@comboWithParams name="id_ticket_category" items=[] default_value="" additionalParameters=params />
-		<span class="help-block" id="help_message_category"></span>
-	</div>
-</div>
-
-<div class="form-group">
-	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6 col-sm-offset-3 col-md-offset-md-3 col-lg-offset-3">
-		<#assign params = "class=form-control" >
-		<#assign i18nHelpBlockKey = "module.workflow.ticketing.task_modify_ticket_category.labelTicketCategoryPrecision.help" >
-		<@comboWithParams name="id_ticket_precision" items=[] default_value="" additionalParameters=params />
-		<span class="help-block" id="help_message_precision"></span>
-	</div>
-</div>
+<#list categories_depths as depth>
+    <div class="form-group">
+      <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_category_${depth.depthNumber}">${depth.label}&nbsp;:</label>
+	    <div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+	      <@comboWithParams name="id_category_${depth.depthNumber}" default_value="" additionalParameters=" id=\"id_category_${depth.depthNumber}\" depth=\"${depth.depthNumber}\" class=\"form-control input-lg\" " items=[] />
+	      <span class="help-block" id="help_message_${depth.depthNumber}"></span>
+	    </div>
+    </div>
+</#list>
 
 <div id="generic_attributes"></div>
 
@@ -38,6 +21,6 @@
 <script language="javascript"> 
     var url = "jsp/admin/plugins/ticketing/ModifyTicketCategory.jsp?view=ticketForm&id_task=${id_task}";
     $(document).ready(function() {
-        lutece_ticket_tree("#id_ticket_type", "#id_ticket_domain", "#id_ticket_category", "#id_ticket_precision", ${categories_tree}, url);
+        lutece_ticket_tree(${ticket.branchJSONObject}, ${categories_tree}, url);
     });
 </script>

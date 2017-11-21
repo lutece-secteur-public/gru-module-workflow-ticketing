@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.service.category.TicketCategoryService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketCategoryValidator;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketCategoryValidatorResult;
@@ -53,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -70,10 +72,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 {
     // Messages
     private static final String MESSAGE_MODIFY_TICKET_CATEGORY = "module.workflow.ticketing.task_modify_ticket_category.labelModifyTicketCategory";
-    private static final String MESSAGE_MODIFY_TICKET_TYPE_INFORMATION = "module.workflow.ticketing.task_modify_ticket_type.information";
-    private static final String MESSAGE_MODIFY_TICKET_DOMAIN_INFORMATION = "module.workflow.ticketing.task_modify_ticket_domain.information";
     private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION = "module.workflow.ticketing.task_modify_ticket_category.information";
-    private static final String MESSAGE_MODIFY_TICKET_PRECISION_INFORMATION = "module.workflow.ticketing.task_modify_ticket_precision.information";
     private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION = "module.workflow.ticketing.task_modify_ticket_attribute.information";
     private static final String MESSAGE_NO_VALUE = "module.workflow.ticketing.task_modify_ticket_category.noValue";
 
@@ -101,13 +100,15 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
         Ticket ticket = getTicket( nIdResourceHistory );
 
+        String[] listPreviousTicketCategoryLabel = new String[TicketCategoryService.getInstance( ).getCategoriesTree( ).getMaxDepthNumber( )];
+        Arrays.fill(listPreviousTicketCategoryLabel, "");
+        
         if ( ticket != null )
         {
-            
-            String strPreviousTypeLabel = ticket.getTicketType( ).getLabel( );
-            String strPreviousDomainLabel = ticket.getTicketDomain( ).getLabel( );
-            String strPreviousCategoryLabel = ticket.getTicketCategory( ).getLabel( );
-            String strPreviousPrecisionLabel = ticket.getTicketPrecision( ).getLabel( );
+            for ( TicketCategory ticketCategory : ticket.getBranch( ) )
+            {
+                listPreviousTicketCategoryLabel[ticketCategory.getCategoryType( ).getDepthNumber( ) - 1] = ticketCategory.getLabel( );
+            }
             
             // Validate the TicketCategory
             TicketCategoryValidatorResult categoryValidatorResult = new TicketCategoryValidator( request ).validateTicketCategory( );
@@ -115,36 +116,22 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
             TicketHome.update( ticket );
 
-            if ( !strPreviousTypeLabel.equals( ticket.getTicketType( ).getLabel( ) ) )
+            for ( TicketCategory ticketCategory : ticket.getBranch( ) )
             {
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_TYPE_INFORMATION, locale ),
-                        strPreviousTypeLabel, ticket.getTicketType( ).getLabel( ) );
-            }
-
-            if ( !strPreviousDomainLabel.equals( ticket.getTicketDomain( ).getLabel( ) ) )
-            {
-                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_DOMAIN_INFORMATION, locale ),
-                        strPreviousDomainLabel, ticket.getTicketDomain( ).getLabel( ) );
-            }
-
-            if ( !strPreviousCategoryLabel.equals( ticket.getTicketCategory( ).getLabel( ) ) )
-            {
-                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ),
-                        strPreviousCategoryLabel, ticket.getTicketCategory( ).getLabel( ) );
-            }
-
-            if ( !strPreviousPrecisionLabel.equals( ticket.getTicketPrecision( ).getLabel( ) ) )
-            {
-                strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_PRECISION_INFORMATION, locale ),
-                        StringUtils.isNotEmpty( strPreviousPrecisionLabel ) ? strPreviousPrecisionLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ),
-                        StringUtils.isNotEmpty( ticket.getTicketPrecision( ).getLabel( ) ) ? ticket.getTicketPrecision( ).getLabel( ) : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
+                String strPreviousCategoryLabel = listPreviousTicketCategoryLabel[ticketCategory.getCategoryType( ).getDepthNumber( ) - 1];
+                
+                if ( !strPreviousCategoryLabel.equals( ticketCategory.getLabel( ) ) )
+                {
+                    strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ),
+                            ticketCategory.getCategoryType( ).getLabel( ), StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ),
+                            StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
+                }
             }
 
             if ( ticket.getTicketCategory( ).getId( ) > 0 )
             {
                 TaskModifyTicketCategoryConfig config = _taskModifyTicketCategoryConfigService.findByPrimaryKey( getId( ) );
-                int nIdCategory = ( ticket.getTicketPrecision( ) != null && StringUtils.isNotBlank( ticket.getTicketPrecision( ).getLabel( ) ) )?ticket.getTicketPrecision( ).getId( ):ticket.getTicketCategory( ).getId( );
-                List<Entry> listEntry = TicketFormService.getFilterInputs( nIdCategory, config.getSelectedEntries( ) );
+                List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), config.getSelectedEntries( ) );
                 // save current values, clear ticket
                 List<Response> listCurrentResponse = ticket.getListResponse( );
                 ticket.setListResponse( new ArrayList<>( ) );
@@ -234,7 +221,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                 }
             }
 
-            if ( !RBACService.isAuthorized( ticket.getTicketDomain( ), TicketCategory.PERMISSION_VIEW_DETAIL, AdminUserService.getAdminUser( request ) ) )
+            if ( !RBACService.isAuthorized( TicketCategoryService.getInstance( ).getTicketCategoryRBACResource( ticket.getTicketCategory( ) ), TicketCategory.PERMISSION_VIEW_DETAIL, AdminUserService.getAdminUser( request ) ) )
             {
                 request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_LIST );
             }

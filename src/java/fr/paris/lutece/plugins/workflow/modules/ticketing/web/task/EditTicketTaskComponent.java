@@ -182,8 +182,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         if ( messageDirection == MessageDirection.AGENT_TO_USER )
         {
-            int nIdCategory = ( ticket.getTicketPrecision( ) != null && StringUtils.isNotBlank( ticket.getTicketPrecision( ).getLabel( ) ) )?ticket.getTicketPrecision( ).getId( ):ticket.getTicketCategory( ).getId( );
-            List<Entry> listEntry = TicketFormService.getFilterInputs( nIdCategory, null );
+            List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), null );
             List<Entry> listEntryWithoutComment = new ArrayList<Entry>( );
 
             for ( Entry entry : listEntry )
@@ -205,8 +204,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
             List<Integer> listIdEntries = _editableTicketService.buildListIdEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
 
-            int nIdCategory = ( ticket.getTicketPrecision( ) != null && StringUtils.isNotBlank( ticket.getTicketPrecision( ).getLabel( ) ) )?ticket.getTicketPrecision( ).getId( ):ticket.getTicketCategory( ).getId( );
-            List<Entry> listEntries = TicketFormService.getFilterInputs( nIdCategory, listIdEntries );
+            List<Entry> listEntries = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), listIdEntries );
 
             String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), false, request );
 

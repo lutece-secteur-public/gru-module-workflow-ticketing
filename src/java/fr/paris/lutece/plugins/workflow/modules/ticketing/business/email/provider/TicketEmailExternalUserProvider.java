@@ -231,10 +231,10 @@ public class TicketEmailExternalUserProvider implements IProvider
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_TYPE, _ticket.getTicketType( ).getLabel( ) ) );
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_DOMAIN, _ticket.getTicketDomain( ).getLabel( ) ) );
 
-        if ( _ticket.getTicketCategory( ) != null )
+        if ( _ticket.getTicketThematic( ) != null )
         {
             collectionNotifyGruMarkers
-                    .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_CATEGORY, _ticket.getTicketCategory( ).getLabel( ) ) );
+                    .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_CATEGORY, _ticket.getTicketThematic( ).getLabel( ) ) );
             collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TICKET_CATEGORY_PRECISION, _ticket.getTicketPrecision( ).getLabel( ) ) );
         }
 
