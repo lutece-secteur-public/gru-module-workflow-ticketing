@@ -33,21 +33,21 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
-import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
-import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
-import fr.paris.lutece.plugins.ticketing.business.search.IndexerAction;
-import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
-import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.workflowcore.business.state.State;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.portal.service.workflow.WorkflowService;
-
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
+import fr.paris.lutece.plugins.ticketing.business.search.IndexerAction;
+import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.portal.service.datastore.DatastoreService;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
 /**
  * This class represents a task to assign to me
@@ -56,7 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskIndexTicket extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_INDEX_TICKET = "module.workflow.ticketing.task_index_ticket.labelIndexTicket";
+    private static final String MESSAGE_INDEX_TICKET            = "module.workflow.ticketing.task_index_ticket.labelIndexTicket";
     private static final String PROPERTY_WORKFLOW_ACTION_ID_NEW = "ticketing.workflow.action.id.new";
 
     @Override
@@ -66,8 +66,7 @@ public class TaskIndexTicket extends AbstractTicketingTask
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
-        TicketCategory ticketCategory = ticket.getTicketCategory( );
-        int nIdWorkflow = ticketCategory.getIdWorkflow( );
+        int nIdWorkflow = Integer.parseInt( DatastoreService.getDataValue( TicketingConstants.PROPERTY_GLOBAL_WORKFLOW_ID, TicketingConstants.DEFAULT_GLOBAL_WORKFLOW_ID ) );
         State state = WorkflowService.getInstance( ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null );
 
         IndexerAction indexerAction = new IndexerAction( );
@@ -76,8 +75,7 @@ public class TaskIndexTicket extends AbstractTicketingTask
         if ( ( state == null ) || ( state.getId( ) == AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ACTION_ID_NEW, 301 ) ) )
         {
             indexerAction.setIdTask( IndexerAction.TASK_CREATE );
-        }
-        else
+        } else
         {
             indexerAction.setIdTask( IndexerAction.TASK_MODIFY );
         }
