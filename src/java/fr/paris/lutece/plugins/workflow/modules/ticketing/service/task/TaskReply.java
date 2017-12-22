@@ -33,6 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.sql.Timestamp;
+import java.text.MessageFormat;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
@@ -41,29 +49,19 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskRe
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.sql.Timestamp;
-
-import java.text.MessageFormat;
-
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * This class represents a task to reply to a ticket
  *
  */
 public class TaskReply extends AbstractTicketingTask
 {
-    private static final String MESSAGE_REPLY = "module.workflow.ticketing.task_reply.labelReply";
-    private static final String MESSAGE_REPLY_INFORMATION_PREFIX = "module.workflow.ticketing.task_reply.information.";
+    private static final String MESSAGE_REPLY                        = "module.workflow.ticketing.task_reply.labelReply";
+    private static final String MESSAGE_REPLY_INFORMATION_PREFIX     = "module.workflow.ticketing.task_reply.information.";
     private static final String MESSAGE_REPLY_INFORMATION_NO_MESSAGE = "module.workflow.ticketing.task_reply.information.";
 
     // PARAMETERS
-    public static final String PARAMETER_USER_MESSAGE = "user_message";
-    private ITaskConfigService _taskConfigService;
+    public static final String  PARAMETER_USER_MESSAGE               = "user_message";
+    private ITaskConfigService  _taskConfigService;
 
     @Override
     public String getTitle( Locale locale )
@@ -100,9 +98,8 @@ public class TaskReply extends AbstractTicketingTask
                 strUserMessage = I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_NO_MESSAGE, Locale.FRENCH );
             }
 
-            strTaskInformation = MessageFormat
-                    .format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ),
-                            Locale.FRENCH ), strUserMessage );
+            strTaskInformation = "<!-- MESSAGE-IN-WORKFLOW -->" + MessageFormat
+                    .format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ), Locale.FRENCH ), strUserMessage );
 
         }
 

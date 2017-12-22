@@ -33,6 +33,19 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -58,21 +71,6 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.url.UrlItem;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.text.MessageFormat;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * This class represents a task to edit a ticket
  *
@@ -80,35 +78,35 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskEditTicket extends AbstractTicketingTask
 {
     // Parameters
-    private static final String PARAMETER_MESSAGE = "message";
-    private static final String PARAMETER_IDS_ENTRY = "ids_entry";
+    private static final String    PARAMETER_MESSAGE                                          = "message";
+    private static final String    PARAMETER_IDS_ENTRY                                        = "ids_entry";
 
     // Messages
-    private static final String MESSAGE_EDIT_TICKET = "module.workflow.ticketing.task_edit_ticket.labelEditTicket";
-    private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT = "module.workflow.ticketing.task_edit_ticket.information.view.agent";
-    private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED = "module.workflow.ticketing.task_edit_ticket.information.view.agent.noFieldEdited";
-    private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER = "module.workflow.ticketing.task_edit_ticket.information.view.user";
-    private static final String MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED = "module.workflow.ticketing.task_edit_ticket.information.view.user.noFieldEdited";
-    private static final String MESSAGE_EDIT_TICKET_INFORMATION_NO_MESSAGE = "module.workflow.ticketing.task_edit_ticket.information.noMessage";
+    private static final String    MESSAGE_EDIT_TICKET                                        = "module.workflow.ticketing.task_edit_ticket.labelEditTicket";
+    private static final String    MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT                 = "module.workflow.ticketing.task_edit_ticket.information.view.agent";
+    private static final String    MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED = "module.workflow.ticketing.task_edit_ticket.information.view.agent.noFieldEdited";
+    private static final String    MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER                  = "module.workflow.ticketing.task_edit_ticket.information.view.user";
+    private static final String    MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED  = "module.workflow.ticketing.task_edit_ticket.information.view.user.noFieldEdited";
+    private static final String    MESSAGE_EDIT_TICKET_INFORMATION_NO_MESSAGE                 = "module.workflow.ticketing.task_edit_ticket.information.noMessage";
 
     // Parameters
-    private static final String PARAMETER_USER_MESSAGE = "user_message";
+    private static final String    PARAMETER_USER_MESSAGE                                     = "user_message";
 
     // Beans
-    private static final String BEAN_EDIT_TICKET_CONFIG_SERVICE = "workflow-ticketing.taskEditTicketConfigService";
+    private static final String    BEAN_EDIT_TICKET_CONFIG_SERVICE                            = "workflow-ticketing.taskEditTicketConfigService";
 
     // Other constants
-    private static final String UNDERSCORE = "_";
-    private static final String SEPARATOR = "; ";
+    private static final String    UNDERSCORE                                                 = "_";
+    private static final String    SEPARATOR                                                  = "; ";
 
     // Services
     @Inject
     private IEditableTicketService _editableTicketService;
     @Inject
     @Named( BEAN_EDIT_TICKET_CONFIG_SERVICE )
-    private ITaskConfigService _taskEditableTicketConfigService;
+    private ITaskConfigService     _taskEditableTicketConfigService;
     @Inject
-    private TicketFormService _ticketFormService;
+    private TicketFormService      _ticketFormService;
 
     @Override
     public String getTitle( Locale locale )
@@ -133,8 +131,7 @@ public class TaskEditTicket extends AbstractTicketingTask
         if ( messageDirection == MessageDirection.AGENT_TO_USER )
         {
             strTaskInformation = processAgentTask( nIdResourceHistory, request, locale, config );
-        }
-        else
+        } else
         {
             strTaskInformation = processUserTask( nIdResourceHistory, request, locale, config );
         }
@@ -160,7 +157,7 @@ public class TaskEditTicket extends AbstractTicketingTask
         String strTaskInformation = StringUtils.EMPTY;
 
         String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
-        String [ ] listIdsEntry = request.getParameterValues( PARAMETER_IDS_ENTRY + UNDERSCORE + getId( ) );
+        String[] listIdsEntry = request.getParameterValues( PARAMETER_IDS_ENTRY + UNDERSCORE + getId( ) );
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
@@ -211,8 +208,7 @@ public class TaskEditTicket extends AbstractTicketingTask
         if ( bCreate )
         {
             _editableTicketService.create( editableTicket );
-        }
-        else
+        } else
         {
             _editableTicketService.update( editableTicket );
         }
@@ -225,13 +221,12 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         if ( sbEntries.length( ) == 0 )
         {
-            strTaskInformation = MessageFormat.format(
-                    I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED, Locale.FRENCH ), strAgentMessage );
-        }
-        else
+            strTaskInformation = "<!-- MESSAGE-IN-WORKFLOW -->"
+                    + MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED, Locale.FRENCH ), strAgentMessage );
+        } else
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT, Locale.FRENCH ),
-                    sbEntries.toString( ), strAgentMessage );
+            strTaskInformation = "<!-- MESSAGE-IN-WORKFLOW -->"
+                    + MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT, Locale.FRENCH ), sbEntries.toString( ), strAgentMessage );
         }
 
         return strTaskInformation;
@@ -312,13 +307,12 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         if ( sbEntries.length( ) == 0 )
         {
-            strTaskInformation = MessageFormat.format(
-                    I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED, Locale.FRENCH ), strUserMessage );
-        }
-        else
+            strTaskInformation = "<!-- MESSAGE-IN-WORKFLOW -->"
+                    + MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED, Locale.FRENCH ), strUserMessage );
+        } else
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER, Locale.FRENCH ),
-                    sbEntries.toString( ), strUserMessage );
+            strTaskInformation = "<!-- MESSAGE-IN-WORKFLOW -->"
+                    + MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER, Locale.FRENCH ), sbEntries.toString( ), strUserMessage );
         }
 
         return strTaskInformation;
