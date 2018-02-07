@@ -33,24 +33,29 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.unittree.business.unit.Unit;
+import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformation;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.information.ITaskInformationService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.text.MessageFormat;
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class represents a Task for Ticketing
@@ -70,7 +75,27 @@ public abstract class AbstractTicketingTask extends SimpleTask
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        String strTaskInformation = processTicketingTask( nIdResourceHistory, request, locale );
+        AdminUser user = AdminUserService.getAdminUser( request );
+        Ticket ticket = getTicket( nIdResourceHistory );
+        List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
+        
+        // Check if user is in same unit tree as unit assigned to ticket
+        Set<Integer> subUnits = unitsList.stream( ).map( unit -> unit.getIdUnit( ) ).collect( Collectors.toSet( ) );
+        unitsList.stream( ).forEach( unit -> subUnits.addAll( UnitHome.getAllSubUnitsId( unit.getIdUnit( ) ) ) );
+        boolean ticketInSubUnit = true;
+        if(ticket.getAssigneeUnit( ) != null) {
+            ticketInSubUnit = subUnits.stream( ).anyMatch( unitId -> ticket.getAssigneeUnit( ).getUnitId( ) == unitId );
+        }
+        
+        
+        String strTaskInformation = null;
+        
+        if ( !ticketInSubUnit )
+        {
+            throw new TicketTaskException( );
+        } else {
+            strTaskInformation = processTicketingTask( nIdResourceHistory, request, locale );
+        }
 
         if ( !StringUtils.isEmpty( strTaskInformation ) )
         {

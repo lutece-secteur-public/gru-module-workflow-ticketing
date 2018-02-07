@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -40,22 +49,9 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TicketTaskException;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-
-import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class represents a task to assign to me
@@ -107,27 +103,16 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
 
                     List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
 
-                    // Check if user is in same unit tree as unit assigned to ticket
-                    Set<Integer> subUnits = unitsList.stream( ).map( unit -> unit.getIdUnit( ) ).collect( Collectors.toSet( ) );
-                    unitsList.stream( ).forEach( unit -> subUnits.addAll( UnitHome.getAllSubUnitsId( unit.getIdUnit( ) ) ) );
-                    boolean ticketInSubUnit = subUnits.stream( ).anyMatch( unitId -> ticket.getAssigneeUnit( ).getUnitId( ) == unitId );
-                    
-                    if ( !ticketInSubUnit )
+                    if ( ( unitsList != null ) && ( unitsList.size( ) > 0 ) )
                     {
-                        throw new TicketTaskException( );
-                    } else {
-                        // Assign first unit of user to ticket
-                        if ( ( unitsList != null ) && ( unitsList.size( ) > 0 ) )
-                        {
-                            AssigneeUnit assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
-                            ticket.setAssigneeUnit( assigneeUnit );
-                        }
+                        AssigneeUnit assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
+                        ticket.setAssigneeUnit( assigneeUnit );
+                    }
     
                         TicketHome.update( ticket );
     
                         strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION, Locale.FRENCH ),
                                 strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
-                    }
                 }
             }
         }
