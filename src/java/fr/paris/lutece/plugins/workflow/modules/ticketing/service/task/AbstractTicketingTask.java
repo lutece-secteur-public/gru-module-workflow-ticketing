@@ -63,6 +63,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
  */
 public abstract class AbstractTicketingTask extends SimpleTask
 {
+    private static final String ACCESS_CODE_USER_FRONT = "ticketing_userfront";
     private static final String LOG_ERROR_SAVE_INFORMATION = "Error when saving message '{0}' for resourceId {1} and taskId {2}";
     protected final static String REDIRECT_TO_LIST = "list";
 
@@ -78,7 +79,7 @@ public abstract class AbstractTicketingTask extends SimpleTask
         AdminUser user = AdminUserService.getAdminUser( request );
         Ticket ticket = getTicket( nIdResourceHistory );
         List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
-        
+
         // Check if user is in same unit tree as unit assigned to ticket
         Set<Integer> subUnits = unitsList.stream( ).map( unit -> unit.getIdUnit( ) ).collect( Collectors.toSet( ) );
         unitsList.stream( ).forEach( unit -> subUnits.addAll( UnitHome.getAllSubUnitsId( unit.getIdUnit( ) ) ) );
@@ -86,11 +87,10 @@ public abstract class AbstractTicketingTask extends SimpleTask
         if(ticket.getAssigneeUnit( ) != null) {
             ticketInSubUnit = subUnits.stream( ).anyMatch( unitId -> ticket.getAssigneeUnit( ).getUnitId( ) == unitId );
         }
-        
-        
+
         String strTaskInformation = null;
-        
-        if ( !ticketInSubUnit )
+
+        if ( !ticketInSubUnit && !ACCESS_CODE_USER_FRONT.equals( user.getAccessCode( ) ) )
         {
             throw new TicketTaskException( );
         } else {
