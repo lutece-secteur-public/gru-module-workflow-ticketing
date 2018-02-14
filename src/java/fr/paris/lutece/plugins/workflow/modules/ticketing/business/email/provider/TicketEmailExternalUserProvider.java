@@ -37,13 +37,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryType;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryTypeHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketCriticality;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketPriority;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.ITicketEmailExternalUserHistoryDAO;
@@ -85,6 +89,10 @@ public class TicketEmailExternalUserProvider implements IProvider
     private static final String                MESSAGE_MARKER_EMAIL_RECIPIENTS_CC      = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_recipients_cc";
     private static final String                MESSAGE_MARKER_MESSAGE                  = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.message";
     private static final String                MESSAGE_MARKER_LINK                     = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticketing_ticket_link";
+    private static final String MESSAGE_MARKER_PRIORITY = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.priority";
+    private static final String MESSAGE_MARKER_CRITICALITY = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.criticality";
+    private static final String MESSAGE_MARKER_PRIORITY_LABEL = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.priority_label";
+    private static final String MESSAGE_MARKER_CRITICALITY_LABEL = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.criticality_label";
 
     /** The TicketEmailExternalUserHistoryDAO DAO. */
     private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO      = SpringContextService.getBean( ITicketEmailExternalUserHistoryDAO.BEAN_SERVICE );
@@ -249,6 +257,22 @@ public class TicketEmailExternalUserProvider implements IProvider
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_MESSAGE, _emailExternalUserMessage.getMessageQuestion( ) ) );
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LINK, buildTicketLink( _emailExternalUserMessage.getIdMessageExternalUser( ) ) ) );
 
+        TicketPriority priority = TicketPriority.valueOf( _ticket.getPriority( ) );
+        String priorityLabel = StringUtils.EMPTY;
+        if ( !TicketPriority.LOW.equals( priority ) )
+        {
+            priorityLabel = I18nService.getLocalizedString( MESSAGE_MARKER_PRIORITY_LABEL, I18nService.getDefaultLocale( ) ) + priority.getLocalizedMessage( Locale.FRENCH );
+        }
+        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_PRIORITY, priorityLabel ) );
+
+        TicketCriticality criticality = TicketCriticality.valueOf( _ticket.getCriticality( ) );
+        String criticalityLabel = StringUtils.EMPTY;
+        if ( !TicketCriticality.LOW.equals( criticality ) )
+        {
+            criticalityLabel = I18nService.getLocalizedString( MESSAGE_MARKER_CRITICALITY_LABEL, I18nService.getDefaultLocale( ) ) + criticality.getLocalizedMessage( Locale.FRENCH );
+        }
+        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_CRITICALITY, criticalityLabel ) );
+
         return collectionNotifyGruMarkers;
     }
 
@@ -290,6 +314,8 @@ public class TicketEmailExternalUserProvider implements IProvider
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC, MESSAGE_MARKER_EMAIL_RECIPIENTS_CC ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_MESSAGE, MESSAGE_MARKER_MESSAGE ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_LINK, MESSAGE_MARKER_LINK ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_PRIORITY, MESSAGE_MARKER_PRIORITY ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_CRITICALITY, MESSAGE_MARKER_CRITICALITY ) );
 
         return collectionNotifyGruMarkers;
     }
