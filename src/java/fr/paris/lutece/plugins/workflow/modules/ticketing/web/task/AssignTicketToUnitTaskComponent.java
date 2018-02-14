@@ -33,6 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
@@ -43,14 +51,9 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUnit}
@@ -63,10 +66,11 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
 
     // MESSAGE
     private static final String MESSAGE_NO_UNIT_FOUND = "module.workflow.ticketing.task_assign_ticket_to_unit.labelNoUnitFound";
+    
+    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
 
     // MARKS
     private static final String MARK_UNITS_LIST = "units_list";
-    private static final String MARK_CURRENT_UNIT = "current_unit";
 
     /**
      * {@inheritDoc}
@@ -77,22 +81,11 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
         Ticket ticket = getTicket( nIdResource, strResourceType );
         Map<String, Object> model = getModel( ticket );
         ReferenceList unitsList = null;
-        String strCurrentUnitId = null;
 
         if ( ticket != null )
         {
             AdminUser user = AdminUserService.getAdminUser( request );
             unitsList = getUnitsList( user );
-
-            if ( ticket.getAssigneeUnit( ) != null )
-            {
-                strCurrentUnitId = String.valueOf( ticket.getAssigneeUnit( ).getUnitId( ) );
-
-                if ( unitsList.toMap( ).containsKey( strCurrentUnitId ) )
-                {
-                    model.put( MARK_CURRENT_UNIT, strCurrentUnitId );
-                }
-            }
 
             if ( ( unitsList == null ) || ( unitsList.size( ) == 0 ) )
             {
@@ -121,6 +114,12 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
     {
         List<Unit> lstUnits = UnitHome.findAll( );
         ReferenceList lstRef = new ReferenceList( lstUnits.size( ) );
+        
+        ReferenceItem emptyReferenceItem = new ReferenceItem();
+        emptyReferenceItem.setCode(StringUtils.EMPTY);
+        emptyReferenceItem.setName(I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM, Locale.FRANCE ));
+        emptyReferenceItem.setChecked(true);
+        lstRef.add(emptyReferenceItem);
 
         for ( Unit unit : lstUnits )
         {

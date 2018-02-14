@@ -9,6 +9,13 @@
     <#else>
         <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit" inputName="id_unit" items=units_list value="" i18nHelpBlockKey="ticketing.task_assign_ticket_to_unit.labelUnit.help" />
     </#if>
+    
+   	<div class="form-group" id="errorEntity" style="display: none;">
+        <div class="col-xs-12 col-sm-offset-3 col-sm-6 col-md-6 col-lg-6 alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i>
+            <span>#i18n{module.workflow.ticketing.task_edit_ticket_form.message.empty.entity}</span>
+        </div>
+	</div>
 </#if>
 
 <script language="javascript">
@@ -34,6 +41,16 @@
                 $('#id_user').prop("disabled", false);
             }
         });
+        
+        $('#id_unit').closest("form").submit(function(){
+			if($('#id_unit').val() == ""){
+				$('#errorEntity').show();
+				return false;
+			} else {
+				$('#errorEntity').hide();
+				return true;
+			}
+		});
     });
 </script>
 

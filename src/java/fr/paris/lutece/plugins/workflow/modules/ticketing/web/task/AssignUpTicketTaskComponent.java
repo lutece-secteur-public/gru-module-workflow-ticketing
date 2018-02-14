@@ -33,6 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntity;
 import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntityHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -43,12 +51,6 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TaskAssignUpTicket}
@@ -64,6 +66,8 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
 
     // MARKS
     private static final String MARK_TICKET_SUPPORT_ENTITIES = "ticket_up_units";
+    
+    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
 
     /**
      * {@inheritDoc}
@@ -73,13 +77,19 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
         ReferenceList lstRefSupportEntities = new ReferenceList( );
+        
+        ReferenceItem emptyReferenceItem = new ReferenceItem();
+        emptyReferenceItem.setCode(StringUtils.EMPTY);
+        emptyReferenceItem.setName(I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM, locale ));
+        emptyReferenceItem.setChecked(true);
+		lstRefSupportEntities.add(emptyReferenceItem);
 
         AdminUser adminUser = AdminUserService.getAdminUser( request );
         List<SupportEntity> lstSupportEntity = SupportEntityHome.getEligibleSupportEntities( adminUser );
 
         for ( SupportEntity supportEntity : lstSupportEntity )
         {
-            ReferenceItem refItem = new ReferenceItem( );
+            ReferenceItem refItem = new ReferenceItem();
             refItem.setName( supportEntity.getName( ) );
             refItem.setCode( String.valueOf( supportEntity.getUnit( ).getUnitId( ) ) );
             lstRefSupportEntities.add( refItem );
