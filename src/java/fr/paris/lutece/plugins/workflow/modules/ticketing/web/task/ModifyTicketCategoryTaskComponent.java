@@ -166,8 +166,8 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
 
         Map<String, Object> model = getModel( ticket );
 
-        model.put( TicketingConstants.MARK_TICKET_CATEGORIES_TREE, TicketCategoryService.getInstance( ).getCategoriesTree( ).getTreeJSONObject( ) );
-        model.put( TicketingConstants.MARK_TICKET_CATEGORIES_DEPTHS, TicketCategoryService.getInstance( ).getCategoriesTree( ).getDepths( ) );
+        model.put( TicketingConstants.MARK_TICKET_CATEGORIES_TREE, TicketCategoryService.getInstance( true ).getCategoriesTree( ).getTreeJSONObject( ) );
+        model.put( TicketingConstants.MARK_TICKET_CATEGORIES_DEPTHS, TicketCategoryService.getInstance( true ).getCategoriesTree( ).getDepths( ) );
         model.put( MARK_ID_TASK, task.getId( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM, locale, model );
@@ -184,7 +184,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         Ticket ticket = getTicket( nIdResource, strResourceType );
         String strError = StringUtils.EMPTY;
         List<String> listErrors = new ArrayList<>( );
-        
+
         TicketCategoryValidatorResult categoryValidatorResult = new TicketCategoryValidator( request ).validateTicketCategory( );
 
         // Check if a category have been selected
@@ -192,7 +192,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         {
             categoryValidatorResult.getListValidationErrors( ).stream( ).forEach( ( error ) -> listErrors.add( error ) );
         }
-        
+
         // Validate the selection of items
         if ( categoryValidatorResult.isTicketCategoryValid( ) )
         {
@@ -204,7 +204,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             {
                 listFormErrors.addAll( _ticketFormService.getResponseEntry( request, entry.getIdEntry( ), request.getLocale( ), ticket ) );
             }
-            
+
             if ( !listFormErrors.isEmpty( ) )
             {
                 for ( GenericAttributeError formError : listFormErrors )
@@ -215,7 +215,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
                 listErrors.add( strError );
             }
         }
-        
+
         if ( !listErrors.isEmpty( ) )
         {
             return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ATTRIBUTE_ERROR, listErrors.toArray( ), AdminMessage.TYPE_STOP );
