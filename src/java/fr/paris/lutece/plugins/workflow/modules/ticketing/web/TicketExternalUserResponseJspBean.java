@@ -314,4 +314,10 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
         return getPage( PROPERTY_PAGE_TITLE_EXTERNAL_USER_RESPONSE, TEMPLATE_EXTERNAL_USER_MESSAGE, model );
     }
+
+    @Override
+    protected boolean checkAccessToTicket( HttpServletRequest request, Ticket ticket )
+    {
+        return true;
+    }
 }
