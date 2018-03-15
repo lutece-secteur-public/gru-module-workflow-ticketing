@@ -185,7 +185,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         String strError = StringUtils.EMPTY;
         List<String> listErrors = new ArrayList<>( );
 
-        TicketCategoryValidatorResult categoryValidatorResult = new TicketCategoryValidator( request ).validateTicketCategory( );
+        TicketCategoryValidatorResult categoryValidatorResult = new TicketCategoryValidator( request, locale ).validateTicketCategory( );
 
         // Check if a category have been selected
         if ( !categoryValidatorResult.isTicketCategoryValid( ) )

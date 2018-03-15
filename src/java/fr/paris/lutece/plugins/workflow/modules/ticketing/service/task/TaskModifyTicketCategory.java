@@ -102,16 +102,16 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
         String[] listPreviousTicketCategoryLabel = new String[TicketCategoryService.getInstance( ).getCategoriesTree( ).getMaxDepthNumber( )];
         Arrays.fill(listPreviousTicketCategoryLabel, "");
-        
+
         if ( ticket != null )
         {
             for ( TicketCategory ticketCategory : ticket.getBranch( ) )
             {
                 listPreviousTicketCategoryLabel[ticketCategory.getCategoryType( ).getDepthNumber( ) - 1] = ticketCategory.getLabel( );
             }
-            
+
             // Validate the TicketCategory
-            TicketCategoryValidatorResult categoryValidatorResult = new TicketCategoryValidator( request ).validateTicketCategory( );
+            TicketCategoryValidatorResult categoryValidatorResult = new TicketCategoryValidator( request, locale ).validateTicketCategory( );
             ticket.setTicketCategory( categoryValidatorResult.getTicketCategory( ) );
 
             TicketHome.update( ticket );
@@ -119,12 +119,12 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
             for ( TicketCategory ticketCategory : ticket.getBranch( ) )
             {
                 String strPreviousCategoryLabel = listPreviousTicketCategoryLabel[ticketCategory.getCategoryType( ).getDepthNumber( ) - 1];
-                
+
                 if ( !strPreviousCategoryLabel.equals( ticketCategory.getLabel( ) ) )
                 {
                     strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ),
                             ticketCategory.getCategoryType( ).getLabel( ), StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ),
-                            StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
+                                    StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
                 }
             }
 
