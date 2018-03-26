@@ -86,6 +86,7 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
                 if ( assigneeUnit.getUnitId( ) != unit.getIdUnit( ) && request != null )
                 {
                     request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
+                    request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
                 }
 
                 assigneeUnit.setUnitId( unit.getIdUnit( ) );

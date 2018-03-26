@@ -44,12 +44,11 @@ import fr.paris.lutece.plugins.ticketing.service.category.TicketCategoryService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketCategoryValidator;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketCategoryValidatorResult;
+import fr.paris.lutece.plugins.ticketing.web.util.TicketUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.rbac.RBACService;
-
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;
@@ -81,9 +80,6 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
     public static final String PARAMETER_TICKET_DOMAIN_ID = "id_ticket_domain";
     public static final String PARAMETER_TICKET_TYPE_ID = "id_ticket_type";
     public static final String SEPARATOR = " - ";
-
-    // Other constants
-    private static final String REDIRECT_LIST = "list";
 
     // Beans
     private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE = "workflow-ticketing.taskModifyTicketCategoryConfigService";
@@ -221,9 +217,9 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                 }
             }
 
-            if ( !RBACService.isAuthorized( TicketCategoryService.getInstance( ).getTicketCategoryRBACResource( ticket.getTicketCategory( ) ), TicketCategory.PERMISSION_VIEW_DETAIL, AdminUserService.getAdminUser( request ) ) )
+            if ( !TicketUtils.isAuthorized( ticket, TicketCategory.PERMISSION_VIEW_DETAIL, AdminUserService.getAdminUser( request ) ) )
             {
-                request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_LIST );
+                request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
             }
         }
 

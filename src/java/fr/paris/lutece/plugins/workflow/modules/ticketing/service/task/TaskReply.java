@@ -88,7 +88,7 @@ public class TaskReply extends AbstractTicketingTask
             {
                 ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
                 ticket.setDateClose( new Timestamp( new java.util.Date( ).getTime( ) ) );
-                request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, TicketingConstants.REDIRECT_VIEW_LIST );
+                request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
             }
 
             TicketHome.update( ticket );

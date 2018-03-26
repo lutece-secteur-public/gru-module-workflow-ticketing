@@ -39,7 +39,6 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
-import fr.paris.lutece.plugins.unittree.service.unit.UnitService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import org.apache.commons.lang.StringUtils;
@@ -106,6 +105,7 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
                     TicketHome.update( ticket );
 
                     request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
+                    request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
 
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ),
                             strCurrentUnit, assigneeUnit.getName( ) );
