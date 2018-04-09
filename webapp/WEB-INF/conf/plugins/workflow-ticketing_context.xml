@@ -210,6 +210,19 @@
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ReplyTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeReply"
 		p:taskConfigService-ref="workflow-ticketing.taskReplyConfigService" />
+	
+	<!-- Task comment extended from workflow -->
+	<bean id="workflow-ticketing.taskComment" class="fr.paris.lutece.plugins.workflow.modules.comment.service.TaskComment" scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeTicketingComment"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType" 
+		p:key="taskTicketingComment" p:titleI18nKey="module.workflow.ticketing.task_comment.title"
+		p:beanName="workflow-ticketing.taskComment" p:configBeanName="workflow.taskCommentConfig"
+		p:configRequired="true"	p:formTaskRequired="true" />
+	<bean id="workflow-ticketing.commentTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingCommentTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeTicketingComment"
+		p:taskConfigService-ref="workflow.taskCommentConfigService" />
+		
 
 	<!-- Task Modify ticket category -->
 	<bean id="workflow-ticketing.taskModifyTicketCategory"
