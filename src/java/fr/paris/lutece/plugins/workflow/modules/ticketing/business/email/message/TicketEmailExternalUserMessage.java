@@ -56,6 +56,9 @@ public class TicketEmailExternalUserMessage
     /** the response to the agent */
     private String _strMessageResponse;
 
+    /** the subject of the mail */
+    private String _strEmailSubject;
+
     /** true if the external user has answered */
     private boolean _bIsAnswered;
 
@@ -176,5 +179,15 @@ public class TicketEmailExternalUserMessage
     public void setIsAnswered( boolean bIsAnswered )
     {
         this._bIsAnswered = bIsAnswered;
+    }
+
+    public String getEmailSubject( )
+    {
+        return _strEmailSubject;
+    }
+
+    public void setEmailSubject( String emailSubject )
+    {
+        _strEmailSubject = emailSubject;
     }
 }
