@@ -28,15 +28,16 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 
 public class TicketingCommentTaskComponent extends CommentTaskComponent
 {
+	//beans
+	private static final String TICKETING_TICKET_REFERENCE_SERVICE = "ticketing.ticketReferenceService";
+	private static final String WORKFLOW_COMMENT_VALUE_SERVICE = "workflow.commentValueService";
 
 	TicketingTaskComponent taskComponent = new TicketingTaskComponent( );
     
-    
     @Inject
-    @Named( "ticketing.ticketReferenceService" )
-    private ContentPostProcessor contentPostProcessor;
+    @Named( TICKETING_TICKET_REFERENCE_SERVICE )
+    private ContentPostProcessor _contentPostProcessor;
     
-    private static final String WORKFLOW_COMMENT_VALUE_SERVICE = "workflow.commentValueService";
     @Inject
     @Named( WORKFLOW_COMMENT_VALUE_SERVICE )
     private ICommentValueService _commentValueService;
@@ -91,13 +92,10 @@ public class TicketingCommentTaskComponent extends CommentTaskComponent
 
         if ( commentValue != null && StringUtils.isNotBlank( commentValue.getValue( ) ) )
         {
-            if ( contentPostProcessor != null )
+            if ( _contentPostProcessor != null )
             {
                 String strComment = commentValue.getValue( );
-//                for ( ContentPostProcessor contentPostProcessor : _listContentPostProcessors )
-//                {
-                    strComment = contentPostProcessor.process( request, strComment );
-               // }
+                strComment = _contentPostProcessor.process( request, strComment );
                 commentValue.setValue( strComment );
             }
         }
