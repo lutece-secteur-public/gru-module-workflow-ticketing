@@ -63,7 +63,6 @@ public final class TicketEmailExternalUserConstants
     public static final String MARK_EMAIL_RECIPIENTS_CC             = "email_recipients_cc";
     public static final String MARK_MESSAGE                         = "message";
     public static final String MARK_LINK                            = "ticketing_ticket_link";
-    public static final String MARK_SUBJECT = "email_subject";
 
     public static final String MARK_PRIORITY = "priority";
     public static final String MARK_CRITICALITY = "criticality";

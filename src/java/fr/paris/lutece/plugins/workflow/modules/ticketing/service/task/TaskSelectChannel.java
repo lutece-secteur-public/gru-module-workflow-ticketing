@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
-import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryService;
@@ -87,8 +86,7 @@ public class TaskSelectChannel extends AbstractTicketingTask
         }
         else
         {
-            Ticket ticket = getTicket( nIdResourceHistory );
-            idChannel = ticket.getChannel( ).getId( );
+            idChannel = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_CHANNEL_ID_FRONT, TicketingConstants.PROPERTY_UNSET_INT );
         }
 
         ResourceHistory resourceHistory = new ResourceHistory( );

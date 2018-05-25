@@ -74,7 +74,6 @@ public class TaskTicketEmailExternalUser extends SimpleTask
     // Parameters
     public static final String PARAMETER_MESSAGE = "message";
     public static final String PARAMETER_EMAIL_RECIPIENTS = "email_recipients";
-    public static final String PARAMETER_EMAIL_SUBJECT = "email_subject";
     public static final String PARAMETER_EMAIL_RECIPIENTS_CC = "email_recipients_cc";
     public static final String PARAM_NEXT_ACTION_ID = "next_action_id";
 
@@ -161,7 +160,6 @@ public class TaskTicketEmailExternalUser extends SimpleTask
         String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
         String strEmailRecipients = request.getParameter( PARAMETER_EMAIL_RECIPIENTS + UNDERSCORE + getId( ) );
         String strEmailRecipientsCc = request.getParameter( PARAMETER_EMAIL_RECIPIENTS_CC + UNDERSCORE + getId( ) );
-        String strSubject = request.getParameter( PARAMETER_EMAIL_SUBJECT + UNDERSCORE + getId( ) );
 
         // Create message item
         TicketEmailExternalUserMessage emailExternalUserMessage = new TicketEmailExternalUserMessage( );
@@ -169,7 +167,6 @@ public class TaskTicketEmailExternalUser extends SimpleTask
         emailExternalUserMessage.setMessageQuestion( strAgentMessage );
         emailExternalUserMessage.setEmailRecipients( strEmailRecipients );
         emailExternalUserMessage.setEmailRecipientsCc( strEmailRecipientsCc );
-        emailExternalUserMessage.setEmailSubject( strSubject );
         _ticketEmailExternalUserDemandDAO.createQuestion( emailExternalUserMessage );
 
         // Create resource item
@@ -245,7 +242,6 @@ public class TaskTicketEmailExternalUser extends SimpleTask
 
         String strEmailRecipients = firstEmailsAgentDemand.getEmailRecipients( );
         String strEmailRecipientsCc = firstEmailsAgentDemand.getEmailRecipientsCc( );
-        String strSubject = firstEmailsAgentDemand.getEmailSubject( );
 
         // Create message item
         TicketEmailExternalUserMessage emailExternalUser = new TicketEmailExternalUserMessage( );
@@ -253,7 +249,6 @@ public class TaskTicketEmailExternalUser extends SimpleTask
         emailExternalUser.setMessageQuestion( strAgentMessage );
         emailExternalUser.setEmailRecipients( strEmailRecipients );
         emailExternalUser.setEmailRecipientsCc( strEmailRecipientsCc );
-        emailExternalUser.setEmailSubject( strSubject );
         _ticketEmailExternalUserDemandDAO.createQuestion( emailExternalUser );
 
         // Create resource item

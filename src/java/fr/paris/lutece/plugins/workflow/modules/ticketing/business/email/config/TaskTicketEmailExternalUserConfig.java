@@ -49,8 +49,6 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
 
     private Integer _nIdContactAttribute;
 
-    private String _strDefaultSubject;
-
     /**
      * Gives the message direction
      * 
@@ -112,16 +110,6 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
     public void setIdContactAttribute( Integer nIdContactAttribute )
     {
         this._nIdContactAttribute = nIdContactAttribute;
-    }
-
-    public String getDefaultSubject( )
-    {
-        return _strDefaultSubject;
-    }
-
-    public void setDefaultSubject( String defaultSubject )
-    {
-        _strDefaultSubject = defaultSubject;
     }
 
 }

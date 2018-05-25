@@ -87,7 +87,6 @@ public class TicketEmailExternalUserProvider implements IProvider
     private static final String                MESSAGE_MARKER_TECHNICAL_URL_COMPLETE   = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.url_completed";
     private static final String                MESSAGE_MARKER_EMAIL_RECIPIENTS         = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_recipients";
     private static final String                MESSAGE_MARKER_EMAIL_RECIPIENTS_CC      = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_recipients_cc";
-    private static final String MESSAGE_MARKER_SUBJECT = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_subject";
     private static final String                MESSAGE_MARKER_MESSAGE                  = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.message";
     private static final String                MESSAGE_MARKER_LINK                     = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticketing_ticket_link";
     private static final String MESSAGE_MARKER_PRIORITY = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.priority";
@@ -258,8 +257,6 @@ public class TicketEmailExternalUserProvider implements IProvider
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_MESSAGE, _emailExternalUserMessage.getMessageQuestion( ) ) );
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LINK, buildTicketLink( _emailExternalUserMessage.getIdMessageExternalUser( ) ) ) );
 
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_SUBJECT, _emailExternalUserMessage.getEmailSubject( ) ) );
-
         TicketPriority priority = TicketPriority.valueOf( _ticket.getPriority( ) );
         String priorityLabel = StringUtils.EMPTY;
         if ( !TicketPriority.LOW.equals( priority ) )
@@ -315,7 +312,6 @@ public class TicketEmailExternalUserProvider implements IProvider
         // SPECIFIC EMAIL AGENT
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS, MESSAGE_MARKER_EMAIL_RECIPIENTS ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC, MESSAGE_MARKER_EMAIL_RECIPIENTS_CC ) );
-        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_SUBJECT, MESSAGE_MARKER_SUBJECT ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_MESSAGE, MESSAGE_MARKER_MESSAGE ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_LINK, MESSAGE_MARKER_LINK ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_PRIORITY, MESSAGE_MARKER_PRIORITY ) );
