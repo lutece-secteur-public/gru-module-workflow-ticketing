@@ -1,11 +1,11 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,20 +22,24 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.content.ContentPostProcessor;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 public class TicketingCommentTaskComponent extends CommentTaskComponent
 {
-    TicketingTaskComponent taskComponent = new TicketingTaskComponent( );
 
+	TicketingTaskComponent taskComponent = new TicketingTaskComponent( );
+    
+    
     @Inject
+    @Named( "ticketing.ticketReferenceService" )
+    private ContentPostProcessor contentPostProcessor;
+    
+    private static final String WORKFLOW_COMMENT_VALUE_SERVICE = "workflow.commentValueService";
+    @Inject
+    @Named( WORKFLOW_COMMENT_VALUE_SERVICE )
     private ICommentValueService _commentValueService;
-    private static final String CONTENT_POST_PROCESSORS_LIST_BEAN_NAME = "workflow.commentContentPostProcessors.list";
-    private static final List<ContentPostProcessor> _listContentPostProcessors = SpringContextService.getBean( CONTENT_POST_PROCESSORS_LIST_BEAN_NAME );
-
     // TEMPLATES
     private static final String TEMPLATE_TASK_COMMENT_FORM = "admin/plugins/workflow/modules/comment/task_comment_form.html";
     private static final String TEMPLATE_TASK_COMMENT_INFORMATION = "admin/plugins/workflow/modules/comment/task_comment_information.html";
@@ -87,13 +91,13 @@ public class TicketingCommentTaskComponent extends CommentTaskComponent
 
         if ( commentValue != null && StringUtils.isNotBlank( commentValue.getValue( ) ) )
         {
-            if ( _listContentPostProcessors != null && !_listContentPostProcessors.isEmpty( ) )
+            if ( contentPostProcessor != null )
             {
                 String strComment = commentValue.getValue( );
-                for ( ContentPostProcessor contentPostProcessor : _listContentPostProcessors )
-                {
+//                for ( ContentPostProcessor contentPostProcessor : _listContentPostProcessors )
+//                {
                     strComment = contentPostProcessor.process( request, strComment );
-                }
+               // }
                 commentValue.setValue( strComment );
             }
         }
