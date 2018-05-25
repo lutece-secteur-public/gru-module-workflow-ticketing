@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,8 +30,7 @@ public class TicketingCommentTaskComponent extends CommentTaskComponent
 {
     TicketingTaskComponent taskComponent = new TicketingTaskComponent( );
 
-    @Inject
-    private ICommentValueService _commentValueService;
+    private static final ICommentValueService _commentValueService = SpringContextService.getBean( "workflow.commentValueService" );
     private static final String CONTENT_POST_PROCESSORS_LIST_BEAN_NAME = "workflow.commentContentPostProcessors.list";
     private static final List<ContentPostProcessor> _listContentPostProcessors = SpringContextService.getBean( CONTENT_POST_PROCESSORS_LIST_BEAN_NAME );
 
