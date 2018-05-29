@@ -98,12 +98,14 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     private static final String                  MARK_MESSAGE_DIRECTIONS_LIST            = "message_directions_list";
     private static final String                  MARK_MESSAGE_DIRECTION                  = "message_direction";
     private static final String                  MARK_CONFIG_CONTACT_ATTRIBUTE           = "contact_attribute_id";
+    private static final String MARK_CONFIG_DEFAULT_SUBJECT = "default_subject";
     private static final String                  MARK_CONFIG_LABEL_ATTRIBUTE             = "label_contact_attribute";
 
     // Parameters config
     private static final String                  PARAMETER_MESSAGE_DIRECTION             = "message_direction";
     private static final String                  PARAMETER_FOLLOW_ACTION_ID              = "following_action_id";
     private static final String                  PARAMETER_CONTACT_ATTRIBUTE             = "contact_attribute_id";
+    private static final String PARAMETER_DEFAULT_SUBJECT = "default_subject";
 
     // Error message
     public static final String                   MESSAGE_EMPTY_EMAIL                     = "module.workflow.ticketing.task_ticket_email_external_user.error.email.empty";
@@ -257,10 +259,13 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         String strNextActionId = String.valueOf( config.getIdFollowingAction( ) );
         String strEmailRecipients = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS + TaskTicketEmailExternalUser.UNDERSCORE + task.getId( ) );
         String strEmailRecipientsCc = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS_CC + TaskTicketEmailExternalUser.UNDERSCORE + task.getId( ) );
+        String strEmailSubject = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_SUBJECT + TaskTicketEmailExternalUser.UNDERSCORE + task.getId( ) );
 
         String strError = null;
         int nLevelError = -1;
         Object[] errorParams = new Object[1];
+
+        // TODO SI PAS D'OBJET, ERREUR !
 
         if ( config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER )
         {
@@ -332,6 +337,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         model.put( MARK_MESSAGE_DIRECTIONS_LIST, listMessageDirections );
         model.put( MARK_CONFIG_FOLLOW_ACTION_ID, StringUtils.EMPTY );
         model.put( MARK_CONFIG_CONTACT_ATTRIBUTE, StringUtils.EMPTY );
+        model.put( MARK_CONFIG_DEFAULT_SUBJECT, StringUtils.EMPTY );
 
         if ( config != null )
         {
@@ -346,6 +352,12 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
             {
                 model.put( MARK_CONFIG_CONTACT_ATTRIBUTE, config.getIdContactAttribute( ) );
             }
+
+            if ( config.getDefaultSubject( ) != null )
+            {
+                model.put( MARK_CONFIG_DEFAULT_SUBJECT, config.getDefaultSubject( ) );
+            }
+
         } else
         {
             model.put( MARK_MESSAGE_DIRECTION, MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER );
@@ -368,6 +380,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         Integer nMessageDirectionId = getParameterAsInteger( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
         Integer nIdFollowingAction = getParameterAsInteger( request.getParameter( PARAMETER_FOLLOW_ACTION_ID ) );
         Integer nIdContactAttribute = getParameterAsInteger( request.getParameter( PARAMETER_CONTACT_ATTRIBUTE ) );
+        String strDefaultSubject = request.getParameter( PARAMETER_DEFAULT_SUBJECT );
 
         TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bConfigToCreate = false;
@@ -382,6 +395,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         config.setMessageDirectionExternalUser( MessageDirectionExternalUser.valueOf( nMessageDirectionId ) );
         config.setIdFollowingAction( nIdFollowingAction );
         config.setIdContactAttribute( nIdContactAttribute );
+        config.setDefaultSubject( strDefaultSubject );
 
         String strJspError = this.validateConfig( config, request );
 

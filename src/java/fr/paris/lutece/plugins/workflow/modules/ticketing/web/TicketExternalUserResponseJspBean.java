@@ -72,7 +72,9 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.constants.Messages;
+import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * TicketExternalUserResponse JSP Bean abstract class for JSP Bean
@@ -111,6 +113,8 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     private static final String MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM = "task_ticket_email_external_user_form";
     private static final String MARK_KEY_MESSAGE = "key_message";
     private static final String MARK_TYPE_MESSAGE = "type_message";
+    private static final String MARK_SIGNATURE = "signature";
+    private static final String MARK_TIMESTAMP = "timestamp";
 
     // Views
     private static final String VIEW_TICKET_EXTERNAL_USER_RESPONSE = "externalUserReponse";
@@ -247,12 +251,22 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                 MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM,
                 WorkflowService.getInstance( ).getDisplayTasksForm( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, externalUserConfig.getIdFollowingAction( ),
                         request, getLocale( ) ) );
-        model.put( TicketingConstants.MARK_FORM_ACTION, getActionUrl( TicketingConstants.ACTION_DO_PROCESS_WORKFLOW_ACTION ) );
+        model.put( TicketingConstants.MARK_FORM_ACTION, getActionUrl( TicketingConstants.ACTION_DO_PROCESS_WORKFLOW_ACTION, request ) );
         model.put( MARK_ID_ACTION, externalUserConfig.getIdFollowingAction( ) );
         model.put( MARK_ID_TICKET, ticket.getId( ) );
         model.put( MARK_ID_MESSAGE_EXTERNAL_USER, strIdEmailExternalUser );
 
         return getPage( PROPERTY_PAGE_TITLE_EXTERNAL_USER_RESPONSE, TEMPLATE_EXTERNAL_USER_RESPONSE, model );
+    }
+
+    protected String getActionUrl( String strAction, HttpServletRequest request )
+    {
+        UrlItem url = new UrlItem( getControllerPath( ) + getControllerJsp( ) );
+        url.addParameter( MVCUtils.PARAMETER_ACTION, strAction );
+        url.addParameter( MARK_SIGNATURE, request.getParameter( MARK_SIGNATURE ) );
+        url.addParameter( MARK_TIMESTAMP, request.getParameter( MARK_TIMESTAMP ) );
+        url.addParameter( MARK_ID_MESSAGE_EXTERNAL_USER, request.getParameter( MARK_ID_MESSAGE_EXTERNAL_USER ) );
+        return url.getUrl( );
     }
 
     /**
@@ -275,7 +289,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         }
         catch( Exception e )
         {
-            return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_ALREADY_ANSWER, SiteMessage.TYPE_WARNING );
+            return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_NOT_DONE, SiteMessage.TYPE_WARNING );
         }
     }
 
@@ -285,7 +299,12 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     @Override
     public String redirectWorkflowActionCancelled( HttpServletRequest request )
     {
-        return redirectView( request, VIEW_TICKET_EXTERNAL_USER_RESPONSE );
+        Map<String, String> parameters = new HashMap<>( );
+        parameters.put( MARK_SIGNATURE, request.getParameter( MARK_SIGNATURE ) );
+        parameters.put( MARK_TIMESTAMP, request.getParameter( MARK_TIMESTAMP ) );
+        parameters.put( MARK_ID_MESSAGE_EXTERNAL_USER, request.getParameter( MARK_ID_MESSAGE_EXTERNAL_USER ) );
+
+        return redirect( request, VIEW_TICKET_EXTERNAL_USER_RESPONSE, parameters );
     }
 
     /**
