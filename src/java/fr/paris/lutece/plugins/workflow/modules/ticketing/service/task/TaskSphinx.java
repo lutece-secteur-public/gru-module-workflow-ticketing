@@ -72,7 +72,7 @@ public class TaskSphinx extends AbstractTicketingTask
         }
         catch ( IOException exception )
         {
-            AppLogService.error( "Error when sending ticket data for ticket " + ticket.getId( ) );
+            AppLogService.error( "Error when sending ticket data for ticket " + ticket.getId( ), exception );
         }
 
         return strTaskInformation;

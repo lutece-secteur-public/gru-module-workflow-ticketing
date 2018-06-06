@@ -2,15 +2,19 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.sphinx;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 
 import com.google.gson.JsonObject;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import okhttp3.CipherSuite;
+import okhttp3.ConnectionSpec;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.TlsVersion;
 
 public class SphinxService
 {
@@ -22,9 +26,31 @@ public class SphinxService
     private static final String USERNAME = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.username" );
     private static final String PASSWORD = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.password" );
 
-    private OkHttpClient _client = new OkHttpClient( );
+    private static OkHttpClient _client;
     public static final MediaType JSON = MediaType.parse( "application/json; charset=utf-8" );
     public static final MediaType TEXT = MediaType.parse( "text/plain; charset=utf-8" );
+
+    public static OkHttpClient getHttpClient( )
+    {
+        if ( _client == null )
+        {
+            ConnectionSpec spec = new ConnectionSpec.Builder( ConnectionSpec.MODERN_TLS ).tlsVersions( TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2 )
+                    .cipherSuites( CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
+                            CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
+                            CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,
+                            CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256,
+                            CipherSuite.TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_DHE_DSS_WITH_AES_128_GCM_SHA256,
+                            CipherSuite.TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA,
+                            CipherSuite.TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_EMPTY_RENEGOTIATION_INFO_SCSV )
+                    .build( );
+
+            _client = new OkHttpClient.Builder( ).connectionSpecs( Collections.singletonList( spec ) ).build( );
+        }
+
+        return _client;
+    }
 
     public String accessToken( ) throws IOException
     {
@@ -32,7 +58,7 @@ public class SphinxService
 
         RequestBody body = RequestBody.create( TEXT, authParams );
         Request request = new Request.Builder( ).url( TOKEN_URL ).post( body ).build( );
-        Response response = _client.newCall(request).execute();
+        Response response = getHttpClient( ).newCall( request ).execute( );
         return response.body( ).string( );
     }
 
@@ -40,7 +66,7 @@ public class SphinxService
     {
         RequestBody body = RequestBody.create( JSON, json );
         Request request = new Request.Builder( ).url( API_URL + endpoint ).addHeader( "Authorization", "bearer " + accessToken( ) ).post( body ).build( );
-        Response response = _client.newCall( request ).execute( );
+        Response response = getHttpClient( ).newCall( request ).execute( );
         return response.body( ).string( );
     }
 
