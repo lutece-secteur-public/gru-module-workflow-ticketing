@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -25,6 +26,7 @@ public class SphinxService
     private static final String TOKEN_URL = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.token_url" );
     private static final String USERNAME = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.username" );
     private static final String PASSWORD = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.password" );
+    private static final String SURVEY = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.survey" );
 
     private static OkHttpClient _client;
     public static final MediaType JSON = MediaType.parse( "application/json; charset=utf-8" );
@@ -121,7 +123,10 @@ public class SphinxService
             ticketJson.addProperty( "delai_en_jours", ( ticket.getDateClose( ).getTime( ) - ticket.getDateCreate( ).getTime( ) ) / ( 60 * 60 * 1000 ) );
         }
 
-        post( "/api/survey/Reservoir_des_donnees_GRU/data", ticketJson.toString( ) );
+        JsonArray ticketsJson = new JsonArray( );
+        ticketsJson.add( ticketJson );
+
+        post( "/api/survey/" + SURVEY + "/data", ticketsJson.toString( ) );
     }
 
 
