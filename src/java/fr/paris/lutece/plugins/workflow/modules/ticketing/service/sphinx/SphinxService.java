@@ -139,7 +139,7 @@ public class SphinxService
             String closeDate = new SimpleDateFormat( "dd/MM/yyyy" ).format( ticket.getDateClose( ) );
             ticketJson.addProperty( COLUMN_CLOSE_DATE, closeDate );
 
-            ticketJson.addProperty( COLUMN_DAYS_OPENED, ( ticket.getDateClose( ).getTime( ) - ticket.getDateCreate( ).getTime( ) ) / ( 60 * 60 * 1000 ) );
+            ticketJson.addProperty( COLUMN_DAYS_OPENED, ( int ) ( ticket.getDateClose( ).getTime( ) - ticket.getDateCreate( ).getTime( ) ) / ( 24 * 60 * 60 * 1000 ) );
         }
 
         JsonArray ticketsJson = new JsonArray( );
