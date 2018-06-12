@@ -75,6 +75,9 @@
         class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
         p:taskConfigDAO-ref="workflow-ticketing.taskMarkAsUnreadConfigDAO" />
 
+	<bean id="workflow-ticketing.sphinxService"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.sphinx.SphinxService" />
+		
 	<!-- Task config -->
 	<bean id="workflow-ticketing.taskReplyConfig"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig"
@@ -309,6 +312,16 @@
 		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
 		p:key="taskAutomaticAssignmentDirection" p:titleI18nKey="module.workflow.ticketing.task_automatic_assignment_direction_title"
 		p:beanName="workflow-ticketing.taskAutomaticAssignmentDirection"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+		
+	<!-- Task Sphinx -->
+	<bean id="workflow-ticketing.taskSphinx"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskSphinx"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeSphinx"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskSphinx" p:titleI18nKey="module.workflow.ticketing.task_sphinx_title"
+		p:beanName="workflow-ticketing.taskSphinx"
 		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
 		
 	<!-- Task Mark as unread -->
