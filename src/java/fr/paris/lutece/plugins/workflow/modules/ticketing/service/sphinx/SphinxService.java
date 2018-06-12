@@ -6,6 +6,8 @@ import java.util.Collections;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import okhttp3.CipherSuite;
@@ -30,9 +32,22 @@ public class SphinxService
 
     private static OkHttpClient _client;
     public static final MediaType JSON = MediaType.parse( "application/json; charset=utf-8" );
-    public static final MediaType TEXT = MediaType.parse( "text/plain; charset=utf-8" );
+    public static final MediaType FORM = MediaType.parse( "application/x-www-form-urlencoded; charset=utf-8" );
 
-    private static boolean USE_SSL = false;
+    private static final String ACCESS_TOKEN = "access_token";
+
+    private static final String COLUMN_EMAIL = "email";
+    private static final String COLUMN_CREATION_DATE = "Date_de_creation";
+    private static final String COLUMN_CATEGORY_1 = "domaine";
+    private static final String COLUMN_CATEGORY_2 = "thematique";
+    private static final String COLUMN_CATEGORY_3 = "sous_thematique";
+    private static final String COLUMN_CATEGORY_4 = "localisation";
+    private static final String COLUMN_CHANNEL = "Canal";
+    private static final String COLUMN_ASSIGN_ENTITY = "Entite_d_assignation";
+    private static final String COLUMN_CLOSE_DATE = "Date_de_cloture";
+    private static final String COLUMN_DAYS_OPENED = "delai_en_jours";
+
+    private static boolean USE_SSL = true;
 
     public static OkHttpClient getHttpClient( )
     {
@@ -67,10 +82,14 @@ public class SphinxService
     {
         String authParams = "username=" + USERNAME + "&password=" + PASSWORD + "&lang=fr&grant_type=password&client_id=sphinxapiclient";
 
-        RequestBody body = RequestBody.create( TEXT, authParams );
+        RequestBody body = RequestBody.create( FORM, authParams );
         Request request = new Request.Builder( ).url( TOKEN_URL ).post( body ).build( );
         Response response = getHttpClient( ).newCall( request ).execute( );
-        return response.body( ).string( );
+
+        String rawData = response.body( ).string( );
+        JsonObject dataJson = new JsonParser( ).parse( rawData ).getAsJsonObject( );
+
+        return dataJson.get( ACCESS_TOKEN ).getAsString( );
     }
 
     public String post( String endpoint, String json ) throws IOException
@@ -85,42 +104,42 @@ public class SphinxService
     {
         JsonObject ticketJson = new JsonObject( );
 
-        ticketJson.addProperty( "email", ticket.getEmail( ) );
+        ticketJson.addProperty( COLUMN_EMAIL, ticket.getEmail( ) );
 
         String creationDate = new SimpleDateFormat( "dd/MM/yyyy" ).format( ticket.getDateCreate( ) );
-        ticketJson.addProperty( "Date_de_creation", creationDate );
+        ticketJson.addProperty( COLUMN_CREATION_DATE, creationDate );
 
         if ( ticket.getCategoryDepth( 0 ) != null )
         {
-            ticketJson.addProperty( "domaine", ticket.getCategoryDepth( 0 ).getLabel( ) );
+            ticketJson.addProperty( COLUMN_CATEGORY_1, ticket.getCategoryDepth( 0 ).getLabel( ) );
         }
         if ( ticket.getCategoryDepth( 1 ) != null )
         {
-            ticketJson.addProperty( "thematique", ticket.getCategoryDepth( 1 ).getLabel( ) );
+            ticketJson.addProperty( COLUMN_CATEGORY_2, ticket.getCategoryDepth( 1 ).getLabel( ) );
         }
         if ( ticket.getCategoryDepth( 2 ) != null )
         {
-            ticketJson.addProperty( "sous_thematique", ticket.getCategoryDepth( 2 ).getLabel( ) );
+            ticketJson.addProperty( COLUMN_CATEGORY_3, ticket.getCategoryDepth( 2 ).getLabel( ) );
         }
         if ( ticket.getCategoryDepth( 3 ) != null )
         {
-            ticketJson.addProperty( "localisation", ticket.getCategoryDepth( 3 ).getLabel( ) );
+            ticketJson.addProperty( COLUMN_CATEGORY_4, ticket.getCategoryDepth( 3 ).getLabel( ) );
         }
         if ( ticket.getChannel( ) != null )
         {
-            ticketJson.addProperty( "Canal", ticket.getChannel( ).getLabel( ) );
+            ticketJson.addProperty( COLUMN_CHANNEL, ticket.getChannel( ).getLabel( ) );
         }
         if ( ticket.getAssigneeUnit( ) != null )
         {
-            ticketJson.addProperty( "Entite_d_assignation", ticket.getAssigneeUnit( ).getName( ) );
+            ticketJson.addProperty( COLUMN_ASSIGN_ENTITY, ticket.getAssigneeUnit( ).getName( ) );
         }
 
         if ( ticket.getDateClose( ) != null )
         {
             String closeDate = new SimpleDateFormat( "dd/MM/yyyy" ).format( ticket.getDateClose( ) );
-            ticketJson.addProperty( "Date_de_cloture", closeDate );
+            ticketJson.addProperty( COLUMN_CLOSE_DATE, closeDate );
 
-            ticketJson.addProperty( "delai_en_jours", ( ticket.getDateClose( ).getTime( ) - ticket.getDateCreate( ).getTime( ) ) / ( 60 * 60 * 1000 ) );
+            ticketJson.addProperty( COLUMN_DAYS_OPENED, ( ticket.getDateClose( ).getTime( ) - ticket.getDateCreate( ).getTime( ) ) / ( 60 * 60 * 1000 ) );
         }
 
         JsonArray ticketsJson = new JsonArray( );
