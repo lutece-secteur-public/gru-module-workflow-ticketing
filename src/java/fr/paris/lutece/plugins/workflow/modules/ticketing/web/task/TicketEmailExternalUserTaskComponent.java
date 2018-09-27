@@ -159,9 +159,10 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 
         Map<String, Object> model = new HashMap<String, Object>( );
 
-        if ( config != null && config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER )
+        String messageQuestion = mailExternalUserMessage != null ? mailExternalUserMessage.getMessageQuestion( ) : "";
+		if ( config != null && config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER )
         {
-            model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + mailExternalUserMessage.getMessageQuestion( ) );
+            model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + messageQuestion );
             List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = _ticketEmailExternalUserRecipientDAO.loadByIdHistory( nIdHistory, task.getId( ) );
             List<TicketEmailExternalUserCc> listCcEmailExternalUser = _ticketEmailExternalUserCcDAO.loadByIdHistory( nIdHistory, task.getId( ) );
 
@@ -181,10 +182,11 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
             model.put( MARK_TICKETING_EMAIL_INFO_CC, sbInfosCc.toString( ) );
         } else if ( config != null && config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.RE_AGENT_TO_EXTERNAL_USER )
         {
-            model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + mailExternalUserMessage.getMessageQuestion( ) );
+            model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + messageQuestion );
         } else
         {
-            model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + mailExternalUserMessage.getMessageResponse( ) );
+            String messageResponse = mailExternalUserMessage != null ? mailExternalUserMessage.getMessageResponse( ):"";
+			model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + messageResponse );
         }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_TICKET_INFORMATION, locale, model );
