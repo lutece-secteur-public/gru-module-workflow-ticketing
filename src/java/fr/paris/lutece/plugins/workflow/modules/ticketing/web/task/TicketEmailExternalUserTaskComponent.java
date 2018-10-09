@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -51,8 +50,6 @@ import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.business.TaskNotifyGruConfig;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.TaskNotifyGruConfigService;
-import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
-import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.ITicketEmailExternalUserCcDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCc;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.MessageDirectionExternalUser;
@@ -61,15 +58,12 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.TicketEmailExternalUserHistory;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.TicketEmailExternalUserMessage;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.ITicketEmailExternalUserRecipientDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.TicketEmailExternalUserRecipient;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.IExternalUserDAO;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistoryDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskTicketEmailExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -164,10 +158,6 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Inject
     @Named( TaskNotifyGruConfigService.BEAN_SERVICE )
     private ITaskConfigService          _taskNotifyGruConfigService;
-    
-    @Inject
-    @Named( "workflow-ticketing.externaluser.provider-manager" )
-    private TicketEmailExternalUserProviderManager _ticketEmailExternalUserProviderManager;
 
     /**
      * {@inheritDoc}
@@ -235,21 +225,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 	        		TaskNotifyGruConfig configNotify = _taskNotifyGruConfigService.findByPrimaryKey( taskItem.getId( ) );
 	        		if ( configNotify != null ) 
 	        		{
-	        			String strProviderId = "ticketEmailExternalUserProviderManager";
-						ResourceHistory resourceHistory = new ResourceHistory();
-						resourceHistory.setIdResource(nIdResource);
-						resourceHistory.setId(167490);
-						IProvider provider = _ticketEmailExternalUserProviderManager.createProvider(strProviderId, resourceHistory , request);
-						Collection<NotifyGruMarker> markerValues = provider.provideMarkerValues();
-						
-						String subject = configNotify.getSubjectBroadcast();
-						
-						for(NotifyGruMarker marker : markerValues) {
-							subject = subject.replace("${"+marker.getMarker()+"}", marker.getValue()); 
-							subject = subject.replace("${"+marker.getMarker()+"!}", marker.getValue() != null ? marker.getValue():""); 
-						}
-
-						config.setDefaultSubject(subject);
+	        			config.setDefaultSubject(configNotify.getSubjectBroadcast());
 	        		}
 	        	}
 	        }
