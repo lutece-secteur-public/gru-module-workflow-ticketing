@@ -48,6 +48,8 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
+import fr.paris.lutece.plugins.workflow.modules.notifygru.business.TaskNotifyGruConfig;
+import fr.paris.lutece.plugins.workflow.modules.notifygru.service.TaskNotifyGruConfigService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.ITicketEmailExternalUserCcDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCc;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.MessageDirectionExternalUser;
@@ -65,6 +67,8 @@ import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
+import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
 import fr.paris.lutece.portal.business.user.attribute.IAttribute;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -146,6 +150,14 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Inject
     @Named( IExternalUserDAO.BEAN_SERVICE )
     private IExternalUserDAO                     _ExternalUserDAO;
+    
+    @Inject
+    @Named( TaskService.BEAN_SERVICE )
+    private ITaskService                        _taskService;
+    
+    @Inject
+    @Named( TaskNotifyGruConfigService.BEAN_SERVICE )
+    private ITaskConfigService          _taskNotifyGruConfigService;
 
     /**
      * {@inheritDoc}
@@ -201,7 +213,24 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
-
+        
+        if ( config != null) 
+        {
+	        List<ITask> taskList = _taskService.getListTaskByIdAction(task.getAction().getId(), locale);
+	        for( ITask taskItem : taskList ) 
+	        { 
+	        	String key = taskItem.getTaskType ( ).getKey ( );
+	        	if( "taskNotifyGru".equals( key ) ) 
+	        	{
+	        		TaskNotifyGruConfig configNotify = _taskNotifyGruConfigService.findByPrimaryKey( taskItem.getId( ) );
+	        		if ( configNotify != null ) 
+	        		{
+	        			config.setDefaultSubject(configNotify.getSubjectBroadcast());
+	        		}
+	        	}
+	        }
+        }
+        
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_CONFIG, config );
 
