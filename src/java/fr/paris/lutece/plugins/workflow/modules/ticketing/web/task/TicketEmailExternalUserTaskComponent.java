@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +49,10 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
+import fr.paris.lutece.plugins.workflow.modules.notifygru.business.TaskNotifyGruConfig;
+import fr.paris.lutece.plugins.workflow.modules.notifygru.service.TaskNotifyGruConfigService;
+import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
+import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.ITicketEmailExternalUserCcDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCc;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.MessageDirectionExternalUser;
@@ -56,15 +61,20 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.TicketEmailExternalUserHistory;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.TicketEmailExternalUserMessage;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.ITicketEmailExternalUserRecipientDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.TicketEmailExternalUserRecipient;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.IExternalUserDAO;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistoryDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskTicketEmailExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
+import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.plugins.workflowcore.web.task.TaskComponent;
 import fr.paris.lutece.portal.business.user.attribute.IAttribute;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -146,6 +156,18 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Inject
     @Named( IExternalUserDAO.BEAN_SERVICE )
     private IExternalUserDAO                     _ExternalUserDAO;
+    
+    @Inject
+    @Named( TaskService.BEAN_SERVICE )
+    private ITaskService                        _taskService;
+    
+    @Inject
+    @Named( TaskNotifyGruConfigService.BEAN_SERVICE )
+    private ITaskConfigService          _taskNotifyGruConfigService;
+    
+    @Inject
+    @Named( "workflow-ticketing.externaluser.provider-manager" )
+    private TicketEmailExternalUserProviderManager _ticketEmailExternalUserProviderManager;
 
     /**
      * {@inheritDoc}
@@ -201,7 +223,38 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        
+        if ( config != null) 
+        {
+	        List<ITask> taskList = _taskService.getListTaskByIdAction(task.getAction().getId(), locale);
+	        for( ITask taskItem : taskList ) 
+	        { 
+	        	String key = taskItem.getTaskType ( ).getKey ( );
+	        	if( "taskNotifyGru".equals( key ) ) 
+	        	{
+	        		TaskNotifyGruConfig configNotify = _taskNotifyGruConfigService.findByPrimaryKey( taskItem.getId( ) );
+	        		if ( configNotify != null ) 
+	        		{
+	        			String strProviderId = "ticketEmailExternalUserProviderManager";
+						ResourceHistory resourceHistory = new ResourceHistory();
+						resourceHistory.setIdResource(nIdResource);
+						resourceHistory.setId(167490);
+						IProvider provider = _ticketEmailExternalUserProviderManager.createProvider(strProviderId, resourceHistory , request);
+						Collection<NotifyGruMarker> markerValues = provider.provideMarkerValues();
+						
+						String subject = configNotify.getSubjectBroadcast();
+						
+						for(NotifyGruMarker marker : markerValues) {
+							subject = subject.replace("${"+marker.getMarker()+"}", marker.getValue()); 
+							subject = subject.replace("${"+marker.getMarker()+"!}", marker.getValue() != null ? marker.getValue():""); 
+						}
 
+						config.setDefaultSubject(subject);
+	        		}
+	        	}
+	        }
+        }
+        
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_CONFIG, config );
 
