@@ -65,7 +65,6 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provide
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.ITicketEmailExternalUserRecipientDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.TicketEmailExternalUserRecipient;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.IExternalUserDAO;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistoryDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskTicketEmailExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.WorkflowTicketingUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
@@ -245,9 +244,17 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 						String subject = configNotify.getSubjectBroadcast();
 						
 						for(NotifyGruMarker marker : markerValues) {
-							subject = subject.replace("${"+marker.getMarker()+"}", marker.getValue()); 
-							subject = subject.replace("${"+marker.getMarker()+"!}", marker.getValue() != null ? marker.getValue():""); 
+							String markerKey = marker.getMarker();
+							if (markerKey != null ) 
+							{
+								String markerValue = marker.getValue();
+								String value = markerValue != null ? markerValue : "";
+								subject = subject.replace("${"+markerKey+"}", value); 
+								subject = subject.replace("${"+markerKey+"!}", value); 
+							}
 						}
+						
+						subject = subject.replaceAll("\\$\\{.*\\}","");
 
 						config.setDefaultSubject(subject);
 	        		}
