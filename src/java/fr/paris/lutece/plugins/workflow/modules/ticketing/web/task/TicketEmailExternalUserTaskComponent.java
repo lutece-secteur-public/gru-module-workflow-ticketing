@@ -245,8 +245,14 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 						String subject = configNotify.getSubjectBroadcast();
 						
 						for(NotifyGruMarker marker : markerValues) {
-							subject = subject.replace("${"+marker.getMarker()+"}", marker.getValue()); 
-							subject = subject.replace("${"+marker.getMarker()+"!}", marker.getValue() != null ? marker.getValue():""); 
+							String markerKey = marker.getMarker();
+							if (markerKey != null ) 
+							{
+								String markerValue = marker.getValue();
+								String value = markerValue != null ? markerValue : "";
+								subject = subject.replace("${"+markerKey+"}", value); 
+								subject = subject.replace("${"+markerKey+"!}", value); 
+							}
 						}
 
 						config.setDefaultSubject(subject);
