@@ -118,14 +118,9 @@ public class TicketEmailExternalUserProvider implements IProvider
             throw new AppException( "No ticket for resource history Id : " + resourceHistory.getIdResource( ) );
         }
         TicketEmailExternalUserHistory ticketEmailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( resourceHistory.getId( ) );
-        if ( ticketEmailExternalUserHistory == null )
+        if ( ticketEmailExternalUserHistory != null )
         {
-            throw new AppException( "No ticketEmailExternalUserHistory found for resource history Id : " + resourceHistory.getId( ) );
-        }
-        _emailExternalUserMessage = _ticketEmailExternalUserDemandDAO.loadByIdMessageExternalUser( ticketEmailExternalUserHistory.getIdMessageExternalUser( ) );
-        if ( _emailExternalUserMessage == null )
-        {
-            throw new AppException( "No TicketExternalUserMessage found for demand id : " + ticketEmailExternalUserHistory.getIdMessageExternalUser( ) );
+        	_emailExternalUserMessage = _ticketEmailExternalUserDemandDAO.loadByIdMessageExternalUser( ticketEmailExternalUserHistory.getIdMessageExternalUser( ) );
         }
     }
 
@@ -253,13 +248,15 @@ public class TicketEmailExternalUserProvider implements IProvider
         }
 
         // SPECIFIC EMAIL AGENT
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS, _emailExternalUserMessage.getEmailRecipients( ) ) );
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC, _emailExternalUserMessage.getEmailRecipientsCc( ) ) );
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_MESSAGE, _emailExternalUserMessage.getMessageQuestion( ) ) );
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LINK, buildTicketLink( _emailExternalUserMessage.getIdMessageExternalUser( ) ) ) );
-
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_SUBJECT, _emailExternalUserMessage.getEmailSubject( ) ) );
-
+        if ( _emailExternalUserMessage != null ) 
+        {
+	        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS, _emailExternalUserMessage.getEmailRecipients( ) ) );
+	        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC, _emailExternalUserMessage.getEmailRecipientsCc( ) ) );
+	        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_MESSAGE, _emailExternalUserMessage.getMessageQuestion( ) ) );
+	        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LINK, buildTicketLink( _emailExternalUserMessage.getIdMessageExternalUser( ) ) ) );
+	        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_SUBJECT, _emailExternalUserMessage.getEmailSubject( ) ) );
+        }
+        
         TicketPriority priority = TicketPriority.valueOf( _ticket.getPriority( ) );
         String priorityLabel = StringUtils.EMPTY;
         if ( !TicketPriority.LOW.equals( priority ) )

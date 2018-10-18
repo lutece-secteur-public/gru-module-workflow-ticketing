@@ -237,20 +237,19 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 	        			String strProviderId = "ticketEmailExternalUserProviderManager";
 						ResourceHistory resourceHistory = new ResourceHistory();
 						resourceHistory.setIdResource(nIdResource);
-						resourceHistory.setId(167490);
 						IProvider provider = _ticketEmailExternalUserProviderManager.createProvider(strProviderId, resourceHistory , request);
 						Collection<NotifyGruMarker> markerValues = provider.provideMarkerValues();
 						
 						String subject = configNotify.getSubjectBroadcast();
 						
-						for(NotifyGruMarker marker : markerValues) {
+						for( NotifyGruMarker marker : markerValues ) {
 							String markerKey = marker.getMarker();
-							if (markerKey != null ) 
+							if ( markerKey != null ) 
 							{
 								String markerValue = marker.getValue();
 								String value = markerValue != null ? markerValue : "";
 								subject = subject.replace("${"+markerKey+"}", value); 
-								subject = subject.replace("${"+markerKey+"!}", value); 
+								subject = subject.replace("${"+markerKey+"!}", value != null && !"".equals(value) ? value : ""); 
 							}
 						}
 						
