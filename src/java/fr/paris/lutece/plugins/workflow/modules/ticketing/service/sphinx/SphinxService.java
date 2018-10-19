@@ -88,7 +88,7 @@ public class SphinxService
 
         String rawData = response.body( ).string( );
         JsonObject dataJson = new JsonParser( ).parse( rawData ).getAsJsonObject( );
-
+        response.body( ).close();
         return dataJson.get( ACCESS_TOKEN ).getAsString( );
     }
 
@@ -97,7 +97,9 @@ public class SphinxService
         RequestBody body = RequestBody.create( JSON, json );
         Request request = new Request.Builder( ).url( API_URL + endpoint ).addHeader( "Authorization", "bearer " + accessToken( ) ).post( body ).build( );
         Response response = getHttpClient( ).newCall( request ).execute( );
-        return response.body( ).string( );
+        String bodyResponse = response.body( ).string( );
+        response.body( ).close();
+		return bodyResponse;
     }
 
     public void postTicketData( Ticket ticket ) throws IOException
