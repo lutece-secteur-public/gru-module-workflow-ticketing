@@ -43,13 +43,10 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task, message_direction, close_ticket"
-            + " FROM workflow_task_ticketing_reply_config WHERE id_task = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_ticketing_reply_config"
-            + " (id_task, message_direction, close_ticket) VALUES (?, ?, ?)";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_reply_config" + " SET id_task = ?, message_direction = ?, close_ticket = ?"
-            + " WHERE id_task = ?";
-    private static final String SQL_QUERY_DELETE = "DELETE FROM workflow_task_ticketing_reply_config  WHERE id_task = ?";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_task, message_direction, close_ticket" + " FROM workflow_task_ticketing_reply_config WHERE id_task = ?";
+    private static final String SQL_QUERY_INSERT              = "INSERT INTO  workflow_task_ticketing_reply_config" + " (id_task, message_direction, close_ticket) VALUES (?, ?, ?)";
+    private static final String SQL_QUERY_UPDATE              = "UPDATE workflow_task_ticketing_reply_config" + " SET id_task = ?, message_direction = ?, close_ticket = ?" + " WHERE id_task = ?";
+    private static final String SQL_QUERY_DELETE              = "DELETE FROM workflow_task_ticketing_reply_config  WHERE id_task = ?";
 
     /**
      * {@inheritDoc}

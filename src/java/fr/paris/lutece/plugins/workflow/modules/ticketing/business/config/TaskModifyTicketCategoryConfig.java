@@ -33,10 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.config;
 
-import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 /**
  *

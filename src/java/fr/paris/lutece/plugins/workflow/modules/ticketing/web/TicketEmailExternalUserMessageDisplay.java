@@ -45,11 +45,11 @@ import fr.paris.lutece.portal.business.user.AdminUser;
  */
 public class TicketEmailExternalUserMessageDisplay
 {
-    private Timestamp _dDateCreate;
+    private Timestamp        _dDateCreate;
 
-    private String _strMessageQuestion;
+    private String           _strMessageQuestion;
 
-    private AdminUser _adminUser;
+    private AdminUser        _adminUser;
 
     private List<UploadFile> _listUploadedFiles;
 

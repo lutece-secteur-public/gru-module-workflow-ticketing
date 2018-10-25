@@ -50,9 +50,9 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
             + " WHERE id_history = ? ";
     private static final String SQL_QUERY_FIND_BY_ID_MESSAGE = " SELECT id_task, id_history, id_message_external_user FROM workflow_task_ticketing_email_external_user_history "
             + " WHERE id_message_external_user = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_email_external_user_history ( id_task, id_history, id_message_external_user ) "
+    private static final String SQL_QUERY_INSERT             = " INSERT INTO workflow_task_ticketing_email_external_user_history ( id_task, id_history, id_message_external_user ) "
             + " VALUES ( ?,?,? ) ";
-    private static final String SQL_QUERY_DELETE_BY_HISTORY = " DELETE FROM workflow_task_ticketing_email_external_user_history WHERE id_history = ? ";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY  = " DELETE FROM workflow_task_ticketing_email_external_user_history WHERE id_history = ? ";
 
     /**
      * {@inheritDoc}

@@ -40,8 +40,8 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.information;
  */
 public class TaskInformation
 {
-    private int _nIdResourceHistory;
-    private int _nIdTask;
+    private int    _nIdResourceHistory;
+    private int    _nIdTask;
     private String _strValue;
 
     /**

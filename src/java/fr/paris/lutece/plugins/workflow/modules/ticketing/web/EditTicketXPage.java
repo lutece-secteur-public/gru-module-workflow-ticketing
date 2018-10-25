@@ -84,41 +84,41 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class EditTicketXPage implements XPageApplication
 {
     // XPage
-    public static final String XPAGE = "editticket";
+    public static final String               XPAGE                                = "editticket";
 
     /**
      * Generated serial id
      */
-    private static final long serialVersionUID = 7677620731962218061L;
+    private static final long                serialVersionUID                     = 7677620731962218061L;
 
     // TEMPLATES
-    private static final String TEMPLATE_EDIT_TICKET = "skin/plugins/ticketing/ticket/view_ticket_details.html";
+    private static final String              TEMPLATE_EDIT_TICKET                 = "skin/plugins/ticketing/ticket/view_ticket_details.html";
 
     // Properties
-    private static final String PROPERTY_XPAGE_EDIT_TICKET_PAGETITLE = "module.workflow.ticketing.edit_ticket.page_title";
-    private static final String PROPERTY_XPAGE_EDIT_TICKET_PATHLABEL = "module.workflow.ticketing.edit_ticket.page_label";
-    private static final String PROPERTY_URL_RETURN = "module.workflow.ticketing.task_edit_ticket.url_return";
+    private static final String              PROPERTY_XPAGE_EDIT_TICKET_PAGETITLE = "module.workflow.ticketing.edit_ticket.page_title";
+    private static final String              PROPERTY_XPAGE_EDIT_TICKET_PATHLABEL = "module.workflow.ticketing.edit_ticket.page_label";
+    private static final String              PROPERTY_URL_RETURN                  = "module.workflow.ticketing.task_edit_ticket.url_return";
 
     // MESSAGES
-    private static final String MESSAGE_TICKET_ALREADY_EDITED = "module.workflow.ticketing.edit_ticket.message.ticket_already_edited";
-    private static final String MESSAGE_EDITION_COMPLETE = "module.workflow.ticketing.edit_ticket.message.edition_complete";
-    private static final String MESSAGE_TICKET_DELETED = "module.workflow.ticketing.externalUserResponse.message.ticket_closed";
+    private static final String              MESSAGE_TICKET_ALREADY_EDITED        = "module.workflow.ticketing.edit_ticket.message.ticket_already_edited";
+    private static final String              MESSAGE_EDITION_COMPLETE             = "module.workflow.ticketing.edit_ticket.message.edition_complete";
+    private static final String              MESSAGE_TICKET_DELETED               = "module.workflow.ticketing.externalUserResponse.message.ticket_closed";
 
     // Marks
-    private static final String MARK_SIGNATURE = "signature";
-    private static final String MARK_TIMESTAMP = "timestamp";
-    private static final String MARK_ID_ACTION = "id_action";
+    private static final String              MARK_SIGNATURE                       = "signature";
+    private static final String              MARK_TIMESTAMP                       = "timestamp";
+    private static final String              MARK_ID_ACTION                       = "id_action";
 
     // Parameters
-    private static final String PARAMETER_ACTION = "action";
+    private static final String              PARAMETER_ACTION                     = "action";
 
     // ACTIONS
-    private static final String ACTION_DO_MODIFY_TICKET = "do_modify_ticket";
-    private static transient WorkflowService _workflowService = WorkflowService.getInstance( );
+    private static final String              ACTION_DO_MODIFY_TICKET              = "do_modify_ticket";
+    private static transient WorkflowService _workflowService                     = WorkflowService.getInstance( );
 
     // SERVICES
-    private transient IEditableTicketService _editableTicketService = SpringContextService.getBean( EditableTicketService.BEAN_NAME );
-    private transient TicketFormService _ticketFormService = SpringContextService.getBean( TicketFormService.BEAN_NAME );
+    private transient IEditableTicketService _editableTicketService               = SpringContextService.getBean( EditableTicketService.BEAN_NAME );
+    private transient TicketFormService      _ticketFormService                   = SpringContextService.getBean( TicketFormService.BEAN_NAME );
 
     /**
      * {@inheritDoc}
@@ -136,21 +136,19 @@ public class EditTicketXPage implements XPageApplication
             String strIdTask = request.getParameter( TaskEditTicketConstants.PARAMETER_ID_TASK );
             String strIdAction = request.getParameter( TicketingConstants.PARAMETER_WORKFLOW_ID_ACTION );
 
-            if ( StringUtils.isNotBlank( strIdHistory ) && StringUtils.isNumeric( strIdHistory ) && StringUtils.isNotBlank( strIdTask )
-                    && StringUtils.isNumeric( strIdTask ) && StringUtils.isNotBlank( strIdAction ) && StringUtils.isNumeric( strIdAction ) )
+            if ( StringUtils.isNotBlank( strIdHistory ) && StringUtils.isNumeric( strIdHistory ) && StringUtils.isNotBlank( strIdTask ) && StringUtils.isNumeric( strIdTask )
+                    && StringUtils.isNotBlank( strIdAction ) && StringUtils.isNumeric( strIdAction ) )
             {
                 int nIdHistory = Integer.parseInt( strIdHistory );
                 int nIdTask = Integer.parseInt( strIdTask );
                 int nIdAction = Integer.parseInt( strIdAction );
 
                 page = getPage( request, nIdHistory, nIdTask, nIdAction, strUrlReturn );
-            }
-            else
+            } else
             {
                 setSiteMessage( request, Messages.MANDATORY_FIELDS, SiteMessage.TYPE_STOP, strUrlReturn );
             }
-        }
-        else
+        } else
         {
             setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP, strUrlReturn );
         }
@@ -191,32 +189,26 @@ public class EditTicketXPage implements XPageApplication
                     {
                         // Back to home page
                         setSiteMessage( request, MESSAGE_EDITION_COMPLETE, SiteMessage.TYPE_INFO, strUrlReturn );
-                    }
-                    else
+                    } else
                     {
                         page = getEditTicketPage( request, editableTicket );
                     }
-                }
-                catch( RuntimeException e )
+                } catch ( RuntimeException e )
                 {
                     AppLogService.error( e );
                     setSiteMessage( request, WorkflowCapableXPage.ERROR_WORKFLOW_ACTION_ABORTED, SiteMessage.TYPE_STOP, strUrlReturn );
                 }
-            }
-            else
+            } else
             {
                 setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP, strUrlReturn );
             }
+        } else if ( editableTicket != null )
+        {
+            setSiteMessage( request, MESSAGE_TICKET_ALREADY_EDITED, SiteMessage.TYPE_INFO, strUrlReturn );
+        } else
+        {
+            setSiteMessage( request, MESSAGE_TICKET_DELETED, SiteMessage.TYPE_INFO, strUrlReturn );
         }
-        else
-            if ( editableTicket != null )
-            {
-                setSiteMessage( request, MESSAGE_TICKET_ALREADY_EDITED, SiteMessage.TYPE_INFO, strUrlReturn );
-            }
-            else
-            {
-                setSiteMessage( request, MESSAGE_TICKET_DELETED, SiteMessage.TYPE_INFO, strUrlReturn );
-            }
 
         return page;
     }
@@ -292,15 +284,13 @@ public class EditTicketXPage implements XPageApplication
                 {
                     Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
 
-                    _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdAction, null, request,
-                            request.getLocale( ), false );
+                    _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdAction, null, request, request.getLocale( ), false );
 
                     bIsActionProccessed = true;
 
                     // Immediate indexation of the Ticket
                     immediateTicketIndexing( ticket.getId( ), request );
-                }
-                finally
+                } finally
                 {
                     TicketUtils.unregisterAdminUserFront( request );
                 }
@@ -329,8 +319,7 @@ public class EditTicketXPage implements XPageApplication
         if ( StringUtils.isNotBlank( strUrlReturn ) )
         {
             SiteMessageService.setMessage( request, strMessage, nTypeMessage, strUrlReturn );
-        }
-        else
+        } else
         {
             SiteMessageService.setMessage( request, strMessage, nTypeMessage );
         }
@@ -366,8 +355,7 @@ public class EditTicketXPage implements XPageApplication
             {
                 TicketIndexer ticketIndexer = new TicketIndexer( );
                 ticketIndexer.indexTicket( ticket );
-            }
-            catch( TicketIndexerException ticketIndexerException )
+            } catch ( TicketIndexerException ticketIndexerException )
             {
                 // The indexation of the Ticket fail, we will store the Ticket in the table for the daemon
                 IndexerActionHome.create( TicketIndexerActionUtil.createIndexerActionFromTicket( ticket ) );

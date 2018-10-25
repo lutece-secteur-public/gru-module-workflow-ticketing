@@ -33,12 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket;
 
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
+import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 
 /**
  * This class provides methods to manage {@link fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField}

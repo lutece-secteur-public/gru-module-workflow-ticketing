@@ -60,16 +60,15 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskAssignTicketToMe extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_ASSIGN_TICKET_TO_ME = "module.workflow.ticketing.task_assign_ticket_to_me.labelAssignTicketToMe";
-    private static final String MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION = "module.workflow.ticketing.task_assign_ticket_to_me.information";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_ME                 = "module.workflow.ticketing.task_assign_ticket_to_me.labelAssignTicketToMe";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION     = "module.workflow.ticketing.task_assign_ticket_to_me.information";
     private static final String MESSAGE_ASSIGN_TICKET_TO_ME_NO_CURRENT_USER = "module.workflow.ticketing.task_assign_ticket_to_me.no_current_user";
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
-        boolean bBypassAssignToMe = ( request != null )
-                && BooleanUtils.isTrue( (Boolean) request.getAttribute( TicketingConstants.ATTRIBUTE_BYPASS_ASSSIGN_TO_ME ) );
+        boolean bBypassAssignToMe = ( request != null ) && BooleanUtils.isTrue( ( Boolean ) request.getAttribute( TicketingConstants.ATTRIBUTE_BYPASS_ASSSIGN_TO_ME ) );
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
@@ -83,12 +82,11 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
             {
                 assigneeUser = new AssigneeUser( );
                 strCurrentUser = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_NO_CURRENT_USER, Locale.FRENCH );
-            }
-            else
+            } else
             {
                 strCurrentUser = assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( );
             }
-            
+
             if ( request != null )
             {
                 AdminUser user = AdminUserService.getAdminUser( request );
@@ -108,11 +106,11 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
                         AssigneeUnit assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
                         ticket.setAssigneeUnit( assigneeUnit );
                     }
-    
-                        TicketHome.update( ticket );
-    
-                        strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION, Locale.FRENCH ),
-                                strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+
+                    TicketHome.update( ticket );
+
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION, Locale.FRENCH ), strCurrentUser,
+                            assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
                 }
             }
         }

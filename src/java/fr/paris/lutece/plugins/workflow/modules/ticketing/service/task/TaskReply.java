@@ -98,7 +98,8 @@ public class TaskReply extends AbstractTicketingTask
                 strUserMessage = I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_NO_MESSAGE, Locale.FRENCH );
             }
 
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ), Locale.FRENCH ), TicketingConstants.MESSAGE_MARK + strUserMessage );
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ), Locale.FRENCH ),
+                    TicketingConstants.MESSAGE_MARK + strUserMessage );
 
         }
 

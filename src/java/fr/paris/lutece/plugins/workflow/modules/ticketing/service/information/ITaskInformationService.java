@@ -33,10 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.information;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformation;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *

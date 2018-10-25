@@ -33,6 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -40,14 +48,6 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketNomenclature}
@@ -59,16 +59,16 @@ public class ModifyTicketNomenclatureTaskComponent extends TicketingTaskComponen
     private static final String TEMPLATE_TASK_MODIFY_TICKET_NOMENCLATURE_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_nomenclature_form.html";
 
     // list
-    private static final String MARK_TICKET_NOMENCLATURE = "ticket_nomenclature";
+    private static final String MARK_TICKET_NOMENCLATURE                      = "ticket_nomenclature";
 
     // Parameter
-    private static final String PARAMETER_TICKET_NOMENCLATURE = "nomenclature";
+    private static final String PARAMETER_TICKET_NOMENCLATURE                 = "nomenclature";
 
     // Message reply
-    private static final String MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR = "module.workflow.ticketing.task_modify_ticket_nomenclature.error";
+    private static final String MESSAGE_MODIFY_TICKET_NOMENCLATURE_ERROR      = "module.workflow.ticketing.task_modify_ticket_nomenclature.error";
 
     // Property
-    private static final String PROPERTY_NOMENCLATURE_REGEXP = "workflow-ticketing.workflow.nomenclature.regexp";
+    private static final String PROPERTY_NOMENCLATURE_REGEXP                  = "workflow-ticketing.workflow.nomenclature.regexp";
 
     @Override
     public String getDisplayTaskForm( int nIdHistory, String strResourceType, HttpServletRequest request, Locale locale, ITask task )

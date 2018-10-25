@@ -11,13 +11,12 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnreadConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, id_marking FROM workflow_task_ticketing_mark_unread_config "
-            + " WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_mark_unread_config ( id_task, id_marking ) " + " VALUES ( ?,? ) ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_mark_unread_config SET id_marking = ? " + " WHERE id_task = ? ";
-    private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_mark_unread_config WHERE id_task = ? ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, id_marking FROM workflow_task_ticketing_mark_unread_config " + " WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT              = " INSERT INTO workflow_task_ticketing_mark_unread_config ( id_task, id_marking ) " + " VALUES ( ?,? ) ";
+    private static final String SQL_QUERY_UPDATE              = "UPDATE workflow_task_ticketing_mark_unread_config SET id_marking = ? " + " WHERE id_task = ? ";
+    private static final String SQL_QUERY_DELETE              = " DELETE FROM workflow_task_ticketing_mark_unread_config WHERE id_task = ? ";
 
-    private static final String SQL_QUERY_FIND_BY_MARKING_ID = " SELECT id_task FROM workflow_task_ticketing_mark_unread_config " + " WHERE id_marking = ? ";
+    private static final String SQL_QUERY_FIND_BY_MARKING_ID  = " SELECT id_task FROM workflow_task_ticketing_mark_unread_config " + " WHERE id_marking = ? ";
 
     /**
      * {@inheritDoc}

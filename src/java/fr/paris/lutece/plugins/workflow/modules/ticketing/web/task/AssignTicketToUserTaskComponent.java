@@ -33,6 +33,14 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
@@ -42,14 +50,6 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToUser}
@@ -61,14 +61,14 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
     private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_USER_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_user_form.html";
 
     // MESSAGE
-    private static final String MESSAGE_NO_USER_FOUND = "module.workflow.ticketing.task_assign_ticket_to_user.labelNoUserFound";
+    private static final String MESSAGE_NO_USER_FOUND                    = "module.workflow.ticketing.task_assign_ticket_to_user.labelNoUserFound";
 
     // MARKS
-    private static final String MARK_USERS_LIST = "users_list";
-    private static final String MARK_CURRENT_USER = "current_user";
+    private static final String MARK_USERS_LIST                          = "users_list";
+    private static final String MARK_CURRENT_USER                        = "current_user";
 
     // Constantes
-    private static final String EMPTY_CHOICE_IN_LIST = "-1";
+    private static final String EMPTY_CHOICE_IN_LIST                     = "-1";
 
     /**
      * {@inheritDoc}
@@ -86,8 +86,7 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
             if ( ticket.getAssigneeUnit( ) != null )
             {
                 usersList = getUsersList( ticket.getAssigneeUnit( ).getUnitId( ) );
-                strCurrentUserId = ( ticket.getAssigneeUser( ) == null ) ? EMPTY_CHOICE_IN_LIST : ( String
-                        .valueOf( ticket.getAssigneeUser( ).getAdminUserId( ) ) );
+                strCurrentUserId = ( ticket.getAssigneeUser( ) == null ) ? EMPTY_CHOICE_IN_LIST : ( String.valueOf( ticket.getAssigneeUser( ).getAdminUserId( ) ) );
 
                 if ( usersList.toMap( ).containsKey( strCurrentUserId ) )
                 {
@@ -99,8 +98,7 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
             {
                 request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
                 addError( I18nService.getLocalizedString( MESSAGE_NO_USER_FOUND, locale ) );
-            }
-            else
+            } else
             {
                 model.put( MARK_USERS_LIST, usersList );
             }

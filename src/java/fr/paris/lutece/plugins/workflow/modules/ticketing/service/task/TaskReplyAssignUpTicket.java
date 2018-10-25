@@ -33,6 +33,16 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -46,17 +56,6 @@ import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.text.MessageFormat;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * This class represents a task to respond to assigner after assigning up
  *
@@ -64,14 +63,14 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskReplyAssignUpTicket extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_REPLY_ASSIGN_UP_TICKET = "module.workflow.ticketing.task_reply_assign_up_ticket.labelReplyAssignUpTicket";
-    private static final String MESSAGE_REPLY_ASSIGN_UP_TICKET_INFORMATION = "module.workflow.ticketing.task_reply_assign_up_ticket.information";
+    private static final String MESSAGE_REPLY_ASSIGN_UP_TICKET              = "module.workflow.ticketing.task_reply_assign_up_ticket.labelReplyAssignUpTicket";
+    private static final String MESSAGE_REPLY_ASSIGN_UP_TICKET_INFORMATION  = "module.workflow.ticketing.task_reply_assign_up_ticket.information";
     private static final String MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER = "module.workflow.ticketing.task_reply_assign_up_ticket.no_current_user";
-    private static final String MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND = "module.workflow.ticketing.task_reply_assign_up_ticket.no_user_found";
-    private static final String PROPERTY_ASSIGN_UP_ACTION_ID = "workflow-ticketing.workflow.action.id.assignUp";
-    private static final String PROPERTY_ASSIGN_TO_UNIT_ACTION_ID = "workflow-ticketing.workflow.action.id.assignToUnit";
-    private static final int ASSIGN_UP_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID, 304 );
-    private static final int ASSIGN_TO_UNIT_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_TO_UNIT_ACTION_ID, 305 );
+    private static final String MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND   = "module.workflow.ticketing.task_reply_assign_up_ticket.no_user_found";
+    private static final String PROPERTY_ASSIGN_UP_ACTION_ID                = "workflow-ticketing.workflow.action.id.assignUp";
+    private static final String PROPERTY_ASSIGN_TO_UNIT_ACTION_ID           = "workflow-ticketing.workflow.action.id.assignToUnit";
+    private static final int    ASSIGN_UP_ACTION_ID                         = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID, 304 );
+    private static final int    ASSIGN_TO_UNIT_ACTION_ID                    = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_TO_UNIT_ACTION_ID, 305 );
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -116,8 +115,7 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
                 {
                     ticket.setAssigneeUnit( ticket.getAssignerUnit( ) );
 
-                }
-                else
+                } else
                 {
                     List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
 
@@ -138,8 +136,7 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
                         ( ticket.getAssigneeUser( ) != null ) ? ( ticket.getAssigneeUser( ).getFirstname( ) + " " + ticket.getAssigneeUser( ).getLastname( ) )
                                 : I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER, Locale.FRENCH ),
                         ( ticket.getAssigneeUnit( ) != null ) ? ticket.getAssigneeUnit( ).getName( ) : StringUtils.EMPTY );
-            }
-            else
+            } else
             {
                 strTaskInformation = I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_USER_FOUND, Locale.FRENCH );
             }
@@ -164,8 +161,7 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
         List<Integer> listIdResource = new ArrayList<Integer>( );
         listIdResource.add( resourceHistory.getIdResource( ) );
 
-        List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource, resourceHistory.getResourceType( ),
-                resourceHistory.getWorkflow( ).getId( ) );
+        List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource, resourceHistory.getResourceType( ), resourceHistory.getWorkflow( ).getId( ) );
 
         boolean isAssignUpActionFound = false;
         ListIterator<Integer> iterator = listIdHistory.listIterator( listIdHistory.size( ) );

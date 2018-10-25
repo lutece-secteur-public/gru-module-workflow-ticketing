@@ -33,20 +33,19 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class represents a task to register the channel on ticket creation
@@ -55,7 +54,7 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskRegisterChannel extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_REGISTER_CHANNEL = "module.workflow.ticketing.task_register_channel.labelRegisterChannel";
+    private static final String       MESSAGE_REGISTER_CHANNEL = "module.workflow.ticketing.task_register_channel.labelRegisterChannel";
 
     // Services
     @Inject

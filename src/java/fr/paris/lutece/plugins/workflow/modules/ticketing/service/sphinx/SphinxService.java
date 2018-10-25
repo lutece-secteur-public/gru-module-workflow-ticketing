@@ -21,33 +21,33 @@ import okhttp3.TlsVersion;
 
 public class SphinxService
 {
-    public static final String BEAN_NAME = "workflow-ticketing.sphinxService";
+    public static final String    BEAN_NAME            = "workflow-ticketing.sphinxService";
 
-    private static final String API_URL = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.url" );
+    private static final String   API_URL              = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.url" );
 
-    private static final String TOKEN_URL = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.token_url" );
-    private static final String USERNAME = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.username" );
-    private static final String PASSWORD = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.password" );
-    private static final String SURVEY = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.survey" );
+    private static final String   TOKEN_URL            = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.token_url" );
+    private static final String   USERNAME             = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.username" );
+    private static final String   PASSWORD             = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.password" );
+    private static final String   SURVEY               = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.survey" );
 
-    private static OkHttpClient _client;
-    public static final MediaType JSON = MediaType.parse( "application/json; charset=utf-8" );
-    public static final MediaType FORM = MediaType.parse( "application/x-www-form-urlencoded; charset=utf-8" );
+    private static OkHttpClient   _client;
+    public static final MediaType JSON                 = MediaType.parse( "application/json; charset=utf-8" );
+    public static final MediaType FORM                 = MediaType.parse( "application/x-www-form-urlencoded; charset=utf-8" );
 
-    private static final String ACCESS_TOKEN = "access_token";
+    private static final String   ACCESS_TOKEN         = "access_token";
 
-    private static final String COLUMN_EMAIL = "email";
-    private static final String COLUMN_CREATION_DATE = "Date_de_creation";
-    private static final String COLUMN_CATEGORY_1 = "domaine";
-    private static final String COLUMN_CATEGORY_2 = "thematique";
-    private static final String COLUMN_CATEGORY_3 = "sous_thematique";
-    private static final String COLUMN_CATEGORY_4 = "localisation";
-    private static final String COLUMN_CHANNEL = "Canal";
-    private static final String COLUMN_ASSIGN_ENTITY = "Entite_d_assignation";
-    private static final String COLUMN_CLOSE_DATE = "Date_de_cloture";
-    private static final String COLUMN_DAYS_OPENED = "delai_en_jours";
+    private static final String   COLUMN_EMAIL         = "email";
+    private static final String   COLUMN_CREATION_DATE = "Date_de_creation";
+    private static final String   COLUMN_CATEGORY_1    = "domaine";
+    private static final String   COLUMN_CATEGORY_2    = "thematique";
+    private static final String   COLUMN_CATEGORY_3    = "sous_thematique";
+    private static final String   COLUMN_CATEGORY_4    = "localisation";
+    private static final String   COLUMN_CHANNEL       = "Canal";
+    private static final String   COLUMN_ASSIGN_ENTITY = "Entite_d_assignation";
+    private static final String   COLUMN_CLOSE_DATE    = "Date_de_cloture";
+    private static final String   COLUMN_DAYS_OPENED   = "delai_en_jours";
 
-    private static boolean USE_SSL = true;
+    private static boolean        USE_SSL              = true;
 
     public static OkHttpClient getHttpClient( )
     {
@@ -68,8 +68,7 @@ public class SphinxService
                         .build( );
 
                 _client = new OkHttpClient.Builder( ).connectionSpecs( Collections.singletonList( spec ) ).build( );
-            }
-            else
+            } else
             {
                 _client = new OkHttpClient( );
             }
@@ -88,7 +87,7 @@ public class SphinxService
 
         String rawData = response.body( ).string( );
         JsonObject dataJson = new JsonParser( ).parse( rawData ).getAsJsonObject( );
-        response.body( ).close();
+        response.body( ).close( );
         return dataJson.get( ACCESS_TOKEN ).getAsString( );
     }
 
@@ -98,8 +97,8 @@ public class SphinxService
         Request request = new Request.Builder( ).url( API_URL + endpoint ).addHeader( "Authorization", "bearer " + accessToken( ) ).post( body ).build( );
         Response response = getHttpClient( ).newCall( request ).execute( );
         String bodyResponse = response.body( ).string( );
-        response.body( ).close();
-		return bodyResponse;
+        response.body( ).close( );
+        return bodyResponse;
     }
 
     public void postTicketData( Ticket ticket ) throws IOException
@@ -149,6 +148,5 @@ public class SphinxService
 
         post( "/api/survey/" + SURVEY + "/data", ticketsJson.toString( ) );
     }
-
 
 }

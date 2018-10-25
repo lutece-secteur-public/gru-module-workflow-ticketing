@@ -59,14 +59,14 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class AssignUpTicketTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_ASSIGN_UP_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_up_ticket_form.html";
+    private static final String TEMPLATE_TASK_ASSIGN_UP_TICKET_FORM    = "admin/plugins/workflow/modules/ticketing/task_assign_up_ticket_form.html";
 
     // MESSAGE
-    private static final String MESSAGE_NO_SUPPORT_ENTITY_FOUND = "module.workflow.ticketing.task_assign_up_ticket.labelNoSupportEntiesFound";
+    private static final String MESSAGE_NO_SUPPORT_ENTITY_FOUND        = "module.workflow.ticketing.task_assign_up_ticket.labelNoSupportEntiesFound";
 
     // MARKS
-    private static final String MARK_TICKET_SUPPORT_ENTITIES = "ticket_up_units";
-    
+    private static final String MARK_TICKET_SUPPORT_ENTITIES           = "ticket_up_units";
+
     private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
 
     /**
@@ -77,19 +77,19 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
         ReferenceList lstRefSupportEntities = new ReferenceList( );
-        
-        ReferenceItem emptyReferenceItem = new ReferenceItem();
-        emptyReferenceItem.setCode(StringUtils.EMPTY);
-        emptyReferenceItem.setName(I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM, locale ));
-        emptyReferenceItem.setChecked(true);
-		lstRefSupportEntities.add(emptyReferenceItem);
+
+        ReferenceItem emptyReferenceItem = new ReferenceItem( );
+        emptyReferenceItem.setCode( StringUtils.EMPTY );
+        emptyReferenceItem.setName( I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM, locale ) );
+        emptyReferenceItem.setChecked( true );
+        lstRefSupportEntities.add( emptyReferenceItem );
 
         AdminUser adminUser = AdminUserService.getAdminUser( request );
         List<SupportEntity> lstSupportEntity = SupportEntityHome.getEligibleSupportEntities( adminUser );
 
         for ( SupportEntity supportEntity : lstSupportEntity )
         {
-            ReferenceItem refItem = new ReferenceItem();
+            ReferenceItem refItem = new ReferenceItem( );
             refItem.setName( supportEntity.getName( ) );
             refItem.setCode( String.valueOf( supportEntity.getUnit( ).getUnitId( ) ) );
             lstRefSupportEntities.add( refItem );
@@ -99,8 +99,7 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
         {
             request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
             addError( I18nService.getLocalizedString( MESSAGE_NO_SUPPORT_ENTITY_FOUND, locale ) );
-        }
-        else
+        } else
         {
             model.put( MARK_TICKET_SUPPORT_ENTITIES, lstRefSupportEntities );
         }

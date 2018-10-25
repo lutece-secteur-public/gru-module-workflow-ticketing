@@ -33,10 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.config;
 
-import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 /**
  *
@@ -47,10 +47,10 @@ public class TaskEditTicketConfig extends TaskConfig
 {
     @NotNull
     @Min( 1 )
-    private int _nIdUserEditionAction;
+    private int              _nIdUserEditionAction;
     @NotNull
     @Min( 1 )
-    private int _nIdStateAfterEdition;
+    private int              _nIdStateAfterEdition;
     private MessageDirection _messageDirection;
 
     /**

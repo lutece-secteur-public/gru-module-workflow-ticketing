@@ -33,12 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.sql.DAOUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -47,8 +47,7 @@ import java.util.List;
  */
 public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
 {
-    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_entry "
-            + " FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
+    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_entry " + " FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
     private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_editable_ticket_field (id_history, id_entry ) " + " VALUES ( ?,? ) ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
 

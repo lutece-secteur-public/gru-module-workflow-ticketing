@@ -221,10 +221,12 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         if ( sbEntries.length( ) == 0 )
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED, Locale.FRENCH ), TicketingConstants.MESSAGE_MARK + strAgentMessage );
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT_NO_FIELD_EDITED, Locale.FRENCH ),
+                    TicketingConstants.MESSAGE_MARK + strAgentMessage );
         } else
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT, Locale.FRENCH ), sbEntries.toString( ), TicketingConstants.MESSAGE_MARK + strAgentMessage );
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_AGENT, Locale.FRENCH ), sbEntries.toString( ),
+                    TicketingConstants.MESSAGE_MARK + strAgentMessage );
         }
 
         return strTaskInformation;
@@ -305,10 +307,12 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         if ( sbEntries.length( ) == 0 )
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED, Locale.FRENCH ), TicketingConstants.MESSAGE_MARK + strUserMessage );
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED, Locale.FRENCH ),
+                    TicketingConstants.MESSAGE_MARK + strUserMessage );
         } else
         {
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER, Locale.FRENCH ), sbEntries.toString( ), TicketingConstants.MESSAGE_MARK + strUserMessage );
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER, Locale.FRENCH ), sbEntries.toString( ),
+                    TicketingConstants.MESSAGE_MARK + strUserMessage );
         }
 
         return strTaskInformation;

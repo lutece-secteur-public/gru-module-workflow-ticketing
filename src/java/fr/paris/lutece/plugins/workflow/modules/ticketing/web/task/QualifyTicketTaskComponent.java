@@ -33,17 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketCriticality;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketPriority;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskQualifyTicket}
@@ -55,10 +55,10 @@ public class QualifyTicketTaskComponent extends TicketingTaskComponent
     private static final String TEMPLATE_TASK_QUALIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_qualify_ticket_form.html";
 
     // MARKS
-    private static final String MARK_TICKET_PRIORITIES_LIST = "ticket_priorities_list";
-    private static final String MARK_TICKET_PRIORITY_DEFAULT = "ticket_priority_default";
-    private static final String MARK_TICKET_CRITICALITIES_LIST = "ticket_criticalities_list";
-    private static final String MARK_TICKET_CRITICALITY_DEFAULT = "ticket_criticality_default";
+    private static final String MARK_TICKET_PRIORITIES_LIST       = "ticket_priorities_list";
+    private static final String MARK_TICKET_PRIORITY_DEFAULT      = "ticket_priority_default";
+    private static final String MARK_TICKET_CRITICALITIES_LIST    = "ticket_criticalities_list";
+    private static final String MARK_TICKET_CRITICALITY_DEFAULT   = "ticket_criticality_default";
 
     /**
      * {@inheritDoc}

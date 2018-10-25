@@ -33,6 +33,19 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
@@ -49,19 +62,6 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskMo
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import org.apache.commons.lang.StringUtils;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class represents a task to modify the ticket category and so, its domain and type
@@ -70,24 +70,24 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskModifyTicketCategory extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_MODIFY_TICKET_CATEGORY = "module.workflow.ticketing.task_modify_ticket_category.labelModifyTicketCategory";
-    private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION = "module.workflow.ticketing.task_modify_ticket_category.information";
+    private static final String MESSAGE_MODIFY_TICKET_CATEGORY              = "module.workflow.ticketing.task_modify_ticket_category.labelModifyTicketCategory";
+    private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION  = "module.workflow.ticketing.task_modify_ticket_category.information";
     private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION = "module.workflow.ticketing.task_modify_ticket_attribute.information";
-    private static final String MESSAGE_NO_VALUE = "module.workflow.ticketing.task_modify_ticket_category.noValue";
+    private static final String MESSAGE_NO_VALUE                            = "module.workflow.ticketing.task_modify_ticket_category.noValue";
 
     // PARAMETERS
-    public static final String PARAMETER_TICKET_CATEGORY_ID = "id_ticket_category";
-    public static final String PARAMETER_TICKET_DOMAIN_ID = "id_ticket_domain";
-    public static final String PARAMETER_TICKET_TYPE_ID = "id_ticket_type";
-    public static final String SEPARATOR = " - ";
+    public static final String  PARAMETER_TICKET_CATEGORY_ID                = "id_ticket_category";
+    public static final String  PARAMETER_TICKET_DOMAIN_ID                  = "id_ticket_domain";
+    public static final String  PARAMETER_TICKET_TYPE_ID                    = "id_ticket_type";
+    public static final String  SEPARATOR                                   = " - ";
 
     // Beans
-    private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE = "workflow-ticketing.taskModifyTicketCategoryConfigService";
+    private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE  = "workflow-ticketing.taskModifyTicketCategoryConfigService";
     @Inject
-    private TicketFormService _ticketFormService;
+    private TicketFormService   _ticketFormService;
     @Inject
     @Named( BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE )
-    private ITaskConfigService _taskModifyTicketCategoryConfigService;
+    private ITaskConfigService  _taskModifyTicketCategoryConfigService;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -97,7 +97,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
         Ticket ticket = getTicket( nIdResourceHistory );
 
         String[] listPreviousTicketCategoryLabel = new String[TicketCategoryService.getInstance( ).getCategoriesTree( ).getMaxDepthNumber( )];
-        Arrays.fill(listPreviousTicketCategoryLabel, "");
+        Arrays.fill( listPreviousTicketCategoryLabel, "" );
 
         if ( ticket != null )
         {
@@ -118,9 +118,9 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
                 if ( !strPreviousCategoryLabel.equals( ticketCategory.getLabel( ) ) )
                 {
-                    strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ),
-                            ticketCategory.getCategoryType( ).getLabel( ), StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ),
-                                    StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
+                    strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ), ticketCategory.getCategoryType( ).getLabel( ),
+                            StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ),
+                            StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
                 }
             }
 
@@ -152,12 +152,10 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             if ( response.getResponseValue( ) != null )
                             {
                                 strPreviousAttributeValue += ( " " + response.getResponseValue( ) );
+                            } else if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                            {
+                                strPreviousAttributeValue += ( " " + response.getFile( ).getTitle( ) );
                             }
-                            else
-                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
-                                {
-                                    strPreviousAttributeValue += ( " " + response.getFile( ).getTitle( ) );
-                                }
                             // clear the response
                             nIdCurrentResponse = response.getIdResponse( );
                             iterator.remove( );
@@ -175,12 +173,10 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             if ( response.getResponseValue( ) != null )
                             {
                                 strNewAttributeValue += ( " " + response.getResponseValue( ) );
+                            } else if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                            {
+                                strNewAttributeValue += ( " " + response.getFile( ).getTitle( ) );
                             }
-                            else
-                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
-                                {
-                                    strNewAttributeValue += ( " " + response.getFile( ).getTitle( ) );
-                                }
                             responseNew = response;
                             break;
                         }
@@ -189,8 +185,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                     // compare
                     if ( !strPreviousAttributeValue.equals( strNewAttributeValue ) )
                     {
-                        strTaskInformation += MessageFormat.format(
-                                I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION, Locale.FRENCH ), entry.getTitle( ),
+                        strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION, Locale.FRENCH ), entry.getTitle( ),
                                 strPreviousAttributeValue, strNewAttributeValue );
                         if ( nIdCurrentResponse != -1 )
                         {

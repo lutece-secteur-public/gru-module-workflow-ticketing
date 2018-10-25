@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -48,18 +57,6 @@ import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceWorkflowSe
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
  *
  * This class provides methods to manage {@link fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket}
@@ -67,21 +64,21 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class EditableTicketService implements IEditableTicketService
 {
-    public static final String BEAN_NAME = "workflow-ticketing.editableTicketService";
+    public static final String          BEAN_NAME = "workflow-ticketing.editableTicketService";
 
     // SERVICES
     @Inject
     private IEditableTicketFieldService _editableTicketFieldService;
     @Inject
-    private ITaskService _taskService;
+    private ITaskService                _taskService;
     @Inject
-    private IResourceWorkflowService _resourceWorkflowService;
+    private IResourceWorkflowService    _resourceWorkflowService;
     @Inject
-    private IActionService _actionService;
+    private IActionService              _actionService;
 
     // DAO
     @Inject
-    private IEditableTicketDAO _editableTicketDAO;
+    private IEditableTicketDAO          _editableTicketDAO;
 
     // CRUD
 
@@ -257,11 +254,9 @@ public class EditableTicketService implements IEditableTicketService
             {
                 Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
 
-                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, action
-                        .getWorkflow( ).getId( ) );
+                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, action.getWorkflow( ).getId( ) );
 
-                if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState( ) != null )
-                        && ( resourceWorkflow.getState( ).getId( ) == action.getStateAfter( ).getId( ) ) )
+                if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState( ) != null ) && ( resourceWorkflow.getState( ).getId( ) == action.getStateAfter( ).getId( ) ) )
                 {
                     bIsValid = true;
                 }
