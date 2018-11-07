@@ -142,9 +142,9 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         _bAvatarAvailable = ( PluginService.getPlugin( TicketingConstants.PLUGIN_AVATAR ) != null );
     }
 
-    public String getTimeout( )
+    public String getTimeout( HttpServletRequest request )
     {
-        return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_TIMEOUT, SiteMessage.TYPE_ERROR );
+        return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_TIMEOUT, SiteMessage.TYPE_WARNING );
     }
 
     /**
