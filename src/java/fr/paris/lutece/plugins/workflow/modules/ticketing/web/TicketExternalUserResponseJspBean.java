@@ -99,6 +99,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     private static final String                PROPERTY_EXTERNAL_USER_MESSAGE_ALREADY_ANSWER = "module.workflow.ticketing.externalUserResponse.message.already_answer";
     private static final String                PROPERTY_EXTERNAL_USER_MESSAGE_NOT_DONE       = "module.workflow.ticketing.externalUserResponse.message.not_respond";
     private static final String                PROPERTY_TICKET_DELETED                       = "module.workflow.ticketing.externalUserResponse.message.ticket_closed";
+    private static final String                PROPERTY_EXTERNAL_USER_MESSAGE_TIMEOUT        = "module.workflow.ticketing.externalUserResponse.message.ticket_timeout";
 
     // Markers
     private static final String                MARK_REFERENCE                                = "reference";
@@ -139,6 +140,11 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         _taskTicketExternalUserConfigService = SpringContextService.getBean( TaskTicketEmailExternalUser.BEAN_TICKET_CONFIG_SERVICE );
         _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
         _bAvatarAvailable = ( PluginService.getPlugin( TicketingConstants.PLUGIN_AVATAR ) != null );
+    }
+
+    public String getTimeout( )
+    {
+        return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_TIMEOUT, SiteMessage.TYPE_ERROR );
     }
 
     /**
@@ -218,7 +224,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                 listEmailExternalUserMessageDisplay.add( emailExternalUserMessageDisplay );
             }
 
-            if ( listFileUpload != null && !listFileUpload.isEmpty( ) )
+            if ( ( listFileUpload != null ) && !listFileUpload.isEmpty( ) )
             {
                 String strBaseUrl = AppPathService.getBaseUrl( request );
 
@@ -310,7 +316,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
     /**
      * call TEMPLATE_EXTERNAL_USER_MESSAGE template for the given message key
-     * 
+     *
      * @param strKeyMessage
      *            the key of the message
      * @param nMessageType
