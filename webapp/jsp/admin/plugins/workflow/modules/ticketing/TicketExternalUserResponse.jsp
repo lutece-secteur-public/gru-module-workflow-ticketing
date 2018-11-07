@@ -10,7 +10,7 @@
 <%@ include file="../../../../AdminFooter.jsp" %>
 
 <script>
-setTimeout(function () {
+setInterval(function () {
 	   window.location.href = "jsp/admin/plugins/workflow/modules/ticketing/TicketExternalUserResponseTimeout.jsp"; //will redirect to error page in 28 minutes (just before WSSO 30 minutes)
 	}, 28*60*1000);
 
