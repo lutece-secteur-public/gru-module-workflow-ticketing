@@ -70,20 +70,20 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_category_form.html";
+    private static final String TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_FORM   = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_category_form.html";
     private static final String TEMPLATE_TASK_MODIFY_TICKET_CATEGORY_CONFIG = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_category_config.html";
 
     // MARKS
-    private static final String MARK_CONFIG = "config";
-    private static final String MARK_CONFIG_ALL_ENTRY = "form_entries";
-    private static final String MARK_CONFIG_SELECTED_ENTRY = "selected_form_entry";
-    private static final String MARK_ID_TASK = "id_task";
+    private static final String MARK_CONFIG                                 = "config";
+    private static final String MARK_CONFIG_ALL_ENTRY                       = "form_entries";
+    private static final String MARK_CONFIG_SELECTED_ENTRY                  = "selected_form_entry";
+    private static final String MARK_ID_TASK                                = "id_task";
 
     // Message reply
-    private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_ERROR = "module.workflow.ticketing.task_modify_ticket_attribute.error";
+    private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_ERROR       = "module.workflow.ticketing.task_modify_ticket_attribute.error";
 
     @Inject
-    private TicketFormService _ticketFormService;
+    private TicketFormService   _ticketFormService;
 
     /**
      * {@inheritDoc}
@@ -137,7 +137,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
         TaskModifyTicketCategoryConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
-        String [ ] tSelectedEntries = new String [ ] { };
+        String[] tSelectedEntries = new String[] { };
         config.clearSelectedEntries( );
 
         if ( request.getParameterValues( MARK_CONFIG_SELECTED_ENTRY ) != null )

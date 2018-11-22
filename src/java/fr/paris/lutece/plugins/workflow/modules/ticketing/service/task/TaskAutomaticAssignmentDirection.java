@@ -58,15 +58,15 @@ public class TaskAutomaticAssignmentDirection extends AbstractTicketingTask
 {
 
     // Messages
-    private static final String MESSAGE_AUTOMATIC_ASSIGNMENT_DIRECTION = "module.workflow.ticketing.task_automatic_assignment_direction.labelAutomaticAssignmentDirection";
+    private static final String MESSAGE_AUTOMATIC_ASSIGNMENT_DIRECTION                = "module.workflow.ticketing.task_automatic_assignment_direction.labelAutomaticAssignmentDirection";
     private static final String MESSAGE_AUTOMATIC_ASSIGN_DIRECTION_TICKET_INFORMATION = "module.workflow.ticketing.task_automatic_assignment_direction.information";
 
     // Properties
-    private static final String PROPERTY_DIRECTION_DOMAIN_LABEL = "workflow-ticketing.workflow.automatic_assignment_direction.domainLabel";
-    private static final String PROPERTY_USER_ATTRIBUTE_DIRECTION = "workflow-ticketing.workflow.identity.attribute.user.vdp.direction";
-    private static final String PROPERTY_USER_ATTRIBUTE_DEFAULT_DIRECTION = "direction";
+    private static final String PROPERTY_DIRECTION_DOMAIN_LABEL                       = "workflow-ticketing.workflow.automatic_assignment_direction.domainLabel";
+    private static final String PROPERTY_USER_ATTRIBUTE_DIRECTION                     = "workflow-ticketing.workflow.identity.attribute.user.vdp.direction";
+    private static final String PROPERTY_USER_ATTRIBUTE_DEFAULT_DIRECTION             = "direction";
 
-    private static final String PROPERTY_DIRECTION_ID_UNIT = "workflow-ticketing.workflow.direction.idUnit";
+    private static final String PROPERTY_DIRECTION_ID_UNIT                            = "workflow-ticketing.workflow.direction.idUnit";
 
     @Override
     public String getTitle( Locale locale )
@@ -95,8 +95,7 @@ public class TaskAutomaticAssignmentDirection extends AbstractTicketingTask
 
             ticket.setAssigneeUnit( new AssigneeUnit( unit ) );
             TicketHome.update( ticket );
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AUTOMATIC_ASSIGN_DIRECTION_TICKET_INFORMATION, Locale.FRENCH ),
-                    ticket.getAssigneeUnit( ).getName( ) );
+            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AUTOMATIC_ASSIGN_DIRECTION_TICKET_INFORMATION, Locale.FRENCH ), ticket.getAssigneeUnit( ).getName( ) );
         }
 
         return strTaskInformation;

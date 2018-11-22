@@ -28,36 +28,36 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 
 public class TicketingCommentTaskComponent extends CommentTaskComponent
 {
-	//beans
-	private static final String TICKETING_TICKET_REFERENCE_SERVICE = "ticketing.ticketReferenceService";
-	private static final String WORKFLOW_COMMENT_VALUE_SERVICE = "workflow.commentValueService";
+    // beans
+    private static final String  TICKETING_TICKET_REFERENCE_SERVICE = "ticketing.ticketReferenceService";
+    private static final String  WORKFLOW_COMMENT_VALUE_SERVICE     = "workflow.commentValueService";
 
-	TicketingTaskComponent taskComponent = new TicketingTaskComponent( );
-    
+    TicketingTaskComponent       taskComponent                      = new TicketingTaskComponent( );
+
     @Inject
     @Named( TICKETING_TICKET_REFERENCE_SERVICE )
     private ContentPostProcessor _contentPostProcessor;
-    
+
     @Inject
     @Named( WORKFLOW_COMMENT_VALUE_SERVICE )
     private ICommentValueService _commentValueService;
     // TEMPLATES
-    private static final String TEMPLATE_TASK_COMMENT_FORM = "admin/plugins/workflow/modules/comment/task_comment_form.html";
-    private static final String TEMPLATE_TASK_COMMENT_INFORMATION = "admin/plugins/workflow/modules/comment/task_comment_information.html";
+    private static final String  TEMPLATE_TASK_COMMENT_FORM         = "admin/plugins/workflow/modules/comment/task_comment_form.html";
+    private static final String  TEMPLATE_TASK_COMMENT_INFORMATION  = "admin/plugins/workflow/modules/comment/task_comment_information.html";
 
     // MARKS
-    private static final String MARK_ID_HISTORY = "id_history";
-    private static final String MARK_TASK = "task";
-    private static final String MARK_CONFIG = "config";
-    private static final String MARK_COMMENT_VALUE = "comment_value";
-    private static final String MARK_WEBAPP_URL = "webapp_url";
-    private static final String MARK_LOCALE = "locale";
-    private static final String MARK_HAS_PERMISSION_DELETE = "has_permission_delete";
-    private static final String MARK_IS_OWNER = "is_owner";
-    private static final String MARK_LIST_ID_TICKETS = "list_id_tickets";
+    private static final String  MARK_ID_HISTORY                    = "id_history";
+    private static final String  MARK_TASK                          = "task";
+    private static final String  MARK_CONFIG                        = "config";
+    private static final String  MARK_COMMENT_VALUE                 = "comment_value";
+    private static final String  MARK_WEBAPP_URL                    = "webapp_url";
+    private static final String  MARK_LOCALE                        = "locale";
+    private static final String  MARK_HAS_PERMISSION_DELETE         = "has_permission_delete";
+    private static final String  MARK_IS_OWNER                      = "is_owner";
+    private static final String  MARK_LIST_ID_TICKETS               = "list_id_tickets";
 
     // PARAMETERS
-    private static final String PARAMETER_COMMENT_VALUE = "comment_value";
+    private static final String  PARAMETER_COMMENT_VALUE            = "comment_value";
 
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )

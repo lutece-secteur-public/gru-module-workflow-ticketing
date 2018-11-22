@@ -33,15 +33,15 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket;
 
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.IEditableTicketFieldDAO;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 import javax.inject.Inject;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.IEditableTicketFieldDAO;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 
 /**
  *
@@ -50,7 +50,7 @@ import javax.inject.Inject;
  */
 public class EditableTicketFieldService implements IEditableTicketFieldService
 {
-    public static final String BEAN_SERVICE = "workflow-ticketing.editableTicketFieldService";
+    public static final String      BEAN_SERVICE = "workflow-ticketing.editableTicketFieldService";
     @Inject
     private IEditableTicketFieldDAO _editableTicketFieldDAO;
 

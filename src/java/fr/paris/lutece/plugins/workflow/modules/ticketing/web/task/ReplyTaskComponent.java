@@ -33,6 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
@@ -42,12 +48,6 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReply}
  *
@@ -55,19 +55,19 @@ import javax.servlet.http.HttpServletRequest;
 public class ReplyTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_REPLY_FORM = "admin/plugins/workflow/modules/ticketing/task_reply_form.html";
-    private static final String TEMPLATE_TASK_REPLY_CONFIG = "admin/plugins/workflow/modules/ticketing/task_reply_config.html";
+    private static final String TEMPLATE_TASK_REPLY_FORM     = "admin/plugins/workflow/modules/ticketing/task_reply_form.html";
+    private static final String TEMPLATE_TASK_REPLY_CONFIG   = "admin/plugins/workflow/modules/ticketing/task_reply_config.html";
 
     // Markers
-    private static final String MARK_AGENT_VIEW = "agent_view";
+    private static final String MARK_AGENT_VIEW              = "agent_view";
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
-    private static final String MARK_MESSAGE_DIRECTION = "message_direction";
-    private static final String MARK_CLOSE_TICKET = "close_ticket";
-    private static final String MARK_LIST_ID_TICKETS = "list_id_tickets";
+    private static final String MARK_MESSAGE_DIRECTION       = "message_direction";
+    private static final String MARK_CLOSE_TICKET            = "close_ticket";
+    private static final String MARK_LIST_ID_TICKETS         = "list_id_tickets";
 
     // Parameters
-    private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
-    private static final String PARAMETER_CLOSE_TICKET = "close_ticket";
+    private static final String PARAMETER_MESSAGE_DIRECTION  = "message_direction";
+    private static final String PARAMETER_CLOSE_TICKET       = "close_ticket";
 
     /**
      * {@inheritDoc}
@@ -87,8 +87,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         {
             model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection( ).ordinal( ) );
             model.put( MARK_CLOSE_TICKET, config.isCloseTicket( ) );
-        }
-        else
+        } else
         {
             model.put( MARK_CLOSE_TICKET, false );
             model.put( MARK_MESSAGE_DIRECTION, MessageDirection.AGENT_TO_USER );
@@ -124,8 +123,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         if ( bConfigToCreate )
         {
             this.getTaskConfigService( ).create( config );
-        }
-        else
+        } else
         {
             this.getTaskConfigService( ).update( config );
         }

@@ -33,10 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service;
 
+import java.util.Locale;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-
-import java.util.Locale;
 
 /**
  * Ticketing POC GRU module
@@ -46,7 +46,7 @@ public class WorkflowTicketingPlugin extends Plugin
     /**
      * Name of the Workflow ticketing module
      */
-    public static final String PLUGIN_NAME = "workflow-ticketing";
+    public static final String PLUGIN_NAME              = "workflow-ticketing";
 
     /**
      * Transaction manage bean name for services of this plugin

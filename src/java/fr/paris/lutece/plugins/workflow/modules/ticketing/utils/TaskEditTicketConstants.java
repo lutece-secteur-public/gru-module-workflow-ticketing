@@ -41,12 +41,12 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.utils;
 public final class TaskEditTicketConstants
 {
     // MARKS
-    public static final String MARK_EDITABLE_TICKET = "editable_ticket";
-    public static final String MARK_ENTRIES_HTML_FORM = "entries_html_form";
+    public static final String MARK_EDITABLE_TICKET     = "editable_ticket";
+    public static final String MARK_ENTRIES_HTML_FORM   = "entries_html_form";
 
     // PARAMETERS
-    public static final String PARAMETER_ID_HISTORY = "id_history";
-    public static final String PARAMETER_ID_TASK = "id_task";
+    public static final String PARAMETER_ID_HISTORY     = "id_history";
+    public static final String PARAMETER_ID_TASK        = "id_task";
 
     // Messages
     public static final String MESSAGE_NO_CONFIGURATION = "module.workflow.ticketing.task_edit_ticket.message.no_configuration";

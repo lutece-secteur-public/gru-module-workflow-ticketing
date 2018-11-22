@@ -36,8 +36,6 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser
 import org.junit.Assert;
 import org.junit.Test;
 
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.ExternalUser;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.ExternalUserComparator;
 import junit.framework.TestCase;
 
 /**
@@ -62,33 +60,24 @@ public class ExternalUserComparatorTest extends TestCase
         ExternalUser user8 = createExternalUser( "a0z", "z", "z", "z.z@z.com" );
         ExternalUser user9 = createExternalUser( "a10z", "z", "z", "z.z@z.com" );
         ExternalUser user10 = createExternalUser( "a9z", "z", "z", "z.z@z.com" );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user1 ) + " / " + fieldAgentUserToString( user2 ) + " / " + comp.compare( user1, user2 ) + ">0",
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user1 ) + " / " + fieldAgentUserToString( user2 ) + " / " + comp.compare( user1, user2 ) + ">0",
                 comp.compare( user1, user2 ) > 0 );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user1 ) + " / " + fieldAgentUserToString( user3 ) + " / " + comp.compare( user1, user3 ) + ">0",
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user1 ) + " / " + fieldAgentUserToString( user3 ) + " / " + comp.compare( user1, user3 ) + ">0",
                 comp.compare( user1, user3 ) > 0 );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user4 ) + " / " + fieldAgentUserToString( user3 ) + " / " + comp.compare( user4, user3 ) + ">0",
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user4 ) + " / " + fieldAgentUserToString( user3 ) + " / " + comp.compare( user4, user3 ) + ">0",
                 comp.compare( user4, user3 ) > 0 );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user4 ) + " / " + fieldAgentUserToString( user5 ) + " / " + comp.compare( user4, user5 ) + ">0",
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user4 ) + " / " + fieldAgentUserToString( user5 ) + " / " + comp.compare( user4, user5 ) + ">0",
                 comp.compare( user4, user5 ) > 0 );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user4 ) + " / " + fieldAgentUserToString( user6 ) + " / " + comp.compare( user4, user6 ) + ">0",
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user4 ) + " / " + fieldAgentUserToString( user6 ) + " / " + comp.compare( user4, user6 ) + ">0",
                 comp.compare( user4, user6 ) > 0 );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user4 ) + " / " + fieldAgentUserToString( user7 ) + " / " + comp.compare( user4, user7 ) + ">0",
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user4 ) + " / " + fieldAgentUserToString( user7 ) + " / " + comp.compare( user4, user7 ) + ">0",
                 comp.compare( user4, user7 ) > 0 );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user3 ) + " / " + fieldAgentUserToString( user8 ) + " / " + comp.compare( user3, user8 ) + ">0",
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user3 ) + " / " + fieldAgentUserToString( user8 ) + " / " + comp.compare( user3, user8 ) + ">0",
                 comp.compare( user3, user8 ) > 0 );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user9 ) + " / " + fieldAgentUserToString( user8 ) + " / " + comp.compare( user9, user8 ) + ">0",
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user9 ) + " / " + fieldAgentUserToString( user8 ) + " / " + comp.compare( user9, user8 ) + ">0",
                 comp.compare( user9, user8 ) > 0 );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user9 ) + " / " + fieldAgentUserToString( user10 ) + " / " + comp.compare( user9, user10 )
-                        + ">0", comp.compare( user9, user10 ) > 0 );
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user9 ) + " / " + fieldAgentUserToString( user10 ) + " / " + comp.compare( user9, user10 ) + ">0",
+                comp.compare( user9, user10 ) > 0 );
     }
 
     /**

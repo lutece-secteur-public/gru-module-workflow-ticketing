@@ -39,13 +39,13 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc;
 public class TicketEmailExternalUserCc
 {
     /** The _n id cc. */
-    private int _nIdCc;
+    private int    _nIdCc;
 
     /** The _n id task. */
-    private int _nIdTask;
+    private int    _nIdTask;
 
     /** The _n id resource history. */
-    private int _nIdResourceHistory;
+    private int    _nIdResourceHistory;
 
     /** The _str email. */
     private String _strEmail;

@@ -33,17 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket;
 
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
-
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicket;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.EditableTicketField;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 
 /**
  *

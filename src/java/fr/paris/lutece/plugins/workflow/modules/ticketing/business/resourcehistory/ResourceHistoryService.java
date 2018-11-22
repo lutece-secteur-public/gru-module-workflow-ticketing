@@ -33,17 +33,17 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory;
 
-import fr.paris.lutece.plugins.ticketing.business.channel.Channel;
-import fr.paris.lutece.plugins.ticketing.business.channel.ChannelHome;
-import fr.paris.lutece.plugins.ticketing.business.resourcehistory.IResourceHistoryInformationService;
-import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+
+import fr.paris.lutece.plugins.ticketing.business.channel.Channel;
+import fr.paris.lutece.plugins.ticketing.business.channel.ChannelHome;
+import fr.paris.lutece.plugins.ticketing.business.resourcehistory.IResourceHistoryInformationService;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 
 /**
  *
@@ -55,9 +55,9 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
     /**
      * The name of the bean of this service
      */
-    public static final String BEAN_SERVICE = "workflow-ticketing.resourceHistoryService";
+    public static final String                                                            BEAN_SERVICE = "workflow-ticketing.resourceHistoryService";
     @Inject
-    private IResourceHistoryDAO _dao;
+    private IResourceHistoryDAO                                                           _dao;
     @Inject
     private fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService _resourceHistoryService;
 
@@ -112,13 +112,12 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
     {
         Map<String, Channel> mapHistoryChannel = new HashMap<String, Channel>( );
 
-        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource(
-                nIdResource, strResourceType, nIdWorkflow );
+        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
 
         for ( fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory resourceHistory : listResourceHistory )
         {
-            fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryChannel = findByPrimaryKey(
-                    resourceHistory.getId( ), WorkflowUtils.getPlugin( ) );
+            fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryChannel = findByPrimaryKey( resourceHistory.getId( ),
+                    WorkflowUtils.getPlugin( ) );
 
             if ( resourceHistoryChannel != null )
             {
@@ -142,13 +141,12 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
      */
     public void removeResourceHistory( int nIdResource, String strResourceType, int nIdWorkflow )
     {
-        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource(
-                nIdResource, strResourceType, nIdWorkflow );
+        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
 
         for ( fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory resourceHistory : listResourceHistory )
         {
-            fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryTicketing = findByPrimaryKey(
-                    resourceHistory.getId( ), WorkflowUtils.getPlugin( ) );
+            fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryTicketing = findByPrimaryKey( resourceHistory.getId( ),
+                    WorkflowUtils.getPlugin( ) );
 
             if ( resourceHistoryTicketing != null )
             {

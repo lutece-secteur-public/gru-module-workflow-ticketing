@@ -33,19 +33,18 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.text.MessageFormat;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketCriticality;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketPriority;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.text.MessageFormat;
-
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class represents a task to qualify the ticket
@@ -54,16 +53,16 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskQualifyTicket extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_QUALIFY_TICKET = "module.workflow.ticketing.task_qualify_ticket.labelQualifyTicket";
-    private static final String MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY = "module.workflow.ticketing.task_qualify_ticket.information.priority";
+    private static final String MESSAGE_QUALIFY_TICKET                         = "module.workflow.ticketing.task_qualify_ticket.labelQualifyTicket";
+    private static final String MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY    = "module.workflow.ticketing.task_qualify_ticket.information.priority";
     private static final String MESSAGE_QUALIFY_TICKET_INFORMATION_CRITICALITY = "module.workflow.ticketing.task_qualify_ticket.information.criticality";
 
     // PARAMETERS
-    public static final String PARAMETER_TICKET_PRIORITY = "ticket_priority";
-    public static final String PARAMETER_TICKET_CRITICALITY = "ticket_criticality";
+    public static final String  PARAMETER_TICKET_PRIORITY                      = "ticket_priority";
+    public static final String  PARAMETER_TICKET_CRITICALITY                   = "ticket_criticality";
 
     // Other constants
-    private static final String NEW_LINE = "<br/>";
+    private static final String NEW_LINE                                       = "<br/>";
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -94,8 +93,8 @@ public class TaskQualifyTicket extends AbstractTicketingTask
 
             if ( priorityBefore != priorityAfter )
             {
-                sb.append( MessageFormat.format( I18nService.getLocalizedString( MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY, Locale.FRENCH ),
-                        priorityBefore.getLocalizedMessage( Locale.FRENCH ), priorityAfter.getLocalizedMessage( Locale.FRENCH ) ) );
+                sb.append( MessageFormat.format( I18nService.getLocalizedString( MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY, Locale.FRENCH ), priorityBefore.getLocalizedMessage( Locale.FRENCH ),
+                        priorityAfter.getLocalizedMessage( Locale.FRENCH ) ) );
 
                 bPriorityChanged = true;
             }

@@ -33,20 +33,18 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.text.MessageFormat;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.reference.ITicketReferenceService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.text.MessageFormat;
-
-import java.util.Locale;
-
-import javax.inject.Inject;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class represents a task to generate the ticket reference
@@ -55,8 +53,8 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskGenerateTicketReference extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_GENERATE_TICKET_REFERENCE = "module.workflow.ticketing.task_generate_ticket_reference.labelGenerateTicketReference";
-    private static final String MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION = "module.workflow.ticketing.task_generate_ticket_reference.information";
+    private static final String     MESSAGE_GENERATE_TICKET_REFERENCE             = "module.workflow.ticketing.task_generate_ticket_reference.labelGenerateTicketReference";
+    private static final String     MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION = "module.workflow.ticketing.task_generate_ticket_reference.information";
 
     // Services
     @Inject
@@ -72,7 +70,7 @@ public class TaskGenerateTicketReference extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            synchronized( _ticketReferenceService )
+            synchronized ( _ticketReferenceService )
             {
                 strReference = _ticketReferenceService.generateReference( ticket );
                 ticket.setReference( strReference );

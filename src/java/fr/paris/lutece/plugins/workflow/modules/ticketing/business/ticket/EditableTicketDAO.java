@@ -33,12 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.sql.DAOUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -47,17 +47,16 @@ import java.util.List;
  */
 public class EditableTicketDAO implements IEditableTicketDAO
 {
-    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_task, id_ticket, message, is_edited "
+    private static final String SQL_QUERY_SELECT               = " SELECT id_history, id_task, id_ticket, message, is_edited "
             + " FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? AND id_task = ? ";
-    private static final String SQL_QUERY_SELECT_BY_ID_TASK = " SELECT id_history, id_task, id_ticket, message, is_edited "
-            + " FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_editable_ticket ( id_history, id_task, id_ticket, message, is_edited ) "
+    private static final String SQL_QUERY_SELECT_BY_ID_TASK    = " SELECT id_history, id_task, id_ticket, message, is_edited " + " FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT               = " INSERT INTO workflow_task_ticketing_editable_ticket ( id_history, id_task, id_ticket, message, is_edited ) "
             + " VALUES ( ?,?,?,?,? ) ";
-    private static final String SQL_QUERY_SELECT_BY_ID_TICKET = " SELECT id_history, id_task, id_ticket, message, is_edited "
+    private static final String SQL_QUERY_SELECT_BY_ID_TICKET  = " SELECT id_history, id_task, id_ticket, message, is_edited "
             + " FROM workflow_task_ticketing_editable_ticket WHERE id_ticket = ? AND is_edited = 0 ";
     private static final String SQL_QUERY_DELETE_BY_ID_HISTORY = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? AND id_task = ? ";
-    private static final String SQL_QUERY_DELETE_BY_TASK = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
-    private static final String SQL_QUERY_UPDATE = " UPDATE workflow_task_ticketing_editable_ticket SET message = ?, is_edited = ? WHERE id_history = ? AND id_task = ? ";
+    private static final String SQL_QUERY_DELETE_BY_TASK       = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
+    private static final String SQL_QUERY_UPDATE               = " UPDATE workflow_task_ticketing_editable_ticket SET message = ?, is_edited = ? WHERE id_history = ? AND id_task = ? ";
 
     /**
      * {@inheritDoc}

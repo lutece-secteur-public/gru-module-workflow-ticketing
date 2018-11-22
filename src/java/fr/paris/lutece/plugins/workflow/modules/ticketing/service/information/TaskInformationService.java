@@ -33,13 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.information;
 
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.ITaskInformationDAO;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformation;
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.ITaskInformationDAO;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformation;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 
 /**
  *
@@ -51,7 +51,7 @@ public class TaskInformationService implements ITaskInformationService
     /**
      * The name of the bean of this service
      */
-    public static final String BEAN_SERVICE = "workflow-ticketing.taskInformationService";
+    public static final String  BEAN_SERVICE = "workflow-ticketing.taskInformationService";
     @Inject
     private ITaskInformationDAO _dao;
 

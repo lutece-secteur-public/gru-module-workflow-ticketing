@@ -39,13 +39,13 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipi
 public class TicketEmailExternalUserRecipient
 {
     /** The _n id recipient. */
-    private int _nIdRecipient;
+    private int    _nIdRecipient;
 
     /** The _n id task. */
-    private int _nIdTask;
+    private int    _nIdTask;
 
     /** The _n id resource history. */
-    private int _nIdResourceHistory;
+    private int    _nIdResourceHistory;
 
     /** The _str email. */
     private String _strEmail;

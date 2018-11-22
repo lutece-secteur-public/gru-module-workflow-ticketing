@@ -33,20 +33,19 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.text.MessageFormat;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.text.MessageFormat;
-
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class represents a task to assign a user
@@ -55,13 +54,13 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskAssignTicketToUser extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_ASSIGN_TICKET_TO_USER = "module.workflow.ticketing.task_assign_ticket_to_user.labelAssignTicketToUser";
-    private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION = "module.workflow.ticketing.task_assign_ticket_to_user.information";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_USER                             = "module.workflow.ticketing.task_assign_ticket_to_user.labelAssignTicketToUser";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION                 = "module.workflow.ticketing.task_assign_ticket_to_user.information";
     private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET = "module.workflow.ticketing.task_assign_ticket_to_user.information.unassign_ticket";
-    private static final String MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER = "module.workflow.ticketing.task_assign_ticket_to_user.no_current_user";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER             = "module.workflow.ticketing.task_assign_ticket_to_user.no_current_user";
 
     // PARAMETERS
-    public static final String PARAMETER_ASSIGNEE_USER = "id_user";
+    public static final String  PARAMETER_ASSIGNEE_USER                                   = "id_user";
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -81,8 +80,7 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
             {
                 assigneeUser = new AssigneeUser( );
                 strCurrentUser = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER, Locale.FRENCH );
-            }
-            else
+            } else
             {
                 strCurrentUser = assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( );
             }
@@ -105,11 +103,10 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
                     ticket.setAssigneeUser( assigneeUser );
                     TicketHome.update( ticket );
 
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ),
-                            strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ), strCurrentUser,
+                            assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
                 }
-            }
-            else
+            } else
             {
                 // Unassign ticket
                 ticket.setAssigneeUser( null );
@@ -117,8 +114,7 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
 
                 if ( assigneeUser.getAdminUserId( ) != 0 )
                 {
-                    strTaskInformation = MessageFormat.format(
-                            I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ), strCurrentUser );
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ), strCurrentUser );
                 }
             }
         }

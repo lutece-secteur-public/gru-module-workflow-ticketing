@@ -69,45 +69,45 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class ExternalUserSearchServlet extends HttpServlet
 {
     // Other constants
-    public static final String URL_SERVLET = "servlet/plugins/workflow/ticketing/externaluser/externalusersearch";
+    public static final String            URL_SERVLET              = "servlet/plugins/workflow/ticketing/externaluser/externalusersearch";
 
     /**
      * Generated serial Id
      */
-    private static final long serialVersionUID = -1109810381598265699L;
+    private static final long             serialVersionUID         = -1109810381598265699L;
 
     // Template
-    private static final String TEMPLATE_SEARCH_RESULT = "admin/plugins/workflow/modules/ticketing/external_user/search_external_user_result.html";
+    private static final String           TEMPLATE_SEARCH_RESULT   = "admin/plugins/workflow/modules/ticketing/external_user/search_external_user_result.html";
 
     // Properties
-    private static final String PROPERTY_ENCODING = "lutece.encoding";
+    private static final String           PROPERTY_ENCODING        = "lutece.encoding";
 
     // Model
-    private static final String MARK_ERRORS = "errors";
-    private static final String MARK_INFOS = "infos";
-    private static final String MARK_LIST_USERS = "result_user";
-    private static final String MARK_INPUT_EMAIL = "input_email";
-    private static final String MARK_ID_TASK = "id_task";
-    private static final String MARK_ATTRIBUTE_LABEL = "attribute_label";
+    private static final String           MARK_ERRORS              = "errors";
+    private static final String           MARK_INFOS               = "infos";
+    private static final String           MARK_LIST_USERS          = "result_user";
+    private static final String           MARK_INPUT_EMAIL         = "input_email";
+    private static final String           MARK_ID_TASK             = "id_task";
+    private static final String           MARK_ATTRIBUTE_LABEL     = "attribute_label";
 
     // Request parameter
-    private static final String PARAM_INPUT_EMAIL = "input_email";
-    private static final String PARAM_ID_TASK = "id_task";
-    private static final String PARAM_LASTNAME = "lastname";
-    private static final String PARAM_ID_ATTRIBUTE = "id_attribute";
-    private static final String PARAM_ATTRIBUTE_VALUE = "attribute_value";
-    private static final String PARAM_NEXT_ACTION_ID = "next_action_id";
+    private static final String           PARAM_INPUT_EMAIL        = "input_email";
+    private static final String           PARAM_ID_TASK            = "id_task";
+    private static final String           PARAM_LASTNAME           = "lastname";
+    private static final String           PARAM_ID_ATTRIBUTE       = "id_attribute";
+    private static final String           PARAM_ATTRIBUTE_VALUE    = "attribute_value";
+    private static final String           PARAM_NEXT_ACTION_ID     = "next_action_id";
 
     // message
-    private static final String LOG_UNAUTHENTICATED_USER = "Calling ExternalUserSearchServlet with unauthenticated user";
-    private static final String KEY_ERROR_NO_RESULT = "module.workflow.ticketing.task_ticket_email_external_user.error.search.no_result";
-    private static final String KEY_INFOS_LIMIT_RESULT = "module.workflow.ticketing.task_ticket_email_external_user.info.search.limit_result";
+    private static final String           LOG_UNAUTHENTICATED_USER = "Calling ExternalUserSearchServlet with unauthenticated user";
+    private static final String           KEY_ERROR_NO_RESULT      = "module.workflow.ticketing.task_ticket_email_external_user.error.search.no_result";
+    private static final String           KEY_INFOS_LIMIT_RESULT   = "module.workflow.ticketing.task_ticket_email_external_user.info.search.limit_result";
 
     // BEAN
-    private IExternalUserDAO _externalUserDAO = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
+    private IExternalUserDAO              _externalUserDAO         = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
 
     // SERVICE
-    private static final AttributeService _attributeService = AttributeService.getInstance( );
+    private static final AttributeService _attributeService        = AttributeService.getInstance( );
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -166,9 +166,7 @@ public class ExternalUserSearchServlet extends HttpServlet
 
         if ( ( searchLimit > 0 ) && ( listExternalUsers.size( ) > searchLimit ) )
         {
-            listInfos.add( new MVCMessage( I18nService.getLocalizedString( KEY_INFOS_LIMIT_RESULT, new Object [ ] {
-                    searchLimit, listExternalUsers.size( )
-            }, locale ) ) );
+            listInfos.add( new MVCMessage( I18nService.getLocalizedString( KEY_INFOS_LIMIT_RESULT, new Object[] { searchLimit, listExternalUsers.size( ) }, locale ) ) );
             listExternalUsers = listExternalUsers.subList( 0, searchLimit );
         }
 

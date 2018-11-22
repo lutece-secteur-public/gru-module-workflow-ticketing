@@ -45,13 +45,11 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, message_direction, id_user_edition_action FROM workflow_task_ticketing_edit_ticket_config "
-            + " WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_edit_ticket_config ( id_task, message_direction, id_user_edition_action ) "
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, message_direction, id_user_edition_action FROM workflow_task_ticketing_edit_ticket_config " + " WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT              = " INSERT INTO workflow_task_ticketing_edit_ticket_config ( id_task, message_direction, id_user_edition_action ) "
             + " VALUES ( ?,?,? ) ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_edit_ticket_config SET message_direction = ?, id_user_edition_action = ? "
-            + " WHERE id_task = ? ";
-    private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_edit_ticket_config WHERE id_task = ? ";
+    private static final String SQL_QUERY_UPDATE              = "UPDATE workflow_task_ticketing_edit_ticket_config SET message_direction = ?, id_user_edition_action = ? " + " WHERE id_task = ? ";
+    private static final String SQL_QUERY_DELETE              = " DELETE FROM workflow_task_ticketing_edit_ticket_config WHERE id_task = ? ";
 
     /**
      * {@inheritDoc}

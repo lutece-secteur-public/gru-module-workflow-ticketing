@@ -83,50 +83,51 @@ import fr.paris.lutece.util.url.UrlItem;
 public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 {
     // Right
-    public static final String RIGHT_EXTERNAL_USER = "TICKETING_EXTERNAL_USER";
-    private static final long serialVersionUID = 1L;
+    public static final String                 RIGHT_EXTERNAL_USER                           = "TICKETING_EXTERNAL_USER";
+    private static final long                  serialVersionUID                              = 1L;
 
     // //////////////////////////////////////////////////////////////////////////
     // Constants
 
     // templates
-    private static final String TEMPLATE_EXTERNAL_USER_RESPONSE = "admin/plugins/workflow/modules/ticketing/external_user/ticket_external_user_response.html";
-    private static final String TEMPLATE_EXTERNAL_USER_MESSAGE = "admin/plugins/workflow/modules/ticketing/external_user/ticket_external_user_message.html";
+    private static final String                TEMPLATE_EXTERNAL_USER_RESPONSE               = "admin/plugins/workflow/modules/ticketing/external_user/ticket_external_user_response.html";
+    private static final String                TEMPLATE_EXTERNAL_USER_MESSAGE                = "admin/plugins/workflow/modules/ticketing/external_user/ticket_external_user_message.html";
 
     // Properties
-    private static final String PROPERTY_PAGE_TITLE_EXTERNAL_USER_RESPONSE = "module.workflow.ticketing.externalUserResponse.pageTitle";
-    private static final String PROPERTY_EXTERNAL_USER_MESSAGE_OK = "module.workflow.ticketing.externalUserResponse.message.ok";
-    private static final String PROPERTY_EXTERNAL_USER_MESSAGE_ALREADY_ANSWER = "module.workflow.ticketing.externalUserResponse.message.already_answer";
-    private static final String PROPERTY_EXTERNAL_USER_MESSAGE_NOT_DONE = "module.workflow.ticketing.externalUserResponse.message.not_respond";
-    private static final String PROPERTY_TICKET_DELETED = "module.workflow.ticketing.externalUserResponse.message.ticket_closed";
+    private static final String                PROPERTY_PAGE_TITLE_EXTERNAL_USER_RESPONSE    = "module.workflow.ticketing.externalUserResponse.pageTitle";
+    private static final String                PROPERTY_EXTERNAL_USER_MESSAGE_OK             = "module.workflow.ticketing.externalUserResponse.message.ok";
+    private static final String                PROPERTY_EXTERNAL_USER_MESSAGE_ALREADY_ANSWER = "module.workflow.ticketing.externalUserResponse.message.already_answer";
+    private static final String                PROPERTY_EXTERNAL_USER_MESSAGE_NOT_DONE       = "module.workflow.ticketing.externalUserResponse.message.not_respond";
+    private static final String                PROPERTY_TICKET_DELETED                       = "module.workflow.ticketing.externalUserResponse.message.ticket_closed";
+    private static final String                PROPERTY_EXTERNAL_USER_MESSAGE_TIMEOUT        = "module.workflow.ticketing.externalUserResponse.message.ticket_timeout";
 
     // Markers
-    private static final String MARK_REFERENCE = "reference";
-    private static final String MARK_LIST_EXTERNAL_USER_MESSAGE = "list_external_user_message";
-    private static final String MARK_ID_ACTION = "id_action";
-    private static final String MARK_ID_TICKET = "id_ticket";
-    private static final String MARK_ID_MESSAGE_EXTERNAL_USER = "id_message_external_user";
-    private static final String MARK_LIST_FILE_UPLOAD = "list_file_uploaded";
-    private static final String MARK_MAP_FILE_URL = "list_url";
-    private static final String MARK_USER_FACTORY = "user_factory";
-    private static final String MARK_USER_ADMIN = "user_admin";
-    private static final String MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM = "task_ticket_email_external_user_form";
-    private static final String MARK_KEY_MESSAGE = "key_message";
-    private static final String MARK_TYPE_MESSAGE = "type_message";
-    private static final String MARK_SIGNATURE = "signature";
-    private static final String MARK_TIMESTAMP = "timestamp";
+    private static final String                MARK_REFERENCE                                = "reference";
+    private static final String                MARK_LIST_EXTERNAL_USER_MESSAGE               = "list_external_user_message";
+    private static final String                MARK_ID_ACTION                                = "id_action";
+    private static final String                MARK_ID_TICKET                                = "id_ticket";
+    private static final String                MARK_ID_MESSAGE_EXTERNAL_USER                 = "id_message_external_user";
+    private static final String                MARK_LIST_FILE_UPLOAD                         = "list_file_uploaded";
+    private static final String                MARK_MAP_FILE_URL                             = "list_url";
+    private static final String                MARK_USER_FACTORY                             = "user_factory";
+    private static final String                MARK_USER_ADMIN                               = "user_admin";
+    private static final String                MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM     = "task_ticket_email_external_user_form";
+    private static final String                MARK_KEY_MESSAGE                              = "key_message";
+    private static final String                MARK_TYPE_MESSAGE                             = "type_message";
+    private static final String                MARK_SIGNATURE                                = "signature";
+    private static final String                MARK_TIMESTAMP                                = "timestamp";
 
     // Views
-    private static final String VIEW_TICKET_EXTERNAL_USER_RESPONSE = "externalUserReponse";
+    private static final String                VIEW_TICKET_EXTERNAL_USER_RESPONSE            = "externalUserReponse";
 
     // Other constants
-    private boolean _bAvatarAvailable;
+    private boolean                            _bAvatarAvailable;
 
     /** DAO beans & service */
     private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO;
     private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserMessageDAO;
-    private ITaskConfigService _taskTicketExternalUserConfigService;
-    private IResourceHistoryService _resourceHistoryService;
+    private ITaskConfigService                 _taskTicketExternalUserConfigService;
+    private IResourceHistoryService            _resourceHistoryService;
 
     /**
      *
@@ -139,6 +140,11 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         _taskTicketExternalUserConfigService = SpringContextService.getBean( TaskTicketEmailExternalUser.BEAN_TICKET_CONFIG_SERVICE );
         _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
         _bAvatarAvailable = ( PluginService.getPlugin( TicketingConstants.PLUGIN_AVATAR ) != null );
+    }
+
+    public String getTimeout( HttpServletRequest request )
+    {
+        return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_TIMEOUT, SiteMessage.TYPE_WARNING );
     }
 
     /**
@@ -182,8 +188,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                 return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_ALREADY_ANSWER, SiteMessage.TYPE_WARNING );
             }
 
-            for ( TicketEmailExternalUserMessage emailExternalUserMessage : _ticketEmailExternalUserMessageDAO
-                    .loadByIdTicketNotClosed( requiredEmailExternalUserMessage.getIdTicket( ) ) )
+            for ( TicketEmailExternalUserMessage emailExternalUserMessage : _ticketEmailExternalUserMessageDAO.loadByIdTicketNotClosed( requiredEmailExternalUserMessage.getIdTicket( ) ) )
             {
                 TicketEmailExternalUserMessageDisplay emailExternalUserMessageDisplay = new TicketEmailExternalUserMessageDisplay( );
                 emailExternalUserMessageDisplay.setMessageQuestion( emailExternalUserMessage.getMessageQuestion( ) );
@@ -204,8 +209,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                     externalUserConfig = _taskTicketExternalUserConfigService.findByPrimaryKey( externalUserHistory.getIdTask( ) );
                 }
 
-                List<UploadFile> listFileUploadTemp = FactoryDOA.getUploadFileDAO( ).load( externalUserHistory.getIdResourceHistory( ),
-                        WorkflowUtils.getPlugin( ) );
+                List<UploadFile> listFileUploadTemp = FactoryDOA.getUploadFileDAO( ).load( externalUserHistory.getIdResourceHistory( ), WorkflowUtils.getPlugin( ) );
 
                 emailExternalUserMessageDisplay.setUploadedFiles( listFileUploadTemp );
                 listFileUpload.addAll( listFileUploadTemp );
@@ -220,19 +224,17 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                 listEmailExternalUserMessageDisplay.add( emailExternalUserMessageDisplay );
             }
 
-            if ( listFileUpload != null && !listFileUpload.isEmpty( ) )
+            if ( ( listFileUpload != null ) && !listFileUpload.isEmpty( ) )
             {
                 String strBaseUrl = AppPathService.getBaseUrl( request );
 
                 for ( int i = 0; i < listFileUpload.size( ); i++ )
                 {
-                    mapFileUrl.put( Integer.toString( listFileUpload.get( i ).getIdUploadFile( ) ),
-                            DownloadFileService.getUrlDownloadFile( listFileUpload.get( i ).getIdFile( ), strBaseUrl ) );
+                    mapFileUrl.put( Integer.toString( listFileUpload.get( i ).getIdUploadFile( ) ), DownloadFileService.getUrlDownloadFile( listFileUpload.get( i ).getIdFile( ), strBaseUrl ) );
                 }
             }
 
-        }
-        catch( NumberFormatException | NullPointerException e )
+        } catch ( NumberFormatException | NullPointerException e )
         {
             return redirect( request, AdminMessageService.getMessageUrl( request, Messages.MESSAGE_INVALID_ENTRY, AdminMessage.TYPE_STOP ) );
         }
@@ -247,10 +249,8 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_USER_FACTORY, UserFactory.getInstance( ) );
         model.put( TicketingConstants.MARK_AVATAR_AVAILABLE, _bAvatarAvailable );
         model.put( MARK_USER_ADMIN, userAdmin );
-        model.put(
-                MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM,
-                WorkflowService.getInstance( ).getDisplayTasksForm( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, externalUserConfig.getIdFollowingAction( ),
-                        request, getLocale( ) ) );
+        model.put( MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM,
+                WorkflowService.getInstance( ).getDisplayTasksForm( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, externalUserConfig.getIdFollowingAction( ), request, getLocale( ) ) );
         model.put( TicketingConstants.MARK_FORM_ACTION, getActionUrl( TicketingConstants.ACTION_DO_PROCESS_WORKFLOW_ACTION, request ) );
         model.put( MARK_ID_ACTION, externalUserConfig.getIdFollowingAction( ) );
         model.put( MARK_ID_TICKET, ticket.getId( ) );
@@ -277,17 +277,15 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     {
         try
         {
-            if ( !_ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser(
-                    Integer.parseInt( request.getParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER ) ) ).getIsAnswered( ) )
+            if ( !_ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( Integer.parseInt( request.getParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER ) ) )
+                    .getIsAnswered( ) )
             {
                 return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_NOT_DONE, SiteMessage.TYPE_WARNING );
-            }
-            else
+            } else
             {
                 return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_OK, SiteMessage.TYPE_INFO );
             }
-        }
-        catch( Exception e )
+        } catch ( Exception e )
         {
             return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_NOT_DONE, SiteMessage.TYPE_WARNING );
         }
@@ -318,7 +316,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
     /**
      * call TEMPLATE_EXTERNAL_USER_MESSAGE template for the given message key
-     * 
+     *
      * @param strKeyMessage
      *            the key of the message
      * @param nMessageType

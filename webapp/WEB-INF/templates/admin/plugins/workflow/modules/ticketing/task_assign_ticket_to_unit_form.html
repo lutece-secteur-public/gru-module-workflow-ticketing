@@ -1,7 +1,7 @@
 <@messages errors=errors />
 
 <input name="redirect" id="redirect" value="" type="hidden">
-<input id="former_unit" value="${ticket.assigneeUnit.unitId}" type="hidden">
+<input id="former_unit" value="${ticket.assigneeUnit.unitId!}" type="hidden">
 
 <#if units_list?? && units_list?has_content>
     <#if current_unit?? && current_unit?has_content>

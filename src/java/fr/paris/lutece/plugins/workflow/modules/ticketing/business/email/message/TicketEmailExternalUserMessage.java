@@ -39,25 +39,25 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.messag
 public class TicketEmailExternalUserMessage
 {
     /** The id message. */
-    private int _nIdMessageExternalUser;
+    private int     _nIdMessageExternalUser;
 
     /** The id demand. */
-    private int _nIdTicket;
+    private int     _nIdTicket;
 
     /** the recipients email */
-    private String _strEmailRecipients;
+    private String  _strEmailRecipients;
 
     /** the recipients email in copy */
-    private String _strEmailRecipientsCc;
+    private String  _strEmailRecipientsCc;
 
     /** the message to the agent */
-    private String _strMessageQuestion;
+    private String  _strMessageQuestion;
 
     /** the response to the agent */
-    private String _strMessageResponse;
+    private String  _strMessageResponse;
 
     /** the subject of the mail */
-    private String _strEmailSubject;
+    private String  _strEmailSubject;
 
     /** true if the external user has answered */
     private boolean _bIsAnswered;
