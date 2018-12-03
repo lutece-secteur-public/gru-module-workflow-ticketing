@@ -72,6 +72,7 @@ public interface IExternalUserDAO
      * @param strAttributeValue
      *            value of user attribute to search
      * @param strActionId
+     *            Action Id
      * @return list of ExternalUser
      */
     List<ExternalUser> findExternalUser( String strLastname, String strEmail, String strIdAttribute, String strAttributeValue, String strActionId );
