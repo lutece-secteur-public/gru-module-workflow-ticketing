@@ -62,12 +62,12 @@ public class TicketEmailExternalUserCc
     }
 
     /**
-     * @param nIdInfosHistory
-     *            the nIdInfosHistory to set
+     * @param nIdCc
+     *            id cc
      */
     public void setIdInfosHistory( int nIdCc )
     {
-        this._nIdCc = nIdCc;
+        _nIdCc = nIdCc;
     }
 
     /**
@@ -84,7 +84,7 @@ public class TicketEmailExternalUserCc
      */
     public void setIdTask( int nIdTask )
     {
-        this._nIdTask = nIdTask;
+        _nIdTask = nIdTask;
     }
 
     /**
@@ -101,7 +101,7 @@ public class TicketEmailExternalUserCc
      */
     public void setIdResourceHistory( int nIdResourceHistory )
     {
-        this._nIdResourceHistory = nIdResourceHistory;
+        _nIdResourceHistory = nIdResourceHistory;
     }
 
     /**
@@ -118,7 +118,7 @@ public class TicketEmailExternalUserCc
      */
     public void setEmail( String strEmail )
     {
-        this._strEmail = strEmail;
+        _strEmail = strEmail;
     }
 
     /**
@@ -135,6 +135,6 @@ public class TicketEmailExternalUserCc
      */
     public void setField( String strField )
     {
-        this._strField = strField;
+        _strField = strField;
     }
 }

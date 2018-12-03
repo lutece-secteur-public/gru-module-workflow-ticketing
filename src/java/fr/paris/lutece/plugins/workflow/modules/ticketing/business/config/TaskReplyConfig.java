@@ -46,7 +46,7 @@ public class TaskReplyConfig extends TaskConfig
 
     /**
      * Gives the message direction
-     * 
+     *
      * @return the message direction
      */
     public MessageDirection getMessageDirection( )
@@ -56,18 +56,18 @@ public class TaskReplyConfig extends TaskConfig
 
     /**
      * Sets the message direction
-     * 
+     *
      * @param messageDirection
      *            the message direction to set
      */
     public void setMessageDirection( MessageDirection messageDirection )
     {
-        this._messageDirection = messageDirection;
+        _messageDirection = messageDirection;
     }
 
     /**
      * Gives the closeTicket
-     * 
+     *
      * @return the closeTicket
      */
     public boolean isCloseTicket( )
@@ -77,9 +77,9 @@ public class TaskReplyConfig extends TaskConfig
 
     /**
      * Sets the closeTicket
-     * 
-     * @param closeTicket
-     *            the closeTicket to set
+     *
+     * @param _bCloseTicket
+     *            close ticket
      */
     public void setCloseTicket( boolean _bCloseTicket )
     {

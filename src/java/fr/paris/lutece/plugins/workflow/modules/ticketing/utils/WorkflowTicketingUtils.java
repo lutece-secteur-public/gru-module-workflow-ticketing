@@ -79,7 +79,7 @@ public final class WorkflowTicketingUtils
 
     /**
      * Get the ticket from a given id history
-     * 
+     *
      * @param nIdHistory
      *            the id history
      * @return the ticket
@@ -99,12 +99,13 @@ public final class WorkflowTicketingUtils
 
     /**
      * Check if a list of emails (as string) is valid
-     * 
+     *
      * @param strEmails
      *            the string of emails
-     * @param externalUserDAO
-     *            if not null check in luteceUser if email is valid
-     * 
+     * @param externalUserUserDAO
+     *            external user dao
+     * @param strNextActionId
+     *            next action id
      * @return Empty list if no error, else a list with first element is the message key, and following element are parameters
      */
     public static List<String> validEmailList( String strEmails, IExternalUserDAO externalUserUserDAO, String strNextActionId )
@@ -136,7 +137,7 @@ public final class WorkflowTicketingUtils
                             listForError.add( TicketEmailExternalUserTaskComponent.MESSAGE_INVALID_EMAIL );
                             listForError.add( strEmail );
                             break;
-                        } else if ( externalUserUserDAO != null && !externalUserUserDAO.isValidEmail( strEmail, strNextActionId ) )
+                        } else if ( ( externalUserUserDAO != null ) && !externalUserUserDAO.isValidEmail( strEmail, strNextActionId ) )
                         {
                             listForError.add( TicketEmailExternalUserTaskComponent.MESSAGE_INVALID_EMAIL_OR_NOT_AUTHORIZED );
                             listForError.add( strEmail );
@@ -151,6 +152,14 @@ public final class WorkflowTicketingUtils
 
     /**
      * {@link fr.paris.lutece.portal.service.message.AdminMessageService#formatValidationErrors}
+     *
+     * @param request
+     *            request
+     * @param errors
+     *            errors
+     * @param <T>
+     *            type
+     * @return Object[]
      */
     public static <T> Object[] formatValidationErrors( HttpServletRequest request, List<? extends ErrorMessage> errors )
     {

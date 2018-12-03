@@ -50,19 +50,19 @@ public interface IExternalUserDAO
 
     /**
      * Check if email is a valid email for ExternalUser
-     * 
+     *
      * @param strEmail
      *            the email to check
      * @param strNextActionId
      *            the action the externaluser must be allowed to exectute
-     * 
+     *
      * @return true if the email is ok
      */
     boolean isValidEmail( String strEmail, String strNextActionId );
 
     /**
      * return list of ExternalUser which match the filter
-     * 
+     *
      * @param strLastname
      *            lastname to search
      * @param strEmail
@@ -71,6 +71,7 @@ public interface IExternalUserDAO
      *            id of user attribute to search
      * @param strAttributeValue
      *            value of user attribute to search
+     * @param strActionId
      * @return list of ExternalUser
      */
     List<ExternalUser> findExternalUser( String strLastname, String strEmail, String strIdAttribute, String strAttributeValue, String strActionId );

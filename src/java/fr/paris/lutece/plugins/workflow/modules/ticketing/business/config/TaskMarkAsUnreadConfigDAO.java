@@ -93,7 +93,12 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
     }
 
     /**
-     * {@inheritDoc }
+     *
+     * @param nIdMarking
+     *            id marking
+     * @param plugin
+     *            plugin
+     * @return Id List By Markin gId
      */
     public List<Integer> loadTicketIdListByMarkingId( int nIdMarking, Plugin plugin )
     {
