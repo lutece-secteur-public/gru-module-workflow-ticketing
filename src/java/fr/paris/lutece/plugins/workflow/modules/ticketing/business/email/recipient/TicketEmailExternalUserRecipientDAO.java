@@ -57,8 +57,6 @@ public class TicketEmailExternalUserRecipientDAO implements ITicketEmailExternal
     /**
      * Generates a new primary key
      *
-     * @param plugin
-     *            The Plugin
      * @return The new primary key
      */
     public int newPrimaryKey( )

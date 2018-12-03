@@ -56,7 +56,7 @@ public interface IEditableTicketService
 
     /**
      * Create an editable ticket
-     * 
+     *
      * @param editableTicket
      *            the editable ticket
      */
@@ -65,7 +65,7 @@ public interface IEditableTicketService
 
     /**
      * Update an editable ticket
-     * 
+     *
      * @param editableTicket
      *            the editable ticket
      */
@@ -74,7 +74,7 @@ public interface IEditableTicketService
 
     /**
      * Find an editable ticket
-     * 
+     *
      * @param nIdHistory
      *            the id history
      * @param nIdTask
@@ -85,7 +85,7 @@ public interface IEditableTicketService
 
     /**
      * Get the non edited editable ticket from a given id ticket
-     * 
+     *
      * @param nIdTicket
      *            the id ticket
      * @return the editable ticket
@@ -94,7 +94,7 @@ public interface IEditableTicketService
 
     /**
      * Find editable tickets by a given id task
-     * 
+     *
      * @param nIdTask
      *            the id task
      * @return the list of editable tickets
@@ -103,7 +103,7 @@ public interface IEditableTicketService
 
     /**
      * Remove an editable ticket
-     * 
+     *
      * @param nIdHistory
      *            the id history
      * @param nIdTask
@@ -114,7 +114,7 @@ public interface IEditableTicketService
 
     /**
      * Remove an editable ticket by id task
-     * 
+     *
      * @param nIdTask
      *            the id task
      */
@@ -123,7 +123,7 @@ public interface IEditableTicketService
 
     /**
      * Get the list of entries to edit
-     * 
+     *
      * @param request
      *            the HTTP request
      * @param listEditableTicketFields
@@ -134,10 +134,10 @@ public interface IEditableTicketService
 
     /**
      * Get the id list of entries to edit
-     * 
+     *
      * @param request
      *            the HTTP request
-     * @param listIdEditableTicketFields
+     * @param listEditableTicketFields
      *            the id list of editable ticket fields
      * @return a list of id entries
      */
@@ -145,7 +145,7 @@ public interface IEditableTicketService
 
     /**
      * Check if the ticket has the same state before executing the action
-     * 
+     *
      * @param editableTicket
      *            the editable ticket
      * @param locale

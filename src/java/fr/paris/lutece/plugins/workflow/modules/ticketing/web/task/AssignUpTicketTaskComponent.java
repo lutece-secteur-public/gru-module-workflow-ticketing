@@ -53,7 +53,7 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
- * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TaskAssignUpTicket}
+ * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignUpTicket}
  *
  */
 public class AssignUpTicketTaskComponent extends TicketingTaskComponent

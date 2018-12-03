@@ -53,7 +53,7 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
 
     /**
      * Gives the message direction
-     * 
+     *
      * @return the message direction
      */
     public MessageDirectionExternalUser getMessageDirectionExternalUser( )
@@ -63,13 +63,13 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
 
     /**
      * Sets the message direction
-     * 
+     *
      * @param messageDirectionExternalUser
      *            the message direction to set
      */
     public void setMessageDirectionExternalUser( MessageDirectionExternalUser messageDirectionExternalUser )
     {
-        this._messageDirectionExternalUser = messageDirectionExternalUser;
+        _messageDirectionExternalUser = messageDirectionExternalUser;
     }
 
     /**
@@ -86,7 +86,7 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
      */
     public void setIdFollowingAction( Integer nIdFollowingAction )
     {
-        this._nIdFollowingAction = nIdFollowingAction;
+        _nIdFollowingAction = nIdFollowingAction;
     }
 
     /**
@@ -94,7 +94,7 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
      */
     public boolean isMessageToExternalUser( )
     {
-        return MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER.equals( this._messageDirectionExternalUser );
+        return MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER.equals( _messageDirectionExternalUser );
     }
 
     /**
@@ -106,12 +106,12 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
     }
 
     /**
-     * @param the
-     *            nIdContactAttribute the idContactAttribute to set
+     * @param nIdContactAttribute
+     *            Id Contact Attribute
      */
     public void setIdContactAttribute( Integer nIdContactAttribute )
     {
-        this._nIdContactAttribute = nIdContactAttribute;
+        _nIdContactAttribute = nIdContactAttribute;
     }
 
     public String getDefaultSubject( )

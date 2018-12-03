@@ -158,7 +158,7 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Get the page
-     * 
+     *
      * @param request
      *            teh request
      * @param nIdHistory
@@ -215,7 +215,7 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Get the page to edit the ticket
-     * 
+     *
      * @param request
      *            the HTTP request
      * @param editableTicket
@@ -260,7 +260,7 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Do process the workflow action
-     * 
+     *
      * @param request
      *            HttpServletRequest
      * @param nIdAction
@@ -302,7 +302,7 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Set the site message
-     * 
+     *
      * @param request
      *            the HTTP request
      * @param strMessage
@@ -327,7 +327,7 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Checks if the request is authenticated or not
-     * 
+     *
      * @param request
      *            the HTTP request
      * @return {@code true} if the request is authenticated, {@code false} otherwise
@@ -339,12 +339,11 @@ public class EditTicketXPage implements XPageApplication
 
     /**
      * Immediate indexation of a Ticket for the Frontoffice
-     * 
+     *
      * @param idTicket
      *            the id of the Ticket to index
      * @param request
      *            the HttpServletRequest
-     * @throws SiteMessageException
      */
     protected void immediateTicketIndexing( int idTicket, HttpServletRequest request )
     {
