@@ -123,7 +123,9 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     // Other constants
     private boolean                            _bAvatarAvailable;
 
-    /** DAO beans & service */
+    /**
+     * DAO beans and service
+     */
     private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO;
     private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserMessageDAO;
     private ITaskConfigService                 _taskTicketExternalUserConfigService;

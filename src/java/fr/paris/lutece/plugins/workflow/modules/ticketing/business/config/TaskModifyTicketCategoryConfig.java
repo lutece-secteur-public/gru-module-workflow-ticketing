@@ -51,7 +51,7 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
     public TaskModifyTicketCategoryConfig( )
     {
         super( );
-        this._listSelectedEntries = new ArrayList<Integer>( );
+        _listSelectedEntries = new ArrayList<Integer>( );
     }
 
     /**
@@ -63,11 +63,12 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
     }
 
     /**
-     * @param _listSelectedEntries
+     * @param _nSelectedEntry
+     *            Selected Entry
      */
     public void addSelectedEntry( Integer _nSelectedEntry )
     {
-        this._listSelectedEntries.add( _nSelectedEntry );
+        _listSelectedEntries.add( _nSelectedEntry );
     }
 
     /**
@@ -75,6 +76,6 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
      */
     public void clearSelectedEntries( )
     {
-        this._listSelectedEntries = new ArrayList<Integer>( );
+        _listSelectedEntries = new ArrayList<Integer>( );
     }
 }

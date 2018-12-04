@@ -62,12 +62,12 @@ public class TicketEmailExternalUserMessageDisplay
     }
 
     /**
-     * @param _dateCreate
-     *            the _dateCreate to set
+     * @param dDateCreate
+     *            date create
      */
     public void setDateCreate( Timestamp dDateCreate )
     {
-        this._dDateCreate = dDateCreate;
+        _dDateCreate = dDateCreate;
     }
 
     /**
@@ -84,7 +84,7 @@ public class TicketEmailExternalUserMessageDisplay
      */
     public void setMessageQuestion( String strMessageQuestion )
     {
-        this._strMessageQuestion = strMessageQuestion;
+        _strMessageQuestion = strMessageQuestion;
     }
 
     /**
@@ -101,7 +101,7 @@ public class TicketEmailExternalUserMessageDisplay
      */
     public void setAdminUser( AdminUser adminUser )
     {
-        this._adminUser = adminUser;
+        _adminUser = adminUser;
     }
 
     /**
@@ -118,7 +118,7 @@ public class TicketEmailExternalUserMessageDisplay
      */
     public void setUploadedFiles( List<UploadFile> listUploadedFiles )
     {
-        this._listUploadedFiles = listUploadedFiles;
+        _listUploadedFiles = listUploadedFiles;
     }
 
 }
