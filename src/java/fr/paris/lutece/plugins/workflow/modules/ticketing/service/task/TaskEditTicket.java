@@ -50,6 +50,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
+import fr.paris.lutece.plugins.ticketing.business.file.TicketFileHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
@@ -141,7 +142,7 @@ public class TaskEditTicket extends AbstractTicketingTask
 
     /**
      * Process the task for agent side
-     * 
+     *
      * @param nIdResourceHistory
      *            the ResourceHistory id
      * @param request
@@ -234,7 +235,7 @@ public class TaskEditTicket extends AbstractTicketingTask
 
     /**
      * Process the task for user side
-     * 
+     *
      * @param nIdResourceHistory
      *            the ResourceHistory id
      * @param request
@@ -285,6 +286,10 @@ public class TaskEditTicket extends AbstractTicketingTask
             for ( Response response : ticket.getListResponse( ) )
             {
                 ResponseHome.create( response );
+                if ( response.getFile( ) != null )
+                {
+                    TicketFileHome.migrateToBlob( response.getFile( ) );
+                }
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             }
         }
@@ -320,7 +325,7 @@ public class TaskEditTicket extends AbstractTicketingTask
 
     /**
      * Builds the URL to permit to the user to edit the ticket
-     * 
+     *
      * @param request
      *            the request
      * @param nIdHistory
