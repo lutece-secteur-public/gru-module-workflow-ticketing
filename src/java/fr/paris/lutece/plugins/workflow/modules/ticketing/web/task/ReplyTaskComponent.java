@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUploadHandler;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -45,8 +47,10 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.Messag
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import javax.inject.Inject;
 
 /**
  * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReply}
@@ -64,10 +68,15 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     private static final String MARK_MESSAGE_DIRECTION       = "message_direction";
     private static final String MARK_CLOSE_TICKET            = "close_ticket";
     private static final String MARK_LIST_ID_TICKETS         = "list_id_tickets";
+    private static final String MARK_HANDLER                 = "upload_handler";
+    private static final String MARK_ENTRY_ATTACHED_FILE     = "entry_attached_files";
 
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION  = "message_direction";
     private static final String PARAMETER_CLOSE_TICKET       = "close_ticket";
+    
+    @Inject
+    private TicketFormService _ticketFormService;
 
     /**
      * {@inheritDoc}
@@ -147,7 +156,12 @@ public class ReplyTaskComponent extends TicketingTaskComponent
 
             ModelUtils.storeUserSignature( request, model );
         }
-
+        
+        //Get the id entry for reply attments files from properties
+        int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID, TicketingConstants.PROPERTY_UNSET_INT );
+        
+        model.put( MARK_HANDLER, TicketAsynchronousUploadHandler.getHandler( ) );
+        model.put( MARK_ENTRY_ATTACHED_FILE, _ticketFormService.getHtmlEntry( nIdEntryReplyAttachedFiles, false, request ) );
         model.put( MARK_AGENT_VIEW, bIsAgentView );
         model.put( MARK_LIST_ID_TICKETS, request.getParameterValues( TicketingConstants.PARAMETER_ID_TICKET ) );
 
