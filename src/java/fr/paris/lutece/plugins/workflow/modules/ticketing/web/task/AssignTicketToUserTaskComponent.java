@@ -61,14 +61,14 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
     private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_USER_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_user_form.html";
 
     // MESSAGE
-    private static final String MESSAGE_NO_USER_FOUND                    = "module.workflow.ticketing.task_assign_ticket_to_user.labelNoUserFound";
+    private static final String MESSAGE_NO_USER_FOUND = "module.workflow.ticketing.task_assign_ticket_to_user.labelNoUserFound";
 
     // MARKS
-    private static final String MARK_USERS_LIST                          = "users_list";
-    private static final String MARK_CURRENT_USER                        = "current_user";
+    private static final String MARK_USERS_LIST = "users_list";
+    private static final String MARK_CURRENT_USER = "current_user";
 
     // Constantes
-    private static final String EMPTY_CHOICE_IN_LIST                     = "-1";
+    private static final String EMPTY_CHOICE_IN_LIST = "-1";
 
     /**
      * {@inheritDoc}
@@ -86,7 +86,8 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
             if ( ticket.getAssigneeUnit( ) != null )
             {
                 usersList = getUsersList( ticket.getAssigneeUnit( ).getUnitId( ) );
-                strCurrentUserId = ( ticket.getAssigneeUser( ) == null ) ? EMPTY_CHOICE_IN_LIST : ( String.valueOf( ticket.getAssigneeUser( ).getAdminUserId( ) ) );
+                strCurrentUserId = ( ticket.getAssigneeUser( ) == null ) ? EMPTY_CHOICE_IN_LIST : ( String
+                        .valueOf( ticket.getAssigneeUser( ).getAdminUserId( ) ) );
 
                 if ( usersList.toMap( ).containsKey( strCurrentUserId ) )
                 {
@@ -98,7 +99,8 @@ public class AssignTicketToUserTaskComponent extends TicketingTaskComponent
             {
                 request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
                 addError( I18nService.getLocalizedString( MESSAGE_NO_USER_FOUND, locale ) );
-            } else
+            }
+            else
             {
                 model.put( MARK_USERS_LIST, usersList );
             }

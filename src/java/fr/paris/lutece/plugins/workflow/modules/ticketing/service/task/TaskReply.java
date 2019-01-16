@@ -69,21 +69,21 @@ import javax.inject.Inject;
  */
 public class TaskReply extends AbstractTicketingTask
 {
-    private static final String MESSAGE_REPLY                        = "module.workflow.ticketing.task_reply.labelReply";
-    private static final String MESSAGE_REPLY_INFORMATION_PREFIX     = "module.workflow.ticketing.task_reply.information.";
+    private static final String MESSAGE_REPLY = "module.workflow.ticketing.task_reply.labelReply";
+    private static final String MESSAGE_REPLY_INFORMATION_PREFIX = "module.workflow.ticketing.task_reply.information.";
     private static final String MESSAGE_REPLY_INFORMATION_NO_MESSAGE = "module.workflow.ticketing.task_reply.information.";
 
     // MARKERS
     private static final String MARK_USER_MESSAGE = "user_message";
     private static final String MARK_MAP_DOWNLOAD_URL = "map_download_url";
-    
+
     // PARAMETERS
-    public static final String  PARAMETER_USER_MESSAGE               = "user_message";
-    private ITaskConfigService  _taskConfigService;
-    
+    public static final String PARAMETER_USER_MESSAGE = "user_message";
+    private ITaskConfigService _taskConfigService;
+
     // TEMPLATES
     private static final String TEMPLATE_USER_MESSAGE = "admin/plugins/workflow/modules/ticketing/user_message.html";
-            
+
     @Inject
     private TicketFormService _ticketFormService;
 
@@ -104,9 +104,9 @@ public class TaskReply extends AbstractTicketingTask
         if ( ticket != null )
         {
             String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
-            
+
             strUserMessage = fillWithDownloadUrls( strUserMessage, request );
-            
+
             ticket.setUserMessage( strUserMessage );
 
             TaskReplyConfig config = _taskConfigService.findByPrimaryKey( this.getId( ) );
@@ -125,8 +125,9 @@ public class TaskReply extends AbstractTicketingTask
                 strUserMessage = I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_NO_MESSAGE, Locale.FRENCH );
             }
 
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ), Locale.FRENCH ),
-                    TicketingConstants.MESSAGE_MARK + strUserMessage );
+            strTaskInformation = MessageFormat
+                    .format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ),
+                            Locale.FRENCH ), TicketingConstants.MESSAGE_MARK + strUserMessage );
 
         }
 
@@ -163,40 +164,43 @@ public class TaskReply extends AbstractTicketingTask
     {
         this._taskConfigService = taskConfigService;
     }
-    
+
     /**
      * Fill the user message with the download url links ( Template computed with AppTemplateService )
+     * 
      * @param strUserMessage
-     *              The user message
+     *            The user message
      * @param request
-     *              The request
+     *            The request
      * @return the completed user message
      */
     private String fillWithDownloadUrls( String strUserMessage, HttpServletRequest request )
     {
-        Map<String,Object> model = new HashMap<String,Object>();
+        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_USER_MESSAGE, strUserMessage );
-        
-        //Save the files in core_phy_file
-        Ticket ticket = new Ticket();
-        //Get the id entry for reply attments files from properties
-        int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID, TicketingConstants.PROPERTY_UNSET_INT );
-        
+
+        // Save the files in core_phy_file
+        Ticket ticket = new Ticket( );
+        // Get the id entry for reply attments files from properties
+        int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID,
+                TicketingConstants.PROPERTY_UNSET_INT );
+
         Entry entry = EntryHome.findByPrimaryKey( nIdEntryReplyAttachedFiles );
-        _ticketFormService.getResponseEntry( request, nIdEntryReplyAttachedFiles, request.getLocale( ), ticket );        
-        
-        //Build the download URLs list
-        Map<String,String> mapDownloadUrls = new HashMap<>();
+        _ticketFormService.getResponseEntry( request, nIdEntryReplyAttachedFiles, request.getLocale( ), ticket );
+
+        // Build the download URLs list
+        Map<String, String> mapDownloadUrls = new HashMap<>( );
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
         if ( entryTypeService instanceof AbstractEntryTypeUpload )
         {
             for ( Response response : ticket.getListResponse( ) )
             {
                 ResponseHome.create( response );
-                mapDownloadUrls.put( response.getFile().getTitle( ),( ( AbstractEntryTypeUpload) entryTypeService).getUrlDownloadFile( response.getIdResponse( ), AppPathService.getProdUrl( request ) ) );
+                mapDownloadUrls.put( response.getFile( ).getTitle( ),
+                        ( (AbstractEntryTypeUpload) entryTypeService ).getUrlDownloadFile( response.getIdResponse( ), AppPathService.getProdUrl( request ) ) );
             }
         }
-        
+
         model.put( MARK_MAP_DOWNLOAD_URL, mapDownloadUrls );
         return AppTemplateService.getTemplate( TEMPLATE_USER_MESSAGE, request.getLocale( ), model ).getHtml( );
     }

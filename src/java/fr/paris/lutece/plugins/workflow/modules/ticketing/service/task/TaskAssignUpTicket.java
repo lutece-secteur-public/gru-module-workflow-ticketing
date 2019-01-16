@@ -56,12 +56,12 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskAssignUpTicket extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_ASSIGN_UP_TICKET                     = "module.workflow.ticketing.task_assign_up_ticket.labelAssignUpTicket";
-    private static final String MESSAGE_ASSIGN_UP_TICKET_INFORMATION         = "module.workflow.ticketing.task_assign_up_ticket.information";
+    private static final String MESSAGE_ASSIGN_UP_TICKET = "module.workflow.ticketing.task_assign_up_ticket.labelAssignUpTicket";
+    private static final String MESSAGE_ASSIGN_UP_TICKET_INFORMATION = "module.workflow.ticketing.task_assign_up_ticket.information";
     private static final String MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER = "module.workflow.ticketing.task_assign_up_ticket.unknownFormerUser";
 
     // PARAMETERS
-    public static final String  PARAMETER_TICKET_UP_ASSIGNEE_UNIT_ID         = "ticket_up_unit_id";
+    public static final String PARAMETER_TICKET_UP_ASSIGNEE_UNIT_ID = "ticket_up_unit_id";
 
     @Override
     public String getTitle( Locale locale )
@@ -92,9 +92,10 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
 
                 AssigneeUser assigneeUser = ticket.getAssigneeUser( );
 
-                String strFormerUserInfos = ( assigneeUser == null ) ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER, Locale.FRENCH )
-                        : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ), strFormerUserInfos, unit.getLabel( ) );
+                String strFormerUserInfos = ( assigneeUser == null ) ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER,
+                        Locale.FRENCH ) : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
+                        strFormerUserInfos, unit.getLabel( ) );
 
                 ticket.setAssignerUser( ticket.getAssigneeUser( ) );
                 ticket.setAssignerUnit( ticket.getAssigneeUnit( ) );

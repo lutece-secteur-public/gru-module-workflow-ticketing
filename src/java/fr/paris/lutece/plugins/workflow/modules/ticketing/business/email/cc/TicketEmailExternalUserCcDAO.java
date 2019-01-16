@@ -46,12 +46,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcDAO
 {
-    private static final String SQL_QUERY_NEW_PK             = "SELECT max( id_cc ) FROM workflow_task_ticketing_email_external_user_cc";
+    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_cc ) FROM workflow_task_ticketing_email_external_user_cc";
     private static final String SQL_QUERY_FIND_BY_ID_HISTORY = " SELECT  id_cc, id_task, id_history, email FROM workflow_task_ticketing_email_external_user_cc "
             + " WHERE id_history = ? AND id_task = ? ORDER BY id_cc ASC";
-    private static final String SQL_QUERY_INSERT             = " INSERT INTO workflow_task_ticketing_email_external_user_cc ( id_cc, id_task, id_history, email ) " + " VALUES ( ?,?,?,? ) ";
-    private static final String SQL_QUERY_DELETE             = " DELETE FROM workflow_task_ticketing_email_external_user_cc WHERE id_cc = ?";
-    private static final String SQL_QUERY_DELETE_BY_HISTORY  = " DELETE FROM workflow_task_ticketing_email_external_user_cc WHERE id_history = ?";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_email_external_user_cc ( id_cc, id_task, id_history, email ) "
+            + " VALUES ( ?,?,?,? ) ";
+    private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_email_external_user_cc WHERE id_cc = ?";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY = " DELETE FROM workflow_task_ticketing_email_external_user_cc WHERE id_history = ?";
 
     /**
      * Generates a new primary key

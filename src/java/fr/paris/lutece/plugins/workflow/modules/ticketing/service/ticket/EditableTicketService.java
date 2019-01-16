@@ -64,21 +64,21 @@ import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
  */
 public class EditableTicketService implements IEditableTicketService
 {
-    public static final String          BEAN_NAME = "workflow-ticketing.editableTicketService";
+    public static final String BEAN_NAME = "workflow-ticketing.editableTicketService";
 
     // SERVICES
     @Inject
     private IEditableTicketFieldService _editableTicketFieldService;
     @Inject
-    private ITaskService                _taskService;
+    private ITaskService _taskService;
     @Inject
-    private IResourceWorkflowService    _resourceWorkflowService;
+    private IResourceWorkflowService _resourceWorkflowService;
     @Inject
-    private IActionService              _actionService;
+    private IActionService _actionService;
 
     // DAO
     @Inject
-    private IEditableTicketDAO          _editableTicketDAO;
+    private IEditableTicketDAO _editableTicketDAO;
 
     // CRUD
 
@@ -254,9 +254,11 @@ public class EditableTicketService implements IEditableTicketService
             {
                 Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
 
-                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, action.getWorkflow( ).getId( ) );
+                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, action
+                        .getWorkflow( ).getId( ) );
 
-                if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState( ) != null ) && ( resourceWorkflow.getState( ).getId( ) == action.getStateAfter( ).getId( ) ) )
+                if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState( ) != null )
+                        && ( resourceWorkflow.getState( ).getId( ) == action.getStateAfter( ).getId( ) ) )
                 {
                     bIsValid = true;
                 }

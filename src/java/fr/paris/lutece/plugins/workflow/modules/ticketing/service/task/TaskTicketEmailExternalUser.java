@@ -69,29 +69,29 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 public class TaskTicketEmailExternalUser extends SimpleTask
 {
     // Beans
-    public static final String                   BEAN_TICKET_CONFIG_SERVICE    = "workflow-ticketing.taskTicketEmailExternalUserConfigService";
+    public static final String BEAN_TICKET_CONFIG_SERVICE = "workflow-ticketing.taskTicketEmailExternalUserConfigService";
 
     // Parameters
-    public static final String                   PARAMETER_MESSAGE             = "message";
-    public static final String                   PARAMETER_EMAIL_RECIPIENTS    = "email_recipients";
-    public static final String                   PARAMETER_EMAIL_SUBJECT       = "email_subject";
-    public static final String                   PARAMETER_EMAIL_RECIPIENTS_CC = "email_recipients_cc";
-    public static final String                   PARAM_NEXT_ACTION_ID          = "next_action_id";
+    public static final String PARAMETER_MESSAGE = "message";
+    public static final String PARAMETER_EMAIL_RECIPIENTS = "email_recipients";
+    public static final String PARAMETER_EMAIL_SUBJECT = "email_subject";
+    public static final String PARAMETER_EMAIL_RECIPIENTS_CC = "email_recipients_cc";
+    public static final String PARAM_NEXT_ACTION_ID = "next_action_id";
 
     // Other constants
-    public static final String                   UNDERSCORE                    = "_";
-    public static final String                   SEMICOLON                     = ";";
+    public static final String UNDERSCORE = "_";
+    public static final String SEMICOLON = ";";
 
     // Messages
-    private static final String                  MESSAGE_TICKET                = "module.workflow.ticketing.task_ticket_email_external_user.label";
+    private static final String MESSAGE_TICKET = "module.workflow.ticketing.task_ticket_email_external_user.label";
 
     @Inject
     @Named( BEAN_TICKET_CONFIG_SERVICE )
-    private ITaskConfigService                   _taskTicketConfigService;
+    private ITaskConfigService _taskTicketConfigService;
 
     @Inject
     @Named( ITicketEmailExternalUserHistoryDAO.BEAN_SERVICE )
-    private ITicketEmailExternalUserHistoryDAO   _ticketEmailExternalUserHistoryDAO;
+    private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO;
 
     @Inject
     @Named( ITicketEmailExternalUserRecipientDAO.BEAN_SERVICE )
@@ -99,17 +99,17 @@ public class TaskTicketEmailExternalUser extends SimpleTask
 
     @Inject
     @Named( ITicketEmailExternalUserCcDAO.BEAN_SERVICE )
-    private ITicketEmailExternalUserCcDAO        _ticketEmailExternalUserCcDAO;
+    private ITicketEmailExternalUserCcDAO _ticketEmailExternalUserCcDAO;
 
     @Inject
     @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
-    private ITicketEmailExternalUserMessageDAO   _ticketEmailExternalUserDemandDAO;
+    private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserDemandDAO;
 
-    private IExternalUserDAO                     _externalUserDAO              = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
+    private IExternalUserDAO _externalUserDAO = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
 
     /** The _resource history service. */
     @Inject
-    private IResourceHistoryService              _resourceHistoryService;
+    private IResourceHistoryService _resourceHistoryService;
 
     /**
      * {@inheritDoc}
@@ -129,13 +129,16 @@ public class TaskTicketEmailExternalUser extends SimpleTask
             if ( messageDirectionExternalUser == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER )
             {
                 processAgentTask( nIdResourceHistory, ticket, request, locale, config );
-            } else if ( messageDirectionExternalUser == MessageDirectionExternalUser.EXTERNAL_USER_TO_AGENT )
-            {
-                processExternalUserTask( nIdResourceHistory, ticket, request, locale, config );
-            } else
-            {
-                processAgentRecontactTask( nIdResourceHistory, ticket, request, locale, config );
             }
+            else
+                if ( messageDirectionExternalUser == MessageDirectionExternalUser.EXTERNAL_USER_TO_AGENT )
+                {
+                    processExternalUserTask( nIdResourceHistory, ticket, request, locale, config );
+                }
+                else
+                {
+                    processAgentRecontactTask( nIdResourceHistory, ticket, request, locale, config );
+                }
         }
     }
 
@@ -177,21 +180,22 @@ public class TaskTicketEmailExternalUser extends SimpleTask
         _ticketEmailExternalUserHistoryDAO.insert( emailExternalUserHistory );
 
         // Create resource infos item
-        String[] emailRecipients = null;
+        String [ ] emailRecipients = null;
         if ( strEmailRecipients != null && !strEmailRecipients.isEmpty( ) )
         {
             emailRecipients = strEmailRecipients.split( SEMICOLON );
 
             for ( int i = 0; i < emailRecipients.length; i++ )
             {
-                AdminUser user = AdminUserHome.findUserByLogin( AdminUserHome.findUserByEmail( emailRecipients[i] ) );
+                AdminUser user = AdminUserHome.findUserByLogin( AdminUserHome.findUserByEmail( emailRecipients [i] ) );
 
                 TicketEmailExternalUserRecipient infosEmailExternalUser = new TicketEmailExternalUserRecipient( );
                 infosEmailExternalUser.setIdResourceHistory( nIdResourceHistory );
                 infosEmailExternalUser.setIdTask( getId( ) );
                 infosEmailExternalUser.setEmail( user.getEmail( ) );
 
-                List<ExternalUser> listUsers = _externalUserDAO.findExternalUser( user.getLastName( ), user.getEmail( ), String.valueOf( config.getIdContactAttribute( ) ), null, null );
+                List<ExternalUser> listUsers = _externalUserDAO.findExternalUser( user.getLastName( ), user.getEmail( ),
+                        String.valueOf( config.getIdContactAttribute( ) ), null, null );
 
                 if ( listUsers != null && listUsers.size( ) > 0 )
                 {
@@ -204,7 +208,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
             }
         }
 
-        String[] emailRecipientsCc = null;
+        String [ ] emailRecipientsCc = null;
         if ( strEmailRecipientsCc != null && !strEmailRecipientsCc.isEmpty( ) )
         {
             emailRecipientsCc = strEmailRecipientsCc.split( SEMICOLON );
@@ -213,7 +217,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
                 TicketEmailExternalUserCc infosEmailExternalUser = new TicketEmailExternalUserCc( );
                 infosEmailExternalUser.setIdResourceHistory( nIdResourceHistory );
                 infosEmailExternalUser.setIdTask( getId( ) );
-                infosEmailExternalUser.setEmail( emailRecipientsCc[i] );
+                infosEmailExternalUser.setEmail( emailRecipientsCc [i] );
                 _ticketEmailExternalUserCcDAO.insert( infosEmailExternalUser );
             }
         }
@@ -233,7 +237,8 @@ public class TaskTicketEmailExternalUser extends SimpleTask
      * @param config
      *            configuration of the current task
      */
-    private void processAgentRecontactTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, Locale locale, TaskTicketEmailExternalUserConfig config )
+    private void processAgentRecontactTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, Locale locale,
+            TaskTicketEmailExternalUserConfig config )
     {
         String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
         TicketEmailExternalUserMessage firstEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadFirstByIdTicket( ticket.getId( ) );
@@ -273,7 +278,8 @@ public class TaskTicketEmailExternalUser extends SimpleTask
      * @param config
      *            configuration of the current task
      */
-    private void processExternalUserTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, Locale locale, TaskTicketEmailExternalUserConfig config )
+    private void processExternalUserTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, Locale locale,
+            TaskTicketEmailExternalUserConfig config )
     {
         String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
 

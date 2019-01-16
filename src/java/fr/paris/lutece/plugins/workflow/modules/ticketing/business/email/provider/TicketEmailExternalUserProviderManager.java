@@ -50,7 +50,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class TicketEmailExternalUserProviderManager extends AbstractProviderManager
 {
-    private static final String PROVIDER_ID            = "ticket";
+    private static final String PROVIDER_ID = "ticket";
 
     private static final String MESSAGE_PROVIDER_LABEL = "module.workflow.ticketing.task_ticket_email_external_user.notifygru_provider";
 
@@ -84,7 +84,8 @@ public class TicketEmailExternalUserProviderManager extends AbstractProviderMana
     @Override
     public ProviderDescription getProviderDescription( String strProviderId )
     {
-        ProviderDescription providerDescription = new ProviderDescription( PROVIDER_ID, I18nService.getLocalizedString( MESSAGE_PROVIDER_LABEL, I18nService.getDefaultLocale( ) ) );
+        ProviderDescription providerDescription = new ProviderDescription( PROVIDER_ID, I18nService.getLocalizedString( MESSAGE_PROVIDER_LABEL,
+                I18nService.getDefaultLocale( ) ) );
 
         providerDescription.setMarkerDescriptions( TicketEmailExternalUserProvider.getProviderMarkerDescriptions( ) );
 

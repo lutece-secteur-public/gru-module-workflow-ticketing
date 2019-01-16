@@ -25,14 +25,14 @@ public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
     private static final String TEMPLATE_TASK_MARK_AS_UNREAD_CONFIG = "admin/plugins/workflow/modules/ticketing/task_mark_as_unread_config.html";
 
     // Marks
-    private static final String MARK_CONFIG                         = "config";
-    private static final String MARK_MARKINGS                       = "list_markings";
+    private static final String MARK_CONFIG = "config";
+    private static final String MARK_MARKINGS = "list_markings";
 
     // Parameter
-    private static final String PARAMETER_MARKING_ID                = "marking_id";
+    private static final String PARAMETER_MARKING_ID = "marking_id";
 
     // Errors
-    private static final String MESSAGE_EMPTY_MARKING               = "module.workflow.ticketing.task_mark_as_unread_config.error.marking";
+    private static final String MESSAGE_EMPTY_MARKING = "module.workflow.ticketing.task_mark_as_unread_config.error.marking";
 
     /**
      * {@inheritDoc}
@@ -84,7 +84,8 @@ public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
         if ( bConfigToCreate )
         {
             this.getTaskConfigService( ).create( config );
-        } else
+        }
+        else
         {
             this.getTaskConfigService( ).update( config );
         }

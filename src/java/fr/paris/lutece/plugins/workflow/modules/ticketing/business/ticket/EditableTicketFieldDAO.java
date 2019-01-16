@@ -47,7 +47,8 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
 {
-    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_entry " + " FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
+    private static final String SQL_QUERY_SELECT = " SELECT id_history, id_entry "
+            + " FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
     private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_editable_ticket_field (id_history, id_entry ) " + " VALUES ( ?,? ) ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
 

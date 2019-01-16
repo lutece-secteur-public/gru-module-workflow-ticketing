@@ -54,13 +54,13 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskAssignTicketToUser extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_ASSIGN_TICKET_TO_USER                             = "module.workflow.ticketing.task_assign_ticket_to_user.labelAssignTicketToUser";
-    private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION                 = "module.workflow.ticketing.task_assign_ticket_to_user.information";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_USER = "module.workflow.ticketing.task_assign_ticket_to_user.labelAssignTicketToUser";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION = "module.workflow.ticketing.task_assign_ticket_to_user.information";
     private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET = "module.workflow.ticketing.task_assign_ticket_to_user.information.unassign_ticket";
-    private static final String MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER             = "module.workflow.ticketing.task_assign_ticket_to_user.no_current_user";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER = "module.workflow.ticketing.task_assign_ticket_to_user.no_current_user";
 
     // PARAMETERS
-    public static final String  PARAMETER_ASSIGNEE_USER                                   = "id_user";
+    public static final String PARAMETER_ASSIGNEE_USER = "id_user";
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -80,7 +80,8 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
             {
                 assigneeUser = new AssigneeUser( );
                 strCurrentUser = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_NO_CURRENT_USER, Locale.FRENCH );
-            } else
+            }
+            else
             {
                 strCurrentUser = assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( );
             }
@@ -103,10 +104,11 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
                     ticket.setAssigneeUser( assigneeUser );
                     TicketHome.update( ticket );
 
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ), strCurrentUser,
-                            assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ),
+                            strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
                 }
-            } else
+            }
+            else
             {
                 // Unassign ticket
                 ticket.setAssigneeUser( null );
@@ -114,7 +116,8 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
 
                 if ( assigneeUser.getAdminUserId( ) != 0 )
                 {
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ), strCurrentUser );
+                    strTaskInformation = MessageFormat.format(
+                            I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION_UNASSIGN_TICKET, Locale.FRENCH ), strCurrentUser );
                 }
             }
         }

@@ -42,11 +42,11 @@ import java.util.List;
  */
 public class EditableTicket
 {
-    private int                       _nIdHistory;
-    private int                       _nIdTask;
-    private int                       _nIdTicket;
-    private String                    _strMessage;
-    private boolean                   _bIsEdited;
+    private int _nIdHistory;
+    private int _nIdTask;
+    private int _nIdTicket;
+    private String _strMessage;
+    private boolean _bIsEdited;
     private List<EditableTicketField> _listEditableTicketFields;
 
     /**

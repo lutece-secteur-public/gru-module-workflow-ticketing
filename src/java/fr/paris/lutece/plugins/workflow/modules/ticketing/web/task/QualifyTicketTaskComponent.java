@@ -55,10 +55,10 @@ public class QualifyTicketTaskComponent extends TicketingTaskComponent
     private static final String TEMPLATE_TASK_QUALIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_qualify_ticket_form.html";
 
     // MARKS
-    private static final String MARK_TICKET_PRIORITIES_LIST       = "ticket_priorities_list";
-    private static final String MARK_TICKET_PRIORITY_DEFAULT      = "ticket_priority_default";
-    private static final String MARK_TICKET_CRITICALITIES_LIST    = "ticket_criticalities_list";
-    private static final String MARK_TICKET_CRITICALITY_DEFAULT   = "ticket_criticality_default";
+    private static final String MARK_TICKET_PRIORITIES_LIST = "ticket_priorities_list";
+    private static final String MARK_TICKET_PRIORITY_DEFAULT = "ticket_priority_default";
+    private static final String MARK_TICKET_CRITICALITIES_LIST = "ticket_criticalities_list";
+    private static final String MARK_TICKET_CRITICALITY_DEFAULT = "ticket_criticality_default";
 
     /**
      * {@inheritDoc}

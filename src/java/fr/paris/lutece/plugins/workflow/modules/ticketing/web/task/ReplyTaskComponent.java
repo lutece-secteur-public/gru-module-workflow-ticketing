@@ -59,22 +59,22 @@ import javax.inject.Inject;
 public class ReplyTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_REPLY_FORM     = "admin/plugins/workflow/modules/ticketing/task_reply_form.html";
-    private static final String TEMPLATE_TASK_REPLY_CONFIG   = "admin/plugins/workflow/modules/ticketing/task_reply_config.html";
+    private static final String TEMPLATE_TASK_REPLY_FORM = "admin/plugins/workflow/modules/ticketing/task_reply_form.html";
+    private static final String TEMPLATE_TASK_REPLY_CONFIG = "admin/plugins/workflow/modules/ticketing/task_reply_config.html";
 
     // Markers
-    private static final String MARK_AGENT_VIEW              = "agent_view";
+    private static final String MARK_AGENT_VIEW = "agent_view";
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
-    private static final String MARK_MESSAGE_DIRECTION       = "message_direction";
-    private static final String MARK_CLOSE_TICKET            = "close_ticket";
-    private static final String MARK_LIST_ID_TICKETS         = "list_id_tickets";
-    private static final String MARK_HANDLER                 = "upload_handler";
-    private static final String MARK_ENTRY_ATTACHED_FILE     = "entry_attached_files";
+    private static final String MARK_MESSAGE_DIRECTION = "message_direction";
+    private static final String MARK_CLOSE_TICKET = "close_ticket";
+    private static final String MARK_LIST_ID_TICKETS = "list_id_tickets";
+    private static final String MARK_HANDLER = "upload_handler";
+    private static final String MARK_ENTRY_ATTACHED_FILE = "entry_attached_files";
 
     // Parameters
-    private static final String PARAMETER_MESSAGE_DIRECTION  = "message_direction";
-    private static final String PARAMETER_CLOSE_TICKET       = "close_ticket";
-    
+    private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
+    private static final String PARAMETER_CLOSE_TICKET = "close_ticket";
+
     @Inject
     private TicketFormService _ticketFormService;
 
@@ -96,7 +96,8 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         {
             model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection( ).ordinal( ) );
             model.put( MARK_CLOSE_TICKET, config.isCloseTicket( ) );
-        } else
+        }
+        else
         {
             model.put( MARK_CLOSE_TICKET, false );
             model.put( MARK_MESSAGE_DIRECTION, MessageDirection.AGENT_TO_USER );
@@ -132,7 +133,8 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         if ( bConfigToCreate )
         {
             this.getTaskConfigService( ).create( config );
-        } else
+        }
+        else
         {
             this.getTaskConfigService( ).update( config );
         }
@@ -156,10 +158,11 @@ public class ReplyTaskComponent extends TicketingTaskComponent
 
             ModelUtils.storeUserSignature( request, model );
         }
-        
-        //Get the id entry for reply attments files from properties
-        int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID, TicketingConstants.PROPERTY_UNSET_INT );
-        
+
+        // Get the id entry for reply attments files from properties
+        int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID,
+                TicketingConstants.PROPERTY_UNSET_INT );
+
         model.put( MARK_HANDLER, TicketAsynchronousUploadHandler.getHandler( ) );
         model.put( MARK_ENTRY_ATTACHED_FILE, _ticketFormService.getHtmlEntry( nIdEntryReplyAttachedFiles, false, request ) );
         model.put( MARK_AGENT_VIEW, bIsAgentView );

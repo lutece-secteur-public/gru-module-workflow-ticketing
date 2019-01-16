@@ -46,13 +46,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TicketEmailExternalUserRecipientDAO implements ITicketEmailExternalUserRecipientDAO
 {
-    private static final String SQL_QUERY_NEW_PK             = "SELECT max( id_recipient ) FROM ticket_email_external_user_recipient";
+    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_recipient ) FROM ticket_email_external_user_recipient";
     private static final String SQL_QUERY_FIND_BY_ID_HISTORY = " SELECT  id_recipient, id_task, id_history, email, field, name, firstname FROM ticket_email_external_user_recipient "
             + " WHERE id_history = ? AND id_task = ? ORDER BY id_recipient ASC";
-    private static final String SQL_QUERY_INSERT             = " INSERT INTO ticket_email_external_user_recipient ( id_recipient, id_task, id_history, email, field, name, firstname  ) "
+    private static final String SQL_QUERY_INSERT = " INSERT INTO ticket_email_external_user_recipient ( id_recipient, id_task, id_history, email, field, name, firstname  ) "
             + " VALUES ( ?,?,?,?,?,?,? ) ";
-    private static final String SQL_QUERY_DELETE             = " DELETE FROM ticket_email_external_user_recipient WHERE id_recipient = ?";
-    private static final String SQL_QUERY_DELETE_BY_HISTORY  = " DELETE FROM ticket_email_external_user_recipient WHERE id_history = ?";
+    private static final String SQL_QUERY_DELETE = " DELETE FROM ticket_email_external_user_recipient WHERE id_recipient = ?";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY = " DELETE FROM ticket_email_external_user_recipient WHERE id_history = ?";
 
     /**
      * Generates a new primary key

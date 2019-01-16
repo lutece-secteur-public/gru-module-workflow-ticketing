@@ -65,12 +65,12 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
     private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_form.html";
 
     // MESSAGE
-    private static final String MESSAGE_NO_UNIT_FOUND                    = "module.workflow.ticketing.task_assign_ticket_to_unit.labelNoUnitFound";
+    private static final String MESSAGE_NO_UNIT_FOUND = "module.workflow.ticketing.task_assign_ticket_to_unit.labelNoUnitFound";
 
-    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM   = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
+    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
 
     // MARKS
-    private static final String MARK_UNITS_LIST                          = "units_list";
+    private static final String MARK_UNITS_LIST = "units_list";
 
     /**
      * {@inheritDoc}
@@ -91,7 +91,8 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
             {
                 request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
                 addError( I18nService.getLocalizedString( MESSAGE_NO_UNIT_FOUND, locale ) );
-            } else
+            }
+            else
             {
                 model.put( MARK_UNITS_LIST, unitsList );
             }

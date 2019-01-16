@@ -56,7 +56,7 @@ import fr.paris.lutece.portal.service.workflow.WorkflowService;
 public class TaskIndexTicket extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_INDEX_TICKET            = "module.workflow.ticketing.task_index_ticket.labelIndexTicket";
+    private static final String MESSAGE_INDEX_TICKET = "module.workflow.ticketing.task_index_ticket.labelIndexTicket";
     private static final String PROPERTY_WORKFLOW_ACTION_ID_NEW = "ticketing.workflow.action.id.new";
 
     @Override
@@ -75,7 +75,8 @@ public class TaskIndexTicket extends AbstractTicketingTask
         if ( ( state == null ) || ( state.getId( ) == AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ACTION_ID_NEW, 301 ) ) )
         {
             indexerAction.setIdTask( IndexerAction.TASK_CREATE );
-        } else
+        }
+        else
         {
             indexerAction.setIdTask( IndexerAction.TASK_MODIFY );
         }

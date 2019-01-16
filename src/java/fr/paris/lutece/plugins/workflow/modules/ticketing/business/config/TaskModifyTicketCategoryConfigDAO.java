@@ -45,8 +45,8 @@ public class TaskModifyTicketCategoryConfigDAO implements ITaskConfigDAO<TaskMod
 {
     private static final String SQL_QUERY_SELECT_FOR_TASK = "SELECT id_entry FROM workflow_task_ticketing_modify_config WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE_FOR_TASK = "DELETE FROM workflow_task_ticketing_modify_config WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT          = "INSERT INTO workflow_task_ticketing_modify_config ( id_task, id_entry ) VALUES ( ?,? )";
-    private static final String SQL_QUERY_ADD_INSERT      = ", ( ?,? )";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO workflow_task_ticketing_modify_config ( id_task, id_entry ) VALUES ( ?,? )";
+    private static final String SQL_QUERY_ADD_INSERT = ", ( ?,? )";
 
     /**
      * {@inheritDoc}

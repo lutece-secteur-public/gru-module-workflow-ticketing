@@ -54,7 +54,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskRegisterChannel extends AbstractTicketingTask
 {
     // Messages
-    private static final String       MESSAGE_REGISTER_CHANNEL = "module.workflow.ticketing.task_register_channel.labelRegisterChannel";
+    private static final String MESSAGE_REGISTER_CHANNEL = "module.workflow.ticketing.task_register_channel.labelRegisterChannel";
 
     // Services
     @Inject

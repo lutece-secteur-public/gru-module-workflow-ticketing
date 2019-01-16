@@ -59,6 +59,6 @@ public final class RequestAuthenticationService
      */
     public static AbstractPrivateKeyAuthenticator getRequestAuthenticator( )
     {
-        return ( AbstractPrivateKeyAuthenticator ) SpringContextService.getBean( BEAN_REQUEST_AUTHENTICATION );
+        return (AbstractPrivateKeyAuthenticator) SpringContextService.getBean( BEAN_REQUEST_AUTHENTICATION );
     }
 }

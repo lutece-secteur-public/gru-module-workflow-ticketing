@@ -51,12 +51,12 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskModifyTicketNomenclature extends AbstractTicketingTask
 {
     // Message
-    private static final String MESSAGE_TASK_TITLE                         = "module.workflow.ticketing.task_modify_ticket_nomenclature.labelModifyNomenclatureTicket";
-    private static final String MESSAGE_NO_VALUE                           = "module.workflow.ticketing.task_modify_ticket_nomenclature.noValue";
+    private static final String MESSAGE_TASK_TITLE = "module.workflow.ticketing.task_modify_ticket_nomenclature.labelModifyNomenclatureTicket";
+    private static final String MESSAGE_NO_VALUE = "module.workflow.ticketing.task_modify_ticket_nomenclature.noValue";
     private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION = "module.workflow.ticketing.task_modify_ticket_nomenclature.information";
 
     // Parameter
-    private static final String PARAMETER_TICKET_NOMENCLATURE              = "nomenclature";
+    private static final String PARAMETER_TICKET_NOMENCLATURE = "nomenclature";
 
     @Override
     public String getTitle( Locale locale )

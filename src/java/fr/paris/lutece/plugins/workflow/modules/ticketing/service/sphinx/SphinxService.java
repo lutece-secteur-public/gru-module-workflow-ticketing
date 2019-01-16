@@ -21,33 +21,33 @@ import okhttp3.TlsVersion;
 
 public class SphinxService
 {
-    public static final String    BEAN_NAME            = "workflow-ticketing.sphinxService";
+    public static final String BEAN_NAME = "workflow-ticketing.sphinxService";
 
-    private static final String   API_URL              = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.url" );
+    private static final String API_URL = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.url" );
 
-    private static final String   TOKEN_URL            = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.token_url" );
-    private static final String   USERNAME             = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.username" );
-    private static final String   PASSWORD             = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.password" );
-    private static final String   SURVEY               = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.survey" );
+    private static final String TOKEN_URL = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.token_url" );
+    private static final String USERNAME = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.username" );
+    private static final String PASSWORD = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.password" );
+    private static final String SURVEY = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.survey" );
 
-    private static OkHttpClient   _client;
-    public static final MediaType JSON                 = MediaType.parse( "application/json; charset=utf-8" );
-    public static final MediaType FORM                 = MediaType.parse( "application/x-www-form-urlencoded; charset=utf-8" );
+    private static OkHttpClient _client;
+    public static final MediaType JSON = MediaType.parse( "application/json; charset=utf-8" );
+    public static final MediaType FORM = MediaType.parse( "application/x-www-form-urlencoded; charset=utf-8" );
 
-    private static final String   ACCESS_TOKEN         = "access_token";
+    private static final String ACCESS_TOKEN = "access_token";
 
-    private static final String   COLUMN_EMAIL         = "email";
-    private static final String   COLUMN_CREATION_DATE = "Date_de_creation";
-    private static final String   COLUMN_CATEGORY_1    = "domaine";
-    private static final String   COLUMN_CATEGORY_2    = "thematique";
-    private static final String   COLUMN_CATEGORY_3    = "sous_thematique";
-    private static final String   COLUMN_CATEGORY_4    = "localisation";
-    private static final String   COLUMN_CHANNEL       = "Canal";
-    private static final String   COLUMN_ASSIGN_ENTITY = "Entite_d_assignation";
-    private static final String   COLUMN_CLOSE_DATE    = "Date_de_cloture";
-    private static final String   COLUMN_DAYS_OPENED   = "delai_en_jours";
+    private static final String COLUMN_EMAIL = "email";
+    private static final String COLUMN_CREATION_DATE = "Date_de_creation";
+    private static final String COLUMN_CATEGORY_1 = "domaine";
+    private static final String COLUMN_CATEGORY_2 = "thematique";
+    private static final String COLUMN_CATEGORY_3 = "sous_thematique";
+    private static final String COLUMN_CATEGORY_4 = "localisation";
+    private static final String COLUMN_CHANNEL = "Canal";
+    private static final String COLUMN_ASSIGN_ENTITY = "Entite_d_assignation";
+    private static final String COLUMN_CLOSE_DATE = "Date_de_cloture";
+    private static final String COLUMN_DAYS_OPENED = "delai_en_jours";
 
-    private static boolean        USE_SSL              = true;
+    private static boolean USE_SSL = true;
 
     public static OkHttpClient getHttpClient( )
     {
@@ -55,20 +55,25 @@ public class SphinxService
         {
             if ( USE_SSL )
             {
-                ConnectionSpec spec = new ConnectionSpec.Builder( ConnectionSpec.MODERN_TLS ).tlsVersions( TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2 )
-                        .cipherSuites( CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
-                                CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
-                                CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-                                CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,
-                                CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256,
-                                CipherSuite.TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_DHE_DSS_WITH_AES_128_GCM_SHA256,
-                                CipherSuite.TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA,
-                                CipherSuite.TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_EMPTY_RENEGOTIATION_INFO_SCSV )
-                        .build( );
+                ConnectionSpec spec = new ConnectionSpec.Builder( ConnectionSpec.MODERN_TLS )
+                        .tlsVersions( TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2 )
+                        .cipherSuites( CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+                                CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256,
+                                CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
+                                CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+                                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
+                                CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,
+                                CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
+                                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                                CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256,
+                                CipherSuite.TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+                                CipherSuite.TLS_DHE_DSS_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA,
+                                CipherSuite.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA,
+                                CipherSuite.TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_EMPTY_RENEGOTIATION_INFO_SCSV ).build( );
 
                 _client = new OkHttpClient.Builder( ).connectionSpecs( Collections.singletonList( spec ) ).build( );
-            } else
+            }
+            else
             {
                 _client = new OkHttpClient( );
             }
@@ -140,7 +145,8 @@ public class SphinxService
             String closeDate = new SimpleDateFormat( "dd/MM/yyyy" ).format( ticket.getDateClose( ) );
             ticketJson.addProperty( COLUMN_CLOSE_DATE, closeDate );
 
-            ticketJson.addProperty( COLUMN_DAYS_OPENED, ( int ) ( ticket.getDateClose( ).getTime( ) - ticket.getDateCreate( ).getTime( ) ) / ( 24 * 60 * 60 * 1000 ) );
+            ticketJson.addProperty( COLUMN_DAYS_OPENED, (int) ( ticket.getDateClose( ).getTime( ) - ticket.getDateCreate( ).getTime( ) )
+                    / ( 24 * 60 * 60 * 1000 ) );
         }
 
         JsonArray ticketsJson = new JsonArray( );

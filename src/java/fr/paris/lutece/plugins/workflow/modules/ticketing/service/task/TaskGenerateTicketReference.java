@@ -53,8 +53,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskGenerateTicketReference extends AbstractTicketingTask
 {
     // Messages
-    private static final String     MESSAGE_GENERATE_TICKET_REFERENCE             = "module.workflow.ticketing.task_generate_ticket_reference.labelGenerateTicketReference";
-    private static final String     MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION = "module.workflow.ticketing.task_generate_ticket_reference.information";
+    private static final String MESSAGE_GENERATE_TICKET_REFERENCE = "module.workflow.ticketing.task_generate_ticket_reference.labelGenerateTicketReference";
+    private static final String MESSAGE_GENERATE_TICKET_REFERENCE_INFORMATION = "module.workflow.ticketing.task_generate_ticket_reference.information";
 
     // Services
     @Inject
@@ -70,7 +70,7 @@ public class TaskGenerateTicketReference extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            synchronized ( _ticketReferenceService )
+            synchronized( _ticketReferenceService )
             {
                 strReference = _ticketReferenceService.generateReference( ticket );
                 ticket.setReference( strReference );

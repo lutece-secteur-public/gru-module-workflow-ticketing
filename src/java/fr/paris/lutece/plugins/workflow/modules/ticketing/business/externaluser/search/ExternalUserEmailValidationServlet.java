@@ -66,25 +66,25 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 public class ExternalUserEmailValidationServlet extends HttpServlet
 {
     // Other constants
-    public static final String  URL_SERVLET              = "servlet/plugins/workflow/ticketing/externaluser/externaluseremailvalidation";
+    public static final String URL_SERVLET = "servlet/plugins/workflow/ticketing/externaluser/externaluseremailvalidation";
 
     /**
      * Generated serial Id
      */
-    private static final long   serialVersionUID         = -1109810381598265699L;
+    private static final long serialVersionUID = -1109810381598265699L;
 
     // Properties
-    private static final String PROPERTY_ENCODING        = "lutece.encoding";
+    private static final String PROPERTY_ENCODING = "lutece.encoding";
 
     // Json parameters
-    private static final String ERROR_INVALID_EMAIL      = "error_invalid_email";
-    private static final String ERROR_INVALID_EMAIL_CC   = "error_invalid_email_cc";
+    private static final String ERROR_INVALID_EMAIL = "error_invalid_email";
+    private static final String ERROR_INVALID_EMAIL_CC = "error_invalid_email_cc";
 
     // message
     private static final String LOG_UNAUTHENTICATED_USER = "Calling ExternalUserEmailValidationServlet with unauthenticated user";
 
     // BEAN
-    private IExternalUserDAO    _externalUserDAO         = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
+    private IExternalUserDAO _externalUserDAO = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -121,7 +121,8 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
         if ( StringUtils.isEmpty( strEmailRecipients ) )
         {
             mapErrors.put( ERROR_INVALID_EMAIL, I18nService.getLocalizedString( TicketEmailExternalUserTaskComponent.MESSAGE_EMPTY_EMAIL, locale ) );
-        } else
+        }
+        else
         {
             List<String> listErrorRecipients = WorkflowTicketingUtils.validEmailList( strEmailRecipients, _externalUserDAO, strNextActionId );
             if ( !listErrorRecipients.isEmpty( ) )
@@ -130,9 +131,11 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
                 if ( listErrorRecipients.size( ) == 1 )
                 {
                     strErrorRecipients = I18nService.getLocalizedString( listErrorRecipients.get( 0 ), locale );
-                } else
+                }
+                else
                 {
-                    strErrorRecipients = I18nService.getLocalizedString( listErrorRecipients.get( 0 ), listErrorRecipients.subList( 1, listErrorRecipients.size( ) ).toArray( ), locale );
+                    strErrorRecipients = I18nService.getLocalizedString( listErrorRecipients.get( 0 ),
+                            listErrorRecipients.subList( 1, listErrorRecipients.size( ) ).toArray( ), locale );
                 }
                 mapErrors.put( ERROR_INVALID_EMAIL, strErrorRecipients );
             }
@@ -147,9 +150,11 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
                 if ( listErrorRecipientsCc.size( ) == 1 )
                 {
                     strErrorRecipientsCc = I18nService.getLocalizedString( listErrorRecipientsCc.get( 0 ), locale );
-                } else
+                }
+                else
                 {
-                    strErrorRecipientsCc = I18nService.getLocalizedString( listErrorRecipientsCc.get( 0 ), listErrorRecipientsCc.subList( 1, listErrorRecipientsCc.size( ) ).toArray( ), locale );
+                    strErrorRecipientsCc = I18nService.getLocalizedString( listErrorRecipientsCc.get( 0 ),
+                            listErrorRecipientsCc.subList( 1, listErrorRecipientsCc.size( ) ).toArray( ), locale );
                 }
                 mapErrors.put( ERROR_INVALID_EMAIL_CC, strErrorRecipientsCc );
             }
