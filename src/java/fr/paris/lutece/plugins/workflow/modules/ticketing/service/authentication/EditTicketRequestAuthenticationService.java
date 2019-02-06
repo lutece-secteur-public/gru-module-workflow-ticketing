@@ -59,6 +59,6 @@ public final class EditTicketRequestAuthenticationService
      */
     public static AbstractPrivateKeyAuthenticator getRequestAuthenticator( )
     {
-        return ( AbstractPrivateKeyAuthenticator ) SpringContextService.getBean( BEAN_EDIT_TICKET_REQUEST_AUTHENTICATION );
+        return (AbstractPrivateKeyAuthenticator) SpringContextService.getBean( BEAN_EDIT_TICKET_REQUEST_AUTHENTICATION );
     }
 }

@@ -42,7 +42,7 @@ import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 public class TaskReplyConfig extends TaskConfig
 {
     private MessageDirection _messageDirection;
-    private boolean          _bCloseTicket;
+    private boolean _bCloseTicket;
 
     /**
      * Gives the message direction

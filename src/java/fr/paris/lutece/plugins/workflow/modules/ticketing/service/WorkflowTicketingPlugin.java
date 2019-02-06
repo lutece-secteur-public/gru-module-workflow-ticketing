@@ -46,7 +46,7 @@ public class WorkflowTicketingPlugin extends Plugin
     /**
      * Name of the Workflow ticketing module
      */
-    public static final String PLUGIN_NAME              = "workflow-ticketing";
+    public static final String PLUGIN_NAME = "workflow-ticketing";
 
     /**
      * Transaction manage bean name for services of this plugin

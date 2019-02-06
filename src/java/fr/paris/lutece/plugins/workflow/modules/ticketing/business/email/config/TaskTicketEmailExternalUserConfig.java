@@ -45,11 +45,11 @@ public class TaskTicketEmailExternalUserConfig extends TaskConfig
     @NotNull
     private MessageDirectionExternalUser _messageDirectionExternalUser;
 
-    private Integer                      _nIdFollowingAction;
+    private Integer _nIdFollowingAction;
 
-    private Integer                      _nIdContactAttribute;
+    private Integer _nIdContactAttribute;
 
-    private String                       _strDefaultSubject;
+    private String _strDefaultSubject;
 
     /**
      * Gives the message direction

@@ -49,7 +49,7 @@ public enum MessageDirection
 {
     USER_TO_AGENT, AGENT_TO_USER;
 
-    private static final String                   MESSAGE_PREFIX       = "module.workflow.ticketing.task_reply_config.message.direction.";
+    private static final String MESSAGE_PREFIX = "module.workflow.ticketing.task_reply_config.message.direction.";
     private static Map<Integer, MessageDirection> _mapMessageDirection = new HashMap<Integer, MessageDirection>( );
 
     static

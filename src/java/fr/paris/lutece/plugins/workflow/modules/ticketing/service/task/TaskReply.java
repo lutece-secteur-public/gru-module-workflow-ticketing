@@ -33,6 +33,13 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -43,11 +50,18 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
 
 /**
  * This class represents a task to reply to a ticket
@@ -55,13 +69,23 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class TaskReply extends AbstractTicketingTask
 {
-    private static final String MESSAGE_REPLY                        = "module.workflow.ticketing.task_reply.labelReply";
-    private static final String MESSAGE_REPLY_INFORMATION_PREFIX     = "module.workflow.ticketing.task_reply.information.";
+    private static final String MESSAGE_REPLY = "module.workflow.ticketing.task_reply.labelReply";
+    private static final String MESSAGE_REPLY_INFORMATION_PREFIX = "module.workflow.ticketing.task_reply.information.";
     private static final String MESSAGE_REPLY_INFORMATION_NO_MESSAGE = "module.workflow.ticketing.task_reply.information.";
 
+    // MARKERS
+    private static final String MARK_USER_MESSAGE = "user_message";
+    private static final String MARK_MAP_DOWNLOAD_URL = "map_download_url";
+
     // PARAMETERS
-    public static final String  PARAMETER_USER_MESSAGE               = "user_message";
-    private ITaskConfigService  _taskConfigService;
+    public static final String PARAMETER_USER_MESSAGE = "user_message";
+    private ITaskConfigService _taskConfigService;
+
+    // TEMPLATES
+    private static final String TEMPLATE_USER_MESSAGE = "admin/plugins/workflow/modules/ticketing/user_message.html";
+
+    @Inject
+    private TicketFormService _ticketFormService;
 
     @Override
     public String getTitle( Locale locale )
@@ -80,6 +104,9 @@ public class TaskReply extends AbstractTicketingTask
         if ( ticket != null )
         {
             String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
+
+            strUserMessage = fillWithDownloadUrls( strUserMessage, request );
+
             ticket.setUserMessage( strUserMessage );
 
             TaskReplyConfig config = _taskConfigService.findByPrimaryKey( this.getId( ) );
@@ -98,8 +125,9 @@ public class TaskReply extends AbstractTicketingTask
                 strUserMessage = I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_NO_MESSAGE, Locale.FRENCH );
             }
 
-            strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ), Locale.FRENCH ),
-                    TicketingConstants.MESSAGE_MARK + strUserMessage );
+            strTaskInformation = MessageFormat
+                    .format( I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ),
+                            Locale.FRENCH ), TicketingConstants.MESSAGE_MARK + strUserMessage );
 
         }
 
@@ -135,5 +163,45 @@ public class TaskReply extends AbstractTicketingTask
     public void setTaskConfigService( ITaskConfigService taskConfigService )
     {
         this._taskConfigService = taskConfigService;
+    }
+
+    /**
+     * Fill the user message with the download url links ( Template computed with AppTemplateService )
+     * 
+     * @param strUserMessage
+     *            The user message
+     * @param request
+     *            The request
+     * @return the completed user message
+     */
+    private String fillWithDownloadUrls( String strUserMessage, HttpServletRequest request )
+    {
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( MARK_USER_MESSAGE, strUserMessage );
+
+        // Save the files in core_phy_file
+        Ticket ticket = new Ticket( );
+        // Get the id entry for reply attments files from properties
+        int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID,
+                TicketingConstants.PROPERTY_UNSET_INT );
+
+        Entry entry = EntryHome.findByPrimaryKey( nIdEntryReplyAttachedFiles );
+        _ticketFormService.getResponseEntry( request, nIdEntryReplyAttachedFiles, request.getLocale( ), ticket );
+
+        // Build the download URLs list
+        Map<String, String> mapDownloadUrls = new HashMap<>( );
+        IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
+        if ( entryTypeService instanceof AbstractEntryTypeUpload )
+        {
+            for ( Response response : ticket.getListResponse( ) )
+            {
+                ResponseHome.create( response );
+                mapDownloadUrls.put( response.getFile( ).getTitle( ),
+                        ( (AbstractEntryTypeUpload) entryTypeService ).getUrlDownloadFile( response.getIdResponse( ), AppPathService.getProdUrl( request ) ) );
+            }
+        }
+
+        model.put( MARK_MAP_DOWNLOAD_URL, mapDownloadUrls );
+        return AppTemplateService.getTemplate( TEMPLATE_USER_MESSAGE, request.getLocale( ), model ).getHtml( );
     }
 }

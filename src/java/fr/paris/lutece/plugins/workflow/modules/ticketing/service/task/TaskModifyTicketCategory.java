@@ -71,24 +71,24 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskModifyTicketCategory extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_MODIFY_TICKET_CATEGORY              = "module.workflow.ticketing.task_modify_ticket_category.labelModifyTicketCategory";
-    private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION  = "module.workflow.ticketing.task_modify_ticket_category.information";
+    private static final String MESSAGE_MODIFY_TICKET_CATEGORY = "module.workflow.ticketing.task_modify_ticket_category.labelModifyTicketCategory";
+    private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION = "module.workflow.ticketing.task_modify_ticket_category.information";
     private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION = "module.workflow.ticketing.task_modify_ticket_attribute.information";
-    private static final String MESSAGE_NO_VALUE                            = "module.workflow.ticketing.task_modify_ticket_category.noValue";
+    private static final String MESSAGE_NO_VALUE = "module.workflow.ticketing.task_modify_ticket_category.noValue";
 
     // PARAMETERS
-    public static final String  PARAMETER_TICKET_CATEGORY_ID                = "id_ticket_category";
-    public static final String  PARAMETER_TICKET_DOMAIN_ID                  = "id_ticket_domain";
-    public static final String  PARAMETER_TICKET_TYPE_ID                    = "id_ticket_type";
-    public static final String  SEPARATOR                                   = " - ";
+    public static final String PARAMETER_TICKET_CATEGORY_ID = "id_ticket_category";
+    public static final String PARAMETER_TICKET_DOMAIN_ID = "id_ticket_domain";
+    public static final String PARAMETER_TICKET_TYPE_ID = "id_ticket_type";
+    public static final String SEPARATOR = " - ";
 
     // Beans
-    private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE  = "workflow-ticketing.taskModifyTicketCategoryConfigService";
+    private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE = "workflow-ticketing.taskModifyTicketCategoryConfigService";
     @Inject
-    private TicketFormService   _ticketFormService;
+    private TicketFormService _ticketFormService;
     @Inject
     @Named( BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE )
-    private ITaskConfigService  _taskModifyTicketCategoryConfigService;
+    private ITaskConfigService _taskModifyTicketCategoryConfigService;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -97,14 +97,14 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        String[] listPreviousTicketCategoryLabel = new String[TicketCategoryService.getInstance( ).getCategoriesTree( ).getMaxDepthNumber( )];
+        String [ ] listPreviousTicketCategoryLabel = new String [ TicketCategoryService.getInstance( ).getCategoriesTree( ).getMaxDepthNumber( )];
         Arrays.fill( listPreviousTicketCategoryLabel, "" );
 
         if ( ticket != null )
         {
             for ( TicketCategory ticketCategory : ticket.getBranch( ) )
             {
-                listPreviousTicketCategoryLabel[ticketCategory.getCategoryType( ).getDepthNumber( ) - 1] = ticketCategory.getLabel( );
+                listPreviousTicketCategoryLabel [ticketCategory.getCategoryType( ).getDepthNumber( ) - 1] = ticketCategory.getLabel( );
             }
 
             // Validate the TicketCategory
@@ -115,13 +115,17 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
             for ( TicketCategory ticketCategory : ticket.getBranch( ) )
             {
-                String strPreviousCategoryLabel = listPreviousTicketCategoryLabel[ticketCategory.getCategoryType( ).getDepthNumber( ) - 1];
+                String strPreviousCategoryLabel = listPreviousTicketCategoryLabel [ticketCategory.getCategoryType( ).getDepthNumber( ) - 1];
 
                 if ( !strPreviousCategoryLabel.equals( ticketCategory.getLabel( ) ) )
                 {
-                    strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ), ticketCategory.getCategoryType( ).getLabel( ),
-                            StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ),
-                            StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
+                    strTaskInformation += MessageFormat.format(
+                            I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ),
+                            ticketCategory.getCategoryType( ).getLabel( ),
+                            StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE,
+                                    locale ),
+                            StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString(
+                                    MESSAGE_NO_VALUE, locale ) );
                 }
             }
 
@@ -153,10 +157,12 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             if ( response.getResponseValue( ) != null )
                             {
                                 strPreviousAttributeValue += ( " " + response.getResponseValue( ) );
-                            } else if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
-                            {
-                                strPreviousAttributeValue += ( " " + response.getFile( ).getTitle( ) );
                             }
+                            else
+                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                                {
+                                    strPreviousAttributeValue += ( " " + response.getFile( ).getTitle( ) );
+                                }
                             // clear the response
                             nIdCurrentResponse = response.getIdResponse( );
                             iterator.remove( );
@@ -174,10 +180,12 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             if ( response.getResponseValue( ) != null )
                             {
                                 strNewAttributeValue += ( " " + response.getResponseValue( ) );
-                            } else if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
-                            {
-                                strNewAttributeValue += ( " " + response.getFile( ).getTitle( ) );
                             }
+                            else
+                                if ( ( response.getFile( ) != null ) && ( response.getFile( ).getTitle( ) != null ) )
+                                {
+                                    strNewAttributeValue += ( " " + response.getFile( ).getTitle( ) );
+                                }
                             responseNew = response;
                             break;
                         }
@@ -186,7 +194,8 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                     // compare
                     if ( !strPreviousAttributeValue.equals( strNewAttributeValue ) )
                     {
-                        strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION, Locale.FRENCH ), entry.getTitle( ),
+                        strTaskInformation += MessageFormat.format(
+                                I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION, Locale.FRENCH ), entry.getTitle( ),
                                 strPreviousAttributeValue, strNewAttributeValue );
                         if ( nIdCurrentResponse != -1 )
                         {

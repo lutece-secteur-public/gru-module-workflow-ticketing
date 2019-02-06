@@ -56,7 +56,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY             = "module.workflow.ticketing.task_assign_unit_linked_to_category.labelAssignTicketLinkedToCategory";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY = "module.workflow.ticketing.task_assign_unit_linked_to_category.labelAssignTicketLinkedToCategory";
     private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY_INFORMATION = "module.workflow.ticketing.task_assign_unit_linked_to_category.information";
 
     @Override
@@ -94,7 +94,8 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
                 ticket.setAssigneeUser( null );
                 TicketHome.update( ticket );
 
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY_INFORMATION, Locale.FRENCH ), assigneeUnit.getName( ),
+                strTaskInformation = MessageFormat.format(
+                        I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY_INFORMATION, Locale.FRENCH ), assigneeUnit.getName( ),
                         ticketCategory.getLabel( ) );
             }
         }

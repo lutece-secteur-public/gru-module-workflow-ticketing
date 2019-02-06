@@ -51,13 +51,13 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class TaskMarkAsUnread extends AbstractTicketingTask
 {
-    private static final String MESSAGE_TASK_TITLE                 = "module.workflow.ticketing.task_mark_as_unread.title";
+    private static final String MESSAGE_TASK_TITLE = "module.workflow.ticketing.task_mark_as_unread.title";
 
     private static final String BEAN_MARK_AS_UNREAD_CONFIG_SERVICE = "workflow-ticketing.taskMarkAsUnreadConfigService";
 
     @Inject
     @Named( BEAN_MARK_AS_UNREAD_CONFIG_SERVICE )
-    private ITaskConfigService  _taskConfigService;
+    private ITaskConfigService _taskConfigService;
 
     @Override
     public String getTitle( Locale locale )

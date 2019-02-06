@@ -53,16 +53,16 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskQualifyTicket extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_QUALIFY_TICKET                         = "module.workflow.ticketing.task_qualify_ticket.labelQualifyTicket";
-    private static final String MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY    = "module.workflow.ticketing.task_qualify_ticket.information.priority";
+    private static final String MESSAGE_QUALIFY_TICKET = "module.workflow.ticketing.task_qualify_ticket.labelQualifyTicket";
+    private static final String MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY = "module.workflow.ticketing.task_qualify_ticket.information.priority";
     private static final String MESSAGE_QUALIFY_TICKET_INFORMATION_CRITICALITY = "module.workflow.ticketing.task_qualify_ticket.information.criticality";
 
     // PARAMETERS
-    public static final String  PARAMETER_TICKET_PRIORITY                      = "ticket_priority";
-    public static final String  PARAMETER_TICKET_CRITICALITY                   = "ticket_criticality";
+    public static final String PARAMETER_TICKET_PRIORITY = "ticket_priority";
+    public static final String PARAMETER_TICKET_CRITICALITY = "ticket_criticality";
 
     // Other constants
-    private static final String NEW_LINE                                       = "<br/>";
+    private static final String NEW_LINE = "<br/>";
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -93,8 +93,8 @@ public class TaskQualifyTicket extends AbstractTicketingTask
 
             if ( priorityBefore != priorityAfter )
             {
-                sb.append( MessageFormat.format( I18nService.getLocalizedString( MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY, Locale.FRENCH ), priorityBefore.getLocalizedMessage( Locale.FRENCH ),
-                        priorityAfter.getLocalizedMessage( Locale.FRENCH ) ) );
+                sb.append( MessageFormat.format( I18nService.getLocalizedString( MESSAGE_QUALIFY_TICKET_INFORMATION_PRIORITY, Locale.FRENCH ),
+                        priorityBefore.getLocalizedMessage( Locale.FRENCH ), priorityAfter.getLocalizedMessage( Locale.FRENCH ) ) );
 
                 bPriorityChanged = true;
             }

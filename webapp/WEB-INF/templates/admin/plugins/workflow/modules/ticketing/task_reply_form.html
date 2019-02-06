@@ -1,37 +1,17 @@
 <#if agent_view>
-    <#include "/admin/util/editor/editor.html" />
-</#if>
-
-<div class="form-group">
-	<#if list_id_tickets?? && list_id_tickets?has_content>
-		<#list list_id_tickets as id_ticket >
-			<input name="selected_tickets" value="${id_ticket}" type="hidden"></input>
-		</#list>
-	</#if>
-    <div class="col-xs-12">
-        <textarea name="user_message" id="user_message" class="ticketing <#if agent_view>richtext</#if>" >
-            <#if agent_view>
-                <p><br/>${user_signature}</p>
-            </#if>
-        </textarea>
-    </div>
-</div> 
-
-<#if agent_view>
 	<div class="form-group">
 		<div class="col-xs-12">
             <div class="pull-right">
-	            <a id="search_results_button" onclick="showSearchResponse()" class="btn btn-primary" >#i18n{module.workflow.ticketing.task_reply.button.searchResponse}</a>
+                <a id="search_results_button" onclick="showSearchResponse()" class="btn btn-primary" >#i18n{module.workflow.ticketing.task_reply.button.searchResponse}</a>
             </div>
-	    </div>
+        </div>
 	</div>
 	<div id="search_results_div">
 		<#include "/admin/plugins/ticketing/search/search_response.html" />
 	</div>
-</#if>
-
-<#if agent_view>
+    <#include "/admin/util/editor/editor.html" />
     <@initEditor />
+
 	<script>
 	   $( function(){
             $("#search_results_div").hide();
@@ -46,11 +26,14 @@
             });
 		 });
 		function showSearchResponse() {
-				$("#search_results_div").toggle();
-				//start search
-				if( $("#search_results_div").is(':visible') &&  $("#query").val() != '' ){
+			$("#search_results_div").toggle();
+			//start search
+			if( $("#search_results_div").is(':visible') ) {
+				$("#query").focus();
+				if( $("#query").val() != '' ){
 					$("#search_button").click();
-				}
+				}	
+			}
 		}
 		$(document).on('click','a[name^="response_"]', {} ,function(event) {
 			var element = "#content_"+event.target.name;
@@ -58,3 +41,25 @@
 		});
 	</script>
 </#if>
+        
+<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
+<div class="form-group">
+	<#if list_id_tickets?? && list_id_tickets?has_content>
+		<#list list_id_tickets as id_ticket >
+			<input name="selected_tickets" value="${id_ticket}" type="hidden"></input>
+		</#list>
+	</#if>
+  <label class="col-xs-12 col-sm-3 control-label" for="user_message">#i18n{module.workflow.ticketing.task_reply.labelMyReply}</label>
+  <div class="col-xs-12 col-sm-9">
+    <textarea name="user_message" id="user_message" class="ticketing form-control<#if agent_view> richtext</#if>">
+      <#if agent_view>
+        <p>${user_signature}</p>
+      </#if>
+    </textarea>
+      <#if agent_view>
+            ${entry_attached_files!''}   
+            <@addRequiredJsFiles />
+            <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
+        </#if>
+  </div>
+</div>

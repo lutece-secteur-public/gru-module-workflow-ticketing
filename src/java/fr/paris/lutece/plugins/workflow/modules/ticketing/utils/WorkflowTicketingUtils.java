@@ -62,13 +62,13 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public final class WorkflowTicketingUtils
 {
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
-    private static final String                  SEMICOLON               = ";";
+    private static final String SEMICOLON = ";";
 
     // Templates
-    private static final String                  TEMPLATE_ERRORS_LIST    = "admin/util/errors_list.html";
+    private static final String TEMPLATE_ERRORS_LIST = "admin/util/errors_list.html";
 
     // Marks
-    private static final String                  MARK_ERRORS_LIST        = "errors_list";
+    private static final String MARK_ERRORS_LIST = "errors_list";
 
     /**
      * Private constructor
@@ -114,13 +114,15 @@ public final class WorkflowTicketingUtils
         if ( StringUtils.isBlank( strEmails ) )
         {
             listForError.add( TicketEmailExternalUserTaskComponent.MESSAGE_EMPTY_EMAIL );
-        } else
+        }
+        else
         {
-            String[] arrayEmails = strEmails.split( SEMICOLON );
+            String [ ] arrayEmails = strEmails.split( SEMICOLON );
             if ( arrayEmails.length == 0 )
             {
                 listForError.add( TicketEmailExternalUserTaskComponent.MESSAGE_EMPTY_EMAIL );
-            } else
+            }
+            else
             {
                 EmailValidator validator = EmailValidator.getInstance( );
                 for ( String strEmail : arrayEmails )
@@ -130,19 +132,22 @@ public final class WorkflowTicketingUtils
                         listForError.add( TicketEmailExternalUserTaskComponent.MESSAGE_INVALID_EMAIL );
                         listForError.add( strEmail );
                         break;
-                    } else
+                    }
+                    else
                     {
                         if ( !validator.isValid( strEmail ) )
                         {
                             listForError.add( TicketEmailExternalUserTaskComponent.MESSAGE_INVALID_EMAIL );
                             listForError.add( strEmail );
                             break;
-                        } else if ( ( externalUserUserDAO != null ) && !externalUserUserDAO.isValidEmail( strEmail, strNextActionId ) )
-                        {
-                            listForError.add( TicketEmailExternalUserTaskComponent.MESSAGE_INVALID_EMAIL_OR_NOT_AUTHORIZED );
-                            listForError.add( strEmail );
-                            break;
                         }
+                        else
+                            if ( ( externalUserUserDAO != null ) && !externalUserUserDAO.isValidEmail( strEmail, strNextActionId ) )
+                            {
+                                listForError.add( TicketEmailExternalUserTaskComponent.MESSAGE_INVALID_EMAIL_OR_NOT_AUTHORIZED );
+                                listForError.add( strEmail );
+                                break;
+                            }
                     }
                 }
             }
@@ -161,13 +166,15 @@ public final class WorkflowTicketingUtils
      *            type
      * @return Object[]
      */
-    public static <T> Object[] formatValidationErrors( HttpServletRequest request, List<? extends ErrorMessage> errors )
+    public static <T> Object [ ] formatValidationErrors( HttpServletRequest request, List<? extends ErrorMessage> errors )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( MARK_ERRORS_LIST, errors );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_ERRORS_LIST, request.getLocale( ), model );
-        String[] formatedErrors = { template.getHtml( ) };
+        String [ ] formatedErrors = {
+            template.getHtml( )
+        };
 
         return formatedErrors;
     }

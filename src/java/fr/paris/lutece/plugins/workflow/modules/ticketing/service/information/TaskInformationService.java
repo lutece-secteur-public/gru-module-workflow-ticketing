@@ -51,7 +51,7 @@ public class TaskInformationService implements ITaskInformationService
     /**
      * The name of the bean of this service
      */
-    public static final String  BEAN_SERVICE = "workflow-ticketing.taskInformationService";
+    public static final String BEAN_SERVICE = "workflow-ticketing.taskInformationService";
     @Inject
     private ITaskInformationDAO _dao;
 

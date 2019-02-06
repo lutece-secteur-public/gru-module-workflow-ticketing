@@ -62,19 +62,19 @@ import fr.paris.lutece.util.ErrorMessage;
  */
 public class TicketingTaskComponent extends SimpleTaskComponent
 {
-    protected static final String   ATTRIBUTE_HIDE_NEXT_STEP_BUTTON = "hide_next_button";
+    protected static final String ATTRIBUTE_HIDE_NEXT_STEP_BUTTON = "hide_next_button";
 
     // Markers
-    private static final String     MARK_ERRORS                     = "errors";
-    private static final String     MARK_TICKET                     = "ticket";
+    private static final String MARK_ERRORS = "errors";
+    private static final String MARK_TICKET = "ticket";
 
     // Other constants
-    private static final String     SEPARATOR                       = "<hr>";
+    private static final String SEPARATOR = "<hr>";
 
     // SERVICES
     @Inject
     private ITaskInformationService _taskInformationService;
-    private List<ErrorMessage>      _listErrors;
+    private List<ErrorMessage> _listErrors;
 
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )

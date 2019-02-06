@@ -56,7 +56,7 @@ public class TaskSphinx extends AbstractTicketingTask
     private static final String MESSAGE_INDEX_TICKET = "module.workflow.ticketing.task_sphinx.labelSphinx";
 
     @Inject
-    SphinxService               _sphinxService;
+    SphinxService _sphinxService;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -69,7 +69,8 @@ public class TaskSphinx extends AbstractTicketingTask
         try
         {
             _sphinxService.postTicketData( ticket );
-        } catch ( IOException exception )
+        }
+        catch( IOException exception )
         {
             AppLogService.error( "Error when sending ticket data for ticket " + ticket.getId( ), exception );
         }

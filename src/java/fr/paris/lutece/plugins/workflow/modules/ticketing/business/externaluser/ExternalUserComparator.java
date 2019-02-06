@@ -102,7 +102,8 @@ public class ExternalUserComparator implements Comparator<ExternalUser>
                 strChunk.append( c );
                 nMarker++;
             }
-        } else
+        }
+        else
         {
             while ( nMarker < nStrLength )
             {
@@ -146,14 +147,17 @@ public class ExternalUserComparator implements Comparator<ExternalUser>
             if ( StringUtils.isEmpty( str2 ) )
             {
                 return 0;
-            } else
+            }
+            else
             {
                 nCompare = 1;
             }
-        } else if ( StringUtils.isEmpty( str2 ) )
-        {
-            nCompare = -1;
         }
+        else
+            if ( StringUtils.isEmpty( str2 ) )
+            {
+                nCompare = -1;
+            }
 
         if ( nCompare != 0 )
         {
@@ -193,19 +197,24 @@ public class ExternalUserComparator implements Comparator<ExternalUser>
                         }
                     }
                 }
-            } else if ( isDigit( strChunk1.charAt( 0 ) ) )
-            {
-                // in this case strChunk2 is not numeric
-                nCompare = 1;
-            } else if ( isDigit( strChunk1.charAt( 0 ) ) )
-            {
-                // in this case strChunk1 is not numeric
-                nCompare = -1;
-            } else
-            {
-                // in this case both are string
-                nCompare = strChunk1.compareTo( strChunk2 );
             }
+            else
+                if ( isDigit( strChunk1.charAt( 0 ) ) )
+                {
+                    // in this case strChunk2 is not numeric
+                    nCompare = 1;
+                }
+                else
+                    if ( isDigit( strChunk1.charAt( 0 ) ) )
+                    {
+                        // in this case strChunk1 is not numeric
+                        nCompare = -1;
+                    }
+                    else
+                    {
+                        // in this case both are string
+                        nCompare = strChunk1.compareTo( strChunk2 );
+                    }
 
             if ( nCompare != 0 )
             {

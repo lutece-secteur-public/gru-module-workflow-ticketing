@@ -56,10 +56,10 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class TaskSelectChannel extends AbstractTicketingTask
 {
-    private static final String       MESSAGE_SELECT_CHANNEL = "module.workflow.ticketing.task_select_channel.labelChannel";
+    private static final String MESSAGE_SELECT_CHANNEL = "module.workflow.ticketing.task_select_channel.labelChannel";
 
     // PARAMETERS
-    public static final String        PARAMETER_USER_MESSAGE = "user_message";
+    public static final String PARAMETER_USER_MESSAGE = "user_message";
 
     // Services
     @Inject
@@ -83,7 +83,8 @@ public class TaskSelectChannel extends AbstractTicketingTask
         if ( ( user != null ) && ( user.getUserId( ) != nIdUserFront ) )
         {
             idChannel = Integer.parseInt( request.getParameter( TicketingConstants.PARAMETER_ID_CHANNEL ) );
-        } else
+        }
+        else
         {
             Ticket ticket = getTicket( nIdResourceHistory );
             idChannel = ticket.getChannel( ).getId( );

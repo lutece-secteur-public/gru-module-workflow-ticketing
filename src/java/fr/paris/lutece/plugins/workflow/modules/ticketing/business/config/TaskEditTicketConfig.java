@@ -47,10 +47,10 @@ public class TaskEditTicketConfig extends TaskConfig
 {
     @NotNull
     @Min( 1 )
-    private int              _nIdUserEditionAction;
+    private int _nIdUserEditionAction;
     @NotNull
     @Min( 1 )
-    private int              _nIdStateAfterEdition;
+    private int _nIdStateAfterEdition;
     private MessageDirection _messageDirection;
 
     /**

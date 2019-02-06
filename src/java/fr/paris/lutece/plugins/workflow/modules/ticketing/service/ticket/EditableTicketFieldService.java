@@ -50,7 +50,7 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicket
  */
 public class EditableTicketFieldService implements IEditableTicketFieldService
 {
-    public static final String      BEAN_SERVICE = "workflow-ticketing.editableTicketFieldService";
+    public static final String BEAN_SERVICE = "workflow-ticketing.editableTicketFieldService";
     @Inject
     private IEditableTicketFieldDAO _editableTicketFieldDAO;
 

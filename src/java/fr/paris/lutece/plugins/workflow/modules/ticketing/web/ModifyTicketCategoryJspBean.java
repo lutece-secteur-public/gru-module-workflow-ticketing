@@ -55,20 +55,20 @@ import fr.paris.lutece.portal.web.constants.Messages;
 @Controller( controllerJsp = "ModifyTicketCategory.jsp", controllerPath = TicketingConstants.ADMIN_CONTROLLLER_PATH, right = "TICKETING_TICKETS_MANAGEMENT" )
 public class ModifyTicketCategoryJspBean extends MVCAdminJspBean
 {
-    private static final long        serialVersionUID                           = 1L;
+    private static final long serialVersionUID = 1L;
 
     // //////////////////////////////////////////////////////////////////////////
     // Constants
 
     // Parameters
-    private static final String      PARAMETER_ID_CATEGORY                      = "id_ticket_category";
-    private static final String      PARAMETER_ID_TASK                          = "id_task";
-    private static final String      VIEW_TICKET_FORM                           = "ticketForm";
+    private static final String PARAMETER_ID_CATEGORY = "id_ticket_category";
+    private static final String PARAMETER_ID_TASK = "id_task";
+    private static final String VIEW_TICKET_FORM = "ticketForm";
 
     // Beans
-    private static final String      BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE = "workflow-ticketing.taskModifyTicketCategoryConfigService";
-    private final TicketFormService  _ticketFormService                         = SpringContextService.getBean( TicketFormService.BEAN_NAME );
-    private final ITaskConfigService _taskModifyTicketCategoryConfigService     = SpringContextService.getBean( BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE );
+    private static final String BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE = "workflow-ticketing.taskModifyTicketCategoryConfigService";
+    private final TicketFormService _ticketFormService = SpringContextService.getBean( TicketFormService.BEAN_NAME );
+    private final ITaskConfigService _taskModifyTicketCategoryConfigService = SpringContextService.getBean( BEAN_MODIFY_TICKET_CATEGORY_CONFIG_SERVICE );
 
     /**
      * returns form linked to the selected category
@@ -89,7 +89,8 @@ public class ModifyTicketCategoryJspBean extends MVCAdminJspBean
         String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );
         String strIdTask = request.getParameter( PARAMETER_ID_TASK );
 
-        if ( !StringUtils.isEmpty( strIdCategory ) && StringUtils.isNumeric( strIdCategory ) && !StringUtils.isEmpty( strIdTask ) && StringUtils.isNumeric( strIdTask ) )
+        if ( !StringUtils.isEmpty( strIdCategory ) && StringUtils.isNumeric( strIdCategory ) && !StringUtils.isEmpty( strIdTask )
+                && StringUtils.isNumeric( strIdTask ) )
         {
             int nIdCategory = Integer.parseInt( strIdCategory );
             int nIdTask = Integer.parseInt( strIdTask );

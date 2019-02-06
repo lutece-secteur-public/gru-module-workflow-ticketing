@@ -68,30 +68,30 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class EditTicketTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String    TEMPLATE_TASK_EDIT_TICKET_CONFIG = "admin/plugins/workflow/modules/ticketing/task_edit_ticket_config.html";
-    private static final String    TEMPLATE_TASK_EDIT_TICKET_FORM   = "admin/plugins/workflow/modules/ticketing/task_edit_ticket_form.html";
+    private static final String TEMPLATE_TASK_EDIT_TICKET_CONFIG = "admin/plugins/workflow/modules/ticketing/task_edit_ticket_config.html";
+    private static final String TEMPLATE_TASK_EDIT_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_edit_ticket_form.html";
 
     // Marks
-    private static final String    MARK_CONFIG                      = "config";
-    private static final String    MARK_AGENT_VIEW                  = "agent_view";
-    private static final String    MARK_LIST_ENTRIES                = "list_entries";
-    private static final String    MARK_MESSAGE_DIRECTIONS_LIST     = "message_directions_list";
-    private static final String    MARK_MESSAGE_DIRECTION           = "message_direction";
+    private static final String MARK_CONFIG = "config";
+    private static final String MARK_AGENT_VIEW = "agent_view";
+    private static final String MARK_LIST_ENTRIES = "list_entries";
+    private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
+    private static final String MARK_MESSAGE_DIRECTION = "message_direction";
 
     // Parameters
-    private static final String    PARAMETER_MESSAGE_DIRECTION      = "message_direction";
-    private static final String    PARAMETER_ID_USER_EDITION_ACTION = "idUserEditionAction";
-    private static final String    PARAMETER_MESSAGE                = "message";
+    private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
+    private static final String PARAMETER_ID_USER_EDITION_ACTION = "idUserEditionAction";
+    private static final String PARAMETER_MESSAGE = "message";
 
     // Other constants
-    private static final String    UNDERSCORE                       = "_";
-    private static final String    FIELD_MESSAGE                    = "message";
+    private static final String UNDERSCORE = "_";
+    private static final String FIELD_MESSAGE = "message";
 
     // SERVICES
     @Inject
     private IEditableTicketService _editableTicketService;
     @Inject
-    private TicketFormService      _ticketFormService;
+    private TicketFormService _ticketFormService;
 
     /**
      * {@inheritDoc}
@@ -109,7 +109,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         if ( config != null )
         {
             model.put( MARK_MESSAGE_DIRECTION, config.getMessageDirection( ).ordinal( ) );
-        } else
+        }
+        else
         {
             model.put( MARK_MESSAGE_DIRECTION, MessageDirection.AGENT_TO_USER );
         }
@@ -148,7 +149,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         if ( bConfigToCreate )
         {
             this.getTaskConfigService( ).create( config );
-        } else
+        }
+        else
         {
             this.getTaskConfigService( ).update( config );
         }
@@ -194,7 +196,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
             ModelUtils.storeUserSignature( request, model );
             ModelUtils.storeRichText( request, model );
-        } else
+        }
+        else
         {
             EditableTicket editableTicket = _editableTicketService.findByIdTicket( ticket.getId( ) );
 
@@ -229,7 +232,9 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         if ( ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) ) && StringUtils.isEmpty( strAgentMessage ) )
         {
-            Object[] tabRequiredFields = { FIELD_MESSAGE };
+            Object [ ] tabRequiredFields = {
+                FIELD_MESSAGE
+            };
 
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
