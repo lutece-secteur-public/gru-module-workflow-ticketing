@@ -11,7 +11,8 @@
 
 <script>
 setInterval(function () {
-	   window.location.href = "jsp/admin/plugins/workflow/modules/ticketing/TicketExternalUserResponseTimeout.jsp"; //will redirect to error page in 28 minutes (just before WSSO 30 minutes)
+	   //window.location.href = "jsp/admin/plugins/workflow/modules/ticketing/TicketExternalUserResponseTimeout.jsp"; //will redirect to error page in 28 minutes (just before WSSO 30 minutes)
+    window.location.href = "jsp/admin/DoAdminLogout.jsp"; // force logout
 	}, 28*60*1000);
 
 </script>
