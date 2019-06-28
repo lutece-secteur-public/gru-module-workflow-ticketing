@@ -56,10 +56,10 @@
         <p>${user_signature}</p>
       </#if>
     </textarea>
-      <#if agent_view>
-            ${entry_attached_files!''}   
-            <@addRequiredJsFiles />
-            <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
-        </#if>
   </div>
 </div>
+ <#if agent_view>
+       ${entry_attached_files!''}   
+       <@addRequiredJsFiles />
+       <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
+ </#if>
