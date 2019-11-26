@@ -1,3 +1,5 @@
+<#include "/admin/util/editor/editor.html" />
+
 <p class="lead">#i18n{module.workflow.ticketing.task_notify_waiting_ticket_config.title}</p>
 
 <@fieldInputText i18nLabelKey="module.workflow.ticketing.task_notify_waiting_ticket_config.label_sender" mandatory=true inputName="sender" value="${sender}" i18nHelpBlockKey="module.workflow.ticketing.task_notify_waiting_ticket_config.label_sender.help"/>
@@ -5,14 +7,21 @@
 <@fieldInputText i18nLabelKey="module.workflow.ticketing.task_notify_waiting_ticket_config.label_subject" mandatory=true inputName="subject" value="${subject!''}" i18nHelpBlockKey="module.workflow.ticketing.task_notify_waiting_ticket_config.label_subject.help"/>
 
 <!-- wysiwyg -->
-<div class="form-group">
-    <label class="control-label col-md-3 col-lg-3 col-xs-12 col-sm-12" for="message">#i18n{module.workflow.ticketing.task_notify_waiting_ticket_config.label_message} *</label>
-    <div class="col-md-8 col-lg-8 col-xs-12 col-sm-12">
-        <#if message?exists  && message?has_content>
-            <textarea name="message" id="message" rows="5" cols="70" class="richtext">${message}</textarea>
-        <#else>
-            <textarea name="message" id="message" rows="5" cols="70" class="richtext"></textarea>
-        </#if>
-        <span class="help-block">#i18n{module.workflow.ticketing.task_notify_waiting_ticket_config.label_message.help}</span>
+<div class="row">
+    <div class="form-group">
+        <label class="control-label col-md-3 col-lg-3 col-xs-12 col-sm-12" for="message">#i18n{module.workflow.ticketing.task_notify_waiting_ticket_config.label_message} *</label>
+        <div class="col-md-8 col-lg-8 col-xs-12 col-sm-12">
+            <#if message?exists  && message?has_content>
+                <textarea name="message" id="message" rows="5" cols="70" class="richtext">${message}</textarea>
+            <#else>
+                <textarea name="message" id="message" rows="5" cols="70" class="richtext"></textarea>
+            </#if>
+            <span class="help-block">#i18n{module.workflow.ticketing.task_notify_waiting_ticket_config.label_message.help}</span>
+        </div>
     </div>
 </div>
+
+<#include "/admin/plugins/workflow/modules/notifygru/include/commons.html" />
+<@marker_descriptions />
+
+<@initEditor />

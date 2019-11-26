@@ -33,22 +33,26 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
+import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.ProviderDescription;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfig;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import org.apache.commons.lang.StringUtils;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
 {
@@ -60,6 +64,9 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
     private static final String MARK_CONFIG_MESSAGE = "message";
     private static final String MARK_CONFIG_SENDER = "sender";
     private static final String MARK_CONFIG_SUBJECT = "subject";
+    private static final String MARK_LOCALE = "locale";
+    private static final String MARK_WEBAPP_URL = "webapp_url";
+    private static final String MARK_NOTIFY_GRU_MARKERS = "notifygru_markers";
 
     // Parameters config
     private static final String PARAMETER_MESSAGE = "message";
@@ -68,6 +75,11 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
 
     // Error message
     private static final String MESSAGE_EMPTY_FIELD = "module.workflow.ticketing.task_notify_waiting_ticket.error.field.empty";
+
+
+    @Inject
+    @Named( "workflow-ticketing.externaluser.provider-manager" )
+    private TicketEmailExternalUserProviderManager _ticketEmailExternalUserProviderManager;
 
 
     /**
@@ -94,6 +106,17 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
         }
 
         model.put( MARK_CONFIG, config );
+
+        // wysiwyg
+        model.put( MARK_LOCALE, request.getLocale( ) );
+        model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
+
+        // signets
+        String strProviderId = "ticketEmailExternalUserProviderManager";
+        ResourceHistory resourceHistory = new ResourceHistory( );
+        ProviderDescription providerDescription = _ticketEmailExternalUserProviderManager.getProviderDescription( strProviderId );
+        Collection<NotifyGruMarker> markerDescriptions = providerDescription.getMarkerDescriptions();
+        model.put( MARK_NOTIFY_GRU_MARKERS , markerDescriptions );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_TICKET_CONFIG, locale, model );
 
