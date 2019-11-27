@@ -76,25 +76,25 @@ public class NotifyDaemon extends Daemon
      * Actions manuelles de sollicitation
      */
     // cas : action manuelle = "Solliciter un acteur terrain" [à partir d'un niveau 2] (id 317 en PROD)
-    private int nIdActionSolliciterFromTerrainNiv2 = AppPropertiesService.getPropertyInt( "ticketing.actions.id.sollicite.terrain_deux", TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionSolliciterFromTerrainNiv2 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.sollicite.terrain_deux", TicketingConstants.PROPERTY_UNSET_INT );
     // cas : action manuelle = "Solliciter un acteur terrain" [à partir d'un niveau 3] (id 319)
-    private int nIdActionSolliciterFromTerrainNiv3 = AppPropertiesService.getPropertyInt( "ticketing.actions.id.sollicite.terrain_trois", TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionSolliciterFromTerrainNiv3 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.sollicite.terrain_trois", TicketingConstants.PROPERTY_UNSET_INT );
     // cas : action manuelle = "Solliciter un contributeur" [à partir d'un niveau 2] (id 326)
-    private int nIdActionSolliciterFromContribNiv2 = AppPropertiesService.getPropertyInt( "ticketing.actions.id.sollicite.contrib_deux", TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionSolliciterFromContribNiv2 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.sollicite.contrib_deux", TicketingConstants.PROPERTY_UNSET_INT );
     // cas : actionmanuelle = "Solliciter un contributeur" [à partir d'un niveau 3] (id 329)
-    private int nIdActionSolliciterFromContribNiv3 = AppPropertiesService.getPropertyInt( "ticketing.actions.id.sollicite.contrib_un", TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionSolliciterFromContribNiv3 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.sollicite.contrib_un", TicketingConstants.PROPERTY_UNSET_INT );
 
     /*
      * Actions "Retour de la sollicitation"
      */
     // cas : Si dernière action manuelle = "Solliciter un acteur terrain" [à partir d'un niveau 2] (id 317 en PROD), état d'arrivée = "À traiter"
-    private int nIdActionRetourFromTerrainNiv2 = AppPropertiesService.getPropertyInt( "ticketing.actions.id.return.sollicite.terrain_deux", TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionRetourFromTerrainNiv2 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.return.sollicite.terrain_deux", TicketingConstants.PROPERTY_UNSET_INT );
     // cas : Si dernière action manuelle = "Solliciter un acteur terrain" [à partir d'un niveau 3] (id 319), état d'arrivée = "Escaladé niveau 3"
-    private int nIdActionRetourFromTerrainNiv3 = AppPropertiesService.getPropertyInt( "ticketing.actions.id.return.sollicite.terrain_trois", TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionRetourFromTerrainNiv3 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.return.sollicite.terrain_trois", TicketingConstants.PROPERTY_UNSET_INT );
     // cas : Si dernière action manuelle = "Solliciter un contributeur" [à partir d'un niveau 2] (id 326) état d'arrivée = "À traiter"
-    private int nIdActionRetourFromContribNiv2 = AppPropertiesService.getPropertyInt( "ticketing.actions.id.return.sollicite.contrib_deux", TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionRetourFromContribNiv2 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.return.sollicite.contrib_deux", TicketingConstants.PROPERTY_UNSET_INT );
     // cas : Si dernière action manuelle = "Solliciter un contributeur" [à partir d'un niveau 3] (id 329), état d'arrivée = "Escaladé niveau 3"
-    private int nIdActionRetourFromContribNiv3 = AppPropertiesService.getPropertyInt( "ticketing.actions.id.return.sollicite.contrib_un", TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionRetourFromContribNiv3 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.return.sollicite.contrib_un", TicketingConstants.PROPERTY_UNSET_INT );
 
     // nombre de relances maximum avant retour de la sollicitation
     private int nbRelanceMax = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_NB_MAX, 3 );
