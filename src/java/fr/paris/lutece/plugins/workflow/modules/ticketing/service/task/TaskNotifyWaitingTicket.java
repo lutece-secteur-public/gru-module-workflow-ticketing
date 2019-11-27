@@ -33,22 +33,24 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
-import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
+import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfig;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.ITicketEmailExternalUserHistoryDAO;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.TicketEmailExternalUserHistory;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.TicketEmailExternalUserMessage;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.util.bean.BeanUtil;
+import fr.paris.lutece.portal.service.mail.MailService;
 import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Locale;
 
 public class TaskNotifyWaitingTicket extends AbstractTicketingTask
@@ -66,56 +68,61 @@ public class TaskNotifyWaitingTicket extends AbstractTicketingTask
     @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserDemandDAO;
 
-    @Inject
-    @Named( ITicketEmailExternalUserHistoryDAO.BEAN_SERVICE )
-    private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO;
 
     @Inject
     @Named( BEAN_TICKET_CONFIG_SERVICE )
     private ITaskConfigService _taskTicketConfigService;
 
-    // Parameters
+    @Inject
+    @Named( "workflow-ticketing.externaluser.provider-manager" )
+    private TicketEmailExternalUserProviderManager _ticketEmailExternalUserProviderManager;
 
-
-    // Other constants
 
 
     @Override
     protected String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
+
+
         String strTaskInformation = StringUtils.EMPTY;
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        // Populate the Ticket
-        Ticket ticketWithNewData = new Ticket( );
-        ticketWithNewData.setTicketCategory( new TicketCategory( ) ); // -- to not generate validation error on this field
-        BeanUtil.populate( ticketWithNewData, request );
 
         // get configuration
         TaskNotifyWaitingTicketConfig config = _taskTicketConfigService.findByPrimaryKey( getId( ) );
 
         if ( ticket != null && config != null )
         {
-            // envoi notification
+            String strProviderId = "ticketEmailExternalUserProviderManager";
+            ResourceHistory resourceHistory = new ResourceHistory( );
+            resourceHistory.setIdResource( ticket.getId() );
+            IProvider provider = _ticketEmailExternalUserProviderManager.createProvider( strProviderId, resourceHistory, request );
+            Collection<NotifyGruMarker> markerValues = provider.provideMarkerValues( );
+
+            String subject = config.getSubject( );
+            String message = config.getMessage( );
+
+            for ( NotifyGruMarker marker : markerValues )
+            {
+                String markerKey = marker.getMarker( );
+                if ( markerKey != null )
+                {
+                    String markerValue = marker.getValue( );
+                    String value = markerValue != null ? markerValue : StringUtils.EMPTY;
+                    subject = subject.replace( "${" + markerKey + "}", value );
+                    subject = subject.replace( "${" + markerKey + "!}", !StringUtils.EMPTY.equals( value ) ? value : StringUtils.EMPTY );
+                    message = message.replace( "${" + markerKey + "}", value );
+                    message = message.replace( "${" + markerKey + "!}", !StringUtils.EMPTY.equals( value ) ? value : StringUtils.EMPTY );
+                }
+            }
+            subject = subject.replaceAll( "\\$\\{.*\\}", StringUtils.EMPTY );
+            message = message.replaceAll( "\\$\\{.*\\}", StringUtils.EMPTY );
+
             TicketEmailExternalUserMessage lastEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadLastByIdTicket( ticket.getId( ) );
             String strEmailRecipients = lastEmailsAgentDemand.getEmailRecipients( );
-            String strAgentMessage = config.getMessage();
-            String strSubject = config.getSubject();
+            // envoi notification
+            MailService.sendMailHtml( strEmailRecipients, config.getSenderName(), MailService.getNoReplyEmail(), subject, message );
 
-            // Create message item
-            TicketEmailExternalUserMessage emailExternalUser = new TicketEmailExternalUserMessage( );
-            emailExternalUser.setIdTicket( ticket.getId( ) );
-            emailExternalUser.setMessageQuestion( strAgentMessage );
-            emailExternalUser.setEmailRecipients( strEmailRecipients );
-            emailExternalUser.setEmailSubject( strSubject );
-            _ticketEmailExternalUserDemandDAO.createQuestion( emailExternalUser );
-
-            // Create resource item
-            TicketEmailExternalUserHistory emailExternalUserHistory = new TicketEmailExternalUserHistory( );
-            emailExternalUserHistory.setIdResourceHistory( nIdResourceHistory );
-            emailExternalUserHistory.setIdTask( getId( ) );
-            emailExternalUserHistory.setIdMessageExternalUser( emailExternalUser.getIdMessageExternalUser( ) );
-            _ticketEmailExternalUserHistoryDAO.insert( emailExternalUserHistory );
 
             // gestion historique
             // adresse d'envoi
@@ -126,7 +133,7 @@ public class TaskNotifyWaitingTicket extends AbstractTicketingTask
             // message initial
             strTaskInformation += MessageFormat.format(
                     I18nService.getLocalizedString( MESSAGE_MAILING_CONTENT, locale ),
-                    strAgentMessage );
+                    message );
         }
         return strTaskInformation;
     }

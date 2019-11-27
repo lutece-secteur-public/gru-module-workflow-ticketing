@@ -380,7 +380,7 @@
 		  class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
 		  p:key="taskNotifyWaitingTicket"
 		  p:titleI18nKey="module.workflow.ticketing.task_notify_waiting_ticket.title"
-		  p:beanName="workflow-ticketing.taskModifyTicket"
+		  p:beanName="workflow-ticketing.taskNotifyWaitingTicket"
 		  p:formTaskRequired="false"
 	      p:taskForAutomaticAction="true"
 		  p:configBeanName="workflow-ticketing.taskNotifyWaitingTicketConfig"
