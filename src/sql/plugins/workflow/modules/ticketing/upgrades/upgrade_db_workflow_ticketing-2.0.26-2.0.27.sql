@@ -10,11 +10,15 @@ INSERT INTO `core_datastore` (`entity_key`, `entity_value`) VALUES
 
 -- Nouvelles actions pour l'évolution "relance automatique"
 INSERT INTO `workflow_action` (`id_action`, `name`, `description`, `id_workflow`, `id_state_before`, `id_state_after`, `id_icon`, `is_automatic`, `is_mass_action`, `display_order`, `is_automatic_reflexive_action`) VALUES
-(340, 'Relance automatique', 'Relance automatique des sollicitations En attente d’une réponse', 301, 307, 307, 1, 0, 0, 38, 0),
-(341, 'Retour de la sollicitation', 'dernière action manuelle = "Solliciter un acteur terrain" [à partir d\'un niveau 2]', 301, 307, 303, 1, 0, 0, 39, 0),
-(342, 'Retour de la sollicitation', 'dernière action manuelle = "Solliciter un acteur terrain" [à partir d\'un niveau 3]', 301, 307, 305, 1, 0, 0, 40, 0),
-(343, 'Retour de la sollicitation', 'dernière action manuelle = "Solliciter un contributeur" [à partir d\'un niveau 2]', 301, 307, 303, 1, 0, 0, 41, 0),
-(344, 'Retour de la sollicitation', 'dernière action manuelle = "Solliciter un contributeur" [à partir d\'un niveau 3]', 301, 307, 305, 1, 0, 0, 42, 0);
+(340, 'Relance automatique', 'Relance automatique', 301, 307, 307, 1, 0, 0, 38, 0),
+--  dernière action manuelle = "Solliciter un acteur terrain" [à partir d\'un niveau 2]
+(341, 'Retour de la sollicitation', 'Retour de la sollicitation après relances automatiques infructueuses', 301, 307, 303, 1, 0, 0, 39, 0),
+-- dernière action manuelle = "Solliciter un acteur terrain" [à partir d\'un niveau 3]
+(342, 'Retour de la sollicitation', 'Retour de la sollicitation après relances automatiques infructueuses', 301, 307, 305, 1, 0, 0, 40, 0),
+-- dernière action manuelle = "Solliciter un contributeur" [à partir d\'un niveau 2]
+(343, 'Retour de la sollicitation', 'Retour de la sollicitation après relances automatiques infructueuses', 301, 307, 303, 1, 0, 0, 41, 0),
+-- dernière action manuelle = "Solliciter un contributeur" [à partir d\'un niveau 3]
+(344, 'Retour de la sollicitation', 'Retour de la sollicitation après relances automatiques infructueuses', 301, 307, 305, 1, 0, 0, 42, 0);
 
 INSERT INTO `workflow_task` (`id_task`, `task_type_key`, `id_action`, `display_order`) VALUES
 (569, 'taskNotifyWaitingTicket', 340, 1);
