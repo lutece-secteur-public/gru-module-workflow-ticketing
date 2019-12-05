@@ -1,8 +1,8 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.sphinx;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -10,103 +10,58 @@ import com.google.gson.JsonParser;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import okhttp3.CipherSuite;
-import okhttp3.ConnectionSpec;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.TlsVersion;
+import fr.paris.lutece.util.httpaccess.HttpAccess;
+import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
 public class SphinxService
 {
-    public static final String BEAN_NAME = "workflow-ticketing.sphinxService";
 
-    private static final String API_URL = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.url" );
+    private static final String API_URL              = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.url" );
 
-    private static final String TOKEN_URL = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.token_url" );
-    private static final String USERNAME = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.username" );
-    private static final String PASSWORD = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.password" );
-    private static final String SURVEY = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.survey" );
+    private static final String TOKEN_URL            = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.token_url" );
+    private static final String USERNAME             = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.username" );
+    private static final String PASSWORD             = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.password" );
+    private static final String SURVEY               = AppPropertiesService.getProperty( "workflow-ticketing.workflow.sphinx.survey" );
 
-    private static OkHttpClient _client;
-    public static final MediaType JSON = MediaType.parse( "application/json; charset=utf-8" );
-    public static final MediaType FORM = MediaType.parse( "application/x-www-form-urlencoded; charset=utf-8" );
+    private static final String ACCESS_TOKEN         = "access_token";
 
-    private static final String ACCESS_TOKEN = "access_token";
-
-    private static final String COLUMN_EMAIL = "email";
+    private static final String COLUMN_EMAIL         = "email";
     private static final String COLUMN_CREATION_DATE = "Date_de_creation";
-    private static final String COLUMN_CATEGORY_1 = "domaine";
-    private static final String COLUMN_CATEGORY_2 = "thematique";
-    private static final String COLUMN_CATEGORY_3 = "sous_thematique";
-    private static final String COLUMN_CATEGORY_4 = "localisation";
-    private static final String COLUMN_CHANNEL = "Canal";
+    private static final String COLUMN_CATEGORY_1    = "domaine";
+    private static final String COLUMN_CATEGORY_2    = "thematique";
+    private static final String COLUMN_CATEGORY_3    = "sous_thematique";
+    private static final String COLUMN_CATEGORY_4    = "localisation";
+    private static final String COLUMN_CHANNEL       = "Canal";
     private static final String COLUMN_ASSIGN_ENTITY = "Entite_d_assignation";
-    private static final String COLUMN_CLOSE_DATE = "Date_de_cloture";
-    private static final String COLUMN_DAYS_OPENED = "delai_en_jours";
+    private static final String COLUMN_CLOSE_DATE    = "Date_de_cloture";
+    private static final String COLUMN_DAYS_OPENED   = "delai_en_jours";
 
-    private static boolean USE_SSL = true;
-
-    public static OkHttpClient getHttpClient( )
+    public String accessToken( ) throws HttpAccessException
     {
-        if ( _client == null )
-        {
-            if ( USE_SSL )
-            {
-                ConnectionSpec spec = new ConnectionSpec.Builder( ConnectionSpec.MODERN_TLS )
-                        .tlsVersions( TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2 )
-                        .cipherSuites( CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-                                CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256,
-                                CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
-                                CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-                                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-                                CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_ECDH_RSA_WITH_AES_128_CBC_SHA,
-                                CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA, CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
-                                CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                                CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256,
-                                CipherSuite.TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
-                                CipherSuite.TLS_DHE_DSS_WITH_AES_128_GCM_SHA256, CipherSuite.TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA,
-                                CipherSuite.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA,
-                                CipherSuite.TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA, CipherSuite.TLS_EMPTY_RENEGOTIATION_INFO_SCSV ).build( );
+        HttpAccess httpAccess = new HttpAccess( );
+        Map<String, String> headersRequest = new HashMap<String, String>( );
+        headersRequest.put( "Content-Type", "application/x-www-form-urlencoded" );
+        Map<String, String> params = new HashMap<String, String>( );
+        params.put( "username", USERNAME );
+        params.put( "password", PASSWORD );
+        params.put( "lang", "fr" );
+        params.put( "grant_type", "password" );
+        params.put( "client_id", "sphinxapiclient" );
 
-                _client = new OkHttpClient.Builder( ).connectionSpecs( Collections.singletonList( spec ) ).build( );
-            }
-            else
-            {
-                _client = new OkHttpClient( );
-            }
-        }
-
-        return _client;
-    }
-
-    public String accessToken( ) throws IOException
-    {
-        String authParams = "username=" + USERNAME + "&password=" + PASSWORD + "&lang=fr&grant_type=password&client_id=sphinxapiclient";
-
-        RequestBody body = RequestBody.create( FORM, authParams );
-        Request request = new Request.Builder( ).url( TOKEN_URL ).post( body ).build( );
-        Response response = getHttpClient( ).newCall( request ).execute( );
-
-        String rawData = response.body( ).string( );
+        String rawData = httpAccess.doPost( TOKEN_URL, params, null, null, headersRequest );
         JsonObject dataJson = new JsonParser( ).parse( rawData ).getAsJsonObject( );
-        response.body( ).close( );
         return dataJson.get( ACCESS_TOKEN ).getAsString( );
     }
 
-    public String post( String endpoint, String json ) throws IOException
+    public void post( String endpoint, String json ) throws HttpAccessException
     {
-        RequestBody body = RequestBody.create( JSON, json );
-        Request request = new Request.Builder( ).url( API_URL + endpoint ).addHeader( "Authorization", "bearer " + accessToken( ) ).post( body ).build( );
-        Response response = getHttpClient( ).newCall( request ).execute( );
-        String bodyResponse = response.body( ).string( );
-        response.body( ).close( );
-        return bodyResponse;
+        HttpAccess httpAccess = new HttpAccess( );
+        Map<String, String> headersRequest = new HashMap<String, String>( );
+        headersRequest.put( "Authorization", "bearer " + accessToken( ) );
+        httpAccess.doPostJSON( API_URL + endpoint, json, headersRequest, null );
     }
 
-    public void postTicketData( Ticket ticket ) throws IOException
+    public void postTicketData( Ticket ticket ) throws HttpAccessException
     {
         JsonObject ticketJson = new JsonObject( );
 
@@ -145,14 +100,13 @@ public class SphinxService
             String closeDate = new SimpleDateFormat( "dd/MM/yyyy" ).format( ticket.getDateClose( ) );
             ticketJson.addProperty( COLUMN_CLOSE_DATE, closeDate );
 
-            ticketJson.addProperty( COLUMN_DAYS_OPENED, (int) ( ticket.getDateClose( ).getTime( ) - ticket.getDateCreate( ).getTime( ) )
-                    / ( 24 * 60 * 60 * 1000 ) );
+            ticketJson.addProperty( COLUMN_DAYS_OPENED, ( int ) ( ticket.getDateClose( ).getTime( ) - ticket.getDateCreate( ).getTime( ) ) / ( 24 * 60 * 60 * 1000 ) );
         }
 
         JsonArray ticketsJson = new JsonArray( );
         ticketsJson.add( ticketJson );
 
-        post( "/api/survey/" + SURVEY + "/data", ticketsJson.toString( ) );
+        post( "/api/v4.0/survey/" + SURVEY + "/data", ticketsJson.toString( ) );
     }
 
 }
