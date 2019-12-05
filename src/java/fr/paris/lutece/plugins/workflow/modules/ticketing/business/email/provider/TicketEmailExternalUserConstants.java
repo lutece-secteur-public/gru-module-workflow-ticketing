@@ -69,6 +69,11 @@ public final class TicketEmailExternalUserConstants
     public static final String MARK_CRITICALITY = "criticality";
     public static final String MARK_CATEGORY = "ticket_category_level_";
 
+    // nb relance
+    public static final String MARK_NB_AUTOMATIC_NOTIFICATION = "nb_automatic_notification";
+    // date derniere relance
+    public static final String MARK_LAST_AUTOMATIC_NOTIFICATION_DATE = "last_automatic_notification_date";
+
     // Parameters URL
     public static final String PARAMETER_ID_MESSAGE_EXTERNAL_USER = "id_message_external_user";
     public static final String PARAMETER_SIGNATURE = "signature";
