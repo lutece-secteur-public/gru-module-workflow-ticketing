@@ -22,6 +22,11 @@ INSERT INTO `workflow_task` (`id_task`, `task_type_key`, `id_action`, `display_o
 (569, 'taskNotifyWaitingTicket', 340, 1),
 (570, 'taskNotifyGru',340, 2);
 
+INSERT INTO test.workflow_task_ticketing_email_external_user_config (id_task, message_direction, id_following_action,
+                                                                     id_contact_attribute, default_subject)
+                                                                     VALUES
+(569, 2, null, null, '');
+
 INSERT INTO test.workflow_task_notify_gru_cf (id_task, id_spring_provider, marker_provider_ids, demand_status, crm_status_id, set_onglet, message_guichet, status_text_guichet,
                                               sender_name_guichet, subject_guichet, demand_max_step_guichet, demand_user_current_step_guichet, is_active_onglet_guichet, status_text_agent,
                                               message_agent, is_active_onglet_agent, subject_email, message_email, sender_name_email, recipients_cc_email, recipients_cci_email,
