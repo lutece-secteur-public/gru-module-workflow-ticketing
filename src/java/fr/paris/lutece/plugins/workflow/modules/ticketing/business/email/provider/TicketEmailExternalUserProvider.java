@@ -292,11 +292,11 @@ public class TicketEmailExternalUserProvider implements IProvider
             calendarDerniereRelance.setTime( _ticket.getDateDerniereRelance() );
             Date dateDerniereRelance = calendarDerniereRelance.getTime();
             String dateFormatee = _dateFormater.format( dateDerniereRelance );
-            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, dateFormatee ) );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, dateFormatee ) );
         }
         else
         {
-            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, StringUtils.EMPTY ) );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, StringUtils.EMPTY ) );
         }
 
         return collectionNotifyGruMarkers;
@@ -357,8 +357,8 @@ public class TicketEmailExternalUserProvider implements IProvider
     /**
      * Construct a NotifyGruMarker with value for given parameters
      * 
-     * @param strMarker
-     * @param strValue
+     * @param strMarker maker
+     * @param strValue value
      * @return a NotifyGruMarker
      */
     private static NotifyGruMarker createMarkerValues( String strMarker, String strValue )
@@ -372,8 +372,8 @@ public class TicketEmailExternalUserProvider implements IProvider
     /**
      * Construct a NotifyGruMarker with descrition for given parameters
      * 
-     * @param strMarker
-     * @param strDescription
+     * @param strMarker marker
+     * @param strDescription description
      * @return a NotifyGruMarker
      */
     private static NotifyGruMarker createMarkerDescriptions( String strMarker, String strDescription )
@@ -391,7 +391,7 @@ public class TicketEmailExternalUserProvider implements IProvider
      */
     private String buildTicketLink( int nIdMessageExternalUser )
     {
-        List<String> listElements = new ArrayList<String>( );
+        List<String> listElements = new ArrayList<>( );
         listElements.add( Integer.toString( nIdMessageExternalUser ) );
 
         String strTimestamp = Long.toString( new Date( ).getTime( ) );
