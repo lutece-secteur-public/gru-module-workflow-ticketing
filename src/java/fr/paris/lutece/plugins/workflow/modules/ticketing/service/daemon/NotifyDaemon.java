@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2016, Mairie de Paris
+ * Copyright (c) 2002-2019, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -141,24 +141,29 @@ public class NotifyDaemon extends Daemon
                 int nNbRelance = ticket.getNbRelance( );
                 Timestamp dateDerniereRelance = ticket.getDateDerniereRelance( );
 
+                // update date true si retour de sollicitation, false si relance auto
+                boolean isUpdateDate;
 
                 if ( dateDerniereRelance == null)
                 {
                     // pas de date
                     processRelanceNoDate( ticket, dateExecution );
                     nNbTicketRelance++;
+                    isUpdateDate = false;
                 }
                 else if ( nNbRelance < nbRelanceMax )
                 {
                     nNbTicketRelance = nNbTicketRelance + processRelance( ticket, dateDerniereRelance, dateExecution );
+                    isUpdateDate = false;
                 }
                 else
                 {
                     nNbTicketRetour = nNbTicketRetour + processRetour( ticket, dateExecution );
+                    isUpdateDate = true;
                 }
 
-                // mise à jour du ticket
-                TicketHome.update( ticket );
+                // mise à jour du ticket (sans màj de la date d'update)
+                TicketHome.update( ticket, isUpdateDate );
             }
         }
 

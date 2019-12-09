@@ -69,4 +69,14 @@
         <admin-css-stylesheet>css/admin/plugins/workflow/modules/ticketing/workflow_ticketing.css</admin-css-stylesheet>
     </admin-css-stylesheets>
     <css-stylesheets/>
+
+    <!-- Daemons -->
+    <daemons>
+        <daemon>
+            <daemon-id>automaticNotifyWaitingTicket</daemon-id>
+            <daemon-name>deamon_notify_waiting_ticket.name</daemon-name>
+            <daemon-description>deamon_notify_waiting_ticket.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.NotifyDaemon</daemon-class>
+        </daemon>
+    </daemons>
 </plug-in>

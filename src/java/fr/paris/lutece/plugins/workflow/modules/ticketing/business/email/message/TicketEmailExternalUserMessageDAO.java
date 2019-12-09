@@ -61,6 +61,8 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
             + " WHERE id_ticket = ? AND is_answered = 0 ";
     private static final String SQL_QUERY_LAST_MESSAGE = " SELECT id_message_external_user, id_ticket, email_recipients, email_recipients_cc, message_question, message_response, is_answered, email_subject FROM workflow_ticketing_email_external_user "
             + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC LIMIT 1";
+    private static final String SQL_QUERY_ALL_MESSAGE_ORDER_DESC = " SELECT id_message_external_user, id_ticket, email_recipients, email_recipients_cc, message_question, message_response, is_answered, email_subject FROM workflow_ticketing_email_external_user "
+                                                                 + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC";
 
     /**
      * Generates a new primary key
@@ -318,6 +320,43 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
 
         return listEmailExternalUserMessage;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<TicketEmailExternalUserMessage> loadByIdTicketNotClosedOrderDesc( int nIdTicket )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ALL_MESSAGE_ORDER_DESC, WorkflowTicketingPlugin.getPlugin( ) );
+
+        daoUtil.setInt( 1, nIdTicket );
+
+        daoUtil.executeQuery( );
+
+        int nIndex;
+        List<TicketEmailExternalUserMessage> listEmailExternalUserMessage = new ArrayList<>( );
+        TicketEmailExternalUserMessage emailExternalUserMessage;
+
+        while ( daoUtil.next( ) )
+        {
+            nIndex = 1;
+            emailExternalUserMessage = new TicketEmailExternalUserMessage( );
+            emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
+            emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
+            emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
+            emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
+            emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
+            emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
+            emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
+            emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex ) );
+            listEmailExternalUserMessage.add( emailExternalUserMessage );
+        }
+
+        daoUtil.free( );
+
+        return listEmailExternalUserMessage;
+    }
+
 
     /**
      * {@inheritDoc}
