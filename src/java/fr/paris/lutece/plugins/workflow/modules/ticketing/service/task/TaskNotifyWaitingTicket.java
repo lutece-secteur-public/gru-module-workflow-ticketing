@@ -43,7 +43,6 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.TicketEmailExternalUserHistory;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.TicketEmailExternalUserMessage;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.ITicketEmailExternalUserRecipientDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.TicketEmailExternalUserRecipient;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.ExternalUser;
@@ -56,6 +55,7 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -158,10 +158,22 @@ public class TaskNotifyWaitingTicket extends SimpleTask
      */
     private void processAgentTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, TaskNotifyWaitingTicketConfig config )
     {
-        String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
-        String strEmailRecipients = request.getParameter( PARAMETER_EMAIL_RECIPIENTS + UNDERSCORE + getId( ) );
-        String strEmailRecipientsCc = request.getParameter( PARAMETER_EMAIL_RECIPIENTS_CC + UNDERSCORE + getId( ) );
-        String strSubject = request.getParameter( PARAMETER_EMAIL_SUBJECT + UNDERSCORE + getId( ) );
+        String strAgentMessage = StringUtils.EMPTY;
+        String strEmailRecipients = StringUtils.EMPTY;
+        String strEmailRecipientsCc = StringUtils.EMPTY;
+        String strSubject = StringUtils.EMPTY;
+
+        if (request != null)
+        {
+            strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
+            strEmailRecipients = request.getParameter( PARAMETER_EMAIL_RECIPIENTS + UNDERSCORE + getId( ) );
+            strEmailRecipientsCc = request.getParameter( PARAMETER_EMAIL_RECIPIENTS_CC + UNDERSCORE + getId( ) );
+            strSubject = request.getParameter( PARAMETER_EMAIL_SUBJECT + UNDERSCORE + getId( ) );
+        }
+        else {
+            // cas daemon
+            throw new UnsupportedOperationException();
+        }
 
         // Create message item
         TicketEmailExternalUserMessage emailExternalUserMessage = new TicketEmailExternalUserMessage( );
@@ -235,8 +247,18 @@ public class TaskNotifyWaitingTicket extends SimpleTask
      */
     private void processAgentRecontactTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request )
     {
-        String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
         TicketEmailExternalUserMessage firstEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadFirstByIdTicket( ticket.getId( ) );
+
+        String strAgentMessage = StringUtils.EMPTY;
+        if (request != null)
+        {
+            strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
+        }
+        else
+        {
+            // cas daemon
+            strAgentMessage = firstEmailsAgentDemand.getMessageQuestion();
+        }
 
         String strEmailRecipients = firstEmailsAgentDemand.getEmailRecipients( );
         String strEmailRecipientsCc = firstEmailsAgentDemand.getEmailRecipientsCc( );
