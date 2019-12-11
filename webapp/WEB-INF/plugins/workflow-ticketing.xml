@@ -74,8 +74,8 @@
     <daemons>
         <daemon>
             <daemon-id>automaticNotifyWaitingTicket</daemon-id>
-            <daemon-name>deamon_notify_waiting_ticket.name</daemon-name>
-            <daemon-description>deamon_notify_waiting_ticket.description</daemon-description>
+            <daemon-name>module.workflow.ticketing.deamon_notify_waiting_ticket.name</daemon-name>
+            <daemon-description>module.workflow.ticketing.deamon_notify_waiting_ticket.description</daemon-description>
             <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.NotifyDaemon</daemon-class>
         </daemon>
     </daemons>
