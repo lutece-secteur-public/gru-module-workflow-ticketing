@@ -44,6 +44,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCcDAO" />
     <bean id="workflow-ticketing.taskMarkAsUnreadConfigDAO"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskMarkAsUnreadConfigDAO" />
+	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfigDAO"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfigDAO" />
 
     <!-- NotifyGRU Provider -->
     <bean id="workflow-ticketing.externaluser.provider-manager" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager">
@@ -74,6 +76,9 @@
     <bean id="workflow-ticketing.taskMarkAsUnreadConfigService"
         class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
         p:taskConfigDAO-ref="workflow-ticketing.taskMarkAsUnreadConfigDAO" />
+	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfigService"
+		  class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+		  p:taskConfigDAO-ref="workflow-ticketing.taskNotifyWaitingTicketConfigDAO" />
 
 	<bean id="workflow-ticketing.sphinxService"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.sphinx.SphinxService" />
@@ -93,7 +98,10 @@
         scope="prototype" />  
     <bean id="workflow-ticketing.taskMarkAsUnreadConfig"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskMarkAsUnreadConfig"
-        scope="prototype" />     
+        scope="prototype" />
+	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfig"
+		  class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfig"
+		  scope="prototype" />
 
 	<!-- Task Generate ticket reference -->
 	<bean id="workflow-ticketing.taskGenerateTicketReference"
@@ -350,9 +358,9 @@
     <bean id="workflow-ticketing.ticketEmailExternalUserTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketEmailExternalUserTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeTicketEmailExternalUser"
-        p:taskConfigService-ref="workflow-ticketing.taskTicketEmailExternalUserConfigService" /> 
-        
-    <!-- Task Modify ticket -->
+        p:taskConfigService-ref="workflow-ticketing.taskTicketEmailExternalUserConfigService" />
+
+	<!-- Task Modify ticket -->
 	<bean id="workflow-ticketing.taskModifyTicket"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicket"
 		scope="prototype" />
@@ -363,6 +371,24 @@
 	<bean id="workflow-ticketing.modifyTicketTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeModifyTicket" />
+
+	<!-- Task Notify waiting ticket -->
+	<bean id="workflow-ticketing.taskNotifyWaitingTicket"
+		  class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskNotifyWaitingTicket"
+		  scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeNotifyWaitingTicket"
+		  class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		  p:key="taskNotifyWaitingTicket"
+		  p:titleI18nKey="module.workflow.ticketing.task_notify_waiting_ticket.title"
+		  p:beanName="workflow-ticketing.taskNotifyWaitingTicket"
+		  p:formTaskRequired="false"
+	      p:taskForAutomaticAction="true"
+		  p:configBeanName="workflow-ticketing.taskNotifyWaitingTicketConfig"
+		  p:configRequired="true" />
+	<bean id="workflow-ticketing.notifyWaitingTicketTaskComponent"
+		  class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.NotifyWaitingTicketTaskComponent"
+		  p:taskType-ref="workflow-ticketing.taskTypeNotifyWaitingTicket"
+		  p:taskConfigService-ref="workflow-ticketing.taskNotifyWaitingTicketConfigService"/>
 		
 	<!-- SignRequest -->
 	<bean id="workflow-ticketing.hashService"

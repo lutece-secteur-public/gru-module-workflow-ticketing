@@ -33,11 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -80,6 +77,8 @@ public class TicketEmailExternalUserProvider implements IProvider
     private static final String MESSAGE_MARKER_USER_FIRSTNAME = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.firstname";
     private static final String MESSAGE_MARKER_USER_LASTNAME = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.lastname";
     private static final String MESSAGE_MARKER_USER_UNIT = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.unit_name";
+    private static final String MESSAGE_MARKER_NB_AUTOMATIC_NOTIFICATION = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.nb_automatic_notification";
+    private static final String MESSAGE_MARKER_LAST_AUTOMATIC_NOTIFICATION_DATE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.last_automatic_notification_date";
     private static final String MESSAGE_MARKER_USER_CONTACT_MODE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.contact_mode";
     private static final String MESSAGE_MARKER_USER_FIXED_PHONE_NUMBER = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.fixed_phone";
     private static final String MESSAGE_MARKER_USER_MOBILE_PHONE_NUMBER = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.mobile_phone";
@@ -105,6 +104,8 @@ public class TicketEmailExternalUserProvider implements IProvider
 
     private Ticket _ticket;
     private TicketEmailExternalUserMessage _emailExternalUserMessage;
+
+    SimpleDateFormat _dateFormater = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Constructor for a given resource
@@ -284,6 +285,20 @@ public class TicketEmailExternalUserProvider implements IProvider
         }
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_CRITICALITY, criticalityLabel ) );
 
+        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, String.valueOf( _ticket.getNbRelance() ) ) );
+        if ( _ticket.getDateDerniereRelance()!=null )
+        {
+            Calendar calendarDerniereRelance = Calendar.getInstance();
+            calendarDerniereRelance.setTime( _ticket.getDateDerniereRelance() );
+            Date dateDerniereRelance = calendarDerniereRelance.getTime();
+            String dateFormatee = _dateFormater.format( dateDerniereRelance );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, dateFormatee ) );
+        }
+        else
+        {
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, StringUtils.EMPTY ) );
+        }
+
         return collectionNotifyGruMarkers;
     }
 
@@ -333,14 +348,17 @@ public class TicketEmailExternalUserProvider implements IProvider
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_PRIORITY, MESSAGE_MARKER_PRIORITY ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_CRITICALITY, MESSAGE_MARKER_CRITICALITY ) );
 
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, MESSAGE_MARKER_NB_AUTOMATIC_NOTIFICATION ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, MESSAGE_MARKER_LAST_AUTOMATIC_NOTIFICATION_DATE ) );
+
         return collectionNotifyGruMarkers;
     }
 
     /**
      * Construct a NotifyGruMarker with value for given parameters
      * 
-     * @param strMarker
-     * @param strValue
+     * @param strMarker maker
+     * @param strValue value
      * @return a NotifyGruMarker
      */
     private static NotifyGruMarker createMarkerValues( String strMarker, String strValue )
@@ -354,8 +372,8 @@ public class TicketEmailExternalUserProvider implements IProvider
     /**
      * Construct a NotifyGruMarker with descrition for given parameters
      * 
-     * @param strMarker
-     * @param strDescription
+     * @param strMarker marker
+     * @param strDescription description
      * @return a NotifyGruMarker
      */
     private static NotifyGruMarker createMarkerDescriptions( String strMarker, String strDescription )
@@ -373,7 +391,7 @@ public class TicketEmailExternalUserProvider implements IProvider
      */
     private String buildTicketLink( int nIdMessageExternalUser )
     {
-        List<String> listElements = new ArrayList<String>( );
+        List<String> listElements = new ArrayList<>( );
         listElements.add( Integer.toString( nIdMessageExternalUser ) );
 
         String strTimestamp = Long.toString( new Date( ).getTime( ) );
