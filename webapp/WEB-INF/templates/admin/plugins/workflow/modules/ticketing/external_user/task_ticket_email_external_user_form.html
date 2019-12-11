@@ -1,0 +1,115 @@
+<#if config?exists>
+    <input name="redirect" id="redirect" value="" type="hidden">
+    <#include "/admin/util/editor/editor.html" />
+    <#if config.isMessageToExternalUser(  ) >
+	<div class="row form-group">
+		<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="email_recipients_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients}&nbsp;*&nbsp;:</label>
+		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+			<input class="form-control" id="email_recipients_${config.idTask}" name="email_recipients_${config.idTask}" type="text" value="" maxlength='255' />
+		</div>
+		<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+			<span id="search_results_button" onclick="showSearchResponse_${config.idTask}()" class="btn btn-primary">#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.button}</span>
+		</div>
+	</div>
+	<div class="row form-group">
+         <div class="col-xs-12 col-sm-offset-3 col-sm-6 col-md-6 col-lg-6 alert alert-danger hide" id="message_error_email_div_${config.idTask}">
+             <i class="fa fa-exclamation-circle"></i>
+             <span id="message_error_email_${config.idTask}"></span>
+         </div>
+	</div>
+    <div class="row form-group">
+        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="email_recipients_cc_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_cc}&nbsp;:</label>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <input class="form-control" id="email_recipients_cc_${config.idTask}" name="email_recipients_cc_${config.idTask}" type="text" value="" maxlength='255' />
+        </div>
+    </div>
+    <div class="row form-group">
+        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="email_recipients_cc_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_cc}&nbsp;:</label>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <input class="form-control" id="email_recipients_cc_${config.idTask}" name="email_recipients_cc_${config.idTask}" type="text" value="" maxlength='255' />
+        </div>
+    </div>
+    <div class="row form-group">
+        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="email_subject_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_subject}&nbsp;:</label>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <input class="form-control" readonly="readonly" id="email_subject_${config.idTask}" name="email_subject_${config.idTask}" type="text" value="${config.defaultSubject!''}" maxlength='255' />
+        </div>
+    </div>
+	<div class="row form-group">
+         <div class="col-xs-12 col-sm-offset-3 col-sm-6 col-md-6 col-lg-6 alert alert-danger hide" id="message_error_email_cc_div_${config.idTask}">
+             <i class="fa fa-exclamation-circle"></i>
+             <span id="message_error_email_cc_${config.idTask}"></span>
+         </div>
+	</div>
+	<div class="row form-group" id="search_results_div_${config.idTask}" style="display:none;">
+		<#assign inputEmail="email_recipients_${config.idTask}" >
+		<#include "/admin/plugins/workflow/modules/ticketing/external_user/search_external_user.html" />
+	</div>
+    <div class="row form-group">
+		<label class="col-xs-12 col-sm-12 col-md-3 col-lg-3 control-label" for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_message} : </label>
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+			<textarea name="message_${config.idTask}" id="message_${config.idTask}" rows="5" class="richtext"><p>${user_signature}</p></textarea>
+		</div>
+	</div>
+	<script>
+		function showSearchResponse_${config.idTask}() {
+ 			$("#search_results_div_${config.idTask}").toggle();
+		}
+	</script>
+	<script>
+    function validateBeforeSave_${config.idTask}() {
+        var targetUrl="servlet/plugins/workflow/ticketing/externaluser/externaluseremailvalidation";
+        var dataToSend={
+        	    "email_recipients":$("#email_recipients_${config.idTask}").val(),
+        	    "email_recipients_cc":$("#email_recipients_cc_${config.idTask}").val(),
+				"next_action_id":"${config.idFollowingAction}"
+        	    };
+        var bResult = true;
+        $.ajax({
+            url: targetUrl,
+            async: false,
+            type: "POST",
+            data: dataToSend,
+            dataType : "json",
+            success: function( email_errors ) {
+                if (email_errors.error_invalid_email.length > 0) {
+                    $("#message_error_email_div_${config.idTask}").removeClass("hide");
+                    $("#message_error_email_${config.idTask}").html(email_errors.error_invalid_email);
+                    bResult = false;
+                    }
+                else {
+                    $("#message_error_email_div_${config.idTask}").addClass("hide");
+                    }
+                if (email_errors.error_invalid_email_cc.length > 0) {
+                    $("#message_error_email_cc_div_${config.idTask}").removeClass("hide");
+                    $("#message_error_email_cc_${config.idTask}").html(email_errors.error_invalid_email_cc);
+                    bResult = false;
+                    }
+                else {
+                    $("#message_error_email_cc_div_${config.idTask}").addClass("hide");
+                    }
+                }
+        });
+        return bResult;
+        }
+		  
+    $("#next_button").click( function (e) {
+        e.preventDefault();
+		   
+        if (validateBeforeSave_${config.idTask}()) {
+            $("#wf_action_form").submit();
+        };
+    });
+
+    </script>
+	<#else>
+    <div class="row form-group">
+		<label class="col-xs-12 col-sm-12 col-md-3 col-lg-3 control-label" for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_message} : </label>
+		<div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+			<textarea name="message_${config.idTask}" id="message_${config.idTask}" rows="5" class="richtext"></textarea>
+		</div>
+	</div>
+	</#if>
+    
+    <@initEditor />
+</#if>
