@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
-import fr.paris.lutece.plugins.workflow.modules.notifygru.service.TaskNotifyGruConfigService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfig;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.ITicketEmailExternalUserCcDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCc;
@@ -43,20 +42,12 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.TicketEmailExternalUserHistory;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.TicketEmailExternalUserMessage;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.ITicketEmailExternalUserRecipientDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.TicketEmailExternalUserRecipient;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.ExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.IExternalUserDAO;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskTicketEmailExternalUser;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.service.action.ActionService;
-import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
-import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.plugins.workflowcore.service.task.ITaskService;
-import fr.paris.lutece.plugins.workflowcore.service.task.TaskService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -82,9 +73,6 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
 
     private static final String MARK_TICKETING_EMAIL_INFOS_CC = "email_infos_cc";
 
-    @Inject
-    @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
-    private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserDemandDAO;
 
     @Inject
     @Named( IExternalUserDAO.BEAN_SERVICE )
@@ -120,10 +108,6 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
     private static final String DISPLAY_SEMICOLON = " ; ";
 
     @Inject
-    @Named( TaskTicketEmailExternalUser.BEAN_TICKET_CONFIG_SERVICE )
-    private ITaskConfigService _taskTicketConfigService;
-
-    @Inject
     @Named( ITicketEmailExternalUserHistoryDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO;
 
@@ -139,26 +123,6 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
     @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserMessageDAO;
 
-    @Inject
-    @Named( ActionService.BEAN_SERVICE )
-    private ActionService _actionService;
-
-
-    @Inject
-    @Named( TaskService.BEAN_SERVICE )
-    private ITaskService _taskService;
-
-    @Inject
-    @Named( TaskNotifyGruConfigService.BEAN_SERVICE )
-    private ITaskConfigService _taskNotifyGruConfigService;
-
-    @Inject
-    @Named( "workflow-ticketing.externaluser.provider-manager" )
-    private TicketEmailExternalUserProviderManager _ticketEmailExternalUserProviderManager;
-
-    /** The _resource history service. */
-    @Inject
-    private IResourceHistoryService _resourceHistoryService;
 
     // Constant
 
@@ -292,66 +256,56 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
     @Override
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
-        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdHistory );
-        int idTicket = resourceHistory.getIdResource( );
+        TicketEmailExternalUserHistory emailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
+        TicketEmailExternalUserMessage lastEmailsAgentDemand = _ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( emailExternalUserHistory
+                                                                                                                                         .getIdMessageExternalUser( ) );
         Map<String, Object> model = new HashMap<>( );
 
-        //loadByIdTicketNotClosedOrderDesc
-        List<TicketEmailExternalUserMessage> listEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadByIdTicketNotClosedOrderDesc( idTicket );
-
-        if ( !listEmailsAgentDemand.isEmpty()) {
-            TicketEmailExternalUserMessage lastEmailsAgentDemand = listEmailsAgentDemand.get( 0 );
-
-
+        if ( lastEmailsAgentDemand != null ) {
 
             StringBuilder sb = new StringBuilder(  );
-            boolean hasExternalEmail = false;
-            for (TicketEmailExternalUserMessage ticketEmailExternalUserMessage : listEmailsAgentDemand)
+
+            TicketEmailExternalUserHistory ticketEmailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
+            if ( ticketEmailExternalUserHistory != null )
             {
-                // external user email
-                List<TicketEmailExternalUserHistory> ticketEmailExternalUserHistories = _ticketEmailExternalUserHistoryDAO.loadByIdMessageExternalUser( ticketEmailExternalUserMessage.getIdMessageExternalUser( ) );
-                if ( !ticketEmailExternalUserHistories.isEmpty() )
+                int nIdResourceHistory = ticketEmailExternalUserHistory.getIdResourceHistory( );
+                int nIdTask = ticketEmailExternalUserHistory.getIdTask( );
+                if ( nIdTask != task.getId() )
                 {
-                    int nIdResourceHistory = ticketEmailExternalUserHistories.get( 0 ).getIdResourceHistory( );
-                    int nIdTask = ticketEmailExternalUserHistories.get( 0 ).getIdTask( );
-                    if ( !hasExternalEmail && nIdTask != task.getId() )
+                    List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = _ticketEmailExternalUserRecipientDAO.loadByIdHistory( nIdResourceHistory,
+                            nIdTask );
+                    List<TicketEmailExternalUserCc> listCcEmailExternalUser = _ticketEmailExternalUserCcDAO.loadByIdHistory( nIdResourceHistory, nIdTask );
+
+
+                    StringBuilder sbInfosCc = new StringBuilder( );
+
+                    for ( TicketEmailExternalUserCc emailExternalUserCc : listCcEmailExternalUser )
                     {
-                        List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = _ticketEmailExternalUserRecipientDAO.loadByIdHistory( nIdResourceHistory,
-                                nIdTask );
-                        List<TicketEmailExternalUserCc> listCcEmailExternalUser = _ticketEmailExternalUserCcDAO.loadByIdHistory( nIdResourceHistory, nIdTask );
-
-
-                        StringBuilder sbInfosCc = new StringBuilder( );
-
-                        for ( TicketEmailExternalUserCc emailExternalUserCc : listCcEmailExternalUser )
-                        {
-                            sbInfosCc.append( emailExternalUserCc.getEmail( ) ).append( DISPLAY_SEMICOLON );
-                        }
-                        model.put( MARK_TICKETING_EMAIL_INFOS_CC, sbInfosCc.toString( ) );
-
-                        if ( ! listRecipientEmailExternalUser.isEmpty() )
-                        {
-                            model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listRecipientEmailExternalUser );
-                            hasExternalEmail = true;
-                        }
+                        sbInfosCc.append( emailExternalUserCc.getEmail( ) ).append( DISPLAY_SEMICOLON );
                     }
-                } else
-                {
-                    String strEmailRecipients = lastEmailsAgentDemand.getEmailRecipients( );
-                    List<ExternalUser> listUsers = getExternalUsers( strEmailRecipients );
-                    String strEmailRecipientsCc = lastEmailsAgentDemand.getEmailRecipientsCc( );
+                    model.put( MARK_TICKETING_EMAIL_INFOS_CC, sbInfosCc.toString( ) );
 
-                    model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listUsers );
-                    model.put( MARK_TICKETING_EMAIL_INFOS_CC, strEmailRecipientsCc );
+                    if ( ! listRecipientEmailExternalUser.isEmpty() )
+                    {
+                        model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listRecipientEmailExternalUser );
+                    }
                 }
+            } else
+            {
+                String strEmailRecipients = lastEmailsAgentDemand.getEmailRecipients( );
+                List<ExternalUser> listUsers = getExternalUsers( strEmailRecipients );
+                String strEmailRecipientsCc = lastEmailsAgentDemand.getEmailRecipientsCc( );
+
+                model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listUsers );
+                model.put( MARK_TICKETING_EMAIL_INFOS_CC, strEmailRecipientsCc );
+            }
 
 
-                // messages
-                if ( ticketEmailExternalUserMessage!=null && ticketEmailExternalUserMessage.getMessageQuestion()!=null &&
-                             !ticketEmailExternalUserMessage.getMessageQuestion().trim().isEmpty() && !ticketEmailExternalUserMessage.getMessageQuestion().trim().equalsIgnoreCase( "null" ))
-                {
-                    sb.append( ticketEmailExternalUserMessage.getMessageQuestion( ) ).append( "\n" );
-                }
+            // messages
+            if ( lastEmailsAgentDemand.getMessageQuestion()!=null &&
+                         !lastEmailsAgentDemand.getMessageQuestion().trim().isEmpty() && !lastEmailsAgentDemand.getMessageQuestion().trim().equalsIgnoreCase( "null" ))
+            {
+                sb.append( lastEmailsAgentDemand.getMessageQuestion( ) ).append( "\n" );
             }
 
             model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + sb.toString() );
