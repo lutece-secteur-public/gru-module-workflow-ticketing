@@ -247,14 +247,15 @@ public class TaskNotifyWaitingTicket extends SimpleTask
      */
     private void processAgentRecontactTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request )
     {
-        TicketEmailExternalUserMessage firstEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadFirstByIdTicket( ticket.getId( ) );
+        TicketEmailExternalUserMessage firstEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadLastByIdTicket( ticket.getId( ) );
 
         String strAgentMessage = StringUtils.EMPTY;
-        if (request != null)
+        if (request != null && request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) )!=null)
         {
             strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
         }
-        else
+
+        if (StringUtils.EMPTY.equals( strAgentMessage ))
         {
             // cas daemon
             strAgentMessage = firstEmailsAgentDemand.getMessageQuestion();
