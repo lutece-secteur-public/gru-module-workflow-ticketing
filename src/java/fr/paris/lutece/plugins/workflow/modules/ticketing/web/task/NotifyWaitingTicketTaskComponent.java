@@ -270,7 +270,7 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
             {
                 int nIdResourceHistory = ticketEmailExternalUserHistory.getIdResourceHistory( );
                 int nIdTask = ticketEmailExternalUserHistory.getIdTask( );
-                if ( nIdTask != task.getId() )
+                if ( nIdTask == task.getId() )
                 {
                     List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = _ticketEmailExternalUserRecipientDAO.loadByIdHistory( nIdResourceHistory,
                             nIdTask );
@@ -279,14 +279,38 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
 
                     StringBuilder sbInfosCc = new StringBuilder( );
 
-                    for ( TicketEmailExternalUserCc emailExternalUserCc : listCcEmailExternalUser )
+                    if ( !listCcEmailExternalUser.isEmpty())
                     {
-                        sbInfosCc.append( emailExternalUserCc.getEmail( ) ).append( DISPLAY_SEMICOLON );
+                        for ( TicketEmailExternalUserCc emailExternalUserCc : listCcEmailExternalUser )
+                        {
+                            sbInfosCc.append( emailExternalUserCc.getEmail( ) ).append( DISPLAY_SEMICOLON );
+                        }
+                        model.put( MARK_TICKETING_EMAIL_INFOS_CC, sbInfosCc.toString( ) );
                     }
-                    model.put( MARK_TICKETING_EMAIL_INFOS_CC, sbInfosCc.toString( ) );
+                    else
+                    {
+                        String strEmailRecipientsCc = lastEmailsAgentDemand.getEmailRecipientsCc( );
+                        model.put( MARK_TICKETING_EMAIL_INFOS_CC, strEmailRecipientsCc );
+                    }
 
                     if ( ! listRecipientEmailExternalUser.isEmpty() )
                     {
+                        model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listRecipientEmailExternalUser );
+                    }
+                    else
+                    {
+                        String strEmailRecipients = lastEmailsAgentDemand.getEmailRecipients( );
+                        List<ExternalUser> listUsers = getExternalUsers( strEmailRecipients );
+
+                        for (ExternalUser externalUser : listUsers)
+                        {
+                            TicketEmailExternalUserRecipient ticketEmailExternalUserRecipient = new TicketEmailExternalUserRecipient( );
+                            ticketEmailExternalUserRecipient.setEmail( externalUser.getEmail() );
+                            ticketEmailExternalUserRecipient.setFirstName( externalUser.getFirstname() );
+                            ticketEmailExternalUserRecipient.setName( externalUser.getLastname() );
+                            listRecipientEmailExternalUser.add( ticketEmailExternalUserRecipient );
+                        }
+
                         model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listRecipientEmailExternalUser );
                     }
                 }
@@ -294,12 +318,21 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
             {
                 String strEmailRecipients = lastEmailsAgentDemand.getEmailRecipients( );
                 List<ExternalUser> listUsers = getExternalUsers( strEmailRecipients );
+                List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = new ArrayList<>(  );
+                for (ExternalUser externalUser : listUsers)
+                {
+                    TicketEmailExternalUserRecipient ticketEmailExternalUserRecipient = new TicketEmailExternalUserRecipient( );
+                    ticketEmailExternalUserRecipient.setEmail( externalUser.getEmail() );
+                    ticketEmailExternalUserRecipient.setFirstName( externalUser.getFirstname() );
+                    ticketEmailExternalUserRecipient.setName( externalUser.getLastname() );
+                    listRecipientEmailExternalUser.add( ticketEmailExternalUserRecipient );
+                }
+
                 String strEmailRecipientsCc = lastEmailsAgentDemand.getEmailRecipientsCc( );
 
-                model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listUsers );
+                model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listRecipientEmailExternalUser );
                 model.put( MARK_TICKETING_EMAIL_INFOS_CC, strEmailRecipientsCc );
             }
-
 
             // messages
             if ( lastEmailsAgentDemand.getMessageQuestion()!=null &&
