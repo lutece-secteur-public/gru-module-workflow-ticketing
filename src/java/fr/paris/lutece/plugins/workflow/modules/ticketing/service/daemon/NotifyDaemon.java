@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon;
 
+import fr.paris.lutece.plugins.ticketing.business.search.TicketSearchService;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
@@ -172,6 +173,12 @@ public class NotifyDaemon extends Daemon
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
         AppLogService.info( sbLog.toString() );
+
+        // reindexation full
+        if ( nNbTicketRelance > 0 || nNbTicketRetour > 0)
+        {
+            TicketSearchService.getInstance( ).processIndexing( true );
+        }
 
         return sbLog.toString();
     }
