@@ -33,10 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -75,6 +72,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.url.UrlItem;
+import java.sql.Timestamp;
 
 /**
  * TicketExternalUserResponse JSP Bean abstract class for JSP Bean
@@ -173,6 +171,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         TaskTicketEmailExternalUserConfig externalUserConfig = null;
         List<UploadFile> listFileUpload = new ArrayList<UploadFile>( );
         Map<String, Object> mapFileUrl = new HashMap<String, Object>( );
+        Map<String, Timestamp> mapAllMessageQuestion = new HashMap<>(  );
         AdminUser userAdmin = null;
 
         try
@@ -225,10 +224,14 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
                 emailExternalUserMessageDisplay.setDateCreate( resourceHistory.getCreationDate( ) );
 
-                listEmailExternalUserMessageDisplay.add( emailExternalUserMessageDisplay );
+                if ( !mapAllMessageQuestion.containsKey( emailExternalUserMessageDisplay.getMessageQuestion() ) )
+                {
+                    listEmailExternalUserMessageDisplay.add( emailExternalUserMessageDisplay );
+                    mapAllMessageQuestion.put( emailExternalUserMessageDisplay.getMessageQuestion(), emailExternalUserMessageDisplay.getDateCreate() );
+                }
             }
 
-            if ( ( listFileUpload != null ) && !listFileUpload.isEmpty( ) )
+            if ( !listFileUpload.isEmpty( ) )
             {
                 String strBaseUrl = AppPathService.getBaseUrl( request );
 
