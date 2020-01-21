@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon;
 
-import fr.paris.lutece.plugins.ticketing.business.search.TicketSearchService;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
@@ -105,7 +104,7 @@ public class NotifyDaemon extends Daemon
     @Override
     public void run( )
     {
-        setLastRunLogs( processNotification() );
+         setLastRunLogs( processNotification() );
     }
 
     private String processNotification( )
@@ -136,49 +135,52 @@ public class NotifyDaemon extends Daemon
 
         // boucle sur les tickets
         for (int nIdResource : listResourceWaitingId) {
-            Ticket ticket = TicketHome.findByPrimaryKey( nIdResource );
+            int nNbRelance = 0;
+            Timestamp dateDerniereRelance = null;
+            Ticket ticket = null;
+            try
+            {
+                ticket = TicketHome.findByPrimaryKey( nIdResource );
 
-            if ( ticket != null ) {
-                int nNbRelance = ticket.getNbRelance( );
-                Timestamp dateDerniereRelance = ticket.getDateDerniereRelance( );
-
-                // update date true si retour de sollicitation, false si relance auto
-                boolean isUpdateDate;
-
-                if ( dateDerniereRelance == null)
+                if ( ticket != null )
                 {
-                    // pas de date
-                    processRelanceNoDate( ticket, dateExecution );
-                    nNbTicketRelance++;
-                    isUpdateDate = false;
-                }
-                else if ( nNbRelance < nbRelanceMax )
-                {
-                    nNbTicketRelance = nNbTicketRelance + processRelance( ticket, dateDerniereRelance, dateExecution );
-                    isUpdateDate = false;
-                }
-                else
-                {
-                    nNbTicketRetour = nNbTicketRetour + processRetour( ticket, dateExecution );
-                    isUpdateDate = true;
-                }
+                    nNbRelance = ticket.getNbRelance( );
+                    dateDerniereRelance = ticket.getDateDerniereRelance( );
 
-                // mise à jour du ticket (sans màj de la date d'update)
-                TicketHome.update( ticket, isUpdateDate );
+                    if ( dateDerniereRelance == null )
+                    {
+                        // pas de date
+                        processRelanceNoDate( ticket, dateExecution );
+                        nNbTicketRelance++;
+                    } else if ( nNbRelance < nbRelanceMax )
+                    {
+                        nNbTicketRelance = nNbTicketRelance + processRelance( ticket, dateDerniereRelance, dateExecution );
+                    } else
+                    {
+                        nNbTicketRetour = nNbTicketRetour + processRetour( ticket, dateExecution );
+                    }
+                }
+            }
+            catch ( Exception e )
+            {
+                AppLogService.error( "Erreur du traitement du ticket "+nIdResource, e );
+
+                if ( ticket != null &&
+                        ticket.getNbRelance() != nNbRelance)
+                {
+                    // si le ticket a été mis à jour mais a eu une erreur
+                    ticket.setNbRelance( nNbRelance );
+                    ticket.setDateDerniereRelance( dateDerniereRelance );
+                    TicketHome.update( ticket, false );
+                }
             }
         }
 
-        sbLog.append( "Nombre de tickets au statut" ).append( _workflowService.getState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( "dont :" );
+        sbLog.append( "Nombre de tickets au statut " ).append( _workflowService.getState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
         AppLogService.info( sbLog.toString() );
-
-        // reindexation full
-        if ( nNbTicketRelance > 0 || nNbTicketRetour > 0)
-        {
-            TicketSearchService.getInstance( ).processIndexing( true );
-        }
 
         return sbLog.toString();
     }
@@ -224,10 +226,15 @@ public class NotifyDaemon extends Daemon
      */
     private void processRelanceNoDate( Ticket ticket, Date dateExecution )
     {
-        // Relance automatique
-        _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRelance, null, null, null, true );
         ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
         ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+
+        // mise à jour du ticket (sans màj de la date d'update)
+        // update date true si retour de sollicitation, false si relance auto
+        TicketHome.update( ticket, false );
+
+        // Relance automatique
+        _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRelance, null, null, null, true );
     }
 
     /**
@@ -252,10 +259,15 @@ public class NotifyDaemon extends Daemon
 
         if ( dateLimiteRelance.before( dateExecution ))
         {
-            // Relance automatique
-            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRelance, null, null, null, true );
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+
+            // mise à jour du ticket (sans màj de la date d'update)
+            // update date true si retour de sollicitation, false si relance auto
+            TicketHome.update( ticket, false );
+
+            // Relance automatique
+            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRelance, null, null, null, true );
 
             return 1;
         }
@@ -276,33 +288,53 @@ public class NotifyDaemon extends Daemon
 
         if ( nIdDerniereActionManuelle == nIdActionSolliciterFromTerrainNiv2 )
         {
-            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromTerrainNiv2, null, null, null, true );
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+
+            // mise à jour du ticket (sans màj de la date d'update)
+            // update date true si retour de sollicitation, false si relance auto
+            TicketHome.update( ticket, true );
+
+            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromTerrainNiv2, null, null, null, true );
 
             return 1;
         }
         else if ( nIdDerniereActionManuelle == nIdActionSolliciterFromTerrainNiv3 )
         {
-            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromTerrainNiv3, null, null, null, true );
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+
+            // mise à jour du ticket (sans màj de la date d'update)
+            // update date true si retour de sollicitation, false si relance auto
+            TicketHome.update( ticket, true );
+
+            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromTerrainNiv3, null, null, null, true );
 
             return 1;
         }
         else if ( nIdDerniereActionManuelle == nIdActionSolliciterFromContribNiv2 )
         {
-            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromContribNiv2, null, null, null, true );
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+
+            // mise à jour du ticket (sans màj de la date d'update)
+            // update date true si retour de sollicitation, false si relance auto
+            TicketHome.update( ticket, true );
+
+            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromContribNiv2, null, null, null, true );
 
             return 1;
         }
         else if ( nIdDerniereActionManuelle == nIdActionSolliciterFromContribNiv3 )
         {
-            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromContribNiv3, null, null, null, true );
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+
+            // mise à jour du ticket (sans màj de la date d'update)
+            // update date true si retour de sollicitation, false si relance auto
+            TicketHome.update( ticket, true );
+
+            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromContribNiv3, null, null, null, true );
 
             return 1;
         }
