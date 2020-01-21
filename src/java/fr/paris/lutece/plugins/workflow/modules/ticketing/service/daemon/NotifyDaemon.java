@@ -33,10 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon;
 
+import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
+import fr.paris.lutece.plugins.ticketing.web.util.TicketIndexerActionUtil;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
@@ -138,6 +140,7 @@ public class NotifyDaemon extends Daemon
             int nNbRelance = 0;
             Timestamp dateDerniereRelance = null;
             Ticket ticket = null;
+            boolean isTicketUpdated = false;
             try
             {
                 ticket = TicketHome.findByPrimaryKey( nIdResource );
@@ -152,12 +155,19 @@ public class NotifyDaemon extends Daemon
                         // pas de date
                         processRelanceNoDate( ticket, dateExecution );
                         nNbTicketRelance++;
-                    } else if ( nNbRelance < nbRelanceMax )
+                        isTicketUpdated = true;
+                    }
+                    else if ( nNbRelance < nbRelanceMax )
                     {
-                        nNbTicketRelance = nNbTicketRelance + processRelance( ticket, dateDerniereRelance, dateExecution );
-                    } else
+                        int nRelance = processRelance( ticket, dateDerniereRelance, dateExecution );
+                        nNbTicketRelance = nNbTicketRelance + nRelance;
+                        isTicketUpdated = ( nRelance == 1 );
+                    }
+                    else
                     {
-                        nNbTicketRetour = nNbTicketRetour + processRetour( ticket, dateExecution );
+                        int nRelance = processRetour( ticket, dateExecution );
+                        nNbTicketRetour = nNbTicketRetour +  nRelance;
+                        isTicketUpdated = ( nRelance == 1 );
                     }
                 }
             }
@@ -172,6 +182,14 @@ public class NotifyDaemon extends Daemon
                     ticket.setNbRelance( nNbRelance );
                     ticket.setDateDerniereRelance( dateDerniereRelance );
                     TicketHome.update( ticket, false );
+                    isTicketUpdated = true;
+                }
+            }
+            finally
+            {
+                if ( isTicketUpdated ) {
+                    // Index: store the Ticket in the table for the daemon
+                    IndexerActionHome.create( TicketIndexerActionUtil.createIndexerActionFromTicket( ticket ) );
                 }
             }
         }
@@ -289,7 +307,8 @@ public class NotifyDaemon extends Daemon
         if ( nIdDerniereActionManuelle == nIdActionSolliciterFromTerrainNiv2 )
         {
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-            ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+            // remise à 0
+            ticket.setNbRelance( 0 );
 
             // mise à jour du ticket (sans màj de la date d'update)
             // update date true si retour de sollicitation, false si relance auto
@@ -302,7 +321,7 @@ public class NotifyDaemon extends Daemon
         else if ( nIdDerniereActionManuelle == nIdActionSolliciterFromTerrainNiv3 )
         {
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-            ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+            ticket.setNbRelance( 0 );
 
             // mise à jour du ticket (sans màj de la date d'update)
             // update date true si retour de sollicitation, false si relance auto
@@ -315,7 +334,7 @@ public class NotifyDaemon extends Daemon
         else if ( nIdDerniereActionManuelle == nIdActionSolliciterFromContribNiv2 )
         {
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-            ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+            ticket.setNbRelance( 0 );
 
             // mise à jour du ticket (sans màj de la date d'update)
             // update date true si retour de sollicitation, false si relance auto
@@ -328,7 +347,7 @@ public class NotifyDaemon extends Daemon
         else if ( nIdDerniereActionManuelle == nIdActionSolliciterFromContribNiv3 )
         {
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-            ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+            ticket.setNbRelance( 0 );
 
             // mise à jour du ticket (sans màj de la date d'update)
             // update date true si retour de sollicitation, false si relance auto
