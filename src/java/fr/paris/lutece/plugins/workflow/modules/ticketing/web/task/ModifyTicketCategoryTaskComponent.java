@@ -127,9 +127,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             ReferenceItem refItem = new ReferenceItem( );
             refItem.setCode( Integer.toString( refEntry.getIdEntry( ) ) );
 
-            StringBuilder strInput = new StringBuilder( refEntry.getTitle( ) );
-            strInput.append( " (" ).append( refEntry.getEntryType( ).getTitle( ) ).append( ")" );
-            refItem.setName( strInput.toString( ) );
+            refItem.setName( refEntry.getTitle( ) + " (" + refEntry.getEntryType( ).getTitle( ) + ")" );
             refItem.setChecked( config.getSelectedEntries( ).contains( refEntry.getIdEntry( ) ) );
 
             refList.add( refItem );
@@ -190,7 +188,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Ticket ticket = getTicket( nIdResource, strResourceType );
-        String strError = StringUtils.EMPTY;
+        StringBuilder strError = new StringBuilder( StringUtils.EMPTY );
         List<String> listErrors = new ArrayList<>( );
 
         TicketCategoryValidatorResult categoryValidatorResult = new TicketCategoryValidator( request, locale ).validateTicketCategory( );
@@ -204,7 +202,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         // Validate the selection of items
         if ( categoryValidatorResult.isTicketCategoryValid( ) )
         {
-            List<GenericAttributeError> listFormErrors = new ArrayList<GenericAttributeError>( );
+            List<GenericAttributeError> listFormErrors = new ArrayList<>( );
             TaskModifyTicketCategoryConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
             List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), config.getSelectedEntries( ) );
 
@@ -228,7 +226,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
                     if ( !hasFFError && entry.getCode( ).equals( AppPropertiesService.getProperty( PROPERTY_FF_CODE ) ) )
                     {
                         String strFacilFamilleNumber = request.getParameter( "attribute" + entry.getIdEntry( ) );
-                        if ( strFacilFamilleNumber == null )
+                        if ( strFacilFamilleNumber == null || strFacilFamilleNumber.trim().isEmpty() )
                         {
                             GenericAttributeError formError = new GenericAttributeError( );
                             formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_EMPTY_VALIDATION, request.getLocale( ) ) );
@@ -260,10 +258,10 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             {
                 for ( GenericAttributeError formError : listFormErrors )
                 {
-                    strError += ( formError.getErrorMessage( ) + "<br/>" );
+                    strError.append( formError.getErrorMessage( ) ).append( "<br/>" );
                 }
 
-                listErrors.add( strError );
+                listErrors.add( strError.toString( ) );
             }
         }
 
@@ -278,7 +276,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     private GenericAttributeError getFacilFamilleError ( HttpServletRequest request, Locale locale ) {
         String strFacilFamilleNumber = request.getParameter( "attribute202" );
 
-        if (strFacilFamilleNumber==null) {
+        if ( strFacilFamilleNumber==null || strFacilFamilleNumber.trim().isEmpty() ) {
             GenericAttributeError formError = new GenericAttributeError();
             formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_EMPTY_VALIDATION, request.getLocale( ) ) );
             return formError;
