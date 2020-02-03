@@ -318,7 +318,7 @@ public class NotifyDaemon extends Daemon
             // remise à 0
             ticket.setNbRelance( 0 );
 
-            // mise à jour du ticket (sans màj de la date d'update)
+            // mise à jour du ticket
             // update date true si retour de sollicitation, false si relance auto
             TicketHome.update( ticket, true );
 
@@ -331,7 +331,7 @@ public class NotifyDaemon extends Daemon
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( 0 );
 
-            // mise à jour du ticket (sans màj de la date d'update)
+            // mise à jour du ticket
             // update date true si retour de sollicitation, false si relance auto
             TicketHome.update( ticket, true );
 
@@ -344,7 +344,7 @@ public class NotifyDaemon extends Daemon
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( 0 );
 
-            // mise à jour du ticket (sans màj de la date d'update)
+            // mise à jour du ticket
             // update date true si retour de sollicitation, false si relance auto
             TicketHome.update( ticket, true );
 
@@ -357,7 +357,7 @@ public class NotifyDaemon extends Daemon
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( 0 );
 
-            // mise à jour du ticket (sans màj de la date d'update)
+            // mise à jour du ticket
             // update date true si retour de sollicitation, false si relance auto
             TicketHome.update( ticket, true );
 
