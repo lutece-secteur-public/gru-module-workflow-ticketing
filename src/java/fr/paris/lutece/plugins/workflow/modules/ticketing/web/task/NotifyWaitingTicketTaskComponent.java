@@ -64,16 +64,6 @@ import java.util.*;
 
 public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
 {
-
-
-    // Marks
-
-
-
-
-    private static final String MARK_TICKETING_EMAIL_INFOS_CC = "email_infos_cc";
-
-
     @Inject
     @Named( IExternalUserDAO.BEAN_SERVICE )
     private IExternalUserDAO _externalUserDAO;
@@ -91,6 +81,8 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
     private static final String MARK_CONFIG_CONTACT_ATTRIBUTE = "contact_attribute_id";
     private static final String MARK_CONFIG_DEFAULT_SUBJECT = "default_subject";
+    private static final String MARK_TICKETING_EMAIL_INFOS_CC = "email_infos_cc";
+    private static final String MARK_TICKETING_ID_HISTORY = "id_history";
 
     // Parameters config
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
@@ -344,6 +336,8 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
             model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + sb.toString() );
 
         }
+
+        model.put( MARK_TICKETING_ID_HISTORY,nIdHistory );
 
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_TICKET_INFORMATION, locale, model );
