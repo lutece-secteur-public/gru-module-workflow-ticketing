@@ -249,8 +249,14 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
         TicketEmailExternalUserHistory emailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
+        if ( emailExternalUserHistory == null )
+        {
+            return ( "nIdHistory " + nIdHistory +" n'a pas de ticketEmailExternalUserHistory correspondant" );
+        }
         TicketEmailExternalUserMessage lastEmailsAgentDemand = _ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( emailExternalUserHistory
                                                                                                                                          .getIdMessageExternalUser( ) );
+
+
         Map<String, Object> model = new HashMap<>( );
 
         if ( lastEmailsAgentDemand != null ) {
