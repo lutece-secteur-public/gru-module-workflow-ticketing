@@ -1,10 +1,10 @@
-<#if list_email_infos?exists && list_email_infos?has_content>
+<#if list_email_infos?? && list_email_infos?has_content>
     <div style="border-bottom: 1px solid #f4f4f4;">
 		<span>
 			#i18n{module.workflow.ticketing.task_notify_waiting_ticket.label_email_recipients}
 			<br/><br/>
 			<#list list_email_infos as email_info>
-                <i class="fa fa-arrow-right" aria-hidden="true"></i> ${email_info.firstName!} ${email_info.name!} (${email_info.email!}<#if email_info.field?exists> - ${email_info.field}</#if>)<br/>
+                <i class="fa fa-arrow-right" aria-hidden="true"></i> ${email_info.firstName!} ${email_info.name!} (${email_info.email!}<#if email_info.field??> - ${email_info.field}</#if>)<br/>
             </#list>
 		</span>
 
@@ -19,6 +19,12 @@
     </div>
 </#if>
 
-<#if external_user_message?exists>
+<#if external_user_message??>
     <span>${external_user_message}</span>
 </#if>
+
+<script>
+    $(function() {
+        open_close_history(${id_history});
+    });
+</script>

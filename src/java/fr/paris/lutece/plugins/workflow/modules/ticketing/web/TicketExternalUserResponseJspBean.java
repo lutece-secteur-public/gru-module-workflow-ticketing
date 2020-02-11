@@ -165,12 +165,12 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
         // Retrieve objects
         String strIdEmailExternalUser = request.getParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER );
-        List<TicketEmailExternalUserMessageDisplay> listEmailExternalUserMessageDisplay = new ArrayList<TicketEmailExternalUserMessageDisplay>( );
+        List<TicketEmailExternalUserMessageDisplay> listEmailExternalUserMessageDisplay = new ArrayList<>( );
         TicketEmailExternalUserMessage requiredEmailExternalUserMessage = null;
         TicketEmailExternalUserHistory externalUserHistory = null;
         TaskTicketEmailExternalUserConfig externalUserConfig = null;
-        List<UploadFile> listFileUpload = new ArrayList<UploadFile>( );
-        Map<String, Object> mapFileUrl = new HashMap<String, Object>( );
+        List<UploadFile> listFileUpload = new ArrayList<>( );
+        Map<String, Object> mapFileUrl = new HashMap<>( );
         Map<String, Timestamp> mapAllMessageQuestion = new HashMap<>(  );
         AdminUser userAdmin = null;
 
@@ -235,10 +235,10 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
             {
                 String strBaseUrl = AppPathService.getBaseUrl( request );
 
-                for ( int i = 0; i < listFileUpload.size( ); i++ )
+                for ( UploadFile uploadFile : listFileUpload )
                 {
-                    mapFileUrl.put( Integer.toString( listFileUpload.get( i ).getIdUploadFile( ) ),
-                            DownloadFileService.getUrlDownloadFile( listFileUpload.get( i ).getIdFile( ), strBaseUrl ) );
+                    mapFileUrl.put( Integer.toString( uploadFile.getIdUploadFile( ) ),
+                            DownloadFileService.getUrlDownloadFile( uploadFile.getIdFile( ), strBaseUrl ) );
                 }
             }
 

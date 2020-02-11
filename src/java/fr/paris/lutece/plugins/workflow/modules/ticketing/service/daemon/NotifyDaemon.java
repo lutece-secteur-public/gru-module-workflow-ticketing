@@ -150,7 +150,7 @@ public class NotifyDaemon extends Daemon
                     nNbRelance = ticket.getNbRelance( );
                     dateDerniereRelance = ticket.getDateDerniereRelance( );
 
-                    if ( dateDerniereRelance == null )
+                    if ( dateDerniereRelance == null || nNbRelance == 0 )
                     {
                         // pas de date
                         processRelanceNoDate( ticket, dateExecution );
@@ -234,6 +234,14 @@ public class NotifyDaemon extends Daemon
             return false;
         }
 
+        if ( nbRelanceMax < 1)
+        {
+            // relance desactivée
+            sbLog.append( "Paramétrage relance_auto.nb_relance_max inf. à 1, relance desactivée" );
+            AppLogService.error( "Paramétrage relance_auto.nb_relance_max inférieur à 1, relance desactivée" );
+            return false;
+        }
+
         return true;
     }
 
@@ -245,7 +253,7 @@ public class NotifyDaemon extends Daemon
     private void processRelanceNoDate( Ticket ticket, Date dateExecution )
     {
         ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-        ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+        ticket.setNbRelance( 1 );
 
         // mise à jour du ticket (sans màj de la date d'update)
         // update date true si retour de sollicitation, false si relance auto
@@ -310,7 +318,7 @@ public class NotifyDaemon extends Daemon
             // remise à 0
             ticket.setNbRelance( 0 );
 
-            // mise à jour du ticket (sans màj de la date d'update)
+            // mise à jour du ticket
             // update date true si retour de sollicitation, false si relance auto
             TicketHome.update( ticket, true );
 
@@ -323,7 +331,7 @@ public class NotifyDaemon extends Daemon
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( 0 );
 
-            // mise à jour du ticket (sans màj de la date d'update)
+            // mise à jour du ticket
             // update date true si retour de sollicitation, false si relance auto
             TicketHome.update( ticket, true );
 
@@ -336,7 +344,7 @@ public class NotifyDaemon extends Daemon
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( 0 );
 
-            // mise à jour du ticket (sans màj de la date d'update)
+            // mise à jour du ticket
             // update date true si retour de sollicitation, false si relance auto
             TicketHome.update( ticket, true );
 
@@ -349,7 +357,7 @@ public class NotifyDaemon extends Daemon
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( 0 );
 
-            // mise à jour du ticket (sans màj de la date d'update)
+            // mise à jour du ticket
             // update date true si retour de sollicitation, false si relance auto
             TicketHome.update( ticket, true );
 
