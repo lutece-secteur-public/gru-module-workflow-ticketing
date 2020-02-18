@@ -33,10 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -75,6 +72,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.url.UrlItem;
+import java.sql.Timestamp;
 
 /**
  * TicketExternalUserResponse JSP Bean abstract class for JSP Bean
@@ -167,12 +165,13 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
         // Retrieve objects
         String strIdEmailExternalUser = request.getParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER );
-        List<TicketEmailExternalUserMessageDisplay> listEmailExternalUserMessageDisplay = new ArrayList<TicketEmailExternalUserMessageDisplay>( );
+        List<TicketEmailExternalUserMessageDisplay> listEmailExternalUserMessageDisplay = new ArrayList<>( );
         TicketEmailExternalUserMessage requiredEmailExternalUserMessage = null;
         TicketEmailExternalUserHistory externalUserHistory = null;
         TaskTicketEmailExternalUserConfig externalUserConfig = null;
-        List<UploadFile> listFileUpload = new ArrayList<UploadFile>( );
-        Map<String, Object> mapFileUrl = new HashMap<String, Object>( );
+        List<UploadFile> listFileUpload = new ArrayList<>( );
+        Map<String, Object> mapFileUrl = new HashMap<>( );
+        Map<String, Timestamp> mapAllMessageQuestion = new HashMap<>(  );
         AdminUser userAdmin = null;
 
         try
@@ -225,17 +224,21 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
                 emailExternalUserMessageDisplay.setDateCreate( resourceHistory.getCreationDate( ) );
 
-                listEmailExternalUserMessageDisplay.add( emailExternalUserMessageDisplay );
+                if ( !mapAllMessageQuestion.containsKey( emailExternalUserMessageDisplay.getMessageQuestion() ) )
+                {
+                    listEmailExternalUserMessageDisplay.add( emailExternalUserMessageDisplay );
+                    mapAllMessageQuestion.put( emailExternalUserMessageDisplay.getMessageQuestion(), emailExternalUserMessageDisplay.getDateCreate() );
+                }
             }
 
-            if ( ( listFileUpload != null ) && !listFileUpload.isEmpty( ) )
+            if ( !listFileUpload.isEmpty( ) )
             {
                 String strBaseUrl = AppPathService.getBaseUrl( request );
 
-                for ( int i = 0; i < listFileUpload.size( ); i++ )
+                for ( UploadFile uploadFile : listFileUpload )
                 {
-                    mapFileUrl.put( Integer.toString( listFileUpload.get( i ).getIdUploadFile( ) ),
-                            DownloadFileService.getUrlDownloadFile( listFileUpload.get( i ).getIdFile( ), strBaseUrl ) );
+                    mapFileUrl.put( Integer.toString( uploadFile.getIdUploadFile( ) ),
+                            DownloadFileService.getUrlDownloadFile( uploadFile.getIdFile( ), strBaseUrl ) );
                 }
             }
 

@@ -113,12 +113,12 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
 
         daoUtil.executeQuery( );
 
-        int nIndex = 1;
-        List<TicketEmailExternalUserHistory> lstEmailExternalUser = new ArrayList<TicketEmailExternalUserHistory>( );
+        List<TicketEmailExternalUserHistory> lstEmailExternalUser = new ArrayList<>( );
         TicketEmailExternalUserHistory emailExternalUser = null;
 
         while ( daoUtil.next( ) )
         {
+            int nIndex = 1;
             emailExternalUser = new TicketEmailExternalUserHistory( );
             emailExternalUser.setIdTask( daoUtil.getInt( nIndex++ ) );
             emailExternalUser.setIdResourceHistory( daoUtil.getInt( nIndex++ ) );

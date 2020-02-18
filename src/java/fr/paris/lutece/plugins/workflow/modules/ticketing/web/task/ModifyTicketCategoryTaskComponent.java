@@ -42,6 +42,9 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -85,6 +88,11 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     @Inject
     private TicketFormService _ticketFormService;
 
+    private static final String PROPERTY_ACCOUNT_NUMBER_REGEXP = "module.workflow.ticketingfacilfamilles.workflow.automatic_assignment.accountNumberRegexp";
+    private static final String PROPERTY_FF_CODE = "module.workflow.ticketingfacilfamilles.workflow.automatic_assignment.accountNumberFieldCode";
+    private static final String MESSAGE_ERROR_FACIL_EMPTY_VALIDATION = "ticketing.validation.ticket.TicketFacilNumber.size";
+    private static final String MESSAGE_ERROR_FACIL_REGEX_VALIDATION = "ticketing.validation.ticket.TicketFacilNumber.regex";
+
     /**
      * {@inheritDoc}
      */
@@ -119,9 +127,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             ReferenceItem refItem = new ReferenceItem( );
             refItem.setCode( Integer.toString( refEntry.getIdEntry( ) ) );
 
-            StringBuilder strInput = new StringBuilder( refEntry.getTitle( ) );
-            strInput.append( " (" ).append( refEntry.getEntryType( ).getTitle( ) ).append( ")" );
-            refItem.setName( strInput.toString( ) );
+            refItem.setName( refEntry.getTitle( ) + " (" + refEntry.getEntryType( ).getTitle( ) + ")" );
             refItem.setChecked( config.getSelectedEntries( ).contains( refEntry.getIdEntry( ) ) );
 
             refList.add( refItem );
@@ -182,7 +188,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Ticket ticket = getTicket( nIdResource, strResourceType );
-        String strError = StringUtils.EMPTY;
+        StringBuilder strError = new StringBuilder( StringUtils.EMPTY );
         List<String> listErrors = new ArrayList<>( );
 
         TicketCategoryValidatorResult categoryValidatorResult = new TicketCategoryValidator( request, locale ).validateTicketCategory( );
@@ -196,23 +202,66 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         // Validate the selection of items
         if ( categoryValidatorResult.isTicketCategoryValid( ) )
         {
-            List<GenericAttributeError> listFormErrors = new ArrayList<GenericAttributeError>( );
+            List<GenericAttributeError> listFormErrors = new ArrayList<>( );
             TaskModifyTicketCategoryConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
             List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), config.getSelectedEntries( ) );
 
+            boolean hasFFError = false;
             for ( Entry entry : listEntry )
             {
                 listFormErrors.addAll( _ticketFormService.getResponseEntry( request, entry.getIdEntry( ), request.getLocale( ), ticket ) );
+
+                //O2T 79251: contrôle facil'famille
+                if ( !hasFFError && isDomainFacilFamille(categoryValidatorResult.getTicketCategory( ) ) )
+                {
+                    for ( GenericAttributeError error : listFormErrors )
+                    {
+                        if ( error.getErrorMessage( ).contains( "Facil'Famille" ) ||
+                                     error.getErrorMessage( ).contains( "facil'familles" ) )
+                        {
+                            hasFFError = true;
+                            break;
+                        }
+                    }
+                    if ( !hasFFError && entry.getCode( ).equals( AppPropertiesService.getProperty( PROPERTY_FF_CODE ) ) )
+                    {
+                        String strFacilFamilleNumber = request.getParameter( "attribute" + entry.getIdEntry( ) );
+                        if ( strFacilFamilleNumber == null || strFacilFamilleNumber.trim().isEmpty() )
+                        {
+                            GenericAttributeError formError = new GenericAttributeError( );
+                            formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_EMPTY_VALIDATION, request.getLocale( ) ) );
+                            listFormErrors.add( formError );
+                            hasFFError=true;
+                        }
+                        else if ( !ticket.getFacilFamilleNumber( ).matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ) )
+                        {
+                            GenericAttributeError formError = new GenericAttributeError( );
+                            formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_REGEX_VALIDATION, request.getLocale( ) ) );
+                            listFormErrors.add( formError );
+                            hasFFError=true;
+                        }
+                    }
+                }
+            }
+
+            //O2T 79251: contrôle facil'famille
+            if (listEntry.isEmpty() && isDomainFacilFamille(categoryValidatorResult.getTicketCategory( ) ) )
+            {
+                GenericAttributeError facilFamilleError = getFacilFamilleError( request, locale);
+                if ( facilFamilleError!=null)
+                {
+                    listFormErrors.add( facilFamilleError );
+                }
             }
 
             if ( !listFormErrors.isEmpty( ) )
             {
                 for ( GenericAttributeError formError : listFormErrors )
                 {
-                    strError += ( formError.getErrorMessage( ) + "<br/>" );
+                    strError.append( formError.getErrorMessage( ) ).append( "<br/>" );
                 }
 
-                listErrors.add( strError );
+                listErrors.add( strError.toString( ) );
             }
         }
 
@@ -222,6 +271,38 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         }
 
         return null;
+    }
+
+    private GenericAttributeError getFacilFamilleError ( HttpServletRequest request, Locale locale ) {
+        String strFacilFamilleNumber = request.getParameter( "attribute202" );
+
+        if ( strFacilFamilleNumber==null || strFacilFamilleNumber.trim().isEmpty() ) {
+            GenericAttributeError formError = new GenericAttributeError();
+            formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_EMPTY_VALIDATION, request.getLocale( ) ) );
+            return formError;
+        }
+        else if ( !strFacilFamilleNumber.matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ))
+        {
+            GenericAttributeError formError = new GenericAttributeError();
+            formError.setErrorMessage( I18nService.getLocalizedString(  MESSAGE_ERROR_FACIL_REGEX_VALIDATION, request.getLocale( ) ) );
+            return formError;
+        }
+
+        return null;
+    }
+
+    private boolean isDomainFacilFamille ( TicketCategory category ) {
+        if ( category != null ) {
+            if (category.getDepth().getDepthNumber() > 1) {
+                return isDomainFacilFamille( category.getParent( ) );
+            } else if ( category.getDepth().getDepthNumber() == 1 ) {
+                return category.getLabel().equals( "facil'familles" );
+            } else {
+                // ne devrait pas se produire (0 ou négatif)
+                return false;
+            }
+        }
+        return false;
     }
 
 }

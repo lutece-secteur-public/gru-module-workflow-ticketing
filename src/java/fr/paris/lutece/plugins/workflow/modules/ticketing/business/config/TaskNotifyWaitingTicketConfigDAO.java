@@ -1,5 +1,6 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.config;
 
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.MessageDirectionExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
@@ -10,13 +11,13 @@ public class TaskNotifyWaitingTicketConfigDAO implements ITaskConfigDAO<TaskNoti
 
 
     //language=MySQL
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, sender_name, subject, message FROM workflow_task_ticketing_notify_waiting_ticket_config WHERE id_task = ? ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, message_direction, id_following_action, id_contact_attribute, default_subject FROM workflow_task_ticketing_email_external_user_config WHERE id_task = ? ";
     //language=MySQL
-    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_notify_waiting_ticket_config ( id_task, sender_name, subject, message ) VALUES ( ?,?,?,? ) ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_email_external_user_config ( id_task, message_direction, id_following_action, id_contact_attribute, default_subject ) VALUES ( ?,?,?,?,? ) ";
     //language=MySQL
-    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_notify_waiting_ticket_config SET sender_name = ?, subject = ?, message = ? WHERE id_task = ? ";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_email_external_user_config SET message_direction = ?, id_following_action = ?, id_contact_attribute = ?, default_subject = ? WHERE id_task = ? ";
     //language=MySQL
-    private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_notify_waiting_ticket_config WHERE id_task = ? ";
+    private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_email_external_user_config WHERE id_task = ? ";
 
     @Override
     public void insert( TaskNotifyWaitingTicketConfig config )
@@ -26,10 +27,34 @@ public class TaskNotifyWaitingTicketConfigDAO implements ITaskConfigDAO<TaskNoti
         int nIndex = 1;
 
         daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.setString( nIndex++, config.getSenderName( )==null?StringUtils.EMPTY:config.getSenderName( ) );
-        daoUtil.setString( nIndex++, config.getSubject( )==null?StringUtils.EMPTY:config.getSubject( ) );
-        daoUtil.setString( nIndex, config.getMessage( )==null?StringUtils.EMPTY:config.getMessage( ) );
+        daoUtil.setInt( nIndex++, config.getMessageDirectionExternalUser( ).ordinal( ) );
 
+        if ( config.getIdFollowingAction( ) == null )
+        {
+            daoUtil.setIntNull( nIndex++ );
+        }
+        else
+        {
+            daoUtil.setInt( nIndex++, config.getIdFollowingAction( ) );
+        }
+
+        if ( config.getIdContactAttribute( ) == null )
+        {
+            daoUtil.setIntNull( nIndex++ );
+        }
+        else
+        {
+            daoUtil.setInt( nIndex++, config.getIdContactAttribute( ) );
+        }
+
+        if ( config.getDefaultSubject( ) == null )
+        {
+            daoUtil.setString( nIndex, StringUtils.EMPTY );
+        }
+        else
+        {
+            daoUtil.setString( nIndex, config.getDefaultSubject( ) );
+        }
 
         daoUtil.executeUpdate( );
         daoUtil.free( );
@@ -42,12 +67,35 @@ public class TaskNotifyWaitingTicketConfigDAO implements ITaskConfigDAO<TaskNoti
 
         int nIndex = 1;
 
-        daoUtil.setString( nIndex++, config.getSenderName( )==null?StringUtils.EMPTY:config.getSenderName( ) );
-        daoUtil.setString( nIndex++, config.getSubject( )==null?StringUtils.EMPTY:config.getSubject( ) );
-        daoUtil.setString( nIndex++, config.getMessage( )==null?StringUtils.EMPTY:config.getMessage( ) );
+        daoUtil.setInt( nIndex++, config.getMessageDirectionExternalUser( ).ordinal( ) );
 
+        if ( config.getIdFollowingAction( ) == null )
+        {
+            daoUtil.setIntNull( nIndex++ );
+        }
+        else
+        {
+            daoUtil.setInt( nIndex++, config.getIdFollowingAction( ) );
+        }
+
+        if ( config.getIdContactAttribute( ) == null )
+        {
+            daoUtil.setIntNull( nIndex++ );
+        }
+        else
+        {
+            daoUtil.setInt( nIndex++, config.getIdContactAttribute( ) );
+        }
+
+        if ( config.getDefaultSubject( ) == null )
+        {
+            daoUtil.setString( nIndex++, StringUtils.EMPTY );
+        }
+        else
+        {
+            daoUtil.setString( nIndex++, config.getDefaultSubject( ) );
+        }
         daoUtil.setInt( nIndex, config.getIdTask( ) );
-
         daoUtil.executeUpdate( );
         daoUtil.free( );
     }
@@ -68,9 +116,23 @@ public class TaskNotifyWaitingTicketConfigDAO implements ITaskConfigDAO<TaskNoti
         {
             config = new TaskNotifyWaitingTicketConfig( );
             config.setIdTask( daoUtil.getInt( nIndex++ ) );
-            config.setSenderName( ( daoUtil.getString( nIndex++ ) ) );
-            config.setSubject( ( daoUtil.getString( nIndex++ ) ) );
-            config.setMessage( ( daoUtil.getString( nIndex ) ) );
+            config.setMessageDirectionExternalUser( MessageDirectionExternalUser.valueOf( daoUtil.getInt( nIndex++ ) ) );
+
+            String strIdFollowingAction = daoUtil.getString( nIndex++ );
+
+            if ( StringUtils.isNotEmpty( strIdFollowingAction ) )
+            {
+                config.setIdFollowingAction( Integer.parseInt( strIdFollowingAction ) );
+            }
+
+            String strIdContactAttribute = daoUtil.getString( nIndex++ );
+
+            if ( StringUtils.isNotEmpty( strIdContactAttribute ) )
+            {
+                config.setIdContactAttribute( Integer.parseInt( strIdContactAttribute ) );
+            }
+
+            config.setDefaultSubject( daoUtil.getString( nIndex ) );
         }
 
         daoUtil.free( );

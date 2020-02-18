@@ -118,6 +118,15 @@ public interface ITicketEmailExternalUserMessageDAO
     TicketEmailExternalUserMessage loadLastByIdTicket( int nIdTicket );
 
     /**
+     * Load list of TicketEmailExternalUserMessage by given nIdTicket order desc
+     *
+     * @param nIdTicket
+     *            the id of message
+     * @return the list of TicketEmailExternalUserMessage
+     */
+    List<TicketEmailExternalUserMessage> loadByIdTicketNotClosedOrderDesc( int nIdTicket );
+
+    /**
      * Delete by idMessageExternalUser.
      *
      * @param nIdMessageExternalUser

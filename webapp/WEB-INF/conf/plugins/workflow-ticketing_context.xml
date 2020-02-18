@@ -358,9 +358,9 @@
     <bean id="workflow-ticketing.ticketEmailExternalUserTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketEmailExternalUserTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeTicketEmailExternalUser"
-        p:taskConfigService-ref="workflow-ticketing.taskTicketEmailExternalUserConfigService" /> 
-        
-    <!-- Task Modify ticket -->
+        p:taskConfigService-ref="workflow-ticketing.taskTicketEmailExternalUserConfigService" />
+
+	<!-- Task Modify ticket -->
 	<bean id="workflow-ticketing.taskModifyTicket"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicket"
 		scope="prototype" />

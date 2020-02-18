@@ -34,35 +34,53 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
-import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfig;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.ITicketEmailExternalUserCcDAO;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCc;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.MessageDirectionExternalUser;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.ITicketEmailExternalUserHistoryDAO;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.TicketEmailExternalUserHistory;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.TicketEmailExternalUserMessage;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.ITicketEmailExternalUserRecipientDAO;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipient.TicketEmailExternalUserRecipient;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.ExternalUser;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser.IExternalUserDAO;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
+import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflowcore.service.task.SimpleTask;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.mail.MailService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import java.text.MessageFormat;
-import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
-public class TaskNotifyWaitingTicket extends AbstractTicketingTask
+public class TaskNotifyWaitingTicket extends SimpleTask
 {
     // Beans
     private static final String BEAN_TICKET_CONFIG_SERVICE = "workflow-ticketing.taskNotifyWaitingTicketConfigService";
 
     // Messages
     private static final String MESSAGE_NOTIFY_WAITING_TICKET_LABEL = "module.workflow.ticketing.task_notify_waiting_ticket.labelNotifyWaitingTicket";
-    private static final String MESSAGE_MAILING_ADDRESS = "module.workflow.ticketing.task_notify_waiting_ticket.mailing.address";
-    private static final String MESSAGE_MAILING_CONTENT = "module.workflow.ticketing.task_notify_waiting_ticket.mailing.content";
-    private static final String MESSAGE_MAILING_ADDRESS_LABEL = "module.workflow.ticketing.task_notify_waiting_ticket.mailing.email_recipient";
+
+    // Parameters
+    public static final String PARAMETER_MESSAGE = "message";
+    public static final String PARAMETER_EMAIL_RECIPIENTS = "email_recipients";
+    public static final String PARAMETER_EMAIL_SUBJECT = "email_subject";
+    public static final String PARAMETER_EMAIL_RECIPIENTS_CC = "email_recipients_cc";
+    public static final String PARAM_NEXT_ACTION_ID = "next_action_id";
+
+    // Other constants
+    public static final String UNDERSCORE = "_";
+    public static final String SEMICOLON = ";";
 
     @Inject
     @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
@@ -73,74 +91,242 @@ public class TaskNotifyWaitingTicket extends AbstractTicketingTask
     @Named( BEAN_TICKET_CONFIG_SERVICE )
     private ITaskConfigService _taskTicketConfigService;
 
+    /** The _resource history service. */
     @Inject
-    @Named( "workflow-ticketing.externaluser.provider-manager" )
-    private TicketEmailExternalUserProviderManager _ticketEmailExternalUserProviderManager;
+    private IResourceHistoryService _resourceHistoryService;
 
+    @Inject
+    @Named( ITicketEmailExternalUserHistoryDAO.BEAN_SERVICE )
+    private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO;
 
+    @Inject
+    @Named( ITicketEmailExternalUserRecipientDAO.BEAN_SERVICE )
+    private ITicketEmailExternalUserRecipientDAO _ticketEmailExternalUserRecipientDAO;
+
+    @Inject
+    @Named( ITicketEmailExternalUserCcDAO.BEAN_SERVICE )
+    private ITicketEmailExternalUserCcDAO _ticketEmailExternalUserCcDAO;
+
+    private IExternalUserDAO _externalUserDAO = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
+    
 
     @Override
-    protected String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+        Ticket ticket = TicketHome.findByPrimaryKey( resourceHistory.getIdResource( ) );
 
-
-        String strTaskInformation = StringUtils.EMPTY;
-        Ticket ticket = getTicket( nIdResourceHistory );
-
-
-        // get configuration
         TaskNotifyWaitingTicketConfig config = _taskTicketConfigService.findByPrimaryKey( getId( ) );
 
-        if ( ticket != null && config != null )
+        if ( config != null )
         {
-            String strProviderId = "ticketEmailExternalUserProviderManager";
-            ResourceHistory resourceHistory = new ResourceHistory( );
-            resourceHistory.setIdResource( ticket.getId() );
-            IProvider provider = _ticketEmailExternalUserProviderManager.createProvider( strProviderId, resourceHistory, request );
-            Collection<NotifyGruMarker> markerValues = provider.provideMarkerValues( );
+            MessageDirectionExternalUser messageDirectionExternalUser = config.getMessageDirectionExternalUser( );
 
-            String subject = config.getSubject( );
-            String message = config.getMessage( );
-
-            for ( NotifyGruMarker marker : markerValues )
+            if ( messageDirectionExternalUser == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER )
             {
-                String markerKey = marker.getMarker( );
-                if ( markerKey != null )
-                {
-                    String markerValue = marker.getValue( );
-                    String value = markerValue != null ? markerValue : StringUtils.EMPTY;
-                    subject = subject.replace( "${" + markerKey + "}", value );
-                    subject = subject.replace( "${" + markerKey + "!}", !StringUtils.EMPTY.equals( value ) ? value : StringUtils.EMPTY );
-                    message = message.replace( "${" + markerKey + "}", value );
-                    message = message.replace( "${" + markerKey + "!}", !StringUtils.EMPTY.equals( value ) ? value : StringUtils.EMPTY );
-                }
+                processAgentTask( nIdResourceHistory, ticket, request,  config );
             }
-            subject = subject.replaceAll( "\\$\\{.*\\}", StringUtils.EMPTY );
-            message = message.replaceAll( "\\$\\{.*\\}", StringUtils.EMPTY );
-
-            TicketEmailExternalUserMessage lastEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadLastByIdTicket( ticket.getId( ) );
-            String strEmailRecipients = lastEmailsAgentDemand.getEmailRecipients( );
-            // envoi notification
-            MailService.sendMailHtml( strEmailRecipients, config.getSenderName(), MailService.getNoReplyEmail(), subject, message );
-
-
-            // gestion historique
-            // adresse d'envoi
-            strTaskInformation = MESSAGE_MAILING_ADDRESS_LABEL;
-            strTaskInformation += MessageFormat.format(
-                    I18nService.getLocalizedString( MESSAGE_MAILING_ADDRESS, locale ),
-                    strEmailRecipients );
-            // message initial
-            strTaskInformation += MessageFormat.format(
-                    I18nService.getLocalizedString( MESSAGE_MAILING_CONTENT, locale ),
-                    message );
+            else
+            if ( messageDirectionExternalUser == MessageDirectionExternalUser.EXTERNAL_USER_TO_AGENT )
+            {
+                processExternalUserTask( nIdResourceHistory, ticket, request );
+            }
+            else
+            {
+                processAgentRecontactTask( nIdResourceHistory, ticket, request );
+            }
         }
-        return strTaskInformation;
     }
 
     @Override
     public String getTitle( Locale locale )
     {
         return I18nService.getLocalizedString( MESSAGE_NOTIFY_WAITING_TICKET_LABEL, locale );
+    }
+
+    /**
+     * Process agent to external user task
+     *
+     * @param nIdResourceHistory
+     *            resourceHistory ID
+     * @param ticket
+     *            the current ticket
+     * @param request
+     *            HttpRequest from doAction
+     * @param config
+     *            configuration of the current task
+     */
+    private void processAgentTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request, TaskNotifyWaitingTicketConfig config )
+    {
+        String strAgentMessage = StringUtils.EMPTY;
+        String strEmailRecipients = StringUtils.EMPTY;
+        String strEmailRecipientsCc = StringUtils.EMPTY;
+        String strSubject = StringUtils.EMPTY;
+
+        if (request != null)
+        {
+            strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
+            strEmailRecipients = request.getParameter( PARAMETER_EMAIL_RECIPIENTS + UNDERSCORE + getId( ) );
+            strEmailRecipientsCc = request.getParameter( PARAMETER_EMAIL_RECIPIENTS_CC + UNDERSCORE + getId( ) );
+            strSubject = request.getParameter( PARAMETER_EMAIL_SUBJECT + UNDERSCORE + getId( ) );
+        }
+        else {
+            // cas daemon
+            throw new UnsupportedOperationException();
+        }
+
+        // Create message item
+        TicketEmailExternalUserMessage emailExternalUserMessage = new TicketEmailExternalUserMessage( );
+        emailExternalUserMessage.setIdTicket( ticket.getId( ) );
+        emailExternalUserMessage.setMessageQuestion( strAgentMessage );
+        emailExternalUserMessage.setEmailRecipients( strEmailRecipients );
+        emailExternalUserMessage.setEmailRecipientsCc( strEmailRecipientsCc );
+        emailExternalUserMessage.setEmailSubject( strSubject );
+        _ticketEmailExternalUserDemandDAO.createQuestion( emailExternalUserMessage );
+
+        // Create resource item
+        TicketEmailExternalUserHistory emailExternalUserHistory = new TicketEmailExternalUserHistory( );
+        emailExternalUserHistory.setIdResourceHistory( nIdResourceHistory );
+        emailExternalUserHistory.setIdTask( getId( ) );
+        emailExternalUserHistory.setIdMessageExternalUser( emailExternalUserMessage.getIdMessageExternalUser( ) );
+        _ticketEmailExternalUserHistoryDAO.insert( emailExternalUserHistory );
+
+        // Create resource infos item
+        String [ ] emailRecipients;
+        if ( strEmailRecipients != null && !strEmailRecipients.isEmpty( ) )
+        {
+            emailRecipients = strEmailRecipients.split( SEMICOLON );
+
+            for ( String emailRecipient : emailRecipients )
+            {
+                AdminUser user = AdminUserHome.findUserByLogin( AdminUserHome.findUserByEmail( emailRecipient ) );
+
+                TicketEmailExternalUserRecipient infosEmailExternalUser = new TicketEmailExternalUserRecipient( );
+                infosEmailExternalUser.setIdResourceHistory( nIdResourceHistory );
+                infosEmailExternalUser.setIdTask( getId( ) );
+                infosEmailExternalUser.setEmail( user.getEmail( ) );
+
+                List<ExternalUser> listUsers = _externalUserDAO.findExternalUser( user.getLastName( ), user.getEmail( ),
+                        String.valueOf( config.getIdContactAttribute( ) ), null, null );
+
+                if ( listUsers != null && !listUsers.isEmpty( ) )
+                {
+                    infosEmailExternalUser.setField( listUsers.iterator( ).next( ).getAdditionalAttribute( ) );
+                }
+
+                infosEmailExternalUser.setName( user.getLastName( ) );
+                infosEmailExternalUser.setFirstName( user.getFirstName( ) );
+                _ticketEmailExternalUserRecipientDAO.insert( infosEmailExternalUser );
+            }
+        }
+
+        String [ ] emailRecipientsCc;
+        if ( strEmailRecipientsCc != null && !strEmailRecipientsCc.isEmpty( ) )
+        {
+            emailRecipientsCc = strEmailRecipientsCc.split( SEMICOLON );
+            for ( String recipientCc : emailRecipientsCc )
+            {
+                TicketEmailExternalUserCc infosEmailExternalUser = new TicketEmailExternalUserCc( );
+                infosEmailExternalUser.setIdResourceHistory( nIdResourceHistory );
+                infosEmailExternalUser.setIdTask( getId( ) );
+                infosEmailExternalUser.setEmail( recipientCc );
+                _ticketEmailExternalUserCcDAO.insert( infosEmailExternalUser );
+            }
+        }
+    }
+
+    /**
+     * Process agent to external user task (recontact)
+     *
+     * @param nIdResourceHistory
+     *            resourceHistory ID
+     * @param ticket
+     *            the current ticket
+     * @param request
+     *            HttpRequest from doAction
+     */
+    private void processAgentRecontactTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request )
+    {
+        TicketEmailExternalUserMessage firstEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadLastByIdTicket( ticket.getId( ) );
+
+        String strAgentMessage = StringUtils.EMPTY;
+        if (request != null && request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) )!=null)
+        {
+            strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
+        }
+
+        if (StringUtils.EMPTY.equals( strAgentMessage ))
+        {
+            // cas daemon
+            strAgentMessage = firstEmailsAgentDemand.getMessageQuestion();
+        }
+
+        String strEmailRecipients = firstEmailsAgentDemand.getEmailRecipients( );
+        String strEmailRecipientsCc = firstEmailsAgentDemand.getEmailRecipientsCc( );
+        String strSubject = firstEmailsAgentDemand.getEmailSubject( );
+
+        // Create message item
+        TicketEmailExternalUserMessage emailExternalUser = new TicketEmailExternalUserMessage( );
+        emailExternalUser.setIdTicket( ticket.getId( ) );
+        emailExternalUser.setMessageQuestion( strAgentMessage );
+        emailExternalUser.setEmailRecipients( strEmailRecipients );
+        emailExternalUser.setEmailRecipientsCc( strEmailRecipientsCc );
+        emailExternalUser.setEmailSubject( strSubject );
+        _ticketEmailExternalUserDemandDAO.createQuestion( emailExternalUser );
+
+        // Create resource item
+        TicketEmailExternalUserHistory emailExternalUserHistory = new TicketEmailExternalUserHistory( );
+        emailExternalUserHistory.setIdResourceHistory( nIdResourceHistory );
+        emailExternalUserHistory.setIdTask( getId( ) );
+        emailExternalUserHistory.setIdMessageExternalUser( emailExternalUser.getIdMessageExternalUser( ) );
+        _ticketEmailExternalUserHistoryDAO.insert( emailExternalUserHistory );
+    }
+
+    /**
+     * Process external user to agent task (response)
+     *
+     * @param nIdResourceHistory
+     *            resourceHistory ID
+     * @param ticket
+     *            the current ticket
+     * @param request
+     *            HttpRequest from doAction
+     */
+    private void processExternalUserTask( int nIdResourceHistory, Ticket ticket, HttpServletRequest request )
+    {
+        String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
+
+        // Create demand item
+        int nIdMessageExternalUser = _ticketEmailExternalUserDemandDAO.addAnswer( ticket.getId( ), strAgentMessage );
+
+        // Close all messages for this ticket
+        _ticketEmailExternalUserDemandDAO.closeMessagesByIdTicket( ticket.getId( ) );
+
+        // Create resource item
+        TicketEmailExternalUserHistory emailExternalUserHistory = new TicketEmailExternalUserHistory( );
+        emailExternalUserHistory.setIdResourceHistory( nIdResourceHistory );
+        emailExternalUserHistory.setIdTask( getId( ) );
+        emailExternalUserHistory.setIdMessageExternalUser( nIdMessageExternalUser );
+        _ticketEmailExternalUserHistoryDAO.insert( emailExternalUserHistory );
+
+        // No email for this process
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void doRemoveTaskInformation( int nIdHistory )
+    {
+        super.doRemoveTaskInformation( nIdHistory );
+
+        TicketEmailExternalUserHistory ticketEmailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
+        if ( ticketEmailExternalUserHistory != null )
+        {
+            _ticketEmailExternalUserDemandDAO.deleteByIdMessageExternalUser( ticketEmailExternalUserHistory.getIdMessageExternalUser( ) );
+        }
+        _ticketEmailExternalUserHistoryDAO.deleteByHistory( nIdHistory );
+        _ticketEmailExternalUserCcDAO.deleteByIdHistory( nIdHistory );
+        _ticketEmailExternalUserRecipientDAO.deleteByIdHistory( nIdHistory );
     }
 }
