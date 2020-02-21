@@ -247,7 +247,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             //O2T 79251: contrôle facil'famille
             if (listEntry.isEmpty() && isDomainFacilFamille(categoryValidatorResult.getTicketCategory( ) ) )
             {
-                GenericAttributeError facilFamilleError = getFacilFamilleError( request, locale);
+                GenericAttributeError facilFamilleError = getFacilFamilleError( request );
                 if ( facilFamilleError!=null)
                 {
                     listFormErrors.add( facilFamilleError );
@@ -273,19 +273,22 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         return null;
     }
 
-    private GenericAttributeError getFacilFamilleError ( HttpServletRequest request, Locale locale ) {
+    private GenericAttributeError getFacilFamilleError ( HttpServletRequest request ) {
         String strFacilFamilleNumber = request.getParameter( "attribute202" );
 
-        if ( strFacilFamilleNumber==null || strFacilFamilleNumber.trim().isEmpty() ) {
-            GenericAttributeError formError = new GenericAttributeError();
-            formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_EMPTY_VALIDATION, request.getLocale( ) ) );
-            return formError;
-        }
-        else if ( !strFacilFamilleNumber.matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ))
+        if ( strFacilFamilleNumber!=null )
         {
-            GenericAttributeError formError = new GenericAttributeError();
-            formError.setErrorMessage( I18nService.getLocalizedString(  MESSAGE_ERROR_FACIL_REGEX_VALIDATION, request.getLocale( ) ) );
-            return formError;
+            if ( strFacilFamilleNumber.trim( ).isEmpty( ) )
+            {
+                GenericAttributeError formError = new GenericAttributeError( );
+                formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_EMPTY_VALIDATION, request.getLocale( ) ) );
+                return formError;
+            } else if ( !strFacilFamilleNumber.matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ) )
+            {
+                GenericAttributeError formError = new GenericAttributeError( );
+                formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_REGEX_VALIDATION, request.getLocale( ) ) );
+                return formError;
+            }
         }
 
         return null;
