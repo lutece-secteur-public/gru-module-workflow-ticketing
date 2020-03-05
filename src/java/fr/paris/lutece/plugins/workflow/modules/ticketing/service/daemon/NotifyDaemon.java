@@ -49,9 +49,7 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class NotifyDaemon extends Daemon
 {
@@ -152,10 +150,22 @@ public class NotifyDaemon extends Daemon
 
                     if ( dateDerniereRelance == null || nNbRelance == 0 )
                     {
-                        // pas de date
-                        processRelanceNoDate( ticket, dateExecution );
-                        nNbTicketRelance++;
-                        isTicketUpdated = true;
+                        List<ResourceHistory> allHistory = _resourceHistoryService.getAllHistoryByResource( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow );
+                        allHistory.sort( Comparator.comparing( ResourceHistory::getCreationDate ).reversed() ); // tri du plus récent au plus ancien
+                        for ( ResourceHistory resourceHistory : allHistory )
+                        {
+                            // pas de dernière relance, récupération de la date de dernière sollicitation
+                            if ( resourceHistory.getAction().getId() == nIdActionSolliciterFromTerrainNiv2 ||
+                                         resourceHistory.getAction().getId() == nIdActionSolliciterFromTerrainNiv3 ||
+                                         resourceHistory.getAction().getId() == nIdActionSolliciterFromContribNiv2 ||
+                                         resourceHistory.getAction().getId() == nIdActionSolliciterFromContribNiv3 )
+                            {
+                                int nRelance = processRelance( ticket, resourceHistory.getCreationDate(), dateExecution );
+                                nNbTicketRelance = nNbTicketRelance + nRelance;
+                                isTicketUpdated = ( nRelance == 1 );
+                                break;
+                            }
+                        }
                     }
                     else if ( nNbRelance < nbRelanceMax )
                     {
