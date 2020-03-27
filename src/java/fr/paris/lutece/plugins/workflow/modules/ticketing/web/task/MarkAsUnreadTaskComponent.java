@@ -1,6 +1,5 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -41,10 +40,9 @@ public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
-        TaskMarkAsUnreadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskMarkAsUnreadConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        List<Marking> listMarkings = new ArrayList<Marking>( );
-        listMarkings = MarkingHome.getMarkingsList( );
+        List<Marking> listMarkings = MarkingHome.getMarkingsList( );
 
         model.put( MARK_CONFIG, config );
         model.put( MARK_MARKINGS, listMarkings );
@@ -69,8 +67,8 @@ public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
 
         int nMarkingId = Integer.parseInt( strMarkingId );
 
-        TaskMarkAsUnreadConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
-        Boolean bConfigToCreate = false;
+        TaskMarkAsUnreadConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        boolean bConfigToCreate = false;
 
         if ( config == null )
         {
@@ -83,11 +81,11 @@ public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
 
         if ( bConfigToCreate )
         {
-            this.getTaskConfigService( ).create( config );
+            getTaskConfigService( ).create( config );
         }
         else
         {
-            this.getTaskConfigService( ).update( config );
+            getTaskConfigService( ).update( config );
         }
 
         return null;
