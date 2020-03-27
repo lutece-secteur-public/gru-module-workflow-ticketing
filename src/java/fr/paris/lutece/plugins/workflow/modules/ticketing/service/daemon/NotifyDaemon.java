@@ -33,6 +33,12 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
 import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
@@ -47,9 +53,6 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
-
-import java.sql.Timestamp;
-import java.util.*;
 
 public class NotifyDaemon extends Daemon
 {

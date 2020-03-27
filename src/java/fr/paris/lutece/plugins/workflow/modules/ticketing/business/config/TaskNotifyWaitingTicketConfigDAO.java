@@ -1,10 +1,11 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.config;
 
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.MessageDirectionExternalUser;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfigDAO;
 import fr.paris.lutece.util.sql.DAOUtil;
-import org.apache.commons.lang.StringUtils;
 
 public class TaskNotifyWaitingTicketConfigDAO implements ITaskConfigDAO<TaskNotifyWaitingTicketConfig>
 {
