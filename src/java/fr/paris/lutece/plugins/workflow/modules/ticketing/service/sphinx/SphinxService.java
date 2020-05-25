@@ -6,9 +6,9 @@ import java.util.Map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.web.rs.SphinxRest;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.httpaccess.HttpAccess;
 import fr.paris.lutece.util.httpaccess.HttpAccessException;
@@ -36,28 +36,12 @@ public class SphinxService
     private static final String COLUMN_CLOSE_DATE    = "Date_de_cloture";
     private static final String COLUMN_DAYS_OPENED   = "delai_en_jours";
 
-    public String accessToken( ) throws HttpAccessException
-    {
-        HttpAccess httpAccess = new HttpAccess( );
-        Map<String, String> headersRequest = new HashMap<String, String>( );
-        headersRequest.put( "Content-Type", "application/x-www-form-urlencoded" );
-        Map<String, String> params = new HashMap<String, String>( );
-        params.put( "username", USERNAME );
-        params.put( "password", PASSWORD );
-        params.put( "lang", "fr" );
-        params.put( "grant_type", "password" );
-        params.put( "client_id", "sphinxapiclient" );
-
-        String rawData = httpAccess.doPost( TOKEN_URL, params, null, null, headersRequest );
-        JsonObject dataJson = new JsonParser( ).parse( rawData ).getAsJsonObject( );
-        return dataJson.get( ACCESS_TOKEN ).getAsString( );
-    }
 
     public void post( String endpoint, String json ) throws HttpAccessException
     {
         HttpAccess httpAccess = new HttpAccess( );
         Map<String, String> headersRequest = new HashMap<String, String>( );
-        headersRequest.put( "Authorization", "bearer " + accessToken( ) );
+        headersRequest.put( "Authorization", "bearer " + SphinxRest.getTokenAccess( ) );
         httpAccess.doPostJSON( API_URL + endpoint, json, headersRequest, null );
     }
 
