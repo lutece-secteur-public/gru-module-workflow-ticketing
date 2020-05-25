@@ -35,13 +35,12 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.sphinx.SphinxService;
+import fr.paris.lutece.plugins.ticketing.web.rs.SphinxRest;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.httpaccess.HttpAccessException;
@@ -55,9 +54,6 @@ public class TaskSphinx extends AbstractTicketingTask
     // Messages
     private static final String MESSAGE_INDEX_TICKET = "module.workflow.ticketing.task_sphinx.labelSphinx";
 
-    @Inject
-    SphinxService               _sphinxService;
-
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
@@ -68,7 +64,7 @@ public class TaskSphinx extends AbstractTicketingTask
 
         try
         {
-            _sphinxService.postTicketData( ticket );
+            SphinxRest.postTicketData( ticket );
         } catch ( HttpAccessException exception )
         {
             AppLogService.error( "Error when sending ticket data for ticket " + ticket.getId( ), exception );

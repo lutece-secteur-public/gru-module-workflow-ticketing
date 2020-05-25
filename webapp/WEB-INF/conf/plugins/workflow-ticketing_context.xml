@@ -80,9 +80,6 @@
 		  class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
 		  p:taskConfigDAO-ref="workflow-ticketing.taskNotifyWaitingTicketConfigDAO" />
 
-	<bean id="workflow-ticketing.sphinxService"
-		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.sphinx.SphinxService" />
-		
 	<!-- Task config -->
 	<bean id="workflow-ticketing.taskReplyConfig"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig"
