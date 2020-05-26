@@ -1,5 +1,6 @@
 <br/>
 <div class="col-xs-12">
+<hr class="separate">
 	<#if label_contact_attribute?has_content >
 		<div class="row form-group">
 		<label class="col-xs-12 col-sm-3 control-label">${label_contact_attribute!}&nbsp;:&nbsp;</label>
@@ -8,7 +9,7 @@
 		</div>
 		<div class="col-xs-1 col-sm-1 input-group-btn">
 			<br/>
-			<div class="btn btn-default" id="search_contact_button_${config.idTask}" disabled="disabled">
+			<div class="btn btn-primary valid" id="search_contact_button_${config.idTask}" disabled="disabled" style="width:auto;">
 				<i class="fa fa-search"></i>
 			</div>
 		</div>
@@ -27,12 +28,13 @@
 			</div>
 			<div class="col-xs-1 col-sm-1 input-group-btn">
 				<br/>
-				<div class="btn btn-default" id="search_contact_button_${config.idTask}" disabled="disabled">
+				<div class="btn btn-primary valid" id="search_contact_button_${config.idTask}" disabled="disabled" style="width:auto;">
 					<i class="fa fa-search"></i>
 				</div>
 			</div>
 		</div>
 	</#if>
+<hr class="separate">
 	<div id="contact_results_${config.idTask}" class="row form-group">
 	</div>
 </div>
