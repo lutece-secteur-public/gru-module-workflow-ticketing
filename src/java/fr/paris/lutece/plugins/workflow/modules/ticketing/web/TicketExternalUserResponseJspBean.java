@@ -33,7 +33,11 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web;
 
-import java.util.*;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -72,7 +76,6 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.url.UrlItem;
-import java.sql.Timestamp;
 
 /**
  * TicketExternalUserResponse JSP Bean abstract class for JSP Bean

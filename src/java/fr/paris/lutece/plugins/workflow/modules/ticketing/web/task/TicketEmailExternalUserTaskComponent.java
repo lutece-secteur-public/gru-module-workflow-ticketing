@@ -177,12 +177,12 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         TicketEmailExternalUserHistory emailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
         TicketEmailExternalUserMessage mailExternalUserMessage = _ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( emailExternalUserHistory
                 .getIdMessageExternalUser( ) );
-        TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskTicketEmailExternalUserConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         Map<String, Object> model = new HashMap<String, Object>( );
 
         String messageQuestion = mailExternalUserMessage != null ? mailExternalUserMessage.getMessageQuestion( ) : "";
-        if ( config != null && config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER )
+        if ( ( config != null ) && ( config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER ) )
         {
             model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + messageQuestion );
             List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = _ticketEmailExternalUserRecipientDAO.loadByIdHistory( nIdHistory,
@@ -196,7 +196,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
                 sbInfosCc.append( emailExternalUserCc.getEmail( ) ).append( DISPLAY_SEMICOLON );
             }
 
-            if ( sbInfosCc != null && sbInfosCc.length( ) > 0 )
+            if ( ( sbInfosCc != null ) && ( sbInfosCc.length( ) > 0 ) )
             {
                 sbInfosCc.setLength( sbInfosCc.length( ) - 3 );
             }
@@ -205,7 +205,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
             model.put( MARK_TICKETING_EMAIL_INFO_CC, sbInfosCc.toString( ) );
         }
         else
-            if ( config != null && config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.RE_AGENT_TO_EXTERNAL_USER )
+            if ( ( config != null ) && ( config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.RE_AGENT_TO_EXTERNAL_USER ) )
             {
                 model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + messageQuestion );
             }
@@ -226,7 +226,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskTicketEmailExternalUserConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         if ( config != null )
         {
@@ -245,7 +245,10 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
                         IProvider provider = _ticketEmailExternalUserProviderManager.createProvider( strProviderId, resourceHistory, request );
                         Collection<NotifyGruMarker> markerValues = provider.provideMarkerValues( );
 
-                        String subject = configNotify.getSubjectBroadcast( );
+                        String subject = config.getDefaultSubject( );
+                        if(StringUtils.isBlank( subject )) {
+                            subject = configNotify.getSubjectBroadcast( );
+                        }
 
                         for ( NotifyGruMarker marker : markerValues )
                         {
@@ -255,7 +258,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
                                 String markerValue = marker.getValue( );
                                 String value = markerValue != null ? markerValue : "";
                                 subject = subject.replace( "${" + markerKey + "}", value );
-                                subject = subject.replace( "${" + markerKey + "!}", value != null && !"".equals( value ) ? value : "" );
+                                subject = subject.replace( "${" + markerKey + "!}", ( value != null ) && !"".equals( value ) ? value : "" );
                             }
                         }
 
@@ -271,7 +274,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         model.put( MARK_CONFIG, config );
 
         String strLabelContactAttribute = StringUtils.EMPTY;
-        if ( config != null && config.getIdContactAttribute( ) != null )
+        if ( ( config != null ) && ( config.getIdContactAttribute( ) != null ) )
         {
             IAttribute attribute = _attributeService.getAttributeWithFields( config.getIdContactAttribute( ), locale );
             if ( attribute != null )
@@ -322,7 +325,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Override
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskTicketEmailExternalUserConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         String strNextActionId = String.valueOf( config.getIdFollowingAction( ) );
         String strEmailRecipients = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS + TaskTicketEmailExternalUser.UNDERSCORE
                 + task.getId( ) );
@@ -359,7 +362,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
                 }
             }
 
-            if ( strError == null && StringUtils.isNotEmpty( strEmailRecipientsCc ) )
+            if ( ( strError == null ) && StringUtils.isNotEmpty( strEmailRecipientsCc ) )
             {
                 List<String> listErrorRecipientsCc = WorkflowTicketingUtils.validEmailList( strEmailRecipientsCc, null, null );
                 if ( !listErrorRecipientsCc.isEmpty( ) )
@@ -401,7 +404,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
-        TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskTicketEmailExternalUserConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         ReferenceList listMessageDirections = MessageDirectionExternalUser.getReferenceList( locale );
 
@@ -454,8 +457,8 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         Integer nIdContactAttribute = getParameterAsInteger( request.getParameter( PARAMETER_CONTACT_ATTRIBUTE ) );
         String strDefaultSubject = request.getParameter( PARAMETER_DEFAULT_SUBJECT );
 
-        TaskTicketEmailExternalUserConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
-        Boolean bConfigToCreate = false;
+        TaskTicketEmailExternalUserConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        boolean bConfigToCreate = false;
 
         if ( config == null )
         {
@@ -469,7 +472,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         config.setIdContactAttribute( nIdContactAttribute );
         config.setDefaultSubject( strDefaultSubject );
 
-        String strJspError = this.validateConfig( config, request );
+        String strJspError = validateConfig( config, request );
 
         if ( StringUtils.isNotBlank( strJspError ) )
         {
@@ -478,11 +481,11 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 
         if ( bConfigToCreate )
         {
-            this.getTaskConfigService( ).create( config );
+            getTaskConfigService( ).create( config );
         }
         else
         {
-            this.getTaskConfigService( ).update( config );
+            getTaskConfigService( ).update( config );
         }
 
         return null;
@@ -490,7 +493,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     }
 
     /**
-     * 
+     *
      * @param strParameter
      * @return the parameter value parsed as Integer
      */

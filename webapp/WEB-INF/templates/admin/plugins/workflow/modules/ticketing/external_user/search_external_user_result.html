@@ -1,8 +1,26 @@
+<script type="text/javascript" language="javascript" src="js/plugins/ticketing/jquery.dataTables.min.js" defer></script>
+<link rel="stylesheet" href="css/plugins/ticketing/jquery.dataTables.min.css" type="text/css"/>
+<style>
+.previous {
+    position: initial;
+    top: 0px;
+    font-size: initial;
+    text-transform: initial;
+}
+.next {
+    position: initial;
+    top: AUTO;
+    right: -55px;
+    font-size: initial;
+    text-transform: initial;
+}
+</style>
+
 <#-- results are inclue in a 'row' -->
 <div class="col-xs-12 col-sm-11 col-sm-offset-1">
 	<@messages errors=errors infos=infos />
 	<#if result_user?? && result_user?has_content>
-		<table class="table table-hover">
+		<table class="table table-hover" id="external_user_result_table">
 			<thead>
 				<tr>
 					<th>${attribute_label!''}</th>
@@ -33,5 +51,18 @@ $("tr.result_user_${id_task}").click(function(){
     	}
 	    $("#${input_email}").val(input_email + mail);
     }
-})
+});
+$(document).ready(function() {
+    $('#external_user_result_table').DataTable( {
+    	  "searching": false,
+    	  "lengthChange": false,
+    	  "language": {
+    		    "paginate": {
+    		      "previous": "Pr&eacute;c&eacute;dent",
+    		      "next" : "Suivant"
+    		    },
+    		    "info": "Nombre d'&eacute;l&eacute;ments: _TOTAL_"
+    		  }
+    } );
+} );
 </script>
