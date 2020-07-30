@@ -1,9 +1,9 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.config;
 
+import javax.validation.constraints.NotNull;
+
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.MessageDirectionExternalUser;
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
-
-import javax.validation.constraints.NotNull;
 
 public class TaskNotifyWaitingTicketConfig extends TaskConfig
 {

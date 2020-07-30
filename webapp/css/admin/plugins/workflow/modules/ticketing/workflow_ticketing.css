@@ -1,1 +1,4 @@
 .automatic-assignment  { min-width:100px;padding-left: 30px; padding-right: 30px; }
+#external_user_result_table td:hover {
+	cursor:pointer;
+}

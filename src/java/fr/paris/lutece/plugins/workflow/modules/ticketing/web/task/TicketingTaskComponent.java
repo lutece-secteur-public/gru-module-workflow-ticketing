@@ -68,9 +68,6 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     private static final String MARK_ERRORS = "errors";
     private static final String MARK_TICKET = "ticket";
 
-    // Other constants
-    private static final String SEPARATOR = "<hr>";
-
     // SERVICES
     @Inject
     private ITaskInformationService _taskInformationService;
@@ -85,10 +82,10 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
         if ( taskInformation != null )
         {
-            strTaskInformation = taskInformation.getValue( ) + SEPARATOR;
+            strTaskInformation = "<p>" + taskInformation.getValue( ) + "</p>";
         }
 
-        return strTaskInformation;
+        return "<div class='mt-30'>" + strTaskInformation +"</div>";
     }
 
     @Override
@@ -111,7 +108,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
     /**
      * Add an error message
-     * 
+     *
      * @param strMessage
      *            The message
      */
@@ -122,7 +119,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
     /**
      * Add an error message
-     * 
+     *
      * @param strMessageKey
      *            The message
      * @param locale
@@ -135,7 +132,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
     /**
      * Fill the model with commons objects used in templates
-     * 
+     *
      * @param model
      *            The model
      */
@@ -147,7 +144,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
     /**
      * Get a model Object filled with default values
-     * 
+     *
      * @param ticket
      *            the ticket used to fill the model
      * @return The model
@@ -167,7 +164,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
     /**
      * Gives the ticket from resource
-     * 
+     *
      * @param nIdResource
      *            the resource id
      * @param strResourceType
