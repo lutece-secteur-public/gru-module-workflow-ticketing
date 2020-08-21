@@ -47,6 +47,8 @@ import javax.validation.ConstraintViolation;
 
 import org.apache.commons.lang.StringUtils;
 
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.business.TaskNotifyGruConfig;
@@ -109,6 +111,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     private static final String MARK_CONFIG_CONTACT_ATTRIBUTE = "contact_attribute_id";
     private static final String MARK_CONFIG_DEFAULT_SUBJECT = "default_subject";
     private static final String MARK_CONFIG_LABEL_ATTRIBUTE = "label_contact_attribute";
+    private static final String MARK_TICKET_COMMENT = "ticket_comment";
 
     // Parameters config
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
@@ -287,6 +290,9 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 
         ModelUtils.storeRichText( request, model );
         ModelUtils.storeUserSignature( request, model );
+        
+        Ticket ticket = TicketHome.findByPrimaryKey( nIdResource );
+        model.put( MARK_TICKET_COMMENT, ticket != null ? ticket.getTicketComment( ) : "" );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_TICKET_FORM, locale, model );
 
