@@ -45,7 +45,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_channel  "
             + "FROM workflow_resource_history_ticketing WHERE id_history=?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_history_ticketing " + "(id_history,id_channel ) VALUES( ?, ? )";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_resource_history_ticketing " + "(id_history,id_channel, id_unit_old, id_unit_new ) VALUES( ?, ?, ?, ? )";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_resource_history_ticketing WHERE id_history=?";
     private static final String SQL_QUERY_DELETE_BY_RESOURCE = "DELETE wrht FROM workflow_resource_history wrh, workflow_resource_history_ticketing wrht WHERE wrh.id_history = wrht.id_history AND wrh.id_resource = ? AND wrh.resource_type = ?";
 
@@ -58,7 +58,23 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
 
         daoUtil.setInt( 1, resourceHistory.getIdHistory( ) );
-        daoUtil.setInt( 2, resourceHistory.getIdChannel( ) );
+        if ( resourceHistory.getIdChannel( ) > 0) {
+            daoUtil.setInt( 2, resourceHistory.getIdChannel( ) );
+        } else {
+            daoUtil.setIntNull( 2 );
+        }
+
+        if ( resourceHistory.getIdUnitOld( ) > 0) {
+            daoUtil.setInt( 3, resourceHistory.getIdUnitOld( ) );
+        } else {
+            daoUtil.setIntNull( 3 );
+        }
+
+        if ( resourceHistory.getIdUnitNew( ) > 0) {
+            daoUtil.setInt( 4, resourceHistory.getIdUnitNew( ) );
+        } else {
+            daoUtil.setIntNull( 4 );
+        }
 
         daoUtil.executeUpdate( );
         daoUtil.free( );

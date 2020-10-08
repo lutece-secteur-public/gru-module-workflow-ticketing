@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 import java.text.MessageFormat;
 import java.util.Locale;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,6 +47,9 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
@@ -55,12 +59,16 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskAssignTicketToUnit extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT = "module.workflow.ticketing.task_assign_ticket_to_unit.labelAssignTicketToUnit";
-    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION = "module.workflow.ticketing.task_assign_ticket_to_unit.information";
-    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT = "module.workflow.ticketing.task_assign_ticket_to_unit.no_current_unit";
+    private static final String       MESSAGE_ASSIGN_TICKET_TO_UNIT                 = "module.workflow.ticketing.task_assign_ticket_to_unit.labelAssignTicketToUnit";
+    private static final String       MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION     = "module.workflow.ticketing.task_assign_ticket_to_unit.information";
+    private static final String       MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT = "module.workflow.ticketing.task_assign_ticket_to_unit.no_current_unit";
 
     // PARAMETERS
-    public static final String PARAMETER_ASSIGNEE_UNIT = "id_unit";
+    public static final String        PARAMETER_ASSIGNEE_UNIT                       = "id_unit";
+
+    // Services
+    @Inject
+    protected IResourceHistoryService _resourceHistoryServiceTicketing;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -80,8 +88,7 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
             {
                 assigneeUnit = new AssigneeUnit( );
                 strCurrentUnit = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT, Locale.FRENCH );
-            }
-            else
+            } else
             {
                 strCurrentUnit = assigneeUnit.getName( );
             }
@@ -93,23 +100,29 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
                 unit = UnitHome.findByPrimaryKey( Integer.parseInt( strUnitId ) );
             }
 
-            if ( unit != null )
+            if ( ( unit != null ) && ( unit.getIdUnit( ) != assigneeUnit.getUnitId( ) ) )
             {
-                if ( unit.getIdUnit( ) != assigneeUnit.getUnitId( ) )
-                {
-                    assigneeUnit.setUnitId( unit.getIdUnit( ) );
-                    assigneeUnit.setName( unit.getLabel( ) );
-                    ticket.setAssigneeUnit( assigneeUnit );
-                    ticket.setAssigneeUser( null );
-                    TicketHome.update( ticket );
+                int oldUnit = assigneeUnit.getUnitId( );
+                assigneeUnit.setUnitId( unit.getIdUnit( ) );
+                assigneeUnit.setName( unit.getLabel( ) );
+                ticket.setAssigneeUnit( assigneeUnit );
+                ticket.setAssigneeUser( null );
+                TicketHome.update( ticket );
 
-                    request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
-                    request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
+                request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
+                request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
 
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ),
-                            strCurrentUnit, assigneeUnit.getName( ) );
-                }
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ), strCurrentUnit, assigneeUnit.getName( ) );
+
+                // insert in workflow_resource_history_ticketing
+                ResourceHistory resourceHistory = new ResourceHistory( );
+                resourceHistory.setIdHistory( nIdResourceHistory );
+                resourceHistory.setIdChannel( ticket.getChannel( ).getId( ) );
+                resourceHistory.setIdUnitOld( oldUnit );
+                resourceHistory.setIdUnitNew( unit.getIdUnit( ) );
+                _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin( ) );
             }
+
         }
 
         return strTaskInformation;
