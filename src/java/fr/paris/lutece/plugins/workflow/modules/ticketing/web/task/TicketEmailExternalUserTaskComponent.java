@@ -292,7 +292,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
         ModelUtils.storeUserSignature( request, model );
         
         Ticket ticket = TicketHome.findByPrimaryKey( nIdResource );
-        model.put( MARK_TICKET_COMMENT, ticket != null ? ticket.getTicketComment( ) : "" );
+        model.put( MARK_TICKET_COMMENT, ticket != null ? ticket.getTicketComment( ).replace( "\r\n", "<br>" ) : "" );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_TICKET_FORM, locale, model );
 

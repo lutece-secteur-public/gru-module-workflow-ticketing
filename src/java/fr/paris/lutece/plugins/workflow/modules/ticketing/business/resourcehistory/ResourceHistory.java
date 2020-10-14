@@ -42,6 +42,8 @@ public class ResourceHistory
 {
     private int _nIdHistory;
     private int _nIdChannel;
+    private int _nIdUnitOld;
+    private int _nIdUnitNew;
 
     /**
      *
@@ -54,7 +56,7 @@ public class ResourceHistory
 
     /**
      * the resource history id
-     * 
+     *
      * @param nIdHistory
      *            the resource history id
      */
@@ -74,7 +76,7 @@ public class ResourceHistory
 
     /**
      * the channel id
-     * 
+     *
      * @param nIdChannel
      *            the channel id
      */
@@ -82,4 +84,42 @@ public class ResourceHistory
     {
         _nIdChannel = nIdChannel;
     }
+
+    /**
+     * Get old id unit assignee to the ticket
+     * @return _nIdUnitOld
+     *
+     */
+    public int getIdUnitOld( )
+    {
+        return _nIdUnitOld;
+    }
+
+    /**
+     * Get new id unit assignee to the ticket
+     * @return _nIdUnitNew;
+     */
+    public int getIdUnitNew( )
+    {
+        return _nIdUnitNew;
+    }
+
+    /**
+     *
+     * @param idUnitOld
+     */
+    public void setIdUnitOld( int idUnitOld )
+    {
+        _nIdUnitOld = idUnitOld;
+    }
+
+    /**
+     *
+     * @param idUnitNew
+     */
+    public void setIdUnitNew( int idUnitNew )
+    {
+        _nIdUnitNew = idUnitNew;
+    }
+
 }
