@@ -50,7 +50,6 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
-import fr.paris.lutece.plugins.ticketing.business.file.TicketFileHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
@@ -124,8 +123,8 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             ticketCategory.getCategoryType( ).getLabel( ),
                             StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE,
                                     locale ),
-                            StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString(
-                                    MESSAGE_NO_VALUE, locale ) );
+                                    StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString(
+                                            MESSAGE_NO_VALUE, locale ) );
                 }
             }
 
@@ -220,7 +219,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                     ResponseHome.create( response );
                     if ( response.getFile( ) != null )
                     {
-                        TicketFileHome.migrateToBlob( response.getFile( ) );
+                        //TicketFileHome.migrateToBlob( response.getFile( ) );
                     }
                     TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
                 }
