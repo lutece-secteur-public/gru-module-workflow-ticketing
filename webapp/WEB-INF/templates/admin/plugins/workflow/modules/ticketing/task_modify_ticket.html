@@ -16,6 +16,7 @@
 <@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelPostalCode" inputName="postal_code" value="${(ticket.ticketAddress.postalCode)!''}" maxlength=5 cssClass="form-control input-lg" i18nHelpBlockKey="" />
 <@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelCity" inputName="city" value="${(ticket.ticketAddress.city)!''}" maxlength=76 cssClass="form-control input-lg" i18nHelpBlockKey="" />
 
+
 <div class="form-group">
 	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_contact_mode">#i18n{ticketing.modify_ticket.labelContactMode} :</label>
 	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
@@ -30,3 +31,9 @@
 		<span class="help-block">#i18n{ticketing.create_ticket.labelTicketComment.help}</span>
 	</div>
 </div>
+<#include "/skin/plugins/asynchronousupload/upload_commons.html"/>
+
+${entry_attached_files!''} 
+  
+<@addRequiredJsFiles />
+<script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
