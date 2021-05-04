@@ -36,15 +36,18 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
+import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntity;
+import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntityHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.unittree.business.unit.Unit;
-import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskAssignTicketToUnitConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -81,13 +84,16 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
         Ticket ticket = getTicket( nIdResource, strResourceType );
         Map<String, Object> model = getModel( ticket );
         ReferenceList unitsList = null;
+        TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        // Default assignement level = 2
+        int level = config != null ? config.getIdLevel( ) : 2;
 
         if ( ticket != null )
         {
             AdminUser user = AdminUserService.getAdminUser( request );
-            unitsList = getUnitsList( user );
+            unitsList = getUnitsList( user, level );
 
-            if ( ( unitsList == null ) || ( unitsList.size( ) == 0 ) )
+            if ( CollectionUtils.isEmpty( unitsList ) )
             {
                 request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
                 addError( I18nService.getLocalizedString( MESSAGE_NO_UNIT_FOUND, locale ) );
@@ -105,29 +111,31 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
 
     /**
      * Load the data of all the unit objects allowed for assignment and returns them in form of a collection
-     * 
+     *
      * @param user
      *            connected admin user
+     * @param level
+     *            the level
      * @return the list which contains the data of all the unit objects
      */
-    protected static ReferenceList getUnitsList( AdminUser user )
+    protected static ReferenceList getUnitsList( AdminUser user, int level )
     {
-        List<Unit> lstUnits = UnitHome.findAll( );
-        ReferenceList lstRef = new ReferenceList( lstUnits.size( ) );
 
+        List<AssigneeUnit> listUnitByLevel = SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) );
+
+        ReferenceList lstRef = new ReferenceList( listUnitByLevel.size( ) );
         ReferenceItem emptyReferenceItem = new ReferenceItem( );
         emptyReferenceItem.setCode( StringUtils.EMPTY );
         emptyReferenceItem.setName( I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM, Locale.FRANCE ) );
         emptyReferenceItem.setChecked( true );
         lstRef.add( emptyReferenceItem );
 
-        for ( Unit unit : lstUnits )
+        for ( AssigneeUnit unit : listUnitByLevel )
         {
-            AssigneeUnit assigneeUnit = new AssigneeUnit( unit );
 
-            if ( RBACService.isAuthorized( assigneeUnit, AssigneeUnit.PERMISSION_ASSIGN, user ) )
+            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, user ) )
             {
-                lstRef.addItem( unit.getIdUnit( ), unit.getLabel( ) );
+                lstRef.addItem( unit.getUnitId( ), unit.getName( ) );
             }
         }
 
