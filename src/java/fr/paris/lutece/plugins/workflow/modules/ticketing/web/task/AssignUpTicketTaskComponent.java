@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -41,8 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntity;
-import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntityHome;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskAssignTicketToUnitConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -60,14 +59,61 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
     private static final String TEMPLATE_TASK_ASSIGN_UP_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_up_ticket_form.html";
+    private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_CONFIG = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_config.html";
 
     // MESSAGE
     private static final String MESSAGE_NO_SUPPORT_ENTITY_FOUND = "module.workflow.ticketing.task_assign_up_ticket.labelNoSupportEntiesFound";
 
     // MARKS
     private static final String MARK_TICKET_SUPPORT_ENTITIES = "ticket_up_units";
+    private static final String MARK_LEVEL                                 = "level_selected";
 
     private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
+
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    {
+        Map<String, Object> model = new HashMap<>( );
+        TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+
+        if ( config != null )
+        {
+            model.put( MARK_LEVEL, config.getIdLevel( ) );
+        }
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_CONFIG, locale, model );
+
+        return template.getHtml( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
+    {
+        TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+
+        int level = Integer.parseInt( request.getParameter( MARK_LEVEL ));
+
+        if ( config == null )
+        {
+            config = new TaskAssignTicketToUnitConfig( );
+            config.setIdTask( task.getId( ) );
+            config.setIdLevel(level );
+            getTaskConfigService( ).create( config );
+        } else {
+            config.setIdLevel(level );
+            getTaskConfigService( ).update( config );
+        }
+
+        return null;
+    }
 
     /**
      * {@inheritDoc}
@@ -84,16 +130,14 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
         emptyReferenceItem.setChecked( true );
         lstRefSupportEntities.add( emptyReferenceItem );
 
-        AdminUser adminUser = AdminUserService.getAdminUser( request );
-        List<SupportEntity> lstSupportEntity = SupportEntityHome.getEligibleSupportEntities( adminUser );
+        TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        for ( SupportEntity supportEntity : lstSupportEntity )
-        {
-            ReferenceItem refItem = new ReferenceItem( );
-            refItem.setName( supportEntity.getName( ) );
-            refItem.setCode( String.valueOf( supportEntity.getUnit( ).getUnitId( ) ) );
-            lstRefSupportEntities.add( refItem );
-        }
+        AdminUser adminUser = AdminUserService.getAdminUser( request );
+
+        // Default assignement level = 2
+        int level = config != null ? config.getIdLevel( ) : 2;
+
+        lstRefSupportEntities = getUnitsList(adminUser, level);
 
         if ( ( lstRefSupportEntities == null ) || ( lstRefSupportEntities.size( ) == 0 ) )
         {

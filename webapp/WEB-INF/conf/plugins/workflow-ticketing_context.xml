@@ -155,11 +155,12 @@
 	<bean id="workflow-ticketing.taskTypeAssignUpTicket"
 		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
 		p:key="taskTicketingAssignUpTicket" p:titleI18nKey="module.workflow.ticketing.task_assign_up_ticket.title"
-		p:beanName="workflow-ticketing.taskAssignUpTicket" p:formTaskRequired="true"
-		p:taskForAutomaticAction="false" />
+		p:beanName="workflow-ticketing.taskAssignUpTicket" p:configBeanName="workflow-ticketing.taskAssignTicketToUnitConfig" 
+		p:configRequired="true" p:formTaskRequired="true" p:taskForAutomaticAction="false" />
 	<bean id="workflow-ticketing.assignUpTicketTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignUpTicketTaskComponent"
-		p:taskType-ref="workflow-ticketing.taskTypeAssignUpTicket" />
+		p:taskType-ref="workflow-ticketing.taskTypeAssignUpTicket"
+		p:taskConfigService-ref="workflow-ticketing.taskAssignTicketToUnitConfigService" />
 
 	<!-- Task Assign ticket to unit -->
 	<bean id="workflow-ticketing.taskAssignTicketToUnit"
@@ -169,7 +170,7 @@
 		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
 		p:key="taskTicketingAssignTicketToUnit" p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_unit.title"
 		p:beanName="workflow-ticketing.taskAssignTicketToUnit" p:configBeanName="workflow-ticketing.taskAssignTicketToUnitConfig"
-		p:formTaskRequired="true" p:taskForAutomaticAction="false" />
+		p:configRequired="true" p:formTaskRequired="true" p:taskForAutomaticAction="false" />
 	<bean id="workflow-ticketing.assignTicketToUnitTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUnitTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUnit"

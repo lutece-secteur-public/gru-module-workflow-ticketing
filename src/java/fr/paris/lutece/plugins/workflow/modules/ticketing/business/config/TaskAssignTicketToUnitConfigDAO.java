@@ -7,12 +7,10 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssignTicketToUnitConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, id_level FROM workflow_task_ticketing_assign_unit_config "
-            + " WHERE id_task = ? ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, id_level FROM workflow_task_ticketing_assign_unit_config " + " WHERE id_task = ? ";
     private static final String SQL_QUERY_INSERT              = " INSERT INTO workflow_task_ticketing_assign_unit_config ( id_task, id_level ) " + " VALUES ( ?,? ) ";
     private static final String SQL_QUERY_UPDATE              = " UPDATE workflow_task_ticketing_assign_unit_config SET id_level = ? " + " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE              = " DELETE FROM workflow_task_ticketing_assign_unit_config WHERE id_task = ? ";
-
 
     /**
      * {@inheritDoc}
@@ -20,16 +18,17 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
     @Override
     public synchronized void insert( TaskAssignTicketToUnitConfig config )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ); )
-        {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
 
-            int nIndex = 1;
+        int nIndex = 1;
 
-            daoUtil.setInt( nIndex++, config.getIdTask( ) );
-            daoUtil.setInt( nIndex, config.getIdLevel( ) );
+        daoUtil.setInt( nIndex++, config.getIdTask( ) );
+        daoUtil.setInt( nIndex, config.getIdLevel( ) );
 
-            daoUtil.executeUpdate( );
-        }
+        daoUtil.executeUpdate( );
+
+        daoUtil.free( );
+
     }
 
     /**
@@ -38,16 +37,17 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
     @Override
     public void store( TaskAssignTicketToUnitConfig config )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ); )
-        {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
 
-            int nIndex = 1;
+        int nIndex = 1;
 
-            daoUtil.setInt( nIndex++, config.getIdLevel( ) );
+        daoUtil.setInt( nIndex++, config.getIdLevel( ) );
 
-            daoUtil.setInt( nIndex, config.getIdTask( ) );
-            daoUtil.executeUpdate( );
-        }
+        daoUtil.setInt( nIndex, config.getIdTask( ) );
+        daoUtil.executeUpdate( );
+
+        daoUtil.free( );
+
     }
 
     /**
@@ -57,23 +57,24 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
     public TaskAssignTicketToUnitConfig load( int nIdTask )
     {
         TaskAssignTicketToUnitConfig config = null;
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ); )
+        DAOUtil daoUtil = null;
+
+        daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+
+        daoUtil.setInt( 1, nIdTask );
+
+        daoUtil.executeQuery( );
+
+        int nIndex = 1;
+
+        if ( daoUtil.next( ) )
         {
-
-            daoUtil.setInt( 1, nIdTask );
-
-            daoUtil.executeQuery( );
-
-            int nIndex = 1;
-
-            if ( daoUtil.next( ) )
-            {
-                config = new TaskAssignTicketToUnitConfig( );
-                config.setIdTask( daoUtil.getInt( nIndex++ ) );
-                config.setIdLevel( daoUtil.getInt( nIndex ) );
-            }
-
+            config = new TaskAssignTicketToUnitConfig( );
+            config.setIdTask( daoUtil.getInt( nIndex++ ) );
+            config.setIdLevel( daoUtil.getInt( nIndex ) );
         }
+
+        daoUtil.free( );
 
         return config;
     }
@@ -84,14 +85,13 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
     @Override
     public void delete( int nIdTask )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ); )
-        {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
 
-            daoUtil.setInt( 1, nIdTask );
-            daoUtil.executeUpdate( );
-        }
+        daoUtil.setInt( 1, nIdTask );
+        daoUtil.executeUpdate( );
+
+        daoUtil.free( );
+
     }
-
-
 
 }
