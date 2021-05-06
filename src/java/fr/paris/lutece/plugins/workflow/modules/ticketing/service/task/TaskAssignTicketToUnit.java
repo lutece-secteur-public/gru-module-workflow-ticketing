@@ -66,9 +66,11 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
     // PARAMETERS
     public static final String        PARAMETER_ASSIGNEE_UNIT                       = "id_unit";
 
+
     // Services
     @Inject
     protected IResourceHistoryService _resourceHistoryServiceTicketing;
+
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -78,6 +80,7 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
+
 
         if ( ticket != null )
         {

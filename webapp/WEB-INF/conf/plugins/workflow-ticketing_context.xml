@@ -46,6 +46,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskMarkAsUnreadConfigDAO" />
 	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfigDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfigDAO" />
+	<bean id="workflow-ticketing.taskAssignTicketToUnitConfigDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskAssignTicketToUnitConfigDAO" />
 
     <!-- NotifyGRU Provider -->
     <bean id="workflow-ticketing.externaluser.provider-manager" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager">
@@ -79,6 +81,9 @@
 	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfigService"
 		  class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
 		  p:taskConfigDAO-ref="workflow-ticketing.taskNotifyWaitingTicketConfigDAO" />
+	<bean id="workflow-ticketing.taskAssignTicketToUnitConfigService"
+        class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+        p:taskConfigDAO-ref="workflow-ticketing.taskAssignTicketToUnitConfigDAO" />
 
 	<!-- Task config -->
 	<bean id="workflow-ticketing.taskReplyConfig"
@@ -99,6 +104,9 @@
 	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfig"
 		  class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfig"
 		  scope="prototype" />
+	<bean id="workflow-ticketing.taskAssignTicketToUnitConfig"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskAssignTicketToUnitConfig"
+        scope="prototype" />
 
 	<!-- Task Generate ticket reference -->
 	<bean id="workflow-ticketing.taskGenerateTicketReference"
@@ -147,11 +155,12 @@
 	<bean id="workflow-ticketing.taskTypeAssignUpTicket"
 		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
 		p:key="taskTicketingAssignUpTicket" p:titleI18nKey="module.workflow.ticketing.task_assign_up_ticket.title"
-		p:beanName="workflow-ticketing.taskAssignUpTicket" p:formTaskRequired="true"
-		p:taskForAutomaticAction="false" />
+		p:beanName="workflow-ticketing.taskAssignUpTicket" p:configBeanName="workflow-ticketing.taskAssignTicketToUnitConfig" 
+		p:configRequired="true" p:formTaskRequired="true" p:taskForAutomaticAction="false" />
 	<bean id="workflow-ticketing.assignUpTicketTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignUpTicketTaskComponent"
-		p:taskType-ref="workflow-ticketing.taskTypeAssignUpTicket" />
+		p:taskType-ref="workflow-ticketing.taskTypeAssignUpTicket"
+		p:taskConfigService-ref="workflow-ticketing.taskAssignTicketToUnitConfigService" />
 
 	<!-- Task Assign ticket to unit -->
 	<bean id="workflow-ticketing.taskAssignTicketToUnit"
@@ -160,11 +169,12 @@
 	<bean id="workflow-ticketing.taskTypeAssignTicketToUnit"
 		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
 		p:key="taskTicketingAssignTicketToUnit" p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_unit.title"
-		p:beanName="workflow-ticketing.taskAssignTicketToUnit"
-		p:formTaskRequired="true" p:taskForAutomaticAction="false" />
+		p:beanName="workflow-ticketing.taskAssignTicketToUnit" p:configBeanName="workflow-ticketing.taskAssignTicketToUnitConfig"
+		p:configRequired="true" p:formTaskRequired="true" p:taskForAutomaticAction="false" />
 	<bean id="workflow-ticketing.assignTicketToUnitTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUnitTaskComponent"
-		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUnit" />
+		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUnit"
+		p:taskConfigService-ref="workflow-ticketing.taskAssignTicketToUnitConfigService" />
 
 	<!-- Task Assign ticket to user -->
 	<bean id="workflow-ticketing.taskAssignTicketToUser"
