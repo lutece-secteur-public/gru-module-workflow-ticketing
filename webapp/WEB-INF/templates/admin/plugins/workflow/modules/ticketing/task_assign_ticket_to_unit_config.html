@@ -8,7 +8,9 @@
 		<div class="form-group row col-xs-6 col-sm-6 col-md-6 col-lg-6">
             <label for="id_arrondissement" class="control-label">#i18n{module.workflow.ticketing.task_assign_ticket_to_unit_config.labelLevel}</label>
 		    	<select class="form-control" name="level_selected">
+				  <#if level_selected??>
 		    	    <option value="${level_selected}" selected>Niveau ${level_selected}</option>
+				  </#if>
 		    		<option value="1">Niveau 1</option>
 		    		<option value="2">Niveau 2</option>
 		    		<option value="3">Niveau 3</option>
