@@ -7,9 +7,9 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssignTicketToUnitConfig>
 {
-    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, id_level FROM workflow_task_ticketing_assign_unit_config " + " WHERE id_task = ? ";
-    private static final String SQL_QUERY_INSERT              = " INSERT INTO workflow_task_ticketing_assign_unit_config ( id_task, id_level ) " + " VALUES ( ?,? ) ";
-    private static final String SQL_QUERY_UPDATE              = " UPDATE workflow_task_ticketing_assign_unit_config SET id_level = ? " + " WHERE id_task = ? ";
+    private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = " SELECT id_task, level_1, level_2, level_3 FROM workflow_task_ticketing_assign_unit_config " + " WHERE id_task = ? ";
+    private static final String SQL_QUERY_INSERT              = " INSERT INTO workflow_task_ticketing_assign_unit_config ( id_task, level_1, level_2, level_3 ) " + " VALUES ( ?,?,?,? ) ";
+    private static final String SQL_QUERY_UPDATE              = " UPDATE workflow_task_ticketing_assign_unit_config SET level_1 = ?, level_2 = ?, level_3 = ?  " + " WHERE id_task = ? ";
     private static final String SQL_QUERY_DELETE              = " DELETE FROM workflow_task_ticketing_assign_unit_config WHERE id_task = ? ";
 
     /**
@@ -23,7 +23,9 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
         int nIndex = 1;
 
         daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.setInt( nIndex, config.getIdLevel( ) );
+        daoUtil.setBoolean( nIndex++, config.isLevel1( ) );
+        daoUtil.setBoolean( nIndex++, config.isLevel2( ) );
+        daoUtil.setBoolean( nIndex, config.isLevel3( ) );
 
         daoUtil.executeUpdate( );
 
@@ -41,7 +43,9 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
 
         int nIndex = 1;
 
-        daoUtil.setInt( nIndex++, config.getIdLevel( ) );
+        daoUtil.setBoolean( nIndex++, config.isLevel1( ) );
+        daoUtil.setBoolean( nIndex++, config.isLevel2( ) );
+        daoUtil.setBoolean( nIndex++, config.isLevel3( ) );
 
         daoUtil.setInt( nIndex, config.getIdTask( ) );
         daoUtil.executeUpdate( );
@@ -71,7 +75,9 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
         {
             config = new TaskAssignTicketToUnitConfig( );
             config.setIdTask( daoUtil.getInt( nIndex++ ) );
-            config.setIdLevel( daoUtil.getInt( nIndex ) );
+            config.setLevel1( daoUtil.getBoolean( nIndex++ ) );
+            config.setLevel2( daoUtil.getBoolean( nIndex++ ) );
+            config.setLevel3( daoUtil.getBoolean( nIndex ) );
         }
 
         daoUtil.free( );

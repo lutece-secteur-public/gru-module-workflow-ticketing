@@ -33,7 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -58,19 +61,22 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class AssignUpTicketTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_ASSIGN_UP_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_up_ticket_form.html";
+    private static final String TEMPLATE_TASK_ASSIGN_UP_TICKET_FORM        = "admin/plugins/workflow/modules/ticketing/task_assign_up_ticket_form.html";
     private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_CONFIG = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_config.html";
 
     // MESSAGE
-    private static final String MESSAGE_NO_SUPPORT_ENTITY_FOUND = "module.workflow.ticketing.task_assign_up_ticket.labelNoSupportEntiesFound";
+    private static final String MESSAGE_NO_SUPPORT_ENTITY_FOUND            = "module.workflow.ticketing.task_assign_up_ticket.labelNoSupportEntiesFound";
 
     // MARKS
-    private static final String MARK_TICKET_SUPPORT_ENTITIES = "ticket_up_units";
-    private static final String MARK_LEVEL                                 = "level_selected";
+    private static final String MARK_TICKET_SUPPORT_ENTITIES               = "ticket_up_units";
+    private static final String MARK_LEVEL_1                               = "level_1";
+    private static final String MARK_LEVEL_2                               = "level_2";
+    private static final String MARK_LEVEL_3                               = "level_3";
+    private static final String MARK_CONFIG_TITLE                          = "config_title";
 
-    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
+    private static final String CONFIG_TITLE_KEY                           = "module.workflow.ticketing.task_assign_ticket_up_config.title";
 
-
+    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM     = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
 
     /**
      * {@inheritDoc}
@@ -80,10 +86,13 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
     {
         Map<String, Object> model = new HashMap<>( );
         TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        model.put( MARK_CONFIG_TITLE, I18nService.getLocalizedString( CONFIG_TITLE_KEY, request.getLocale( ) ) );
 
         if ( config != null )
         {
-            model.put( MARK_LEVEL, config.getIdLevel( ) );
+            model.put( MARK_LEVEL_1, config.isLevel1( ) );
+            model.put( MARK_LEVEL_2, config.isLevel2( ) );
+            model.put( MARK_LEVEL_3, config.isLevel3( ) );
         }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_CONFIG, locale, model );
@@ -99,16 +108,25 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
     {
         TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        int level = Integer.parseInt( request.getParameter( MARK_LEVEL ));
+        boolean level1 = StringUtils.isNotEmpty( request.getParameter( MARK_LEVEL_1 ) );
+        boolean level2 = StringUtils.isNotEmpty( request.getParameter( MARK_LEVEL_2 ) );
+        boolean level3 = StringUtils.isNotEmpty( request.getParameter( MARK_LEVEL_3 ) );
 
         if ( config == null )
         {
             config = new TaskAssignTicketToUnitConfig( );
             config.setIdTask( task.getId( ) );
-            config.setIdLevel(level );
+            config.setLevel1( level1 );
+            config.setLevel2( level2 );
+            config.setLevel3( level3 );
             getTaskConfigService( ).create( config );
-        } else {
-            config.setIdLevel(level );
+        }
+        else
+        {
+            config.setLevel1( level1 );
+            config.setLevel2( level2 );
+            config.setLevel3( level3 );
+
             getTaskConfigService( ).update( config );
         }
 
@@ -134,10 +152,12 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
 
         AdminUser adminUser = AdminUserService.getAdminUser( request );
 
-        // Default assignement level = 2
-        int level = config != null ? config.getIdLevel( ) : 2;
+        // Default 1 and 2
+        List<Integer> defaultLevelList = new ArrayList<>( Arrays.asList( 1, 2 ) );
 
-        lstRefSupportEntities = getUnitsList(adminUser, level);
+        List<Integer> levelList = config != null ? config.getLevelList( ) : defaultLevelList;
+
+        lstRefSupportEntities = getUnitsList( adminUser, levelList );
 
         if ( ( lstRefSupportEntities == null ) || ( lstRefSupportEntities.size( ) == 0 ) )
         {
