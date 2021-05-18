@@ -1,34 +1,96 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.config;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
 public class TaskAssignTicketToUnitConfig extends TaskConfig
 {
-    @NotNull
-    @Min( 1 )
-    private int _nIdLevel;
+
+    private boolean _bLevel1;
+    private boolean _bLevel2;
+    private boolean _bLevel3;
 
     /**
-     * Set the id of the level
+     * Set level1
      *
-     * @param nIdLevel
+     * @param bLevel1
      *            the id of the level
      */
-    public void setIdLevel( int nIdLevel )
+    public void setLevel1( boolean bLevel1 )
     {
-        _nIdLevel = nIdLevel;
+        _bLevel1 = bLevel1;
     }
 
     /**
-     * Get the id of the level
+     * Get level1
      *
-     * @return the id of the level
+     * @return true if level1
      */
-    public int getIdLevel( )
+    public boolean isLevel1( )
     {
-        return _nIdLevel;
+        return _bLevel1;
+    }
+
+    /**
+     * Set level2
+     *
+     * @param bLevel1
+     *
+     */
+    public void setLevel2( boolean bLevel2 )
+    {
+        _bLevel2 = bLevel2;
+    }
+
+    /**
+     * Get level2
+     *
+     * @return true if level2
+     */
+    public boolean isLevel2( )
+    {
+        return _bLevel2;
+    }
+
+    /**
+     * Set level3
+     *
+     * @param bLevel3
+     *
+     */
+    public void setLevel3( boolean bLevel3 )
+    {
+        _bLevel3 = bLevel3;
+    }
+
+    /**
+     * Get level3
+     *
+     * @return true if level3
+     */
+    public boolean isLevel3( )
+    {
+        return _bLevel3;
+    }
+
+    public List<Integer> getLevelList( )
+    {
+        List<Integer> levelList = new ArrayList<>( );
+        if ( _bLevel1 )
+        {
+            levelList.add( 1 );
+        }
+        if ( _bLevel2 )
+        {
+            levelList.add( 2 );
+        }
+        if ( _bLevel3 )
+        {
+            levelList.add( 3 );
+        }
+
+        return levelList;
     }
 }

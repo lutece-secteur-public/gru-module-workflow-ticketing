@@ -226,4 +226,41 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
         return lstRef;
     }
+
+    /**
+     * Load the data of all the unit objects allowed for assignment and returns them in form of a collection
+     *
+     * @param user
+     *            connected admin user
+     * @param levelList
+     *            the level list
+     * @return the list which contains the data of all the unit objects
+     */
+    protected static ReferenceList getUnitsList( AdminUser user, List<Integer> levelList )
+    {
+
+        List<AssigneeUnit> listUnitByLevel = new ArrayList<>( );
+
+        for ( Integer level : levelList )
+        {
+            listUnitByLevel.addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
+        }
+        ReferenceList lstRef = new ReferenceList( listUnitByLevel.size( ) );
+        ReferenceItem emptyReferenceItem = new ReferenceItem( );
+        emptyReferenceItem.setCode( StringUtils.EMPTY );
+        emptyReferenceItem.setName( I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM, Locale.FRANCE ) );
+        emptyReferenceItem.setChecked( true );
+        lstRef.add( emptyReferenceItem );
+
+        for ( AssigneeUnit unit : listUnitByLevel )
+        {
+
+            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, user ) )
+            {
+                lstRef.addItem( unit.getUnitId( ), unit.getName( ) );
+            }
+        }
+
+        return lstRef;
+    }
 }

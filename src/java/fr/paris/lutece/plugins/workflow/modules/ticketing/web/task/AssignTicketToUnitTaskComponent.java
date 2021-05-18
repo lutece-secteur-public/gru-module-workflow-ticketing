@@ -33,12 +33,16 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -67,7 +71,12 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
 
     // MARKS
     private static final String MARK_UNITS_LIST                            = "units_list";
-    private static final String MARK_LEVEL                                 = "level_selected";
+    private static final String MARK_LEVEL_1                               = "level_1";
+    private static final String MARK_LEVEL_2                               = "level_2";
+    private static final String MARK_LEVEL_3                               = "level_3";
+    private static final String MARK_CONFIG_TITLE                          = "config_title";
+
+    private static final String CONFIG_TITLE_KEY                           = "module.workflow.ticketing.task_assign_ticket_to_unit_config.title";
 
     /**
      * {@inheritDoc}
@@ -78,9 +87,13 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
         Map<String, Object> model = new HashMap<>( );
         TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
+        model.put( MARK_CONFIG_TITLE, I18nService.getLocalizedString( CONFIG_TITLE_KEY, request.getLocale( ) ) );
+
         if ( config != null )
         {
-            model.put( MARK_LEVEL, config.getIdLevel( ) );
+            model.put( MARK_LEVEL_1, config.isLevel1( ) );
+            model.put( MARK_LEVEL_2, config.isLevel2( ) );
+            model.put( MARK_LEVEL_3, config.isLevel3( ) );
         }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_CONFIG, locale, model );
@@ -96,16 +109,22 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
     {
         TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        int level = Integer.parseInt( request.getParameter( MARK_LEVEL ));
+        boolean level1 = StringUtils.isNotEmpty( request.getParameter( MARK_LEVEL_1 ) );
+        boolean level2 = StringUtils.isNotEmpty( request.getParameter( MARK_LEVEL_2 ) );
+        boolean level3 = StringUtils.isNotEmpty( request.getParameter( MARK_LEVEL_3 ) );
 
         if ( config == null )
         {
             config = new TaskAssignTicketToUnitConfig( );
             config.setIdTask( task.getId( ) );
-            config.setIdLevel(level );
+            config.setLevel1( level1 );
+            config.setLevel2( level2 );
+            config.setLevel3( level3 );
             getTaskConfigService( ).create( config );
         } else {
-            config.setIdLevel(level );
+            config.setLevel1( level1 );
+            config.setLevel2( level2 );
+            config.setLevel3( level3 );
             getTaskConfigService( ).update( config );
         }
 
@@ -122,13 +141,16 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
         Map<String, Object> model = getModel( ticket );
         ReferenceList unitsList = null;
         TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
-        // Default assignement level = 2
-        int level = config != null ? config.getIdLevel( ) : 2;
+        // Default 1 and 2
+        List<Integer> defaultLevelList = new ArrayList<>( Arrays.asList( 1, 2 ) );
+
+        List<Integer> levelList = config!=null ? config.getLevelList( ) : defaultLevelList;
 
         if ( ticket != null )
         {
+
             AdminUser user = AdminUserService.getAdminUser( request );
-            unitsList = getUnitsList( user, level );
+            unitsList = getUnitsList( user, levelList );
 
             if ( CollectionUtils.isEmpty( unitsList ) )
             {
