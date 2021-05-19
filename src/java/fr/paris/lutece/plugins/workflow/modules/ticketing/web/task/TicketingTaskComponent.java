@@ -38,12 +38,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
+import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
+import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntity;
+import fr.paris.lutece.plugins.ticketing.business.supportentity.SupportEntityHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformation;
@@ -52,9 +56,13 @@ import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.config.ITaskConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.plugins.workflowcore.web.task.SimpleTaskComponent;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.util.mvc.utils.MVCMessage;
 import fr.paris.lutece.util.ErrorMessage;
+import fr.paris.lutece.util.ReferenceItem;
+import fr.paris.lutece.util.ReferenceList;
 
 /**
  * This class represents a TaskComponent for Ticketing
@@ -63,6 +71,8 @@ import fr.paris.lutece.util.ErrorMessage;
 public class TicketingTaskComponent extends SimpleTaskComponent
 {
     protected static final String ATTRIBUTE_HIDE_NEXT_STEP_BUTTON = "hide_next_button";
+
+    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM     = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
 
     // Markers
     private static final String MARK_ERRORS = "errors";
@@ -181,5 +191,76 @@ public class TicketingTaskComponent extends SimpleTaskComponent
         }
 
         return ticket;
+    }
+
+
+    /**
+     * Load the data of all the unit objects allowed for assignment and returns them in form of a collection
+     *
+     * @param user
+     *            connected admin user
+     * @param level
+     *            the level
+     * @return the list which contains the data of all the unit objects
+     */
+    protected static ReferenceList getUnitsList( AdminUser user, int level )
+    {
+
+        List<AssigneeUnit> listUnitByLevel = SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) );
+
+        ReferenceList lstRef = new ReferenceList( listUnitByLevel.size( ) );
+        ReferenceItem emptyReferenceItem = new ReferenceItem( );
+        emptyReferenceItem.setCode( StringUtils.EMPTY );
+        emptyReferenceItem.setName( I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM, Locale.FRANCE ) );
+        emptyReferenceItem.setChecked( true );
+        lstRef.add( emptyReferenceItem );
+
+        for ( AssigneeUnit unit : listUnitByLevel )
+        {
+
+            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, user ) )
+            {
+                lstRef.addItem( unit.getUnitId( ), unit.getName( ) );
+            }
+        }
+
+        return lstRef;
+    }
+
+    /**
+     * Load the data of all the unit objects allowed for assignment and returns them in form of a collection
+     *
+     * @param user
+     *            connected admin user
+     * @param levelList
+     *            the level list
+     * @return the list which contains the data of all the unit objects
+     */
+    protected static ReferenceList getUnitsList( AdminUser user, List<Integer> levelList )
+    {
+
+        List<AssigneeUnit> listUnitByLevel = new ArrayList<>( );
+
+        for ( Integer level : levelList )
+        {
+            listUnitByLevel.addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
+        }
+        ReferenceList lstRef = new ReferenceList( listUnitByLevel.size( ) );
+        ReferenceItem emptyReferenceItem = new ReferenceItem( );
+        emptyReferenceItem.setCode( StringUtils.EMPTY );
+        emptyReferenceItem.setName( I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM, Locale.FRANCE ) );
+        emptyReferenceItem.setChecked( true );
+        lstRef.add( emptyReferenceItem );
+
+        for ( AssigneeUnit unit : listUnitByLevel )
+        {
+
+            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, user ) )
+            {
+                lstRef.addItem( unit.getUnitId( ), unit.getName( ) );
+            }
+        }
+
+        return lstRef;
     }
 }

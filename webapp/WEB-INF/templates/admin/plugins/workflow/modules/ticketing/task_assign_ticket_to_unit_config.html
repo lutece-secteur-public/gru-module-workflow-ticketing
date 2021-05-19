@@ -1,0 +1,26 @@
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <fieldset>
+        <legend>${config_title!}</legend>
+        <div class="row">
+        	<label>#i18n{module.workflow.ticketing.task_assign_ticket_to_unit_config.labelLevel}</label>
+        </div>
+		<div class="form-group row col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                       
+            	    	
+	    	<label class="checkbox-inline">
+    			<input type="checkbox" id="level_1" name="level_1" value="1" <#if level_1?c=="true" >checked</#if> />Niveau 1
+		    </label>
+		    
+		    <label class="checkbox-inline">
+    			<input type="checkbox" id="level_2" name="level_2" value="2" <#if level_2?c=="true" >checked</#if> />Niveau 2
+		    </label>
+		    
+		    <label class="checkbox-inline">
+    			<input type="checkbox" id="level_3" name="level_3" value="3" <#if level_3?c=="true" >checked</#if>/>Niveau 3
+		    </label>
+
+		</div>
+    </fieldset>
+	</div>
+</div>

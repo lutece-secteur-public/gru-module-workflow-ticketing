@@ -33,25 +33,25 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.util.CollectionUtils;
 
-import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.unittree.business.unit.Unit;
-import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskAssignTicketToUnitConfig;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -62,15 +62,74 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_form.html";
+    private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_FORM   = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_form.html";
+
+    private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_CONFIG = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_config.html";
 
     // MESSAGE
-    private static final String MESSAGE_NO_UNIT_FOUND = "module.workflow.ticketing.task_assign_ticket_to_unit.labelNoUnitFound";
-
-    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
+    private static final String MESSAGE_NO_UNIT_FOUND                      = "module.workflow.ticketing.task_assign_ticket_to_unit.labelNoUnitFound";
 
     // MARKS
-    private static final String MARK_UNITS_LIST = "units_list";
+    private static final String MARK_UNITS_LIST                            = "units_list";
+    private static final String MARK_LEVEL_1                               = "level_1";
+    private static final String MARK_LEVEL_2                               = "level_2";
+    private static final String MARK_LEVEL_3                               = "level_3";
+    private static final String MARK_CONFIG_TITLE                          = "config_title";
+
+    private static final String CONFIG_TITLE_KEY                           = "module.workflow.ticketing.task_assign_ticket_to_unit_config.title";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
+    {
+        Map<String, Object> model = new HashMap<>( );
+        TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+
+        model.put( MARK_CONFIG_TITLE, I18nService.getLocalizedString( CONFIG_TITLE_KEY, request.getLocale( ) ) );
+
+        if ( config != null )
+        {
+            model.put( MARK_LEVEL_1, config.isLevel1( ) );
+            model.put( MARK_LEVEL_2, config.isLevel2( ) );
+            model.put( MARK_LEVEL_3, config.isLevel3( ) );
+        }
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_CONFIG, locale, model );
+
+        return template.getHtml( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
+    {
+        TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+
+        boolean level1 = StringUtils.isNotEmpty( request.getParameter( MARK_LEVEL_1 ) );
+        boolean level2 = StringUtils.isNotEmpty( request.getParameter( MARK_LEVEL_2 ) );
+        boolean level3 = StringUtils.isNotEmpty( request.getParameter( MARK_LEVEL_3 ) );
+
+        if ( config == null )
+        {
+            config = new TaskAssignTicketToUnitConfig( );
+            config.setIdTask( task.getId( ) );
+            config.setLevel1( level1 );
+            config.setLevel2( level2 );
+            config.setLevel3( level3 );
+            getTaskConfigService( ).create( config );
+        } else {
+            config.setLevel1( level1 );
+            config.setLevel2( level2 );
+            config.setLevel3( level3 );
+            getTaskConfigService( ).update( config );
+        }
+
+        return null;
+    }
 
     /**
      * {@inheritDoc}
@@ -81,18 +140,23 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
         Ticket ticket = getTicket( nIdResource, strResourceType );
         Map<String, Object> model = getModel( ticket );
         ReferenceList unitsList = null;
+        TaskAssignTicketToUnitConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        // Default 1 and 2
+        List<Integer> defaultLevelList = new ArrayList<>( Arrays.asList( 1, 2 ) );
+
+        List<Integer> levelList = config!=null ? config.getLevelList( ) : defaultLevelList;
 
         if ( ticket != null )
         {
-            AdminUser user = AdminUserService.getAdminUser( request );
-            unitsList = getUnitsList( user );
 
-            if ( ( unitsList == null ) || ( unitsList.size( ) == 0 ) )
+            AdminUser user = AdminUserService.getAdminUser( request );
+            unitsList = getUnitsList( user, levelList );
+
+            if ( CollectionUtils.isEmpty( unitsList ) )
             {
                 request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
                 addError( I18nService.getLocalizedString( MESSAGE_NO_UNIT_FOUND, locale ) );
-            }
-            else
+            } else
             {
                 model.put( MARK_UNITS_LIST, unitsList );
             }
@@ -101,36 +165,5 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_FORM, locale, model );
 
         return template.getHtml( );
-    }
-
-    /**
-     * Load the data of all the unit objects allowed for assignment and returns them in form of a collection
-     * 
-     * @param user
-     *            connected admin user
-     * @return the list which contains the data of all the unit objects
-     */
-    protected static ReferenceList getUnitsList( AdminUser user )
-    {
-        List<Unit> lstUnits = UnitHome.findAll( );
-        ReferenceList lstRef = new ReferenceList( lstUnits.size( ) );
-
-        ReferenceItem emptyReferenceItem = new ReferenceItem( );
-        emptyReferenceItem.setCode( StringUtils.EMPTY );
-        emptyReferenceItem.setName( I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM, Locale.FRANCE ) );
-        emptyReferenceItem.setChecked( true );
-        lstRef.add( emptyReferenceItem );
-
-        for ( Unit unit : lstUnits )
-        {
-            AssigneeUnit assigneeUnit = new AssigneeUnit( unit );
-
-            if ( RBACService.isAuthorized( assigneeUnit, AssigneeUnit.PERMISSION_ASSIGN, user ) )
-            {
-                lstRef.addItem( unit.getIdUnit( ), unit.getLabel( ) );
-            }
-        }
-
-        return lstRef;
     }
 }
