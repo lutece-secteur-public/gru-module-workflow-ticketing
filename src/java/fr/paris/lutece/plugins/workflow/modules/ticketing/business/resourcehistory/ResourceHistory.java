@@ -105,8 +105,9 @@ public class ResourceHistory
     }
 
     /**
+     * Sets the id unit old.
      *
-     * @param idUnitOld
+     * @param idUnitOld the new id unit old
      */
     public void setIdUnitOld( int idUnitOld )
     {
@@ -114,8 +115,9 @@ public class ResourceHistory
     }
 
     /**
+     * Sets the id unit new.
      *
-     * @param idUnitNew
+     * @param idUnitNew the new id unit new
      */
     public void setIdUnitNew( int idUnitNew )
     {

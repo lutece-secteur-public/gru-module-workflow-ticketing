@@ -5,6 +5,9 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
 
+/**
+ * The Class TaskAssignTicketToUnitConfig.
+ */
 public class TaskAssignTicketToUnitConfig extends TaskConfig
 {
 
@@ -13,10 +16,9 @@ public class TaskAssignTicketToUnitConfig extends TaskConfig
     private boolean _bLevel3;
 
     /**
-     * Set level1
+     * Set level1.
      *
-     * @param bLevel1
-     *            the id of the level
+     * @param bLevel1            the id of the level
      */
     public void setLevel1( boolean bLevel1 )
     {
@@ -24,7 +26,7 @@ public class TaskAssignTicketToUnitConfig extends TaskConfig
     }
 
     /**
-     * Get level1
+     * Get level1.
      *
      * @return true if level1
      */
@@ -34,10 +36,9 @@ public class TaskAssignTicketToUnitConfig extends TaskConfig
     }
 
     /**
-     * Set level2
+     * Set level2.
      *
-     * @param bLevel1
-     *
+     * @param bLevel2 the new level 2
      */
     public void setLevel2( boolean bLevel2 )
     {
@@ -45,7 +46,7 @@ public class TaskAssignTicketToUnitConfig extends TaskConfig
     }
 
     /**
-     * Get level2
+     * Get level2.
      *
      * @return true if level2
      */
@@ -55,10 +56,9 @@ public class TaskAssignTicketToUnitConfig extends TaskConfig
     }
 
     /**
-     * Set level3
+     * Set level3.
      *
-     * @param bLevel3
-     *
+     * @param bLevel3 the new level 3
      */
     public void setLevel3( boolean bLevel3 )
     {
@@ -66,7 +66,7 @@ public class TaskAssignTicketToUnitConfig extends TaskConfig
     }
 
     /**
-     * Get level3
+     * Get level3.
      *
      * @return true if level3
      */
@@ -75,6 +75,11 @@ public class TaskAssignTicketToUnitConfig extends TaskConfig
         return _bLevel3;
     }
 
+    /**
+     * Gets the level list.
+     *
+     * @return the level list
+     */
     public List<Integer> getLevelList( )
     {
         List<Integer> levelList = new ArrayList<>( );
