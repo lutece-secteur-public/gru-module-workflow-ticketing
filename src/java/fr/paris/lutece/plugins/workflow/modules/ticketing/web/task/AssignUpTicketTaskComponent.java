@@ -94,6 +94,12 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
             model.put( MARK_LEVEL_2, config.isLevel2( ) );
             model.put( MARK_LEVEL_3, config.isLevel3( ) );
         }
+        else
+        {
+            model.put( MARK_LEVEL_1, false );
+            model.put( MARK_LEVEL_2, false );
+            model.put( MARK_LEVEL_3, false );
+        }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_CONFIG, locale, model );
 
