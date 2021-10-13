@@ -26,7 +26,7 @@
         <dependency>
             <groupId>fr.paris.lutece</groupId>
             <artifactId>lutece-core</artifactId>
-            <version>6.0.1</version>
+            <version>6.1.2</version>
             <type>lutece-core</type>
         </dependency>
         <dependency>
@@ -35,6 +35,11 @@
             <version>[3.2.8,)</version>
             <type>lutece-plugin</type>
         </dependency>
+        		<dependency>
+			<groupId>fr.paris.lutece.plugins</groupId>
+			<artifactId>library-workflow-core</artifactId>
+			<version>1.2.0</version>
+		</dependency>
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>plugin-workflow</artifactId>
