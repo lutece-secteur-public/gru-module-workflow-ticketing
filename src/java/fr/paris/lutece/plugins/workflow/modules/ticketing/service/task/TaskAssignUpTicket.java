@@ -73,7 +73,8 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
     protected String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
-        String strTargetUnitId = request.getParameter( PARAMETER_TICKET_UP_ASSIGNEE_UNIT_ID );
+        String strTargetUnitId = request != null ? request.getParameter( PARAMETER_TICKET_UP_ASSIGNEE_UNIT_ID ) : "";
+
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
@@ -81,11 +82,20 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
         if ( ticket != null )
         {
             AssigneeUnit assigneeUnit = new AssigneeUnit( );
-            Unit unit = UnitHome.findByPrimaryKey( Integer.parseInt( strTargetUnitId ) );
+            Unit unit;
+            if ( request == null )
+            {
+                unit = UnitHome.findByPrimaryKey( ticket.getAssigneeUnit( ).getUnitId( ) );
+            }
+            else
+            {
+                unit = UnitHome.findByPrimaryKey( Integer.parseInt( strTargetUnitId ) );
+            }
+
 
             if ( unit != null )
             {
-                if ( ticket.getAssigneeUnit( ).getUnitId( ) != unit.getIdUnit( ) )
+                if ( ( ticket.getAssigneeUnit( ).getUnitId( ) != unit.getIdUnit( ) ) && ( request != null ) )
                 {
                     request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                 }
@@ -109,8 +119,9 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
             }
         }
 
-        request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
-
+        if (request!= null) {
+            request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
+        }
         return strTaskInformation;
     }
 }
