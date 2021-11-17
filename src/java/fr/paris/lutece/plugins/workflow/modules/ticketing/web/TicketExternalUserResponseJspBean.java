@@ -117,6 +117,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     private static final String MARK_TYPE_MESSAGE = "type_message";
     private static final String MARK_SIGNATURE = "signature";
     private static final String MARK_TIMESTAMP = "timestamp";
+    private static final String MARK_EXPIRED = "expired";
 
     // Views
     private static final String VIEW_TICKET_EXTERNAL_USER_RESPONSE = "externalUserReponse";
@@ -252,6 +253,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         }
 
         Ticket ticket = TicketHome.findByPrimaryKey( requiredEmailExternalUserMessage.getIdTicket( ) );
+        int nIdState = TicketHome.findWorkflowStatus( ticket.getId( ) );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_REFERENCE, ticket.getReference( ) );
@@ -269,6 +271,11 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_ID_ACTION, externalUserConfig.getIdFollowingAction( ) );
         model.put( MARK_ID_TICKET, ticket.getId( ) );
         model.put( MARK_ID_MESSAGE_EXTERNAL_USER, strIdEmailExternalUser );
+        
+        if( nIdState != 307 )
+        {
+            model.put( MARK_EXPIRED, true );
+        }
 
         return getPage( PROPERTY_PAGE_TITLE_EXTERNAL_USER_RESPONSE, TEMPLATE_EXTERNAL_USER_RESPONSE, model );
     }
