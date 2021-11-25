@@ -276,7 +276,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_ID_TICKET, ticket.getId( ) );
         model.put( MARK_ID_MESSAGE_EXTERNAL_USER, strIdEmailExternalUser );
         
-        if( state.getId( ) != AppPropertiesService.getPropertyInt( PROPERTY_TICKET_STATUS_WAITING, 307 ) )
+        if( state != null && state.getId( ) != AppPropertiesService.getPropertyInt( PROPERTY_TICKET_STATUS_WAITING, 307 ) )
         {
             model.put( MARK_EXPIRED, true );
         }
