@@ -59,6 +59,7 @@ import fr.paris.lutece.plugins.workflow.modules.upload.factory.FactoryDOA;
 import fr.paris.lutece.plugins.workflow.modules.upload.services.download.DownloadFileService;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
@@ -70,6 +71,7 @@ import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -101,6 +103,8 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     private static final String PROPERTY_EXTERNAL_USER_MESSAGE_NOT_DONE = "module.workflow.ticketing.externalUserResponse.message.not_respond";
     private static final String PROPERTY_TICKET_DELETED = "module.workflow.ticketing.externalUserResponse.message.ticket_closed";
     private static final String PROPERTY_EXTERNAL_USER_MESSAGE_TIMEOUT = "module.workflow.ticketing.externalUserResponse.message.ticket_timeout";
+    private static final String PROPERTY_TICKET_STATUS_WAITING = "workflow.ticketing.state.id.waiting";
+    private static final String PROPERTY_WORKFLOW_ID = "workflow.ticketing.workflow.id";
 
     // Markers
     private static final String MARK_REFERENCE = "reference";
@@ -117,6 +121,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     private static final String MARK_TYPE_MESSAGE = "type_message";
     private static final String MARK_SIGNATURE = "signature";
     private static final String MARK_TIMESTAMP = "timestamp";
+    private static final String MARK_EXPIRED = "expired";
 
     // Views
     private static final String VIEW_TICKET_EXTERNAL_USER_RESPONSE = "externalUserReponse";
@@ -252,6 +257,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         }
 
         Ticket ticket = TicketHome.findByPrimaryKey( requiredEmailExternalUserMessage.getIdTicket( ) );
+        State state = WorkflowService.getInstance(  ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ID, 301 ), -1 );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_REFERENCE, ticket.getReference( ) );
@@ -269,6 +275,11 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_ID_ACTION, externalUserConfig.getIdFollowingAction( ) );
         model.put( MARK_ID_TICKET, ticket.getId( ) );
         model.put( MARK_ID_MESSAGE_EXTERNAL_USER, strIdEmailExternalUser );
+        
+        if( state != null && state.getId( ) != AppPropertiesService.getPropertyInt( PROPERTY_TICKET_STATUS_WAITING, 307 ) )
+        {
+            model.put( MARK_EXPIRED, true );
+        }
 
         return getPage( PROPERTY_PAGE_TITLE_EXTERNAL_USER_RESPONSE, TEMPLATE_EXTERNAL_USER_RESPONSE, model );
     }

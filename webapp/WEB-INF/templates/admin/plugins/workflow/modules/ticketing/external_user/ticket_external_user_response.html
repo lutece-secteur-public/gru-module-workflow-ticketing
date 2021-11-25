@@ -7,9 +7,14 @@
     <div class="col-xs-12 col-sm-offset-1 col-sm-10">
       <h2>#i18n{module.workflow.ticketing.externalUserResponse.pageTitle}</h2>
       <br/>
+      <#if expired?? and expired>
+      <h4>#i18n{module.workflow.ticketingexternalUserResponse.expired}</h4>
+      <#else>
       <h4>#i18n{module.workflow.ticketing.externalUserResponse.title}&nbsp;${reference!}</h4>
+      </#if>
     </div>
   </div>
+      <#if !expired??>
   <br/>
   <div id="demand-panel" class="row ticket-content">
 	<form class="form-horizontal" action="${form_action}" method="post" enctype="multipart/form-data">
@@ -84,4 +89,5 @@
     </div>
     </form>
   </div>
+  </#if>
 </div>
