@@ -43,7 +43,6 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.web.rs.SphinxRest;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
 /**
  * This class represents a task that sends ticket data to sphinx
@@ -65,7 +64,8 @@ public class TaskSphinx extends AbstractTicketingTask
         try
         {
             SphinxRest.postTicketData( ticket );
-        } catch ( HttpAccessException exception )
+        }
+        catch ( Exception exception )
         {
             AppLogService.error( "Error when sending ticket data for ticket " + ticket.getId( ), exception );
         }
