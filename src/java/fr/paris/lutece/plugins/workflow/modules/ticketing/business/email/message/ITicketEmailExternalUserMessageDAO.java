@@ -34,6 +34,9 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message;
 
 import java.util.List;
+import java.util.Map;
+
+import fr.paris.lutece.portal.service.plugin.Plugin;
 
 /**
  * TicketEmailExternalUserMessage DAO interface
@@ -133,4 +136,10 @@ public interface ITicketEmailExternalUserMessageDAO
      *            the n id of message
      */
     void deleteByIdMessageExternalUser( int nIdMessageExternalUser );
+    
+    void update( Map<String, String> data, int id, Plugin plugin );
+    
+    Map<String, String> getHistoryEmailToAnonymize( int idMessage, Plugin plugin );
+    
+    List<Integer> getListIDMessageExternalUser( int idTicket, Plugin plugin );
 }
