@@ -34,11 +34,15 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
@@ -63,6 +67,9 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
             + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC LIMIT 1";
     private static final String SQL_QUERY_ALL_MESSAGE_ORDER_DESC = " SELECT id_message_external_user, id_ticket, email_recipients, email_recipients_cc, message_question, message_response, is_answered, email_subject FROM workflow_ticketing_email_external_user "
                                                                  + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC";
+    private final static String SQL_QUERY_SELECT_ID_MESSAGE_EXTERNAL_USER = "SELECT id_message_external_user FROM workflow_ticketing_email_external_user wteeu WHERE id_ticket = ?";
+    private final static String SQL_QUERY_SELECT_MESSAGE_EXTERNAL_USER = "SELECT message_question, message_response FROM workflow_ticketing_email_external_user wteeu WHERE id_message_external_user = ?";
+    private final static String SQL_QUERY_UPDATE_MESSAGE = "UPDATE workflow_ticketing_email_external_user SET email_recipients = NULL, email_recipients_cc = NULL, message_question = ?, message_reponse = ? WHERE id_message_external_user = ?";
 
     /**
      * Generates a new primary key
@@ -370,5 +377,55 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
         daoUtil.setInt( 1, nIdMessageExternalUser );
         daoUtil.executeUpdate( );
         daoUtil.free( );
+    }
+    
+    public void update( Map<String, String> data, int id, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_MESSAGE, plugin );
+        int nIndex = 1;
+        for( Entry<String, String> entry : data.entrySet( ) )
+        {
+            daoUtil.setString( nIndex, entry.getValue( ) );
+            nIndex++;
+        }
+        daoUtil.setInt( nIndex, id );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
+        
+    }
+    
+    public Map<String, String> getHistoryEmailToAnonymize( int idMessage, Plugin plugin )
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MESSAGE_EXTERNAL_USER, plugin );
+        daoUtil.setInt( 1, idMessage );
+        daoUtil.executeQuery( );
+        
+        if ( daoUtil.next( ) )
+        {
+            map.put( "message_question", daoUtil.getString( 1 ) );
+            map.put( "message_reponse", daoUtil.getString( 2 ) );
+        }
+
+        daoUtil.free( );
+
+        return map;
+    }
+    
+    public List<Integer> getListIDMessageExternalUser( int idTicket, Plugin plugin )
+    {
+        List<Integer> list = new ArrayList<>( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ID_MESSAGE_EXTERNAL_USER, plugin );
+        daoUtil.setInt( 1, idTicket );
+        daoUtil.executeQuery( );
+        
+        while ( daoUtil.next( ) )
+        {
+            list.add( daoUtil.getInt( 1 ) );
+        }
+
+        daoUtil.free( );
+
+        return list;
     }
 }
