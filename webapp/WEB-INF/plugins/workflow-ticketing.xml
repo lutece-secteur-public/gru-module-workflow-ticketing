@@ -88,7 +88,7 @@
 			<daemon-id>ticketAnonymisationDaemon</daemon-id>
 			<daemon-name>module.workflow.ticketing.daemon.ticketAnonymisationDaemon.name</daemon-name>
 			<daemon-description>module.workflow.ticketing.daemon.ticketAnonymisationDaemon.description</daemon-description>
-			<daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemonTicketAnonymisationDaemon</daemon-class>
+			<daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketAnonymisationDaemon</daemon-class>
 		</daemon>
     </daemons>
 </plug-in>
