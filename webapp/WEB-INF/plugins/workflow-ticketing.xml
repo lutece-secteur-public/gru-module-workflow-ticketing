@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><plug-in>
     <name>workflow-ticketing</name>
     <class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin</class>
-    <version>3.0.7</version>
+    <version>3.0.8-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
@@ -78,5 +78,17 @@
             <daemon-description>module.workflow.ticketing.deamon_notify_waiting_ticket.description</daemon-description>
             <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.NotifyDaemon</daemon-class>
         </daemon>
+        <daemon>
+            <daemon-id>automaticNotifyWaitingLevel3Ticket</daemon-id>
+            <daemon-name>module.workflow.ticketing.daemon_notify_waiting_level3_ticket.name</daemon-name>
+            <daemon-description>module.workflow.ticketing.daemon_notify_waiting_level3_ticket.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.NotifyLevel3Daemon</daemon-class>
+        </daemon>
+		<daemon>
+			<daemon-id>ticketAnonymisationDaemon</daemon-id>
+			<daemon-name>module.workflow.ticketing.daemon.ticketAnonymisationDaemon.name</daemon-name>
+			<daemon-description>module.workflow.ticketing.daemon.ticketAnonymisationDaemon.description</daemon-description>
+			<daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketAnonymisationDaemon</daemon-class>
+		</daemon>
     </daemons>
 </plug-in>
