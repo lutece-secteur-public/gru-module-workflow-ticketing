@@ -69,7 +69,7 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
                                                                  + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC";
     private final static String SQL_QUERY_SELECT_ID_MESSAGE_EXTERNAL_USER = "SELECT id_message_external_user FROM workflow_ticketing_email_external_user wteeu WHERE id_ticket = ?";
     private final static String SQL_QUERY_SELECT_MESSAGE_EXTERNAL_USER = "SELECT message_question, message_response FROM workflow_ticketing_email_external_user wteeu WHERE id_message_external_user = ?";
-    private final static String SQL_QUERY_UPDATE_MESSAGE = "UPDATE workflow_ticketing_email_external_user SET email_recipients = NULL, email_recipients_cc = NULL, message_question = ?, message_reponse = ? WHERE id_message_external_user = ?";
+    private final static String SQL_QUERY_UPDATE_MESSAGE = "UPDATE workflow_ticketing_email_external_user SET email_recipients = NULL, email_recipients_cc = NULL, message_question = ?, message_response = ? WHERE id_message_external_user = ?";
 
     /**
      * Generates a new primary key
