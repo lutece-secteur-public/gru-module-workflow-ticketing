@@ -168,7 +168,7 @@ public class NotifyLevel3Daemon extends Daemon
                     }
                     else
                     {
-                        int nRelance = processRetour( ticket, dateExecution );
+                        int nRelance = processRetour( ticket, dateDerniereRelance, dateExecution );
                         nNbTicketRetour = nNbTicketRetour +  nRelance;
                         isTicketUpdated = ( nRelance == 1 );
                     }
@@ -271,16 +271,7 @@ public class NotifyLevel3Daemon extends Daemon
      */
     private int processRelance( Ticket ticket, Timestamp dateDerniereRelance, Date dateExecution)
     {
-        Calendar calendarLimiteRelance = Calendar.getInstance();
-        calendarLimiteRelance.setTime( dateDerniereRelance );
-        // date à 00h 00mn 00s
-        calendarLimiteRelance.set(Calendar.HOUR_OF_DAY, 0);
-        calendarLimiteRelance.set(Calendar.MINUTE, 0);
-        calendarLimiteRelance.set(Calendar.SECOND, 0);
-        calendarLimiteRelance.set(Calendar.MILLISECOND, 0);
-        calendarLimiteRelance.add(Calendar.DAY_OF_YEAR, nFrequence);
-        // date dernière relance + n jours
-        Date dateLimiteRelance = calendarLimiteRelance.getTime();
+        Date dateLimiteRelance = getDatelimiteRelance( dateDerniereRelance );
 
         if ( dateLimiteRelance.before( dateExecution ))
         {
@@ -301,34 +292,54 @@ public class NotifyLevel3Daemon extends Daemon
         return 0;
     }
 
+    private Date getDatelimiteRelance( Timestamp dateDerniereRelance )
+    {
+        Calendar calendarLimiteRelance = Calendar.getInstance();
+        calendarLimiteRelance.setTime( dateDerniereRelance );
+        // date à 00h 00mn 00s
+        calendarLimiteRelance.set(Calendar.HOUR_OF_DAY, 0);
+        calendarLimiteRelance.set(Calendar.MINUTE, 0);
+        calendarLimiteRelance.set(Calendar.SECOND, 0);
+        calendarLimiteRelance.set(Calendar.MILLISECOND, 0);
+        calendarLimiteRelance.add(Calendar.DAY_OF_YEAR, nFrequence);
+        // date dernière relance + n jours
+        Date dateLimiteRelance = calendarLimiteRelance.getTime();
+        return dateLimiteRelance;
+    }
+
     /**
      * Gère le retour en fonction de la dernière action manuelle
      * @param ticket ticket
      * @param dateExecution date d'exécution
      * @return nombre de tickets en retour (0 ou 1)
      */
-    private int processRetour( Ticket ticket, Date dateExecution )
+    private int processRetour( Ticket ticket, Timestamp dateDerniereRelance, Date dateExecution )
     {
-        // retour sollicitation
-        int nIdDerniereActionManuelle = getLastManualActionSollicitation( ticket.getId(), nIdWorkflow );
+        Date dateLimiteRelance = getDatelimiteRelance( dateDerniereRelance );
 
-        if ( nIdDerniereActionManuelle == nIdActionEscaladerNiveau3 )
+        if ( dateLimiteRelance.before( dateExecution ) )
         {
-            ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-            // remise à 0
-            ticket.setNbRelance( 0 );
+            // retour sollicitation
+            int nIdDerniereActionManuelle = getLastManualActionSollicitation( ticket.getId(), nIdWorkflow );
 
-            // mise à jour du ticket
-            // update date true si retour de sollicitation, false si relance auto
-            TicketHome.update( ticket, true );
+            if ( nIdDerniereActionManuelle == nIdActionEscaladerNiveau3 )
+            {
+                ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
+                // remise à 0
+                ticket.setNbRelance( 0 );
 
-            _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionReturnATraiter, null, null, null, true );
+                // mise à jour du ticket
+                // update date true si retour de sollicitation, false si relance auto
+                TicketHome.update( ticket, true );
 
-            return 1;
-        }
-        else
-        {
-            AppLogService.error( "Dernière action manuelle non trouvée pour le ticket " + ticket.getId() );
+                _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionReturnATraiter, null, null, null, true );
+
+                return 1;
+            }
+            else
+            {
+                AppLogService.error( "Dernière action manuelle non trouvée pour le ticket " + ticket.getId() );
+            }
         }
 
         return 0;
