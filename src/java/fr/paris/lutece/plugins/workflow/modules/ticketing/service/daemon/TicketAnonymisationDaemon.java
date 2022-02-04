@@ -6,8 +6,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
+
+import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
@@ -24,14 +26,14 @@ public class TicketAnonymisationDaemon extends Daemon
 
     private static final int DELAI_ANONYMISATION = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_DELAI, 10 );
     private static final int TICKET_STATUS_ARCHIVE = AppPropertiesService.getPropertyInt( "ticketing.daemon.anonymisation.state.id.archive", 308 );
-    
+
     private static ITicketEmailExternalUserMessageDAO _dao = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
-    private static Plugin _plugin = WorkflowTicketingPlugin.getPlugin( );    
-    
+    private static Plugin _plugin = WorkflowTicketingPlugin.getPlugin( );
+
     /*
      * Constructor
      */
-    public TicketAnonymisationDaemon( ) 
+    public TicketAnonymisationDaemon( )
     {
         super( );
     }
@@ -48,22 +50,30 @@ public class TicketAnonymisationDaemon extends Daemon
         anonymisation( sb );
         sb.add( "Fin de l'anomymisation" );
         setLastRunLogs( sb.toString( ) );
-        
+
     }
-    
+
     private void anonymisation( StringJoiner sb )
     {
         String date = dateForAnonymisation( );
         List<Ticket> listTickets = TicketHome.getForAnonymisation( date, TICKET_STATUS_ARCHIVE );
-        
-        for( Ticket ticket : listTickets ) 
+
+        for( Ticket ticket : listTickets )
         {
             // suppression des données sensibles dans l'historique
             anonymizeTicketHistoryData( ticket );
             // anonymisation du ticket
-            ticket.setTicketComment( ticket.getTicketComment( ).replace( ticket.getFirstname( ), "" ).replace( ticket.getLastname( ), "" ).replace( ticket.getEmail( ), "")
-                  .replace( ticket.getFixedPhoneNumber( ), "" ).replace( ticket.getMobilePhoneNumber( ), "" ) ); 
+
+            String newComment = "";
+            newComment = StringUtils.replace( ticket.getTicketComment( ), ticket.getFirstname( ), "" );
+            newComment = StringUtils.replace( newComment, ticket.getLastname( ), "" );
+            newComment = StringUtils.replace( newComment, ticket.getEmail( ), "" );
+            newComment = StringUtils.replace( newComment, ticket.getFixedPhoneNumber( ), "" );
+            newComment = StringUtils.replace( newComment, ticket.getMobilePhoneNumber( ), "" );
+            ticket.setTicketComment( newComment );
+
             ticket.setFirstname( ticket.getReference( ) );
+
             ticket.setLastname( ticket.getReference( ) );
             ticket.setIdUserTitle( 0 );
             ticket.setEmail( ticket.getReference( ) + "@yopmail.com" );
@@ -71,10 +81,10 @@ public class TicketAnonymisationDaemon extends Daemon
             ticket.setMobilePhoneNumber( null );
             ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
             TicketHome.update( ticket );
-            sb.add( "Id Ticket anonymisé:" + String.valueOf( ticket.getId( ) ) );
+            sb.add( "Id Ticket anonymisé: " + ticket.getId( ) );
         }
     }
-    
+
     private String dateForAnonymisation( )
     {
         Date date = new Date( );
@@ -85,7 +95,7 @@ public class TicketAnonymisationDaemon extends Daemon
         date = calDate.getTime( );
         return sdf.format( date );
     }
-    
+
     public static void anonymizeTicketHistoryData( Ticket ticket)
     {
         List<Integer> listEmailExternalUser = _dao.getListIDMessageExternalUser( ticket.getId( ), _plugin );
@@ -94,12 +104,17 @@ public class TicketAnonymisationDaemon extends Daemon
             Map<String, String> data = _dao.getHistoryEmailToAnonymize( idEmailExternalUser, _plugin );
             for( Entry<String, String> entry : data.entrySet( ) )
             {
-                entry.setValue( entry.getValue( ).replace( ticket.getFirstname( ), "" ).replace( ticket.getLastname( ), "" ).replace( ticket.getEmail( ), "")
-                        .replace( ticket.getFixedPhoneNumber( ), "" ).replace( ticket.getMobilePhoneNumber( ), "" ) ); 
+                String newValue = "";
+                newValue = StringUtils.replace( entry.getValue( ), ticket.getFirstname( ), "" );
+                newValue = StringUtils.replace( newValue, ticket.getLastname( ), "" );
+                newValue = StringUtils.replace( newValue, ticket.getEmail( ), "" );
+                newValue = StringUtils.replace( newValue, ticket.getFixedPhoneNumber( ), "" );
+                newValue = StringUtils.replace( newValue, ticket.getMobilePhoneNumber( ), "" );
+                entry.setValue( newValue );
             }
             _dao.update( data, idEmailExternalUser, _plugin );
         }
-        
+
     }
-    
+
 }
