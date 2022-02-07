@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,7 +88,6 @@ public class TaskNotifyWaitingTicket extends SimpleTask
     @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserDemandDAO;
 
-
     @Inject
     @Named( BEAN_TICKET_CONFIG_SERVICE )
     private ITaskConfigService _taskTicketConfigService;
@@ -110,7 +109,6 @@ public class TaskNotifyWaitingTicket extends SimpleTask
     private ITicketEmailExternalUserCcDAO _ticketEmailExternalUserCcDAO;
 
     private IExternalUserDAO _externalUserDAO = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
-    
 
     @Override
     public void processTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -126,17 +124,17 @@ public class TaskNotifyWaitingTicket extends SimpleTask
 
             if ( messageDirectionExternalUser == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER )
             {
-                processAgentTask( nIdResourceHistory, ticket, request,  config );
+                processAgentTask( nIdResourceHistory, ticket, request, config );
             }
             else
-            if ( messageDirectionExternalUser == MessageDirectionExternalUser.EXTERNAL_USER_TO_AGENT )
-            {
-                processExternalUserTask( nIdResourceHistory, ticket, request );
-            }
-            else
-            {
-                processAgentRecontactTask( nIdResourceHistory, ticket, request );
-            }
+                if ( messageDirectionExternalUser == MessageDirectionExternalUser.EXTERNAL_USER_TO_AGENT )
+                {
+                    processExternalUserTask( nIdResourceHistory, ticket, request );
+                }
+                else
+                {
+                    processAgentRecontactTask( nIdResourceHistory, ticket, request );
+                }
         }
     }
 
@@ -165,16 +163,17 @@ public class TaskNotifyWaitingTicket extends SimpleTask
         String strEmailRecipientsCc = StringUtils.EMPTY;
         String strSubject = StringUtils.EMPTY;
 
-        if (request != null)
+        if ( request != null )
         {
             strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
             strEmailRecipients = request.getParameter( PARAMETER_EMAIL_RECIPIENTS + UNDERSCORE + getId( ) );
             strEmailRecipientsCc = request.getParameter( PARAMETER_EMAIL_RECIPIENTS_CC + UNDERSCORE + getId( ) );
             strSubject = request.getParameter( PARAMETER_EMAIL_SUBJECT + UNDERSCORE + getId( ) );
         }
-        else {
+        else
+        {
             // cas daemon
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException( );
         }
 
         // Create message item
@@ -252,15 +251,15 @@ public class TaskNotifyWaitingTicket extends SimpleTask
         TicketEmailExternalUserMessage firstEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadLastByIdTicket( ticket.getId( ) );
 
         String strAgentMessage = StringUtils.EMPTY;
-        if (request != null && request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) )!=null)
+        if ( request != null && request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) ) != null )
         {
             strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
         }
 
-        if (StringUtils.EMPTY.equals( strAgentMessage ))
+        if ( StringUtils.EMPTY.equals( strAgentMessage ) )
         {
             // cas daemon
-            strAgentMessage = firstEmailsAgentDemand.getMessageQuestion();
+            strAgentMessage = firstEmailsAgentDemand.getMessageQuestion( );
         }
 
         String strEmailRecipients = firstEmailsAgentDemand.getEmailRecipients( );

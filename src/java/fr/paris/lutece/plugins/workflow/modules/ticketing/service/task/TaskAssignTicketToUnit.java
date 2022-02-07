@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,18 +59,16 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskAssignTicketToUnit extends AbstractTicketingTask
 {
     // Messages
-    private static final String       MESSAGE_ASSIGN_TICKET_TO_UNIT                 = "module.workflow.ticketing.task_assign_ticket_to_unit.labelAssignTicketToUnit";
-    private static final String       MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION     = "module.workflow.ticketing.task_assign_ticket_to_unit.information";
-    private static final String       MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT = "module.workflow.ticketing.task_assign_ticket_to_unit.no_current_unit";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT = "module.workflow.ticketing.task_assign_ticket_to_unit.labelAssignTicketToUnit";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION = "module.workflow.ticketing.task_assign_ticket_to_unit.information";
+    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT = "module.workflow.ticketing.task_assign_ticket_to_unit.no_current_unit";
 
     // PARAMETERS
-    public static final String        PARAMETER_ASSIGNEE_UNIT                       = "id_unit";
-
+    public static final String PARAMETER_ASSIGNEE_UNIT = "id_unit";
 
     // Services
     @Inject
     protected IResourceHistoryService _resourceHistoryServiceTicketing;
-
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -81,7 +79,6 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
-
         if ( ticket != null )
         {
             AssigneeUnit assigneeUnit = ticket.getAssigneeUnit( );
@@ -91,7 +88,8 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
             {
                 assigneeUnit = new AssigneeUnit( );
                 strCurrentUnit = I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_NO_CURRENT_UNIT, Locale.FRENCH );
-            } else
+            }
+            else
             {
                 strCurrentUnit = assigneeUnit.getName( );
             }
@@ -115,7 +113,8 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
                 request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                 request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
 
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ), strCurrentUnit, assigneeUnit.getName( ) );
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ),
+                        strCurrentUnit, assigneeUnit.getName( ) );
 
                 // insert in workflow_resource_history_ticketing
                 ResourceHistory resourceHistory = new ResourceHistory( );

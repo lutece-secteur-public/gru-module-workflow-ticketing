@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,33 +63,31 @@ public class NotifyLevel3Daemon extends Daemon
     private static WorkflowService _workflowService;
     private static final IResourceHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
 
-    private int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID, TicketingConstants.PROPERTY_UNSET_INT );
-
+    private int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID,
+            TicketingConstants.PROPERTY_UNSET_INT );
 
     /**
      * Statut "Escaladé niveau 3"
      */
-    private int                                  nIdStateLevel3            = AppPropertiesService.getPropertyInt( "workflow.ticketing.state.id.level3", TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdStateLevel3 = AppPropertiesService.getPropertyInt( "workflow.ticketing.state.id.level3", TicketingConstants.PROPERTY_UNSET_INT );
 
     /**
      * Action "Relance niveau 3"
      */
-    private int                                  nIdActionRelance          = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.notify.level3",
-            TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionRelance = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.notify.level3", TicketingConstants.PROPERTY_UNSET_INT );
 
     /*
      * Actions manuelles de sollicitation
      */
     // cas : action manuelle = "Escalader niveau3"
-    private int                                  nIdActionEscaladerNiveau3 = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.escalade.trois",
+    private int nIdActionEscaladerNiveau3 = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.escalade.trois",
             TicketingConstants.PROPERTY_UNSET_INT );
 
     /*
      * Actions "Retour de la sollicitation"
      */
-    private int                                  nIdActionReturnATraiter   = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.return.a_traiter",
+    private int nIdActionReturnATraiter = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.return.a_traiter",
             TicketingConstants.PROPERTY_UNSET_INT );
-
 
     // nombre de relances maximum avant retour de la sollicitation
     private int nbRelanceMax = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_NB_MAX, 3 );
@@ -99,16 +97,17 @@ public class NotifyLevel3Daemon extends Daemon
     @Override
     public void run( )
     {
-        setLastRunLogs( processNotification() );
+        setLastRunLogs( processNotification( ) );
     }
 
     private String processNotification( )
     {
-        StringBuilder sbLog = new StringBuilder(  );
+        StringBuilder sbLog = new StringBuilder( );
 
         boolean isParamOK = isConfParamOK( sbLog );
-        if ( !isParamOK) {
-            return sbLog.toString();
+        if ( !isParamOK )
+        {
+            return sbLog.toString( );
         }
 
         // Date execution
@@ -125,7 +124,7 @@ public class NotifyLevel3Daemon extends Daemon
         {
             // pas de ticket
             sbLog.append( "Aucun ticket escaladé niveau 3" );
-            return sbLog.toString();
+            return sbLog.toString( );
         }
 
         // boucle sur les tickets
@@ -146,40 +145,41 @@ public class NotifyLevel3Daemon extends Daemon
 
                     if ( ( dateDerniereRelance == null ) || ( nNbRelance == 0 ) )
                     {
-                        List<ResourceHistory> allHistory = _resourceHistoryService.getAllHistoryByResource( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow );
-                        allHistory.sort( Comparator.comparing( ResourceHistory::getCreationDate ).reversed() ); // tri du plus récent au plus ancien
+                        List<ResourceHistory> allHistory = _resourceHistoryService.getAllHistoryByResource( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
+                                nIdWorkflow );
+                        allHistory.sort( Comparator.comparing( ResourceHistory::getCreationDate ).reversed( ) ); // tri du plus récent au plus ancien
                         for ( ResourceHistory resourceHistory : allHistory )
                         {
                             // pas de dernière relance, récupération de la date de dernière sollicitation
                             if ( ( resourceHistory.getAction( ).getId( ) == nIdActionEscaladerNiveau3 ) )
                             {
-                                int nRelance = processRelance( ticket, resourceHistory.getCreationDate(), dateExecution );
+                                int nRelance = processRelance( ticket, resourceHistory.getCreationDate( ), dateExecution );
                                 nNbTicketRelance = nNbTicketRelance + nRelance;
                                 isTicketUpdated = ( nRelance == 1 );
                                 break;
                             }
                         }
                     }
-                    else if ( nNbRelance < nbRelanceMax )
-                    {
-                        int nRelance = processRelance( ticket, dateDerniereRelance, dateExecution );
-                        nNbTicketRelance = nNbTicketRelance + nRelance;
-                        isTicketUpdated = ( nRelance == 1 );
-                    }
                     else
-                    {
-                        int nRelance = processRetour( ticket, dateDerniereRelance, dateExecution );
-                        nNbTicketRetour = nNbTicketRetour +  nRelance;
-                        isTicketUpdated = ( nRelance == 1 );
-                    }
+                        if ( nNbRelance < nbRelanceMax )
+                        {
+                            int nRelance = processRelance( ticket, dateDerniereRelance, dateExecution );
+                            nNbTicketRelance = nNbTicketRelance + nRelance;
+                            isTicketUpdated = ( nRelance == 1 );
+                        }
+                        else
+                        {
+                            int nRelance = processRetour( ticket, dateDerniereRelance, dateExecution );
+                            nNbTicketRetour = nNbTicketRetour + nRelance;
+                            isTicketUpdated = ( nRelance == 1 );
+                        }
                 }
             }
-            catch ( Exception e )
+            catch( Exception e )
             {
-                AppLogService.error( "Erreur du traitement du ticket "+nIdResource, e );
+                AppLogService.error( "Erreur du traitement du ticket " + nIdResource, e );
 
-                if ( ( ticket != null ) &&
-                        ( ticket.getNbRelance() != nNbRelance ))
+                if ( ( ticket != null ) && ( ticket.getNbRelance( ) != nNbRelance ) )
                 {
                     // si le ticket a été mis à jour mais a eu une erreur
                     ticket.setNbRelance( nNbRelance );
@@ -190,25 +190,29 @@ public class NotifyLevel3Daemon extends Daemon
             }
             finally
             {
-                if ( isTicketUpdated ) {
+                if ( isTicketUpdated )
+                {
                     // Index: store the Ticket in the table for the daemon
                     IndexerActionHome.create( TicketIndexerActionUtil.createIndexerActionFromTicket( ticket ) );
                 }
             }
         }
 
-        sbLog.append( "Nombre de tickets au statut " ).append( _workflowService.getState( nIdStateLevel3, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+        sbLog.append( "Nombre de tickets au statut " )
+                .append( _workflowService.getState( nIdStateLevel3, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
-        AppLogService.info( sbLog.toString() );
+        AppLogService.info( sbLog.toString( ) );
 
-        return sbLog.toString();
+        return sbLog.toString( );
     }
 
     /**
      * Vérifie les paramètres configurés
-     * @param sbLog logs
+     * 
+     * @param sbLog
+     *            logs
      * @return true si conf OK, false sinon
      */
     private boolean isConfParamOK( StringBuilder sbLog )
@@ -233,7 +237,7 @@ public class NotifyLevel3Daemon extends Daemon
             return false;
         }
 
-        if ( nbRelanceMax < 1)
+        if ( nbRelanceMax < 1 )
         {
             // relance desactivée
             sbLog.append( "Paramétrage relance_auto.nb_relance_max inf. à 1, relance desactivée" );
@@ -246,8 +250,11 @@ public class NotifyLevel3Daemon extends Daemon
 
     /**
      * Relance si pas de date de dernière relance
-     * @param ticket ticket
-     * @param dateExecution date d'exécution
+     * 
+     * @param ticket
+     *            ticket
+     * @param dateExecution
+     *            date d'exécution
      */
     private void processRelanceNoDate( Ticket ticket, Date dateExecution )
     {
@@ -259,21 +266,25 @@ public class NotifyLevel3Daemon extends Daemon
         TicketHome.update( ticket, false );
 
         // Relance automatique
-        _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRelance, null, null, null, true );
+        _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRelance, null, null, null, true );
     }
 
     /**
      * Relance avec contrôle de la date de dernière relance
-     * @param ticket ticket
-     * @param dateDerniereRelance date de dernière relance
-     * @param dateExecution date d'exécution
+     * 
+     * @param ticket
+     *            ticket
+     * @param dateDerniereRelance
+     *            date de dernière relance
+     * @param dateExecution
+     *            date d'exécution
      * @return nombre de tickets relancé (0 ou 1)
      */
-    private int processRelance( Ticket ticket, Timestamp dateDerniereRelance, Date dateExecution)
+    private int processRelance( Ticket ticket, Timestamp dateDerniereRelance, Date dateExecution )
     {
         Date dateLimiteRelance = getDatelimiteRelance( dateDerniereRelance );
 
-        if ( dateLimiteRelance.before( dateExecution ))
+        if ( dateLimiteRelance.before( dateExecution ) )
         {
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
             ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
@@ -282,9 +293,8 @@ public class NotifyLevel3Daemon extends Daemon
             // update date true si retour de sollicitation, false si relance auto
             TicketHome.update( ticket, false );
 
-
             // Relance automatique
-            _workflowService.doProcessAction( ticket.getId(), Ticket.TICKET_RESOURCE_TYPE, nIdActionRelance, null, null, null, true );
+            _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRelance, null, null, null, true );
 
             return 1;
         }
@@ -294,23 +304,26 @@ public class NotifyLevel3Daemon extends Daemon
 
     private Date getDatelimiteRelance( Timestamp dateDerniereRelance )
     {
-        Calendar calendarLimiteRelance = Calendar.getInstance();
+        Calendar calendarLimiteRelance = Calendar.getInstance( );
         calendarLimiteRelance.setTime( dateDerniereRelance );
         // date à 00h 00mn 00s
-        calendarLimiteRelance.set(Calendar.HOUR_OF_DAY, 0);
-        calendarLimiteRelance.set(Calendar.MINUTE, 0);
-        calendarLimiteRelance.set(Calendar.SECOND, 0);
-        calendarLimiteRelance.set(Calendar.MILLISECOND, 0);
-        calendarLimiteRelance.add(Calendar.DAY_OF_YEAR, nFrequence);
+        calendarLimiteRelance.set( Calendar.HOUR_OF_DAY, 0 );
+        calendarLimiteRelance.set( Calendar.MINUTE, 0 );
+        calendarLimiteRelance.set( Calendar.SECOND, 0 );
+        calendarLimiteRelance.set( Calendar.MILLISECOND, 0 );
+        calendarLimiteRelance.add( Calendar.DAY_OF_YEAR, nFrequence );
         // date dernière relance + n jours
-        Date dateLimiteRelance = calendarLimiteRelance.getTime();
+        Date dateLimiteRelance = calendarLimiteRelance.getTime( );
         return dateLimiteRelance;
     }
 
     /**
      * Gère le retour en fonction de la dernière action manuelle
-     * @param ticket ticket
-     * @param dateExecution date d'exécution
+     * 
+     * @param ticket
+     *            ticket
+     * @param dateExecution
+     *            date d'exécution
      * @return nombre de tickets en retour (0 ou 1)
      */
     private int processRetour( Ticket ticket, Timestamp dateDerniereRelance, Date dateExecution )
@@ -320,7 +333,7 @@ public class NotifyLevel3Daemon extends Daemon
         if ( dateLimiteRelance.before( dateExecution ) )
         {
             // retour sollicitation
-            int nIdDerniereActionManuelle = getLastManualActionSollicitation( ticket.getId(), nIdWorkflow );
+            int nIdDerniereActionManuelle = getLastManualActionSollicitation( ticket.getId( ), nIdWorkflow );
 
             if ( nIdDerniereActionManuelle == nIdActionEscaladerNiveau3 )
             {
@@ -338,7 +351,7 @@ public class NotifyLevel3Daemon extends Daemon
             }
             else
             {
-                AppLogService.error( "Dernière action manuelle non trouvée pour le ticket " + ticket.getId() );
+                AppLogService.error( "Dernière action manuelle non trouvée pour le ticket " + ticket.getId( ) );
             }
         }
 
@@ -347,20 +360,24 @@ public class NotifyLevel3Daemon extends Daemon
 
     /**
      *
-     * @param nIdResource identifiant de la ressource
-     * @param nIdWorkflow identifiant du workflow
+     * @param nIdResource
+     *            identifiant de la ressource
+     * @param nIdWorkflow
+     *            identifiant du workflow
      * @return identifiant de la dernière action si dans la liste des actions de sollicitation
      */
     private int getLastManualActionSollicitation( int nIdResource, int nIdWorkflow )
     {
-        List<ResourceHistory> listAllHistoryByResource = _resourceHistoryService.getAllHistoryByResource( nIdResource, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow );
+        List<ResourceHistory> listAllHistoryByResource = _resourceHistoryService.getAllHistoryByResource( nIdResource, Ticket.TICKET_RESOURCE_TYPE,
+                nIdWorkflow );
 
-        if ( ( listAllHistoryByResource != null ) && !listAllHistoryByResource.isEmpty() )
+        if ( ( listAllHistoryByResource != null ) && !listAllHistoryByResource.isEmpty( ) )
         {
             // récupération de la dernière action manuelle de sollicitation (itération inverse)
-            for (int i = listAllHistoryByResource.size(); i-- > 0; ) {
+            for ( int i = listAllHistoryByResource.size( ); i-- > 0; )
+            {
                 ResourceHistory resourceHistory = listAllHistoryByResource.get( i );
-                int nIdAction = resourceHistory.getAction().getId();
+                int nIdAction = resourceHistory.getAction( ).getId( );
                 if ( ( nIdAction == nIdActionEscaladerNiveau3 ) )
                 {
                     return nIdAction;

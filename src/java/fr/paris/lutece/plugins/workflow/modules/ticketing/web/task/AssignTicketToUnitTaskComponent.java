@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,21 +62,21 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_FORM   = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_form.html";
+    private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_FORM = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_form.html";
 
     private static final String TEMPLATE_TASK_ASSIGN_TICKET_TO_UNIT_CONFIG = "admin/plugins/workflow/modules/ticketing/task_assign_ticket_to_unit_config.html";
 
     // MESSAGE
-    private static final String MESSAGE_NO_UNIT_FOUND                      = "module.workflow.ticketing.task_assign_ticket_to_unit.labelNoUnitFound";
+    private static final String MESSAGE_NO_UNIT_FOUND = "module.workflow.ticketing.task_assign_ticket_to_unit.labelNoUnitFound";
 
     // MARKS
-    private static final String MARK_UNITS_LIST                            = "units_list";
-    private static final String MARK_LEVEL_1                               = "level_1";
-    private static final String MARK_LEVEL_2                               = "level_2";
-    private static final String MARK_LEVEL_3                               = "level_3";
-    private static final String MARK_CONFIG_TITLE                          = "config_title";
+    private static final String MARK_UNITS_LIST = "units_list";
+    private static final String MARK_LEVEL_1 = "level_1";
+    private static final String MARK_LEVEL_2 = "level_2";
+    private static final String MARK_LEVEL_3 = "level_3";
+    private static final String MARK_CONFIG_TITLE = "config_title";
 
-    private static final String CONFIG_TITLE_KEY                           = "module.workflow.ticketing.task_assign_ticket_to_unit_config.title";
+    private static final String CONFIG_TITLE_KEY = "module.workflow.ticketing.task_assign_ticket_to_unit_config.title";
 
     /**
      * {@inheritDoc}
@@ -127,7 +127,9 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
             config.setLevel2( level2 );
             config.setLevel3( level3 );
             getTaskConfigService( ).create( config );
-        } else {
+        }
+        else
+        {
             config.setLevel1( level1 );
             config.setLevel2( level2 );
             config.setLevel3( level3 );
@@ -150,7 +152,7 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
         // Default 1 and 2
         List<Integer> defaultLevelList = new ArrayList<>( Arrays.asList( 1, 2 ) );
 
-        List<Integer> levelList = config!=null ? config.getLevelList( ) : defaultLevelList;
+        List<Integer> levelList = config != null ? config.getLevelList( ) : defaultLevelList;
 
         if ( ticket != null )
         {
@@ -162,7 +164,8 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
             {
                 request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
                 addError( I18nService.getLocalizedString( MESSAGE_NO_UNIT_FOUND, locale ) );
-            } else
+            }
+            else
             {
                 model.put( MARK_UNITS_LIST, unitsList );
             }

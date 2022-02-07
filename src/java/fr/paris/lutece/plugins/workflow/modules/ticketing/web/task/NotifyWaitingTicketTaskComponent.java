@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.beanvalidation.BeanValidationUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
+public class NotifyWaitingTicketTaskComponent extends TicketingTaskComponent
 {
     @Inject
     @Named( IExternalUserDAO.BEAN_SERVICE )
@@ -122,9 +122,7 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
     @Named( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE )
     private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserMessageDAO;
 
-
     // Constant
-
 
     /**
      * {@inheritDoc}
@@ -136,8 +134,9 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
         TaskNotifyWaitingTicketConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         // utilisation relance auto uniquement en mode "RE_AGENT_TO_EXTERNAL_USER"
-        ReferenceList listMessageDirections = new ReferenceList(  );
-        listMessageDirections.addItem( MessageDirectionExternalUser.RE_AGENT_TO_EXTERNAL_USER.ordinal( ), MessageDirectionExternalUser.RE_AGENT_TO_EXTERNAL_USER.getLocalizedMessage( locale ) );
+        ReferenceList listMessageDirections = new ReferenceList( );
+        listMessageDirections.addItem( MessageDirectionExternalUser.RE_AGENT_TO_EXTERNAL_USER.ordinal( ),
+                MessageDirectionExternalUser.RE_AGENT_TO_EXTERNAL_USER.getLocalizedMessage( locale ) );
 
         model.put( MARK_MESSAGE_DIRECTIONS_LIST, listMessageDirections );
         model.put( MARK_CONFIG_FOLLOW_ACTION_ID, StringUtils.EMPTY );
@@ -258,33 +257,32 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
         TicketEmailExternalUserHistory emailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
         if ( emailExternalUserHistory == null )
         {
-            return ( "nIdHistory " + nIdHistory +" n'a pas de ticketEmailExternalUserHistory correspondant" );
+            return ( "nIdHistory " + nIdHistory + " n'a pas de ticketEmailExternalUserHistory correspondant" );
         }
-        TicketEmailExternalUserMessage lastEmailsAgentDemand = _ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( emailExternalUserHistory
-                                                                                                                                         .getIdMessageExternalUser( ) );
-
+        TicketEmailExternalUserMessage lastEmailsAgentDemand = _ticketEmailExternalUserMessageDAO
+                .loadByIdMessageExternalUser( emailExternalUserHistory.getIdMessageExternalUser( ) );
 
         Map<String, Object> model = new HashMap<>( );
 
-        if ( lastEmailsAgentDemand != null ) {
+        if ( lastEmailsAgentDemand != null )
+        {
 
-            StringBuilder sb = new StringBuilder(  );
+            StringBuilder sb = new StringBuilder( );
 
             TicketEmailExternalUserHistory ticketEmailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
             if ( ticketEmailExternalUserHistory != null )
             {
                 int nIdResourceHistory = ticketEmailExternalUserHistory.getIdResourceHistory( );
                 int nIdTask = ticketEmailExternalUserHistory.getIdTask( );
-                if ( nIdTask == task.getId() )
+                if ( nIdTask == task.getId( ) )
                 {
-                    List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = _ticketEmailExternalUserRecipientDAO.loadByIdHistory( nIdResourceHistory,
-                            nIdTask );
+                    List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = _ticketEmailExternalUserRecipientDAO
+                            .loadByIdHistory( nIdResourceHistory, nIdTask );
                     List<TicketEmailExternalUserCc> listCcEmailExternalUser = _ticketEmailExternalUserCcDAO.loadByIdHistory( nIdResourceHistory, nIdTask );
-
 
                     StringBuilder sbInfosCc = new StringBuilder( );
 
-                    if ( !listCcEmailExternalUser.isEmpty())
+                    if ( !listCcEmailExternalUser.isEmpty( ) )
                     {
                         for ( TicketEmailExternalUserCc emailExternalUserCc : listCcEmailExternalUser )
                         {
@@ -298,7 +296,7 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
                         model.put( MARK_TICKETING_EMAIL_INFOS_CC, strEmailRecipientsCc );
                     }
 
-                    if ( ! listRecipientEmailExternalUser.isEmpty() )
+                    if ( !listRecipientEmailExternalUser.isEmpty( ) )
                     {
                         model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listRecipientEmailExternalUser );
                     }
@@ -307,29 +305,30 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
                         String strEmailRecipients = lastEmailsAgentDemand.getEmailRecipients( );
                         List<ExternalUser> listUsers = getExternalUsers( strEmailRecipients );
 
-                        for (ExternalUser externalUser : listUsers)
+                        for ( ExternalUser externalUser : listUsers )
                         {
                             TicketEmailExternalUserRecipient ticketEmailExternalUserRecipient = new TicketEmailExternalUserRecipient( );
-                            ticketEmailExternalUserRecipient.setEmail( externalUser.getEmail() );
-                            ticketEmailExternalUserRecipient.setFirstName( externalUser.getFirstname() );
-                            ticketEmailExternalUserRecipient.setName( externalUser.getLastname() );
+                            ticketEmailExternalUserRecipient.setEmail( externalUser.getEmail( ) );
+                            ticketEmailExternalUserRecipient.setFirstName( externalUser.getFirstname( ) );
+                            ticketEmailExternalUserRecipient.setName( externalUser.getLastname( ) );
                             listRecipientEmailExternalUser.add( ticketEmailExternalUserRecipient );
                         }
 
                         model.put( MARK_TICKETING_LIST_EMAIL_INFOS, listRecipientEmailExternalUser );
                     }
                 }
-            } else
+            }
+            else
             {
                 String strEmailRecipients = lastEmailsAgentDemand.getEmailRecipients( );
                 List<ExternalUser> listUsers = getExternalUsers( strEmailRecipients );
-                List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = new ArrayList<>(  );
-                for (ExternalUser externalUser : listUsers)
+                List<TicketEmailExternalUserRecipient> listRecipientEmailExternalUser = new ArrayList<>( );
+                for ( ExternalUser externalUser : listUsers )
                 {
                     TicketEmailExternalUserRecipient ticketEmailExternalUserRecipient = new TicketEmailExternalUserRecipient( );
-                    ticketEmailExternalUserRecipient.setEmail( externalUser.getEmail() );
-                    ticketEmailExternalUserRecipient.setFirstName( externalUser.getFirstname() );
-                    ticketEmailExternalUserRecipient.setName( externalUser.getLastname() );
+                    ticketEmailExternalUserRecipient.setEmail( externalUser.getEmail( ) );
+                    ticketEmailExternalUserRecipient.setFirstName( externalUser.getFirstname( ) );
+                    ticketEmailExternalUserRecipient.setName( externalUser.getLastname( ) );
                     listRecipientEmailExternalUser.add( ticketEmailExternalUserRecipient );
                 }
 
@@ -340,33 +339,33 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
             }
 
             // messages
-            if ( lastEmailsAgentDemand.getMessageQuestion()!=null &&
-                         !lastEmailsAgentDemand.getMessageQuestion().trim().isEmpty() && !lastEmailsAgentDemand.getMessageQuestion().trim().equalsIgnoreCase( "null" ))
+            if ( lastEmailsAgentDemand.getMessageQuestion( ) != null && !lastEmailsAgentDemand.getMessageQuestion( ).trim( ).isEmpty( )
+                    && !lastEmailsAgentDemand.getMessageQuestion( ).trim( ).equalsIgnoreCase( "null" ) )
             {
                 sb.append( lastEmailsAgentDemand.getMessageQuestion( ) ).append( "\n" );
             }
 
-            model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + sb.toString() );
+            model.put( MARK_TICKETING_MESSAGE, TicketingConstants.MESSAGE_MARK + sb.toString( ) );
 
         }
 
-        model.put( MARK_TICKETING_ID_HISTORY,nIdHistory );
-
+        model.put( MARK_TICKETING_ID_HISTORY, nIdHistory );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_TICKET_INFORMATION, locale, model );
 
         return template.getHtml( );
     }
 
-    private List<ExternalUser> getExternalUsers( String strEmailRecipients ) {
-        List<ExternalUser> listExternalUsers = new ArrayList<>(  );
+    private List<ExternalUser> getExternalUsers( String strEmailRecipients )
+    {
+        List<ExternalUser> listExternalUsers = new ArrayList<>( );
 
-        if (strEmailRecipients!=null)
+        if ( strEmailRecipients != null )
         {
             for ( String email : strEmailRecipients.split( ";" ) )
             {
                 List<ExternalUser> listUsers = _externalUserDAO.findExternalUser( null, email, null, null, null );
-                if ( listUsers != null && !listUsers.isEmpty() )
+                if ( listUsers != null && !listUsers.isEmpty( ) )
                 {
                     listExternalUsers.add( listUsers.get( 0 ) );
                 }
@@ -376,11 +375,10 @@ public class NotifyWaitingTicketTaskComponent  extends TicketingTaskComponent
         return listExternalUsers;
     }
 
-
-
     /**
      *
-     * @param strParameter parameter
+     * @param strParameter
+     *            parameter
      * @return the parameter value parsed as Integer
      */
     private Integer getParameterAsInteger( String strParameter )

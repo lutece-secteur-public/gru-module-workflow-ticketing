@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,8 @@ import fr.paris.lutece.util.ReferenceList;
  */
 public enum MessageDirection
 {
-    USER_TO_AGENT, AGENT_TO_USER;
+    USER_TO_AGENT,
+    AGENT_TO_USER;
 
     private static final String MESSAGE_PREFIX = "module.workflow.ticketing.task_reply_config.message.direction.";
     private static Map<Integer, MessageDirection> _mapMessageDirection = new HashMap<Integer, MessageDirection>( );

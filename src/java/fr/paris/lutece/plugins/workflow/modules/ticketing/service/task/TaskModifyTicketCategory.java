@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -118,13 +118,12 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
 
                 if ( !strPreviousCategoryLabel.equals( ticketCategory.getLabel( ) ) )
                 {
-                    strTaskInformation += MessageFormat.format(
-                            I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ),
+                    strTaskInformation += MessageFormat.format( I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION, locale ),
                             ticketCategory.getCategoryType( ).getLabel( ),
-                            StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel : I18nService.getLocalizedString( MESSAGE_NO_VALUE,
-                                    locale ),
-                                    StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( ) : I18nService.getLocalizedString(
-                                            MESSAGE_NO_VALUE, locale ) );
+                            StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel
+                                    : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ),
+                            StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( )
+                                    : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
                 }
             }
 
@@ -219,7 +218,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                     ResponseHome.create( response );
                     if ( response.getFile( ) != null )
                     {
-                        //TicketFileHome.migrateToBlob( response.getFile( ) );
+                        // TicketFileHome.migrateToBlob( response.getFile( ) );
                     }
                     TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
                 }

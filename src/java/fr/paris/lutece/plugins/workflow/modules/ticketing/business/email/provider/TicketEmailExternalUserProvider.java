@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,7 +110,7 @@ public class TicketEmailExternalUserProvider implements IProvider
     private Ticket _ticket;
     private TicketEmailExternalUserMessage _emailExternalUserMessage;
 
-    SimpleDateFormat _dateFormater = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat _dateFormater = new SimpleDateFormat( "dd/MM/yyyy" );
 
     /**
      * Constructor for a given resource
@@ -128,8 +128,8 @@ public class TicketEmailExternalUserProvider implements IProvider
         TicketEmailExternalUserHistory ticketEmailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( resourceHistory.getId( ) );
         if ( ticketEmailExternalUserHistory != null )
         {
-            _emailExternalUserMessage = _ticketEmailExternalUserDemandDAO.loadByIdMessageExternalUser( ticketEmailExternalUserHistory
-                    .getIdMessageExternalUser( ) );
+            _emailExternalUserMessage = _ticketEmailExternalUserDemandDAO
+                    .loadByIdMessageExternalUser( ticketEmailExternalUserHistory.getIdMessageExternalUser( ) );
         }
     }
 
@@ -241,8 +241,8 @@ public class TicketEmailExternalUserProvider implements IProvider
         for ( TicketCategoryType categoryType : TicketCategoryTypeHome.getCategoryTypesList( ) )
         {
             int depth = categoryType.getDepthNumber( );
-            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_CATEGORY + depth, _ticket.getCategoryOfDepth( depth )
-                    .getLabel( ) ) );
+            collectionNotifyGruMarkers
+                    .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_CATEGORY + depth, _ticket.getCategoryOfDepth( depth ).getLabel( ) ) );
         }
 
         if ( _ticket.getChannel( ) != null )
@@ -254,17 +254,17 @@ public class TicketEmailExternalUserProvider implements IProvider
 
         if ( _ticket.getUrl( ) != null )
         {
-            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TECHNICAL_URL_COMPLETED,
-                    StringEscapeUtils.escapeHtml( _ticket.getUrl( ) ) ) );
+            collectionNotifyGruMarkers.add(
+                    createMarkerValues( TicketEmailExternalUserConstants.MARK_TECHNICAL_URL_COMPLETED, StringEscapeUtils.escapeHtml( _ticket.getUrl( ) ) ) );
         }
 
         // SPECIFIC EMAIL AGENT
         if ( _emailExternalUserMessage != null )
         {
-            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS,
-                    _emailExternalUserMessage.getEmailRecipients( ) ) );
-            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC,
-                    _emailExternalUserMessage.getEmailRecipientsCc( ) ) );
+            collectionNotifyGruMarkers
+                    .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS, _emailExternalUserMessage.getEmailRecipients( ) ) );
+            collectionNotifyGruMarkers
+                    .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC, _emailExternalUserMessage.getEmailRecipientsCc( ) ) );
             collectionNotifyGruMarkers
                     .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_MESSAGE, _emailExternalUserMessage.getMessageQuestion( ) ) );
             collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LINK,
@@ -290,12 +290,13 @@ public class TicketEmailExternalUserProvider implements IProvider
         }
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_CRITICALITY, criticalityLabel ) );
 
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, String.valueOf( _ticket.getNbRelance() ) ) );
-        if ( _ticket.getDateDerniereRelance()!=null )
+        collectionNotifyGruMarkers
+                .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, String.valueOf( _ticket.getNbRelance( ) ) ) );
+        if ( _ticket.getDateDerniereRelance( ) != null )
         {
-            Calendar calendarDerniereRelance = Calendar.getInstance();
-            calendarDerniereRelance.setTime( _ticket.getDateDerniereRelance() );
-            Date dateDerniereRelance = calendarDerniereRelance.getTime();
+            Calendar calendarDerniereRelance = Calendar.getInstance( );
+            calendarDerniereRelance.setTime( _ticket.getDateDerniereRelance( ) );
+            Date dateDerniereRelance = calendarDerniereRelance.getTime( );
             String dateFormatee = _dateFormater.format( dateDerniereRelance );
             collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, dateFormatee ) );
         }
@@ -322,10 +323,10 @@ public class TicketEmailExternalUserProvider implements IProvider
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_LASTNAME, MESSAGE_MARKER_USER_LASTNAME ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_UNIT_NAME, MESSAGE_MARKER_USER_UNIT ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_CONTACT_MODE, MESSAGE_MARKER_USER_CONTACT_MODE ) );
-        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_FIXED_PHONE,
-                MESSAGE_MARKER_USER_FIXED_PHONE_NUMBER ) );
-        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_MOBILE_PHONE,
-                MESSAGE_MARKER_USER_MOBILE_PHONE_NUMBER ) );
+        collectionNotifyGruMarkers
+                .add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_FIXED_PHONE, MESSAGE_MARKER_USER_FIXED_PHONE_NUMBER ) );
+        collectionNotifyGruMarkers
+                .add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_MOBILE_PHONE, MESSAGE_MARKER_USER_MOBILE_PHONE_NUMBER ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_EMAIL, MESSAGE_MARKER_USER_EMAIL ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TICKET_REFERENCE, MESSAGE_MARKER_TICKET_REFERENCE ) );
 
@@ -341,8 +342,8 @@ public class TicketEmailExternalUserProvider implements IProvider
 
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TICKET_CHANNEL, MESSAGE_MARKER_TICKET_CHANNEL ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TICKET_COMMENT, MESSAGE_MARKER_TICKET_COMMENT ) );
-        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TECHNICAL_URL_COMPLETED,
-                MESSAGE_MARKER_TECHNICAL_URL_COMPLETE ) );
+        collectionNotifyGruMarkers
+                .add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TECHNICAL_URL_COMPLETED, MESSAGE_MARKER_TECHNICAL_URL_COMPLETE ) );
         // SPECIFIC EMAIL AGENT
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS, MESSAGE_MARKER_EMAIL_RECIPIENTS ) );
         collectionNotifyGruMarkers
@@ -353,8 +354,10 @@ public class TicketEmailExternalUserProvider implements IProvider
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_PRIORITY, MESSAGE_MARKER_PRIORITY ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_CRITICALITY, MESSAGE_MARKER_CRITICALITY ) );
 
-        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, MESSAGE_MARKER_NB_AUTOMATIC_NOTIFICATION ) );
-        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, MESSAGE_MARKER_LAST_AUTOMATIC_NOTIFICATION_DATE ) );
+        collectionNotifyGruMarkers
+                .add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, MESSAGE_MARKER_NB_AUTOMATIC_NOTIFICATION ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE,
+                MESSAGE_MARKER_LAST_AUTOMATIC_NOTIFICATION_DATE ) );
 
         return collectionNotifyGruMarkers;
     }
@@ -362,8 +365,10 @@ public class TicketEmailExternalUserProvider implements IProvider
     /**
      * Construct a NotifyGruMarker with value for given parameters
      * 
-     * @param strMarker maker
-     * @param strValue value
+     * @param strMarker
+     *            maker
+     * @param strValue
+     *            value
      * @return a NotifyGruMarker
      */
     private static NotifyGruMarker createMarkerValues( String strMarker, String strValue )
@@ -377,8 +382,10 @@ public class TicketEmailExternalUserProvider implements IProvider
     /**
      * Construct a NotifyGruMarker with descrition for given parameters
      * 
-     * @param strMarker marker
-     * @param strDescription description
+     * @param strMarker
+     *            marker
+     * @param strDescription
+     *            description
      * @return a NotifyGruMarker
      */
     private static NotifyGruMarker createMarkerDescriptions( String strMarker, String strDescription )
@@ -402,8 +409,8 @@ public class TicketEmailExternalUserProvider implements IProvider
         String strTimestamp = Long.toString( new Date( ).getTime( ) );
         String strSignature = RequestAuthenticationService.getRequestAuthenticator( ).buildSignature( listElements, strTimestamp );
 
-        UrlItem urlTicketLink = new UrlItem( AppPathService.getBaseUrl( LocalVariables.getRequest( ) )
-                + AppPropertiesService.getProperty( PROPERTY_RESPONSE_URL ) );
+        UrlItem urlTicketLink = new UrlItem(
+                AppPathService.getBaseUrl( LocalVariables.getRequest( ) ) + AppPropertiesService.getProperty( PROPERTY_RESPONSE_URL ) );
         urlTicketLink.addParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER, nIdMessageExternalUser );
         urlTicketLink.addParameter( TicketEmailExternalUserConstants.PARAMETER_SIGNATURE, strSignature );
         urlTicketLink.addParameter( TicketEmailExternalUserConstants.PARAMETER_ID_TIMETAMP, strTimestamp );

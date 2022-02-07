@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -179,7 +179,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         TaskTicketEmailExternalUserConfig externalUserConfig = null;
         List<UploadFile> listFileUpload = new ArrayList<>( );
         Map<String, Object> mapFileUrl = new HashMap<>( );
-        Map<String, Timestamp> mapAllMessageQuestion = new HashMap<>(  );
+        Map<String, Timestamp> mapAllMessageQuestion = new HashMap<>( );
         AdminUser userAdmin = null;
 
         try
@@ -232,10 +232,10 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
                 emailExternalUserMessageDisplay.setDateCreate( resourceHistory.getCreationDate( ) );
 
-                if ( !mapAllMessageQuestion.containsKey( emailExternalUserMessageDisplay.getMessageQuestion() ) )
+                if ( !mapAllMessageQuestion.containsKey( emailExternalUserMessageDisplay.getMessageQuestion( ) ) )
                 {
                     listEmailExternalUserMessageDisplay.add( emailExternalUserMessageDisplay );
-                    mapAllMessageQuestion.put( emailExternalUserMessageDisplay.getMessageQuestion(), emailExternalUserMessageDisplay.getDateCreate() );
+                    mapAllMessageQuestion.put( emailExternalUserMessageDisplay.getMessageQuestion( ), emailExternalUserMessageDisplay.getDateCreate( ) );
                 }
             }
 
@@ -257,7 +257,8 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         }
 
         Ticket ticket = TicketHome.findByPrimaryKey( requiredEmailExternalUserMessage.getIdTicket( ) );
-        State state = WorkflowService.getInstance(  ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ID, 301 ), -1 );
+        State state = WorkflowService.getInstance( ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
+                AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ID, 301 ), -1 );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_REFERENCE, ticket.getReference( ) );
@@ -267,16 +268,14 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_USER_FACTORY, UserFactory.getInstance( ) );
         model.put( TicketingConstants.MARK_AVATAR_AVAILABLE, _bAvatarAvailable );
         model.put( MARK_USER_ADMIN, userAdmin );
-        model.put(
-                MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM,
-                WorkflowService.getInstance( ).getDisplayTasksForm( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, externalUserConfig.getIdFollowingAction( ),
-                        request, getLocale( ) ) );
+        model.put( MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM, WorkflowService.getInstance( ).getDisplayTasksForm( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
+                externalUserConfig.getIdFollowingAction( ), request, getLocale( ) ) );
         model.put( TicketingConstants.MARK_FORM_ACTION, getActionUrl( TicketingConstants.ACTION_DO_PROCESS_WORKFLOW_ACTION, request ) );
         model.put( MARK_ID_ACTION, externalUserConfig.getIdFollowingAction( ) );
         model.put( MARK_ID_TICKET, ticket.getId( ) );
         model.put( MARK_ID_MESSAGE_EXTERNAL_USER, strIdEmailExternalUser );
-        
-        if( state != null && state.getId( ) != AppPropertiesService.getPropertyInt( PROPERTY_TICKET_STATUS_WAITING, 307 ) )
+
+        if ( state != null && state.getId( ) != AppPropertiesService.getPropertyInt( PROPERTY_TICKET_STATUS_WAITING, 307 ) )
         {
             model.put( MARK_EXPIRED, true );
         }
