@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,7 +66,7 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     private static final String SQL_QUERY_LAST_MESSAGE = " SELECT id_message_external_user, id_ticket, email_recipients, email_recipients_cc, message_question, message_response, is_answered, email_subject FROM workflow_ticketing_email_external_user "
             + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC LIMIT 1";
     private static final String SQL_QUERY_ALL_MESSAGE_ORDER_DESC = " SELECT id_message_external_user, id_ticket, email_recipients, email_recipients_cc, message_question, message_response, is_answered, email_subject FROM workflow_ticketing_email_external_user "
-                                                                 + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC";
+            + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC";
     private final static String SQL_QUERY_SELECT_ID_MESSAGE_EXTERNAL_USER = "SELECT id_message_external_user FROM workflow_ticketing_email_external_user wteeu WHERE id_ticket = ?";
     private final static String SQL_QUERY_SELECT_MESSAGE_EXTERNAL_USER = "SELECT message_question, message_response FROM workflow_ticketing_email_external_user wteeu WHERE id_message_external_user = ?";
     private final static String SQL_QUERY_UPDATE_MESSAGE = "UPDATE workflow_ticketing_email_external_user SET email_recipients = NULL, email_recipients_cc = NULL, message_question = ?, message_response = ? WHERE id_message_external_user = ?";
@@ -364,7 +364,6 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
         return listEmailExternalUserMessage;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -378,12 +377,12 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
         daoUtil.executeUpdate( );
         daoUtil.free( );
     }
-    
+
     public void update( Map<String, String> data, int id, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_MESSAGE, plugin );
         int nIndex = 1;
-        for( Entry<String, String> entry : data.entrySet( ) )
+        for ( Entry<String, String> entry : data.entrySet( ) )
         {
             daoUtil.setString( nIndex, entry.getValue( ) );
             nIndex++;
@@ -391,16 +390,16 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
         daoUtil.setInt( nIndex, id );
         daoUtil.executeUpdate( );
         daoUtil.free( );
-        
+
     }
-    
+
     public Map<String, String> getHistoryEmailToAnonymize( int idMessage, Plugin plugin )
     {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MESSAGE_EXTERNAL_USER, plugin );
         daoUtil.setInt( 1, idMessage );
         daoUtil.executeQuery( );
-        
+
         if ( daoUtil.next( ) )
         {
             map.put( "message_question", daoUtil.getString( 1 ) );
@@ -411,14 +410,14 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
 
         return map;
     }
-    
+
     public List<Integer> getListIDMessageExternalUser( int idTicket, Plugin plugin )
     {
         List<Integer> list = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ID_MESSAGE_EXTERNAL_USER, plugin );
         daoUtil.setInt( 1, idTicket );
         daoUtil.executeQuery( );
-        
+
         while ( daoUtil.next( ) )
         {
             list.add( daoUtil.getInt( 1 ) );

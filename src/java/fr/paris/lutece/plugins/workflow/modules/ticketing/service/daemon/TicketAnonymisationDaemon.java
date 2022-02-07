@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2022, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon;
 
 import java.sql.Timestamp;
@@ -58,7 +91,7 @@ public class TicketAnonymisationDaemon extends Daemon
         String date = dateForAnonymisation( );
         List<Ticket> listTickets = TicketHome.getForAnonymisation( date, TICKET_STATUS_ARCHIVE );
 
-        for( Ticket ticket : listTickets )
+        for ( Ticket ticket : listTickets )
         {
             // suppression des données sensibles dans l'historique
             anonymizeTicketHistoryData( ticket );
@@ -96,13 +129,13 @@ public class TicketAnonymisationDaemon extends Daemon
         return sdf.format( date );
     }
 
-    public static void anonymizeTicketHistoryData( Ticket ticket)
+    public static void anonymizeTicketHistoryData( Ticket ticket )
     {
         List<Integer> listEmailExternalUser = _dao.getListIDMessageExternalUser( ticket.getId( ), _plugin );
-        for( int idEmailExternalUser : listEmailExternalUser )
+        for ( int idEmailExternalUser : listEmailExternalUser )
         {
             Map<String, String> data = _dao.getHistoryEmailToAnonymize( idEmailExternalUser, _plugin );
-            for( Entry<String, String> entry : data.entrySet( ) )
+            for ( Entry<String, String> entry : data.entrySet( ) )
             {
                 String newValue = "";
                 newValue = StringUtils.replace( entry.getValue( ), ticket.getFirstname( ), "" );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,7 @@ public class TaskSphinx extends AbstractTicketingTask
         {
             SphinxRest.postTicketData( ticket );
         }
-        catch ( Exception exception )
+        catch( Exception exception )
         {
             AppLogService.error( "Error when sending ticket data for ticket " + ticket.getId( ), exception );
         }

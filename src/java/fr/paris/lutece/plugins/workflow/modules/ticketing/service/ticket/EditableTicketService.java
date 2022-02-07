@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -254,8 +254,8 @@ public class EditableTicketService implements IEditableTicketService
             {
                 Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
 
-                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, action
-                        .getWorkflow( ).getId( ) );
+                ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
+                        action.getWorkflow( ).getId( ) );
 
                 if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState( ) != null )
                         && ( resourceWorkflow.getState( ).getId( ) == action.getStateAfter( ).getId( ) ) )

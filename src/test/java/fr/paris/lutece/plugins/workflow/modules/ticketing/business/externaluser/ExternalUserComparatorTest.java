@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,9 +84,8 @@ public class ExternalUserComparatorTest extends TestCase
         Assert.assertTrue(
                 "erreur comparaison " + fieldAgentUserToString( user9 ) + " / " + fieldAgentUserToString( user8 ) + " / " + comp.compare( user9, user8 ) + ">0",
                 comp.compare( user9, user8 ) > 0 );
-        Assert.assertTrue(
-                "erreur comparaison " + fieldAgentUserToString( user9 ) + " / " + fieldAgentUserToString( user10 ) + " / " + comp.compare( user9, user10 )
-                        + ">0", comp.compare( user9, user10 ) > 0 );
+        Assert.assertTrue( "erreur comparaison " + fieldAgentUserToString( user9 ) + " / " + fieldAgentUserToString( user10 ) + " / "
+                + comp.compare( user9, user10 ) + ">0", comp.compare( user9, user10 ) > 0 );
     }
 
     /**

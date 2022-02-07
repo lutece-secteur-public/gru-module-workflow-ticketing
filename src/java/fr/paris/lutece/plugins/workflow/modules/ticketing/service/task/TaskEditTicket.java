@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -291,7 +291,7 @@ public class TaskEditTicket extends AbstractTicketingTask
                 ResponseHome.create( response );
                 if ( response.getFile( ) != null )
                 {
-                    //TicketFileHome.migrateToBlob( response.getFile( ) );
+                    // TicketFileHome.migrateToBlob( response.getFile( ) );
                 }
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             }
@@ -316,8 +316,8 @@ public class TaskEditTicket extends AbstractTicketingTask
         if ( sbEntries.length( ) == 0 )
         {
             strTaskInformation = MessageFormat.format(
-                    I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED, Locale.FRENCH ), TicketingConstants.MESSAGE_MARK
-                    + strUserMessage );
+                    I18nService.getLocalizedString( MESSAGE_EDIT_TICKET_INFORMATION_VIEW_USER_NO_FIELD_EDITED, Locale.FRENCH ),
+                    TicketingConstants.MESSAGE_MARK + strUserMessage );
         }
         else
         {

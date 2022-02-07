@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,8 +84,8 @@ public class TicketEmailExternalUserProviderManager extends AbstractProviderMana
     @Override
     public ProviderDescription getProviderDescription( String strProviderId )
     {
-        ProviderDescription providerDescription = new ProviderDescription( PROVIDER_ID, I18nService.getLocalizedString( MESSAGE_PROVIDER_LABEL,
-                I18nService.getDefaultLocale( ) ) );
+        ProviderDescription providerDescription = new ProviderDescription( PROVIDER_ID,
+                I18nService.getLocalizedString( MESSAGE_PROVIDER_LABEL, I18nService.getDefaultLocale( ) ) );
 
         providerDescription.setMarkerDescriptions( TicketEmailExternalUserProvider.getProviderMarkerDescriptions( ) );
 

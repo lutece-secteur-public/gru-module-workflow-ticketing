@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -233,7 +233,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         if ( ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) ) && StringUtils.isEmpty( strAgentMessage ) )
         {
             Object [ ] tabRequiredFields = {
-                FIELD_MESSAGE
+                    FIELD_MESSAGE
             };
 
             return AdminMessageService.getMessageUrl( request, Messages.MANDATORY_FIELDS, tabRequiredFields, AdminMessage.TYPE_STOP );

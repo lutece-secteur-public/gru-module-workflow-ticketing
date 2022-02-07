@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 {
     protected static final String ATTRIBUTE_HIDE_NEXT_STEP_BUTTON = "hide_next_button";
 
-    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM     = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
+    private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
 
     // Markers
     private static final String MARK_ERRORS = "errors";
@@ -95,7 +95,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
             strTaskInformation = "<p>" + taskInformation.getValue( ) + "</p>";
         }
 
-        return "<div class='mt-30'>" + strTaskInformation +"</div>";
+        return "<div class='mt-30'>" + strTaskInformation + "</div>";
     }
 
     @Override
@@ -193,7 +193,6 @@ public class TicketingTaskComponent extends SimpleTaskComponent
         return ticket;
     }
 
-
     /**
      * Load the data of all the unit objects allowed for assignment and returns them in form of a collection
      *
@@ -206,7 +205,8 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     protected static ReferenceList getUnitsList( AdminUser user, int level )
     {
 
-        List<AssigneeUnit> listUnitByLevel = SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) );
+        List<AssigneeUnit> listUnitByLevel = SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit )
+                .collect( Collectors.toList( ) );
 
         ReferenceList lstRef = new ReferenceList( listUnitByLevel.size( ) );
         ReferenceItem emptyReferenceItem = new ReferenceItem( );
@@ -243,7 +243,8 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
         for ( Integer level : levelList )
         {
-            listUnitByLevel.addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
+            listUnitByLevel
+                    .addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
         }
         ReferenceList lstRef = new ReferenceList( listUnitByLevel.size( ) );
         ReferenceItem emptyReferenceItem = new ReferenceItem( );
