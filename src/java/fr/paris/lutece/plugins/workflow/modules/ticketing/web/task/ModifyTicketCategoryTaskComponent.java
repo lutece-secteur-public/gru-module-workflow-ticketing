@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -211,13 +211,12 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             {
                 listFormErrors.addAll( _ticketFormService.getResponseEntry( request, entry.getIdEntry( ), request.getLocale( ), ticket ) );
 
-                //O2T 79251: contrôle facil'famille
-                if ( !hasFFError && isDomainFacilFamille(categoryValidatorResult.getTicketCategory( ) ) )
+                // O2T 79251: contrôle facil'famille
+                if ( !hasFFError && isDomainFacilFamille( categoryValidatorResult.getTicketCategory( ) ) )
                 {
                     for ( GenericAttributeError error : listFormErrors )
                     {
-                        if ( error.getErrorMessage( ).contains( "Facil'Famille" ) ||
-                                     error.getErrorMessage( ).contains( "facil'familles" ) )
+                        if ( error.getErrorMessage( ).contains( "Facil'Famille" ) || error.getErrorMessage( ).contains( "facil'familles" ) )
                         {
                             hasFFError = true;
                             break;
@@ -234,23 +233,25 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
                                 formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_EMPTY_VALIDATION, request.getLocale( ) ) );
                                 listFormErrors.add( formError );
                                 hasFFError = true;
-                            } else if ( !strFacilFamilleNumber.matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ) )
-                            {
-                                GenericAttributeError formError = new GenericAttributeError( );
-                                formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_REGEX_VALIDATION, request.getLocale( ) ) );
-                                listFormErrors.add( formError );
-                                hasFFError = true;
                             }
+                            else
+                                if ( !strFacilFamilleNumber.matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ) )
+                                {
+                                    GenericAttributeError formError = new GenericAttributeError( );
+                                    formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_REGEX_VALIDATION, request.getLocale( ) ) );
+                                    listFormErrors.add( formError );
+                                    hasFFError = true;
+                                }
                         }
                     }
                 }
             }
 
-            //O2T 79251: contrôle facil'famille
-            if (listEntry.isEmpty() && isDomainFacilFamille(categoryValidatorResult.getTicketCategory( ) ) )
+            // O2T 79251: contrôle facil'famille
+            if ( listEntry.isEmpty( ) && isDomainFacilFamille( categoryValidatorResult.getTicketCategory( ) ) )
             {
                 GenericAttributeError facilFamilleError = getFacilFamilleError( request );
-                if ( facilFamilleError!=null)
+                if ( facilFamilleError != null )
                 {
                     listFormErrors.add( facilFamilleError );
                 }
@@ -275,37 +276,48 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         return null;
     }
 
-    private GenericAttributeError getFacilFamilleError ( HttpServletRequest request ) {
+    private GenericAttributeError getFacilFamilleError( HttpServletRequest request )
+    {
         String strFacilFamilleNumber = request.getParameter( "attribute202" );
 
-        if ( strFacilFamilleNumber!=null )
+        if ( strFacilFamilleNumber != null )
         {
             if ( strFacilFamilleNumber.trim( ).isEmpty( ) )
             {
                 GenericAttributeError formError = new GenericAttributeError( );
                 formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_EMPTY_VALIDATION, request.getLocale( ) ) );
                 return formError;
-            } else if ( !strFacilFamilleNumber.matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ) )
-            {
-                GenericAttributeError formError = new GenericAttributeError( );
-                formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_REGEX_VALIDATION, request.getLocale( ) ) );
-                return formError;
             }
+            else
+                if ( !strFacilFamilleNumber.matches( AppPropertiesService.getProperty( PROPERTY_ACCOUNT_NUMBER_REGEXP ) ) )
+                {
+                    GenericAttributeError formError = new GenericAttributeError( );
+                    formError.setErrorMessage( I18nService.getLocalizedString( MESSAGE_ERROR_FACIL_REGEX_VALIDATION, request.getLocale( ) ) );
+                    return formError;
+                }
         }
 
         return null;
     }
 
-    private boolean isDomainFacilFamille ( TicketCategory category ) {
-        if ( category != null ) {
-            if (category.getDepth().getDepthNumber() > 1) {
+    private boolean isDomainFacilFamille( TicketCategory category )
+    {
+        if ( category != null )
+        {
+            if ( category.getDepth( ).getDepthNumber( ) > 1 )
+            {
                 return isDomainFacilFamille( category.getParent( ) );
-            } else if ( category.getDepth().getDepthNumber() == 1 ) {
-                return category.getLabel().equals( "facil'familles" );
-            } else {
-                // ne devrait pas se produire (0 ou négatif)
-                return false;
             }
+            else
+                if ( category.getDepth( ).getDepthNumber( ) == 1 )
+                {
+                    return category.getLabel( ).equals( "facil'familles" );
+                }
+                else
+                {
+                    // ne devrait pas se produire (0 ou négatif)
+                    return false;
+                }
         }
         return false;
     }

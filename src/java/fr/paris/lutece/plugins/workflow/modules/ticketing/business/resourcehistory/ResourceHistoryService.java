@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -112,8 +112,8 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
     {
         Map<String, Channel> mapHistoryChannel = new HashMap<String, Channel>( );
 
-        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource(
-                nIdResource, strResourceType, nIdWorkflow );
+        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService
+                .getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
 
         for ( fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory resourceHistory : listResourceHistory )
         {
@@ -142,8 +142,8 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
      */
     public void removeResourceHistory( int nIdResource, String strResourceType, int nIdWorkflow )
     {
-        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService.getAllHistoryByResource(
-                nIdResource, strResourceType, nIdWorkflow );
+        List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService
+                .getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
 
         for ( fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory resourceHistory : listResourceHistory )
         {

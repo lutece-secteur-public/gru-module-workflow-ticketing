@@ -1,5 +1,5 @@
 /*
- * Copyright8 (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -87,6 +87,7 @@ public class ResourceHistory
 
     /**
      * Get old id unit assignee to the ticket
+     * 
      * @return _nIdUnitOld
      *
      */
@@ -97,6 +98,7 @@ public class ResourceHistory
 
     /**
      * Get new id unit assignee to the ticket
+     * 
      * @return _nIdUnitNew;
      */
     public int getIdUnitNew( )
@@ -107,7 +109,8 @@ public class ResourceHistory
     /**
      * Sets the id unit old.
      *
-     * @param idUnitOld the new id unit old
+     * @param idUnitOld
+     *            the new id unit old
      */
     public void setIdUnitOld( int idUnitOld )
     {
@@ -117,7 +120,8 @@ public class ResourceHistory
     /**
      * Sets the id unit new.
      *
-     * @param idUnitNew the new id unit new
+     * @param idUnitNew
+     *            the new id unit new
      */
     public void setIdUnitNew( int idUnitNew )
     {

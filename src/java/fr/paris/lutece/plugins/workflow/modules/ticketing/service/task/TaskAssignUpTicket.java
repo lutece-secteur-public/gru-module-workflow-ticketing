@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,7 +75,6 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
         String strTaskInformation = StringUtils.EMPTY;
         String strTargetUnitId = request != null ? request.getParameter( PARAMETER_TICKET_UP_ASSIGNEE_UNIT_ID ) : "";
 
-
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
@@ -92,7 +91,6 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
                 unit = UnitHome.findByPrimaryKey( Integer.parseInt( strTargetUnitId ) );
             }
 
-
             if ( unit != null )
             {
                 if ( ( ticket.getAssigneeUnit( ).getUnitId( ) != unit.getIdUnit( ) ) && ( request != null ) )
@@ -102,8 +100,9 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
 
                 AssigneeUser assigneeUser = ticket.getAssigneeUser( );
 
-                String strFormerUserInfos = ( assigneeUser == null ) ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER,
-                        Locale.FRENCH ) : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+                String strFormerUserInfos = ( assigneeUser == null )
+                        ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER, Locale.FRENCH )
+                        : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
                 strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
                         strFormerUserInfos, unit.getLabel( ) );
 
@@ -119,7 +118,8 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
             }
         }
 
-        if (request!= null) {
+        if ( request != null )
+        {
             request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
         }
         return strTaskInformation;

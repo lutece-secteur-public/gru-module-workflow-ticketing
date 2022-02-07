@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -78,23 +78,23 @@ import fr.paris.lutece.util.url.UrlItem;
 public class ModifyTicketTaskComponent extends TicketingTaskComponent
 {
     // Constants
-    private static final String JSP_VIEW_TICKET                  = TicketingConstants.ADMIN_CONTROLLLER_PATH + TicketingConstants.JSP_VIEW_TICKET;
+    private static final String JSP_VIEW_TICKET = TicketingConstants.ADMIN_CONTROLLLER_PATH + TicketingConstants.JSP_VIEW_TICKET;
 
     // Templates
     private static final String TEMPLATE_TASK_MODIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket.html";
 
     // Marks
-    private static final String MARK_USER_TITLE_LIST             = "user_titles_list";
-    private static final String MARK_CONTACT_MODE_LIST           = "contact_modes_list";
-    private static final String MARK_HANDLER                     = "upload_handler";
-    private static final String MARK_ENTRY_ATTACHED_FILE         = "entry_attached_files";
+    private static final String MARK_USER_TITLE_LIST = "user_titles_list";
+    private static final String MARK_CONTACT_MODE_LIST = "contact_modes_list";
+    private static final String MARK_HANDLER = "upload_handler";
+    private static final String MARK_ENTRY_ATTACHED_FILE = "entry_attached_files";
 
     // Messages
-    private static final String MESSAGE_MODIFY_TICKET_ERROR      = "module.workflow.ticketing.task_modify_ticket.error";
+    private static final String MESSAGE_MODIFY_TICKET_ERROR = "module.workflow.ticketing.task_modify_ticket.error";
     private static final String MESSAGE_ERROR_COMMENT_VALIDATION = "ticketing.validation.ticket.TicketComment.size";
 
     @Inject
-    private TicketFormService   _ticketFormService;
+    private TicketFormService _ticketFormService;
 
     /**
      * {@inheritDoc}
@@ -107,15 +107,17 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
         Map<String, Object> model = getModel( ticket );
 
         // Get the id entry for reply attachment files from properties
-        int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID, TicketingConstants.PROPERTY_UNSET_INT );
+        int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID,
+                TicketingConstants.PROPERTY_UNSET_INT );
         model.put( MARK_HANDLER, TicketAsynchronousUploadHandler.getHandler( ) );
         List<Entry> listEntries = new ArrayList<>( );
 
         List<Response> responseList = ticket.getListResponse( );
         // Get the list of file type entry with distinct idEntry
-        listEntries = responseList.stream( ).map( Response::getEntry ).filter( e -> StringUtils.equals( e.getEntryType( ).getBeanName( ), EntryTypeFile.BEAN_NAME ) )
-                .collect( Collectors.groupingBy( Entry::getIdEntry ) ).values( ).stream( ).flatMap( group -> group.stream( ).limit( 1 ) ).collect( Collectors.toList( ) );
-
+        listEntries = responseList.stream( ).map( Response::getEntry )
+                .filter( e -> StringUtils.equals( e.getEntryType( ).getBeanName( ), EntryTypeFile.BEAN_NAME ) )
+                .collect( Collectors.groupingBy( Entry::getIdEntry ) ).values( ).stream( ).flatMap( group -> group.stream( ).limit( 1 ) )
+                .collect( Collectors.toList( ) );
 
         _ticketFormService.saveTicketInSession( request.getSession( ), ticket );
         String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), false, request );
@@ -143,8 +145,8 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
             UrlItem urlReturnFromErros = new UrlItem( JSP_VIEW_TICKET );
             urlReturnFromErros.addParameter( TicketingConstants.PARAMETER_ID_TICKET, nIdResource );
 
-            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ERROR, WorkflowTicketingUtils.formatValidationErrors( request, listErrors ), urlReturnFromErros.getUrl( ),
-                    AdminMessage.TYPE_ERROR );
+            return AdminMessageService.getMessageUrl( request, MESSAGE_MODIFY_TICKET_ERROR,
+                    WorkflowTicketingUtils.formatValidationErrors( request, listErrors ), urlReturnFromErros.getUrl( ), AdminMessage.TYPE_ERROR );
         }
 
         return null;

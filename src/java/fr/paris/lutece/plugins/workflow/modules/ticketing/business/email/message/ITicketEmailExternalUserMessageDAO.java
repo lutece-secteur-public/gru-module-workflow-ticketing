@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -136,10 +136,10 @@ public interface ITicketEmailExternalUserMessageDAO
      *            the n id of message
      */
     void deleteByIdMessageExternalUser( int nIdMessageExternalUser );
-    
+
     void update( Map<String, String> data, int id, Plugin plugin );
-    
+
     Map<String, String> getHistoryEmailToAnonymize( int idMessage, Plugin plugin );
-    
+
     List<Integer> getListIDMessageExternalUser( int idTicket, Plugin plugin );
 }

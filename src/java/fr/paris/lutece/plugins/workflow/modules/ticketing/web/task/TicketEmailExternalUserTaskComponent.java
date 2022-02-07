@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -178,8 +178,8 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     public String getDisplayTaskInformation( int nIdHistory, HttpServletRequest request, Locale locale, ITask task )
     {
         TicketEmailExternalUserHistory emailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( nIdHistory );
-        TicketEmailExternalUserMessage mailExternalUserMessage = _ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( emailExternalUserHistory
-                .getIdMessageExternalUser( ) );
+        TicketEmailExternalUserMessage mailExternalUserMessage = _ticketEmailExternalUserMessageDAO
+                .loadByIdMessageExternalUser( emailExternalUserHistory.getIdMessageExternalUser( ) );
         TaskTicketEmailExternalUserConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         Map<String, Object> model = new HashMap<String, Object>( );
@@ -249,7 +249,8 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
                         Collection<NotifyGruMarker> markerValues = provider.provideMarkerValues( );
 
                         String subject = config.getDefaultSubject( );
-                        if(StringUtils.isBlank( subject )) {
+                        if ( StringUtils.isBlank( subject ) )
+                        {
                             subject = configNotify.getSubjectBroadcast( );
                         }
 
@@ -290,7 +291,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
 
         ModelUtils.storeRichText( request, model );
         ModelUtils.storeUserSignature( request, model );
-        
+
         Ticket ticket = TicketHome.findByPrimaryKey( nIdResource );
         model.put( MARK_TICKET_COMMENT, ticket != null ? ticket.getTicketComment( ).replace( "\r\n", "<br>" ) : "" );
 
@@ -333,12 +334,12 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     {
         TaskTicketEmailExternalUserConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         String strNextActionId = String.valueOf( config.getIdFollowingAction( ) );
-        String strEmailRecipients = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS + TaskTicketEmailExternalUser.UNDERSCORE
-                + task.getId( ) );
-        String strEmailRecipientsCc = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS_CC + TaskTicketEmailExternalUser.UNDERSCORE
-                + task.getId( ) );
-        String strEmailSubject = request.getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_SUBJECT + TaskTicketEmailExternalUser.UNDERSCORE
-                + task.getId( ) );
+        String strEmailRecipients = request
+                .getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS + TaskTicketEmailExternalUser.UNDERSCORE + task.getId( ) );
+        String strEmailRecipientsCc = request
+                .getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_RECIPIENTS_CC + TaskTicketEmailExternalUser.UNDERSCORE + task.getId( ) );
+        String strEmailSubject = request
+                .getParameter( TaskTicketEmailExternalUser.PARAMETER_EMAIL_SUBJECT + TaskTicketEmailExternalUser.UNDERSCORE + task.getId( ) );
 
         String strError = null;
         int nLevelError = -1;
