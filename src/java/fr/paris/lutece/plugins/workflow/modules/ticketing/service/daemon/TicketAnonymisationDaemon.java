@@ -64,8 +64,8 @@ public class TicketAnonymisationDaemon extends Daemon
     private static ITicketEmailExternalUserMessageDAO _dao = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
     private static Plugin _plugin = WorkflowTicketingPlugin.getPlugin( );
     
-    private static final String REGEX_EMAIL = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}";
-    private static final String REGEX_TELEPHONE = "^(?:(?:\\+|00)33|0)\\s*[1-9](?:[\\s.-]*\\d{2}){4}";
+    private static final String REGEX_EMAIL = "[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}";
+    private static final String REGEX_TELEPHONE = "(?:(?:\\+|00)33|0)\\s*[1-9](?:[\\s.-]*\\d{2}){4}|00 33 \\(0\\)[1-9]{0,2}(?:[\\s.-]*\\d{2}){4}";
 
     /*
      * Constructor
@@ -102,11 +102,11 @@ public class TicketAnonymisationDaemon extends Daemon
             // anonymisation du ticket
 
             String newComment = "";
-            newComment = ticket.getTicketComment( ).replaceAll( Pattern.quote( "(?i)" + ticket.getFirstname( ) ), "" );
-            newComment = newComment.replaceAll( Pattern.quote( "(?i)" + ticket.getLastname( ) ), "" );
-            newComment = newComment.replaceAll( Pattern.quote( REGEX_EMAIL ), "" );
-            newComment = newComment.replaceAll( Pattern.quote( REGEX_TELEPHONE ), "" );
-            newComment = newComment.replaceAll( Pattern.quote( REGEX_TELEPHONE ), "" );
+            newComment = ticket.getTicketComment( ).replaceAll( "(?i)" + ticket.getFirstname( ), "" );
+            newComment = newComment.replaceAll( "(?i)" + ticket.getLastname( ), "" );
+            newComment = newComment.replaceAll( REGEX_EMAIL, "" );
+            newComment = newComment.replaceAll( REGEX_TELEPHONE, "" );
+            newComment = newComment.replaceAll( REGEX_TELEPHONE, "" );
             ticket.setTicketComment( newComment );
 
             ticket.setFirstname( ticket.getReference( ) );
@@ -142,11 +142,11 @@ public class TicketAnonymisationDaemon extends Daemon
             for ( Entry<String, String> entry : data.entrySet( ) )
             {
                 String newValue = "";
-                newValue = entry.getValue( ).replaceAll( Pattern.quote( "(?i)" + ticket.getFirstname( ) ), "" );
-                newValue = newValue.replaceAll( Pattern.quote( "(?i)" + ticket.getLastname( ) ), "" );
-                newValue = newValue.replaceAll( Pattern.quote( REGEX_EMAIL ), "" );
-                newValue = newValue.replaceAll( Pattern.quote( REGEX_TELEPHONE ), "" );
-                newValue = newValue.replaceAll( Pattern.quote( REGEX_TELEPHONE ), "" );
+                newValue = entry.getValue( ).replaceAll( "(?i)" + ticket.getFirstname( ), "" );
+                newValue = newValue.replaceAll( "(?i)" + ticket.getLastname( ), "" );
+                newValue = newValue.replaceAll( REGEX_EMAIL, "" );
+                newValue = newValue.replaceAll( REGEX_TELEPHONE, "" );
+                newValue = newValue.replaceAll( REGEX_TELEPHONE, "" );
                 entry.setValue( newValue );
             }
             _dao.update( data, idEmailExternalUser, _plugin );
