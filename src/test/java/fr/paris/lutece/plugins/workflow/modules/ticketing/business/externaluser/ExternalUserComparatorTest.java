@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser;
 
+import java.util.regex.Pattern;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -130,5 +132,63 @@ public class ExternalUserComparatorTest extends TestCase
         strLog.append( externalUser.getEmail( ) );
 
         return strLog.toString( );
+    }
+    
+    public void testSuppressionDonneesStr() {
+        String regexEmail = "[\\.\\w-]+@([\\w-]+\\.)+[\\w-]{2,4}";
+        String regexPhone = "(?:(?:\\+|00)33|0)\\s*[1-9](?:[\\s.-]*\\d{2}){4}|00 33 \\(0\\)[1-9]{0,2}(?:[\\s.-]*\\d{2}){4}";
+        String regexName = "(?i)" + "Mathieu Pineau";
+        
+        String str1 = "Première phrase réalisée par Mathieu Pineau";
+        String str2 = "Deuxième phrase réalisée par MATHIEU Pineau";
+        String str3 = "Troisième phrase réalisée par Mathieu PINEAU";
+        String newStr1 = str1.replaceAll( regexName, "" );
+        String newStr2 = str2.replaceAll( regexName, "" );
+        String newStr3 = str3.replaceAll( regexName, "" );
+        Assert.assertEquals( "Première phrase réalisée par ", newStr1 );
+        Assert.assertEquals( "Deuxième phrase réalisée par ", newStr2 );
+        Assert.assertEquals( "Troisième phrase réalisée par ", newStr3 );
+        
+        String str4 = "test@gmail.com";
+        String newStr4 = str4.replaceAll( regexEmail, "" );
+        Assert.assertEquals( "", newStr4 );
+        
+        String str5 = "Bonjour,\n"
+                + "Pourriez vous actualiser  quelques informations nous concernant vu sur le site de Paris ou des documents attachés (guide entreprendre à Paris)  \n"
+                + "par exemple ici  https://www.paris.fr/initiative-emploi-services-aux-entrepreneurs_3  \n"
+                + "La Boutique de Gestion ADIL 01 45 80 51 55 , a remplacer par  BGE ADIL PARIS  01 45 80 51 55 ; contact@bge-adil.eu; www.bge-adil.eu\n"
+                + "et dans le guide entreprendre à Paris \n"
+                + "la désignation ADIL ou Adil -Boutique de Gestion (page 5 , 6 et 16) , est remplacée par BGE ADIL PARIS  associé au lien www.bge-adil.eu ou adresse internet contact@bge-adil.eu\n"
+                + "Meri à vous \n"
+                + " ";
+        String str5WithoutPhone = "Bonjour,\n"
+                + "Pourriez vous actualiser  quelques informations nous concernant vu sur le site de Paris ou des documents attachés (guide entreprendre à Paris)  \n"
+                + "par exemple ici  https://www.paris.fr/initiative-emploi-services-aux-entrepreneurs_3  \n"
+                + "La Boutique de Gestion ADIL  , a remplacer par  BGE ADIL PARIS   ; contact@bge-adil.eu; www.bge-adil.eu\n"
+                + "et dans le guide entreprendre à Paris \n"
+                + "la désignation ADIL ou Adil -Boutique de Gestion (page 5 , 6 et 16) , est remplacée par BGE ADIL PARIS  associé au lien www.bge-adil.eu ou adresse internet contact@bge-adil.eu\n"
+                + "Meri à vous \n"
+                + " ";
+        String str5WithoutEmail = "Bonjour,\n"
+                + "Pourriez vous actualiser  quelques informations nous concernant vu sur le site de Paris ou des documents attachés (guide entreprendre à Paris)  \n"
+                + "par exemple ici  https://www.paris.fr/initiative-emploi-services-aux-entrepreneurs_3  \n"
+                + "La Boutique de Gestion ADIL 01 45 80 51 55 , a remplacer par  BGE ADIL PARIS  01 45 80 51 55 ; ; www.bge-adil.eu\n"
+                + "et dans le guide entreprendre à Paris \n"
+                + "la désignation ADIL ou Adil -Boutique de Gestion (page 5 , 6 et 16) , est remplacée par BGE ADIL PARIS  associé au lien www.bge-adil.eu ou adresse internet \n"
+                + "Meri à vous \n"
+                + " ";
+        //String newStr5 = str5.replaceAll( regexPhone, "" );
+        Assert.assertEquals( str5WithoutPhone, str5.replaceAll( regexPhone, "" ) );
+        Assert.assertEquals( str5WithoutEmail, str5.replaceAll( regexEmail, "" ) );
+    }
+    
+
+    
+    public void testSplitAddress( )
+    {
+        String adresse = "227 RUE DE LA CROIX NIVERT, 75015 PARIS";
+        Assert.assertEquals("227 RUE DE LA CROIX NIVERT", adresse.substring( 0, adresse.indexOf( ',' ) ) );
+        Assert.assertEquals("75015", adresse.substring( adresse.indexOf( ',' )+2, adresse.indexOf( ',' )+7));
+        Assert.assertEquals( "PARIS", adresse.substring( adresse.indexOf( ',' )+8) );
     }
 }
