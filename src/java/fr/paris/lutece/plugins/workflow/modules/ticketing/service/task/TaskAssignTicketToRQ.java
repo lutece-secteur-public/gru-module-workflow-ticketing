@@ -67,7 +67,7 @@ public class TaskAssignTicketToRQ extends AbstractTicketingTask
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
         
-        if( ticket != null && ticket.getTicketAddress( ).getQuartier( ) != null && ticket.getTicketAddress( ).getQuartier( ).getRespQuartier( ) != null )
+        if( ticket != null && ticket.getTicketAddress( ) != null && ticket.getTicketAddress( ).getQuartier( ) != null && ticket.getTicketAddress( ).getQuartier( ).getRespQuartier( ) != null )
         {
             User respQuartier = ticket.getTicketAddress( ).getQuartier( ).getRespQuartier( );
             AssigneeUser assigneeUser = new AssigneeUser( );
