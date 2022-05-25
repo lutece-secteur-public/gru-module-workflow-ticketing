@@ -396,7 +396,21 @@
 		  class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.NotifyWaitingTicketTaskComponent"
 		  p:taskType-ref="workflow-ticketing.taskTypeNotifyWaitingTicket"
 		  p:taskConfigService-ref="workflow-ticketing.taskNotifyWaitingTicketConfigService"/>
-		
+		  
+	<!--  Task Assign Ticket to RQ -->	  
+	<bean id="workflow-ticketing.taskAssignTicketToRQ"
+		  class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignTicketToRQ"
+		  scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAssignTicketToRQ"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingAssignTicketToRQ" p:titleI18nKey="module.workflow.ticketing.task_assign_ticket_to_rq.title"
+		p:beanName="workflow-ticketing.taskAssignTicketToRQ"
+		p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.assignTicketToRQTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToRQ" />
+		  
+		  
 	<!-- SignRequest -->
 	<bean id="workflow-ticketing.hashService"
 		class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
