@@ -2,3 +2,7 @@
 #external_user_result_table td:hover {
 	cursor:pointer;
 }
+
+iframe#user_message_ifr {
+	min-height : 300px;
+}
