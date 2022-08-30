@@ -39,45 +39,42 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provid
 public final class TicketEmailExternalUserConstants
 {
     // Path for JspBean
-    public static final String ADMIN_EXTERNAL_USER_CONTROLLLER_PATH = "jsp/admin/plugins/workflow/modules/ticketing/";
+    public static final String ADMIN_EXTERNAL_USER_CONTROLLLER_PATH  = "jsp/admin/plugins/workflow/modules/ticketing/";
 
     // Mark
-    public static final String MARK_GUID = "identification_guid";
-    public static final String MARK_USER_TITLE = "civility";
-    public static final String MARK_USER_FIRSTNAME = "firstname";
-    public static final String MARK_USER_LASTNAME = "lastname";
-    public static final String MARK_USER_CONTACT_MODE = "contact_mode";
-    public static final String MARK_USER_FIXED_PHONE = "fixed_phone";
-    public static final String MARK_USER_MOBILE_PHONE = "mobile_phone";
-    public static final String MARK_USER_EMAIL = "email";
-    public static final String MARK_USER_UNIT_NAME = "unit_name";
-    public static final String MARK_USER_MESSAGE = "user_message";
-    public static final String MARK_TICKET_REFERENCE = "reference";
-    public static final String MARK_TICKET_CHANNEL = "ticket_channel";
-    public static final String MARK_TICKET_COMMENT = "comment";
-    public static final String MARK_TECHNICAL_URL_COMPLETED = "url_completed";
-    public static final String MARK_TECHNICAL_LIST_FORM = "list_form";
-    public static final String MARK_TICKET = "ticket";
-    public static final String MARK_TECHNICAL_LIST_MARKER = "list_markers";
-    public static final String MARK_EMAIL_RECIPIENTS = "email_recipients";
-    public static final String MARK_EMAIL_RECIPIENTS_CC = "email_recipients_cc";
-    public static final String MARK_MESSAGE = "message";
-    public static final String MARK_LINK = "ticketing_ticket_link";
-    public static final String MARK_SUBJECT = "email_subject";
-
-    public static final String MARK_PRIORITY = "priority";
-    public static final String MARK_CRITICALITY = "criticality";
-    public static final String MARK_CATEGORY = "ticket_category_level_";
+    public static final String MARK_GUID                             = "identification_guid";
+    public static final String MARK_USER_TITLE                       = "civility";
+    public static final String MARK_USER_FIRSTNAME                   = "firstname";
+    public static final String MARK_USER_LASTNAME                    = "lastname";
+    public static final String MARK_USER_CONTACT_MODE                = "contact_mode";
+    public static final String MARK_USER_FIXED_PHONE                 = "fixed_phone";
+    public static final String MARK_USER_MOBILE_PHONE                = "mobile_phone";
+    public static final String MARK_USER_EMAIL                       = "email";
+    public static final String MARK_USER_UNIT_NAME                   = "unit_name";
+    public static final String MARK_USER_MESSAGE                     = "user_message";
+    public static final String MARK_TICKET_REFERENCE                 = "reference";
+    public static final String MARK_TICKET_CHANNEL                   = "ticket_channel";
+    public static final String MARK_TICKET_COMMENT                   = "comment";
+    public static final String MARK_TECHNICAL_URL_COMPLETED          = "url_completed";
+    public static final String MARK_TECHNICAL_LIST_FORM              = "list_form";
+    public static final String MARK_TICKET                           = "ticket";
+    public static final String MARK_TECHNICAL_LIST_MARKER            = "list_markers";
+    public static final String MARK_EMAIL_RECIPIENTS                 = "email_recipients";
+    public static final String MARK_EMAIL_RECIPIENTS_CC              = "email_recipients_cc";
+    public static final String MARK_MESSAGE                          = "message";
+    public static final String MARK_LINK                             = "ticketing_ticket_link";
+    public static final String MARK_SUBJECT                          = "email_subject";
+    public static final String MARK_CATEGORY                         = "ticket_category_level_";
 
     // nb relance
-    public static final String MARK_NB_AUTOMATIC_NOTIFICATION = "nb_automatic_notification";
+    public static final String MARK_NB_AUTOMATIC_NOTIFICATION        = "nb_automatic_notification";
     // date derniere relance
     public static final String MARK_LAST_AUTOMATIC_NOTIFICATION_DATE = "last_automatic_notification_date";
 
     // Parameters URL
-    public static final String PARAMETER_ID_MESSAGE_EXTERNAL_USER = "id_message_external_user";
-    public static final String PARAMETER_SIGNATURE = "signature";
-    public static final String PARAMETER_ID_TIMETAMP = "timestamp";
+    public static final String PARAMETER_ID_MESSAGE_EXTERNAL_USER    = "id_message_external_user";
+    public static final String PARAMETER_SIGNATURE                   = "signature";
+    public static final String PARAMETER_ID_TIMETAMP                 = "timestamp";
 
     /**
      * Private constructor

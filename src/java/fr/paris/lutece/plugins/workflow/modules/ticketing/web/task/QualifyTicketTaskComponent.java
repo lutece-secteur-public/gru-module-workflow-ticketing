@@ -38,11 +38,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.ticketing.business.ticket.TicketCriticality;
-import fr.paris.lutece.plugins.ticketing.business.ticket.TicketPriority;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
@@ -54,12 +51,6 @@ public class QualifyTicketTaskComponent extends TicketingTaskComponent
     // TEMPLATES
     private static final String TEMPLATE_TASK_QUALIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_qualify_ticket_form.html";
 
-    // MARKS
-    private static final String MARK_TICKET_PRIORITIES_LIST = "ticket_priorities_list";
-    private static final String MARK_TICKET_PRIORITY_DEFAULT = "ticket_priority_default";
-    private static final String MARK_TICKET_CRITICALITIES_LIST = "ticket_criticalities_list";
-    private static final String MARK_TICKET_CRITICALITY_DEFAULT = "ticket_criticality_default";
-
     /**
      * {@inheritDoc}
      */
@@ -67,14 +58,6 @@ public class QualifyTicketTaskComponent extends TicketingTaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
-
-        ReferenceList listPriorities = TicketPriority.getReferenceList( locale );
-        model.put( MARK_TICKET_PRIORITIES_LIST, listPriorities );
-        model.put( MARK_TICKET_PRIORITY_DEFAULT, TicketPriority.LOW );
-
-        ReferenceList listCriticalities = TicketCriticality.getReferenceList( locale );
-        model.put( MARK_TICKET_CRITICALITIES_LIST, listCriticalities );
-        model.put( MARK_TICKET_CRITICALITY_DEFAULT, TicketCriticality.LOW );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_QUALIFY_TICKET_FORM, locale, model );
 
