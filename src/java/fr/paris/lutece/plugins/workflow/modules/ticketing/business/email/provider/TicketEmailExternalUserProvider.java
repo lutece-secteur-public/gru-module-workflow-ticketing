@@ -39,7 +39,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -47,9 +46,7 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryType;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryTypeHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.plugins.ticketing.business.ticket.TicketCriticality;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
-import fr.paris.lutece.plugins.ticketing.business.ticket.TicketPriority;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.ITicketEmailExternalUserHistoryDAO;
@@ -72,49 +69,43 @@ import fr.paris.lutece.util.url.UrlItem;
 public class TicketEmailExternalUserProvider implements IProvider
 {
     // PROPERTY KEY
-    private static final String PROPERTY_SMS_SENDER_NAME = "workflow-ticketing.gruprovider.sms.sendername";
-    private static final String PROPERTY_RESPONSE_URL = "workflow-ticketing.workflow.task_ticket_email_external_user.url_response";
+    private static final String                PROPERTY_SMS_SENDER_NAME                        = "workflow-ticketing.gruprovider.sms.sendername";
+    private static final String                PROPERTY_RESPONSE_URL                           = "workflow-ticketing.workflow.task_ticket_email_external_user.url_response";
     // MESSAGE KEY
-    private static final String MESSAGE_MARKER_TICKET_REFERENCE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.reference";
-    private static final String MESSAGE_MARKER_TICKET_CHANNEL = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticket_channel";
-    private static final String MESSAGE_MARKER_TICKET_COMMENT = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.comment";
-    private static final String MESSAGE_MARKER_USER_TITLE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.civility";
-    private static final String MESSAGE_MARKER_USER_FIRSTNAME = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.firstname";
-    private static final String MESSAGE_MARKER_USER_LASTNAME = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.lastname";
-    private static final String MESSAGE_MARKER_USER_UNIT = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.unit_name";
-    private static final String MESSAGE_MARKER_NB_AUTOMATIC_NOTIFICATION = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.nb_automatic_notification";
-    private static final String MESSAGE_MARKER_LAST_AUTOMATIC_NOTIFICATION_DATE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.last_automatic_notification_date";
-    private static final String MESSAGE_MARKER_USER_CONTACT_MODE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.contact_mode";
-    private static final String MESSAGE_MARKER_USER_FIXED_PHONE_NUMBER = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.fixed_phone";
-    private static final String MESSAGE_MARKER_USER_MOBILE_PHONE_NUMBER = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.mobile_phone";
-    private static final String MESSAGE_MARKER_USER_EMAIL = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email";
-    private static final String MESSAGE_MARKER_TECHNICAL_URL_COMPLETE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.url_completed";
-    private static final String MESSAGE_MARKER_EMAIL_RECIPIENTS = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_recipients";
-    private static final String MESSAGE_MARKER_EMAIL_RECIPIENTS_CC = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_recipients_cc";
-    private static final String MESSAGE_MARKER_SUBJECT = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_subject";
-    private static final String MESSAGE_MARKER_MESSAGE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.message";
-    private static final String MESSAGE_MARKER_LINK = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticketing_ticket_link";
-    private static final String MESSAGE_MARKER_PRIORITY = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.priority";
-    private static final String MESSAGE_MARKER_CRITICALITY = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.criticality";
-    private static final String MESSAGE_MARKER_PRIORITY_LABEL = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.priority_label";
-    private static final String MESSAGE_MARKER_CRITICALITY_LABEL = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.criticality_label";
+    private static final String                MESSAGE_MARKER_TICKET_REFERENCE                 = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.reference";
+    private static final String                MESSAGE_MARKER_TICKET_CHANNEL                   = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticket_channel";
+    private static final String                MESSAGE_MARKER_TICKET_COMMENT                   = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.comment";
+    private static final String                MESSAGE_MARKER_USER_TITLE                       = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.civility";
+    private static final String                MESSAGE_MARKER_USER_FIRSTNAME                   = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.firstname";
+    private static final String                MESSAGE_MARKER_USER_LASTNAME                    = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.lastname";
+    private static final String                MESSAGE_MARKER_USER_UNIT                        = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.unit_name";
+    private static final String                MESSAGE_MARKER_NB_AUTOMATIC_NOTIFICATION        = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.nb_automatic_notification";
+    private static final String                MESSAGE_MARKER_LAST_AUTOMATIC_NOTIFICATION_DATE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.last_automatic_notification_date";
+    private static final String                MESSAGE_MARKER_USER_CONTACT_MODE                = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.contact_mode";
+    private static final String                MESSAGE_MARKER_USER_FIXED_PHONE_NUMBER          = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.fixed_phone";
+    private static final String                MESSAGE_MARKER_USER_MOBILE_PHONE_NUMBER         = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.mobile_phone";
+    private static final String                MESSAGE_MARKER_USER_EMAIL                       = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email";
+    private static final String                MESSAGE_MARKER_TECHNICAL_URL_COMPLETE           = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.url_completed";
+    private static final String                MESSAGE_MARKER_EMAIL_RECIPIENTS                 = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_recipients";
+    private static final String                MESSAGE_MARKER_EMAIL_RECIPIENTS_CC              = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_recipients_cc";
+    private static final String                MESSAGE_MARKER_SUBJECT                          = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.email_subject";
+    private static final String                MESSAGE_MARKER_MESSAGE                          = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.message";
+    private static final String                MESSAGE_MARKER_LINK                             = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticketing_ticket_link";
 
     /** The TicketEmailExternalUserHistoryDAO DAO. */
-    private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO = SpringContextService
-            .getBean( ITicketEmailExternalUserHistoryDAO.BEAN_SERVICE );
+    private ITicketEmailExternalUserHistoryDAO _ticketEmailExternalUserHistoryDAO              = SpringContextService.getBean( ITicketEmailExternalUserHistoryDAO.BEAN_SERVICE );
 
     /** The TicketingEmailExternalUserMessageDAO DAO. */
-    private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserDemandDAO = SpringContextService
-            .getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
+    private ITicketEmailExternalUserMessageDAO _ticketEmailExternalUserDemandDAO               = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
 
-    private Ticket _ticket;
-    private TicketEmailExternalUserMessage _emailExternalUserMessage;
+    private Ticket                             _ticket;
+    private TicketEmailExternalUserMessage     _emailExternalUserMessage;
 
-    SimpleDateFormat _dateFormater = new SimpleDateFormat( "dd/MM/yyyy" );
+    SimpleDateFormat                           _dateFormater                                   = new SimpleDateFormat( "dd/MM/yyyy" );
 
     /**
      * Constructor for a given resource
-     * 
+     *
      * @param resourceHistory
      *            the resource wich require the provider
      */
@@ -128,8 +119,7 @@ public class TicketEmailExternalUserProvider implements IProvider
         TicketEmailExternalUserHistory ticketEmailExternalUserHistory = _ticketEmailExternalUserHistoryDAO.loadByIdHistory( resourceHistory.getId( ) );
         if ( ticketEmailExternalUserHistory != null )
         {
-            _emailExternalUserMessage = _ticketEmailExternalUserDemandDAO
-                    .loadByIdMessageExternalUser( ticketEmailExternalUserHistory.getIdMessageExternalUser( ) );
+            _emailExternalUserMessage = _ticketEmailExternalUserDemandDAO.loadByIdMessageExternalUser( ticketEmailExternalUserHistory.getIdMessageExternalUser( ) );
         }
     }
 
@@ -241,8 +231,7 @@ public class TicketEmailExternalUserProvider implements IProvider
         for ( TicketCategoryType categoryType : TicketCategoryTypeHome.getCategoryTypesList( ) )
         {
             int depth = categoryType.getDepthNumber( );
-            collectionNotifyGruMarkers
-                    .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_CATEGORY + depth, _ticket.getCategoryOfDepth( depth ).getLabel( ) ) );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_CATEGORY + depth, _ticket.getCategoryOfDepth( depth ).getLabel( ) ) );
         }
 
         if ( _ticket.getChannel( ) != null )
@@ -254,44 +243,20 @@ public class TicketEmailExternalUserProvider implements IProvider
 
         if ( _ticket.getUrl( ) != null )
         {
-            collectionNotifyGruMarkers.add(
-                    createMarkerValues( TicketEmailExternalUserConstants.MARK_TECHNICAL_URL_COMPLETED, StringEscapeUtils.escapeHtml( _ticket.getUrl( ) ) ) );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_TECHNICAL_URL_COMPLETED, StringEscapeUtils.escapeHtml( _ticket.getUrl( ) ) ) );
         }
 
         // SPECIFIC EMAIL AGENT
         if ( _emailExternalUserMessage != null )
         {
-            collectionNotifyGruMarkers
-                    .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS, _emailExternalUserMessage.getEmailRecipients( ) ) );
-            collectionNotifyGruMarkers
-                    .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC, _emailExternalUserMessage.getEmailRecipientsCc( ) ) );
-            collectionNotifyGruMarkers
-                    .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_MESSAGE, _emailExternalUserMessage.getMessageQuestion( ) ) );
-            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LINK,
-                    buildTicketLink( _emailExternalUserMessage.getIdMessageExternalUser( ) ) ) );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS, _emailExternalUserMessage.getEmailRecipients( ) ) );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC, _emailExternalUserMessage.getEmailRecipientsCc( ) ) );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_MESSAGE, _emailExternalUserMessage.getMessageQuestion( ) ) );
+            collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LINK, buildTicketLink( _emailExternalUserMessage.getIdMessageExternalUser( ) ) ) );
             collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_SUBJECT, _emailExternalUserMessage.getEmailSubject( ) ) );
         }
 
-        TicketPriority priority = TicketPriority.valueOf( _ticket.getPriority( ) );
-        String priorityLabel = StringUtils.EMPTY;
-        if ( !TicketPriority.LOW.equals( priority ) )
-        {
-            priorityLabel = I18nService.getLocalizedString( MESSAGE_MARKER_PRIORITY_LABEL, I18nService.getDefaultLocale( ) )
-                    + priority.getLocalizedMessage( Locale.FRENCH );
-        }
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_PRIORITY, priorityLabel ) );
-
-        TicketCriticality criticality = TicketCriticality.valueOf( _ticket.getCriticality( ) );
-        String criticalityLabel = StringUtils.EMPTY;
-        if ( !TicketCriticality.LOW.equals( criticality ) )
-        {
-            criticalityLabel = I18nService.getLocalizedString( MESSAGE_MARKER_CRITICALITY_LABEL, I18nService.getDefaultLocale( ) )
-                    + criticality.getLocalizedMessage( Locale.FRENCH );
-        }
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_CRITICALITY, criticalityLabel ) );
-
-        collectionNotifyGruMarkers
-                .add( createMarkerValues( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, String.valueOf( _ticket.getNbRelance( ) ) ) );
+        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, String.valueOf( _ticket.getNbRelance( ) ) ) );
         if ( _ticket.getDateDerniereRelance( ) != null )
         {
             Calendar calendarDerniereRelance = Calendar.getInstance( );
@@ -299,8 +264,7 @@ public class TicketEmailExternalUserProvider implements IProvider
             Date dateDerniereRelance = calendarDerniereRelance.getTime( );
             String dateFormatee = _dateFormater.format( dateDerniereRelance );
             collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, dateFormatee ) );
-        }
-        else
+        } else
         {
             collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, StringUtils.EMPTY ) );
         }
@@ -310,7 +274,7 @@ public class TicketEmailExternalUserProvider implements IProvider
 
     /**
      * static method for retrieving descriptions of available marks
-     * 
+     *
      * @return Collection of NotifyGruMarker
      */
     public static Collection<NotifyGruMarker> getProviderMarkerDescriptions( )
@@ -323,10 +287,8 @@ public class TicketEmailExternalUserProvider implements IProvider
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_LASTNAME, MESSAGE_MARKER_USER_LASTNAME ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_UNIT_NAME, MESSAGE_MARKER_USER_UNIT ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_CONTACT_MODE, MESSAGE_MARKER_USER_CONTACT_MODE ) );
-        collectionNotifyGruMarkers
-                .add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_FIXED_PHONE, MESSAGE_MARKER_USER_FIXED_PHONE_NUMBER ) );
-        collectionNotifyGruMarkers
-                .add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_MOBILE_PHONE, MESSAGE_MARKER_USER_MOBILE_PHONE_NUMBER ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_FIXED_PHONE, MESSAGE_MARKER_USER_FIXED_PHONE_NUMBER ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_MOBILE_PHONE, MESSAGE_MARKER_USER_MOBILE_PHONE_NUMBER ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_EMAIL, MESSAGE_MARKER_USER_EMAIL ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TICKET_REFERENCE, MESSAGE_MARKER_TICKET_REFERENCE ) );
 
@@ -342,29 +304,22 @@ public class TicketEmailExternalUserProvider implements IProvider
 
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TICKET_CHANNEL, MESSAGE_MARKER_TICKET_CHANNEL ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TICKET_COMMENT, MESSAGE_MARKER_TICKET_COMMENT ) );
-        collectionNotifyGruMarkers
-                .add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TECHNICAL_URL_COMPLETED, MESSAGE_MARKER_TECHNICAL_URL_COMPLETE ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_TECHNICAL_URL_COMPLETED, MESSAGE_MARKER_TECHNICAL_URL_COMPLETE ) );
         // SPECIFIC EMAIL AGENT
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS, MESSAGE_MARKER_EMAIL_RECIPIENTS ) );
-        collectionNotifyGruMarkers
-                .add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC, MESSAGE_MARKER_EMAIL_RECIPIENTS_CC ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_EMAIL_RECIPIENTS_CC, MESSAGE_MARKER_EMAIL_RECIPIENTS_CC ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_SUBJECT, MESSAGE_MARKER_SUBJECT ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_MESSAGE, MESSAGE_MARKER_MESSAGE ) );
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_LINK, MESSAGE_MARKER_LINK ) );
-        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_PRIORITY, MESSAGE_MARKER_PRIORITY ) );
-        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_CRITICALITY, MESSAGE_MARKER_CRITICALITY ) );
-
-        collectionNotifyGruMarkers
-                .add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, MESSAGE_MARKER_NB_AUTOMATIC_NOTIFICATION ) );
-        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE,
-                MESSAGE_MARKER_LAST_AUTOMATIC_NOTIFICATION_DATE ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, MESSAGE_MARKER_NB_AUTOMATIC_NOTIFICATION ) );
+        collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_LAST_AUTOMATIC_NOTIFICATION_DATE, MESSAGE_MARKER_LAST_AUTOMATIC_NOTIFICATION_DATE ) );
 
         return collectionNotifyGruMarkers;
     }
 
     /**
      * Construct a NotifyGruMarker with value for given parameters
-     * 
+     *
      * @param strMarker
      *            maker
      * @param strValue
@@ -381,7 +336,7 @@ public class TicketEmailExternalUserProvider implements IProvider
 
     /**
      * Construct a NotifyGruMarker with descrition for given parameters
-     * 
+     *
      * @param strMarker
      *            marker
      * @param strDescription
@@ -409,8 +364,7 @@ public class TicketEmailExternalUserProvider implements IProvider
         String strTimestamp = Long.toString( new Date( ).getTime( ) );
         String strSignature = RequestAuthenticationService.getRequestAuthenticator( ).buildSignature( listElements, strTimestamp );
 
-        UrlItem urlTicketLink = new UrlItem(
-                AppPathService.getBaseUrl( LocalVariables.getRequest( ) ) + AppPropertiesService.getProperty( PROPERTY_RESPONSE_URL ) );
+        UrlItem urlTicketLink = new UrlItem( AppPathService.getBaseUrl( LocalVariables.getRequest( ) ) + AppPropertiesService.getProperty( PROPERTY_RESPONSE_URL ) );
         urlTicketLink.addParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER, nIdMessageExternalUser );
         urlTicketLink.addParameter( TicketEmailExternalUserConstants.PARAMETER_SIGNATURE, strSignature );
         urlTicketLink.addParameter( TicketEmailExternalUserConstants.PARAMETER_ID_TIMETAMP, strTimestamp );
