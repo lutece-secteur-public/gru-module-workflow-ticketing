@@ -133,6 +133,35 @@
 	<bean id="workflow-ticketing.qualifyTicketTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.QualifyTicketTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeQualifyTicket" />
+		
+		
+	<!-- Task Signalement ticket -->
+	<bean id="workflow-ticketing.taskSignalementTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskSignalementTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeSignalementTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskSignalementTicket" p:titleI18nKey="module.workflow.ticketing.task_signalement_ticket.title"
+		p:beanName="workflow-ticketing.taskSignalementTicket" p:formTaskRequired="true"
+		p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.signalementTicketTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.SignalementTicketTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeSignalementTicket" />
+	
+	
+		<!-- Task VSP ticket -->
+	<bean id="workflow-ticketing.taskVspTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskVspTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeVspTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskVousSimplifierParis" p:titleI18nKey="module.workflow.ticketing.task_vsp_ticket.title"
+		p:beanName="workflow-ticketing.taskVspTicket" p:formTaskRequired="true"
+		p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.vspTicketTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.VspTicketTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeVspTicket" />
+			
 
 	<!-- Task Assign Unit linked to Category -->
 	<bean id="workflow-ticketing.taskAssignUnitLinkedToCategory"

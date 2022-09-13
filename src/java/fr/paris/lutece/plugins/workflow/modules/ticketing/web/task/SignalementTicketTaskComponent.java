@@ -43,13 +43,13 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
- * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskQualifyTicket}
+ * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskSignalementTicket}
  *
  */
-public class QualifyTicketTaskComponent extends TicketingTaskComponent
+public class SignalementTicketTaskComponent extends TicketingTaskComponent
 {
     // TEMPLATES
-    private static final String TEMPLATE_TASK_QUALIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_qualify_ticket_form.html";
+    private static final String TEMPLATE_TASK_SIGNALEMENT_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_signalement_ticket_form.html";
 
     /**
      * {@inheritDoc}
@@ -59,7 +59,7 @@ public class QualifyTicketTaskComponent extends TicketingTaskComponent
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_QUALIFY_TICKET_FORM, locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_SIGNALEMENT_TICKET_FORM, locale, model );
 
         return template.getHtml( );
     }

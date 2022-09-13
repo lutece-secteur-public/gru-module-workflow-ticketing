@@ -31,36 +31,51 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.util.html.HtmlTemplate;
+import org.apache.commons.lang.StringUtils;
+
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
- * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskQualifyTicket}
+ * This class represents a task to report (signalement) the ticket
  *
  */
-public class QualifyTicketTaskComponent extends TicketingTaskComponent
+public class TaskVspTicket extends AbstractTicketingTask
 {
-    // TEMPLATES
-    private static final String TEMPLATE_TASK_QUALIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_qualify_ticket_form.html";
+    // Messages
+    private static final String MESSAGE_VSP_TICKET = "module.workflow.ticketing.task_signalement_ticket.labelVspTicket";
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
+    public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
+        String strTaskInformation = StringUtils.EMPTY;
+        StringBuilder sb = new StringBuilder( );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_QUALIFY_TICKET_FORM, locale, model );
+        // We get the ticket to report (signalement)
+        Ticket ticket = getTicket( nIdResourceHistory );
 
-        return template.getHtml( );
+        if ( ticket != null )
+        {
+
+            TicketHome.update( ticket );
+
+            strTaskInformation = sb.toString( );
+        }
+
+        return strTaskInformation;
     }
+
+    @Override
+    public String getTitle( Locale locale )
+    {
+        return I18nService.getLocalizedString( MESSAGE_VSP_TICKET, locale );
+    }
+
 }
