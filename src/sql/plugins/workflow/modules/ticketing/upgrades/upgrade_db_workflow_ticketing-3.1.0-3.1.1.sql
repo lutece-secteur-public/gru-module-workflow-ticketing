@@ -169,3 +169,8 @@ UPDATE workflow_action
 SET display_order=54
 WHERE id_action=350;
 
+-- Modification nom action workflow
+
+-- MAJ categoriser en Ajouter une nomenclature
+UPDATE workflow_action SET name='Ajouter une nomenclature', description='Ajout de la nomenclature' WHERE id_action=324;
+
