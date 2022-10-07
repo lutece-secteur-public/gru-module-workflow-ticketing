@@ -24,6 +24,22 @@
 	<input id="id" name="id" value="${id_ticket}" type="hidden">
 	<input id="page" name="page" value="" type="hidden">
 	<input id="redirect" name="redirect" value="" type="hidden">
+		<#if list_file_init?has_content>
+	    <div class="col-xs-12 col-sm-offset-1 col-sm-10">
+	       <div class="row form-group">
+				<div class="info_user col-xs-12 col-sm-12 col-md-3 col-lg-3 control-label right">
+			    	<p class="mr-5">#i18n{module.workflow.ticketing.externalUserResponse.documents}</p>
+			    </div>
+			<div class="info_user col-xs-12 col-sm-12 col-md-9 col-lg-9 control-label left">
+				<#list list_file_init as file>
+				    <div class="">
+				        <a class="pull-left" href="${list_url_init[file.idFile?string]}">${file.title}</a><br/>
+				    </div>
+	  			</#list>
+	   	 	</div>
+	   	 </div>
+	   	</div> 
+    </#if>
     <div class="col-xs-12 col-sm-offset-1 col-sm-10">
     <#if list_external_user_message?has_content >
       <#list list_external_user_message as external_user_message>
