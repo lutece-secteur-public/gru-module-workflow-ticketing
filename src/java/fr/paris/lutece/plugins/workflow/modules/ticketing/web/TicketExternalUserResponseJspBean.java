@@ -41,6 +41,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
@@ -63,6 +64,7 @@ import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.IResourceHistoryService;
 import fr.paris.lutece.plugins.workflowcore.service.resource.ResourceHistoryService;
+import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -113,7 +115,9 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     private static final String MARK_ID_TICKET = "id_ticket";
     private static final String MARK_ID_MESSAGE_EXTERNAL_USER = "id_message_external_user";
     private static final String MARK_LIST_FILE_UPLOAD = "list_file_uploaded";
+    private static final String MARK_LIST_FILE_INIT = "list_file_init";
     private static final String MARK_MAP_FILE_URL = "list_url";
+    private static final String MARK_MAP_FILE_URL_INIT = "list_url_init";
     private static final String MARK_USER_FACTORY = "user_factory";
     private static final String MARK_USER_ADMIN = "user_admin";
     private static final String MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM = "task_ticket_email_external_user_form";
@@ -178,7 +182,9 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         TicketEmailExternalUserHistory externalUserHistory = null;
         TaskTicketEmailExternalUserConfig externalUserConfig = null;
         List<UploadFile> listFileUpload = new ArrayList<>( );
+        List<File> listFileInit = new ArrayList<>( );
         Map<String, Object> mapFileUrl = new HashMap<>( );
+        Map<String, Object> mapFileInitUrl = new HashMap<>( );
         Map<String, Timestamp> mapAllMessageQuestion = new HashMap<>( );
         AdminUser userAdmin = null;
 
@@ -219,6 +225,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                     externalUserConfig = _taskTicketExternalUserConfigService.findByPrimaryKey( externalUserHistory.getIdTask( ) );
                 }
 
+
                 List<UploadFile> listFileUploadTemp = FactoryDOA.getUploadFileDAO( ).load( externalUserHistory.getIdResourceHistory( ),
                         WorkflowUtils.getPlugin( ) );
 
@@ -239,7 +246,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                 }
             }
 
-            if ( !listFileUpload.isEmpty( ) )
+            if ( !listFileUpload.isEmpty( ))
             {
                 String strBaseUrl = AppPathService.getBaseUrl( request );
 
@@ -257,6 +264,22 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         }
 
         Ticket ticket = TicketHome.findByPrimaryKey( requiredEmailExternalUserMessage.getIdTicket( ) );
+
+        if( null != ticket.getListResponse( ) )
+        {
+            for ( Response response : ticket.getListResponse( ) )
+            {
+                if( null != response.getFile( ) )
+                {
+                    listFileInit.add( response.getFile( ) );
+                    String strBaseUrl = AppPathService.getBaseUrl( request );
+
+                    mapFileInitUrl.put( Integer.toString( response.getFile( ).getIdFile( ) ),
+                            DownloadFileService.getUrlDownloadFile( response.getFile( ).getIdFile( ), strBaseUrl ) );
+                }
+            }
+        }
+
         State state = WorkflowService.getInstance( ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
                 AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ID, 301 ), -1 );
 
@@ -264,7 +287,9 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_REFERENCE, ticket.getReference( ) );
         model.put( MARK_LIST_EXTERNAL_USER_MESSAGE, listEmailExternalUserMessageDisplay );
         model.put( MARK_LIST_FILE_UPLOAD, listFileUpload );
+        model.put( MARK_LIST_FILE_INIT, listFileInit );
         model.put( MARK_MAP_FILE_URL, mapFileUrl );
+        model.put( MARK_MAP_FILE_URL_INIT, mapFileInitUrl );
         model.put( MARK_USER_FACTORY, UserFactory.getInstance( ) );
         model.put( TicketingConstants.MARK_AVATAR_AVAILABLE, _bAvatarAvailable );
         model.put( MARK_USER_ADMIN, userAdmin );
@@ -275,7 +300,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_ID_TICKET, ticket.getId( ) );
         model.put( MARK_ID_MESSAGE_EXTERNAL_USER, strIdEmailExternalUser );
 
-        if ( state != null && state.getId( ) != AppPropertiesService.getPropertyInt( PROPERTY_TICKET_STATUS_WAITING, 307 ) )
+        if ( ( state != null ) && ( state.getId( ) != AppPropertiesService.getPropertyInt( PROPERTY_TICKET_STATUS_WAITING, 307 ) ) )
         {
             model.put( MARK_EXPIRED, true );
         }
