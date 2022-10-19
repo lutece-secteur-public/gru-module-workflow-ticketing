@@ -147,6 +147,19 @@
 	<bean id="workflow-ticketing.signalementTicketTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.SignalementTicketTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeSignalementTicket" />
+		
+	<!-- Task Remove Signalement ticket -->
+	<bean id="workflow-ticketing.taskRemoveSignalementTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskRemoveSignalementTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeRemoveSignalementTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskRemoveSignalementTicket" p:titleI18nKey="module.workflow.ticketing.task_remove_signalement_ticket.title"
+		p:beanName="workflow-ticketing.taskRemoveSignalementTicket" p:formTaskRequired="true"
+		p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.removeSignalementTicketTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.RemoveSignalementTicketTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeRemoveSignalementTicket" />
 	
 	
 		<!-- Task VSP ticket -->
@@ -161,8 +174,20 @@
 	<bean id="workflow-ticketing.vspTicketTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.VspTicketTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeVspTicket" />
+		
+	<!-- Task Remove VSP ticket -->
+	<bean id="workflow-ticketing.taskRemoveVspTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskRemoveVspTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeRemoveVspTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskRemoveVousSimplifierParis" p:titleI18nKey="module.workflow.ticketing.task_remove_vsp_ticket.title"
+		p:beanName="workflow-ticketing.taskRemoveVspTicket" p:formTaskRequired="true"
+		p:taskForAutomaticAction="false" />
+	<bean id="workflow-ticketing.RemoveVspTicketTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.RemoveVspTicketTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeRemoveVspTicket" />
 			
-
 	<!-- Task Assign Unit linked to Category -->
 	<bean id="workflow-ticketing.taskAssignUnitLinkedToCategory"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAssignUnitLinkedToCategory"
