@@ -36,10 +36,14 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.service.VspResourceService;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
@@ -51,13 +55,25 @@ public class VspTicketTaskComponent extends TicketingTaskComponent
     // TEMPLATES
     private static final String TEMPLATE_TASK_VSP_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_vsp_ticket_form.html";
 
+    // MARKS
+    private static final String MARK_VSP_RULE_ACTIVE_LIST = "vsp_rule_active_list";
+
+    @Inject
+    private VspResourceService _vspResourceService;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
+        Ticket ticket = getTicket( nIdResource, strResourceType );
+        Map<String, Object> model = getModel( ticket );
+
+        ReferenceList vspRuleList = _vspResourceService.getVspRuleLsitWithSelectedChoice( ticket, locale );
+
+        model.put( MARK_VSP_RULE_ACTIVE_LIST, vspRuleList );
+
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_VSP_TICKET_FORM, locale, model );
 

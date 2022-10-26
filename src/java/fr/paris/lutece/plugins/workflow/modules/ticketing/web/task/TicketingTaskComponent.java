@@ -73,10 +73,13 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     protected static final String ATTRIBUTE_HIDE_NEXT_STEP_BUTTON = "hide_next_button";
 
     private static final String MESSAGE_DEFAULT_LABEL_ENTITY_TASK_FORM = "module.workflow.ticketing.task_assign_up_ticket.default.label.entity";
+    private static final String MESSAGE_DEFAULT_LABEL_VSP_RULE_TASK_FORM = "module.workflow.ticketing.task_vsp_ticket.default.label.rule";
 
     // Markers
     private static final String MARK_ERRORS = "errors";
     private static final String MARK_TICKET = "ticket";
+
+
 
     // SERVICES
     @Inject
@@ -244,7 +247,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
         for ( Integer level : levelList )
         {
             listUnitByLevel
-                    .addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
+            .addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
         }
         ReferenceList lstRef = new ReferenceList( listUnitByLevel.size( ) );
         ReferenceItem emptyReferenceItem = new ReferenceItem( );
@@ -264,4 +267,31 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
         return lstRef;
     }
+
+    /*    *//**
+     * Load the data of all the vsp rules returns them in form of a collection
+     *
+     * @param user
+     *            connected admin user
+     * @return the list which contains the data of all the vsp rules active
+     *//*
+    protected static ReferenceList getVspRulesActiveList( Request request )
+    {
+
+        ReferenceList listVspRules = VspRuleHome.getReferenceList( request.g )
+
+        ReferenceList lstRef = new ReferenceList( );
+        ReferenceItem emptyReferenceItem = new ReferenceItem( );
+        emptyReferenceItem.setCode( StringUtils.EMPTY );
+        emptyReferenceItem.setName( I18nService.getLocalizedString( MESSAGE_DEFAULT_LABEL_VSP_RULE_TASK_FORM, Locale.FRANCE ) );
+        emptyReferenceItem.setChecked( true );
+        lstRef.add( emptyReferenceItem );
+
+        for ( VspRule rule : listVspRules )
+        {
+            lstRef.addItem( rule.getId( ), unit.task_vsp_ticket.default.label.rule= - Choisir une r\u00e8gle - );
+        }
+
+        return lstRef;
+    }*/
 }
