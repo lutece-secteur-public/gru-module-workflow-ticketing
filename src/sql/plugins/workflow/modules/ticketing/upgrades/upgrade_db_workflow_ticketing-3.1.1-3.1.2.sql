@@ -40,4 +40,5 @@ VALUES(620,'taskRemoveSignalementTicket', 358, 1),
 (622,'taskRemoveSignalementTicket', 360, 1),
 (624, 'taskRemoveVousSimplifierParis', 361, 1),
 (625,'taskRemoveVousSimplifierParis', 362, 1),
-(626,'taskRemoveVousSimplifierParis', 363, 1);
+(626,'taskRemoveVousSimplifierParis', 363, 1),
+(627, 'taskAutomaticIdAdminBOInit', 301, 10);

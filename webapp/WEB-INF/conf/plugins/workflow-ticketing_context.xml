@@ -383,6 +383,19 @@
 		p:beanName="workflow-ticketing.taskAutomaticAssignmentDirection"
 		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
 		
+	<!-- Task Auto Admin connected -->
+	<bean id="workflow-ticketing.taskAutomaticIdAdminBOInit"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAutomaticIdAdminBOInit"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAutomaticIdAdminBOInit"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskAutomaticIdAdminBOInit" p:titleI18nKey="module.workflow.ticketing.task_automatic_id_bo_admin.title"
+		p:beanName="workflow-ticketing.taskAutomaticIdAdminBOInit"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+		<bean id="workflow-ticketing.automaticIdAdminBOInit"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeAutomaticIdAdminBOInit" />
+		
 	<!-- Task Sphinx -->
 	<bean id="workflow-ticketing.taskSphinx"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskSphinx"
