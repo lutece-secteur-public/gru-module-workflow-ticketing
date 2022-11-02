@@ -1,10 +1,12 @@
 <input name="redirect" id="redirect" value="" type="hidden">
  <div id='vsp_rules_liste'>
  	<#if vsp_rule_active_list?? && vsp_rule_active_list?has_content>
-		<@formGroup labelFor='vsp_rule_choice' labelKey='#i18n{module.workflow.ticketing.task_vsp_ticket.labelVsRuleChoice}' >
+		<@formGroup labelFor='vsp_rule_choice' labelKey='#i18n{module.workflow.ticketing.task_vsp_ticket.labelVsRuleChoice} :' >
 			<#list vsp_rule_active_list as list >
 				<@checkBox orientation='vertical' name='vsp_rule_choice' value=list.code checked=list.checked labelKey=list.name />
-			</#list>	
+			</#list>
+			<br/>
+			<span class="help-block">#i18n{module.workflow.ticketing.task_vsp_ticket.labelVsRuleChoice.help}</span>	
 		</@formGroup>
 		<div class="form-group" id="errorRule" style="display: none;">
         	<div class="col-xs-12 col-sm-offset-3 col-sm-6 col-md-6 col-lg-6 alert alert-danger">
