@@ -1,4 +1,4 @@
---- Possiblite de supprimer Signalement et Vous simplifier Paris
+-- Possiblite de supprimer Signalement et Vous simplifier Paris
 
 -- Vider emplacement pour intercaler boutons
 UPDATE workflow_action SET display_order = display_order + 1 WHERE display_order > 5; 
@@ -42,3 +42,8 @@ VALUES(620,'taskRemoveSignalementTicket', 358, 1),
 (625,'taskRemoveVousSimplifierParis', 362, 1),
 (626,'taskRemoveVousSimplifierParis', 363, 1),
 (627, 'taskAutomaticIdAdminBOInit', 301, 10);
+
+-- configuration pour la relance automatique de usagers
+INSERT INTO core_datastore (entity_key, entity_value) VALUES
+('ticketing.configuration.relance_auto_usager.nb_relance_max', '3'),
+('ticketing.configuration.relance_auto_usager.frequence_relance', '7');
