@@ -1,1 +1,53 @@
 <input name="redirect" id="redirect" value="" type="hidden">
+ <div id='vsp_rules_liste'>
+ 	<#if vsp_rule_active_list?? && vsp_rule_active_list?has_content>
+		<@formGroup labelFor='vsp_rule_choice' labelKey='#i18n{module.workflow.ticketing.task_vsp_ticket.labelVsRuleChoice} :' >
+			<#list vsp_rule_active_list as list >
+				<@checkBox orientation='vertical' name='vsp_rule_choice' value=list.code checked=list.checked labelKey=list.name />
+			</#list>
+			<br/>
+			<span class="help-block">#i18n{module.workflow.ticketing.task_vsp_ticket.labelVsRuleChoice.help}</span>	
+		</@formGroup>
+		<div class="form-group" id="errorRule" style="display: none;">
+        	<div class="col-xs-12 col-sm-offset-3 col-sm-6 col-md-6 col-lg-6 alert alert-danger">
+            	<i class="fa fa-exclamation-circle"></i>
+            	<span>#i18n{module.workflow.ticketing.task_vsp_ticket_form.message.empty.rule}</span>
+        	</div>
+		</div>
+	</#if>
+</div>
+
+<script language="javascript">
+$(document).ready(function() { 
+    	
+	  	$(document).on('change', '.checkbox input[type=checkbox]', function () {
+    		if( $(this).prop('checked') == false ){
+    			$(this).prop('checked', false ).removeAttr('checked');
+    		} else {
+    			$(this).prop('checked', true).attr('checked', 'checked');
+    		}
+    	});
+
+		$('#wf_action_form').submit(function( ){
+        	
+        	let nbRuleschecked = 0;
+        	
+    		$('#vsp_rules_liste input[type=checkbox]').each(function(){
+    			if( $(this).is(':checked') ){
+    				console.log('coche');
+    				nbRuleschecked++;
+    			}
+    		});
+    		        	
+			if( nbRuleschecked == 0 ){
+				$('#errorRule').show();
+				return false;
+			} else {
+				$('#errorRule').hide();
+				return true;
+			}
+		});
+
+        
+    });
+</script>
