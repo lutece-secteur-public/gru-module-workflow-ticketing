@@ -54,7 +54,7 @@ public class TaskModifyTicketCategoryConfigDAO implements ITaskConfigDAO<TaskMod
     @Override
     public synchronized void insert( TaskModifyTicketCategoryConfig config )
     {
-        if ( config.getSelectedEntries( ).size( ) == 0 )
+        if ( config.getSelectedEntries( ).isEmpty( ) )
         {
             return;
         }
@@ -66,18 +66,18 @@ public class TaskModifyTicketCategoryConfigDAO implements ITaskConfigDAO<TaskMod
             strQuery.append( SQL_QUERY_ADD_INSERT );
         }
 
-        DAOUtil daoUtil = new DAOUtil( strQuery.toString( ), PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-
-        int nIndexDao = 1;
-
-        for ( int nIdx = 0; nIdx < config.getSelectedEntries( ).size( ); nIdx++ )
+        try ( DAOUtil daoUtil = new DAOUtil( strQuery.toString( ), PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
-            daoUtil.setInt( nIndexDao++, config.getIdTask( ) );
-            daoUtil.setInt( nIndexDao++, config.getSelectedEntries( ).get( nIdx ) );
+            int nIndexDao = 1;
+
+            for ( int nIdx = 0; nIdx < config.getSelectedEntries( ).size( ); nIdx++ )
+            {
+                daoUtil.setInt( nIndexDao++, config.getIdTask( ) );
+                daoUtil.setInt( nIndexDao++, config.getSelectedEntries( ).get( nIdx ) );
+            }
+            daoUtil.executeUpdate( );
         }
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
     }
 
     /**
@@ -96,20 +96,21 @@ public class TaskModifyTicketCategoryConfigDAO implements ITaskConfigDAO<TaskMod
     @Override
     public TaskModifyTicketCategoryConfig load( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeQuery( );
-
         TaskModifyTicketCategoryConfig config = new TaskModifyTicketCategoryConfig( );
-        config.setIdTask( nIdTask );
 
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
-            config.addSelectedEntry( daoUtil.getInt( 1 ) );
-        }
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeQuery( );
 
-        daoUtil.free( );
+
+            config.setIdTask( nIdTask );
+
+            while ( daoUtil.next( ) )
+            {
+                config.addSelectedEntry( daoUtil.getInt( 1 ) );
+            }
+        }
 
         return config;
     }
@@ -120,10 +121,10 @@ public class TaskModifyTicketCategoryConfigDAO implements ITaskConfigDAO<TaskMod
     @Override
     public synchronized void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_FOR_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_FOR_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 }

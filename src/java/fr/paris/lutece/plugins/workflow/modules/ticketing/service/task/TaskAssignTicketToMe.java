@@ -74,7 +74,7 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ticket != null && !bBypassAssignToMe )
+        if ( ( ticket != null ) && !bBypassAssignToMe )
         {
             AssigneeUser assigneeUser = ticket.getAssigneeUser( );
             String strCurrentUser = null;
@@ -103,7 +103,7 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
 
                     List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
 
-                    if ( ( unitsList != null ) && ( unitsList.size( ) > 0 ) )
+                    if ( ( unitsList != null ) && ( !unitsList.isEmpty( ) ) )
                     {
                         AssigneeUnit assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
                         ticket.setAssigneeUnit( assigneeUnit );

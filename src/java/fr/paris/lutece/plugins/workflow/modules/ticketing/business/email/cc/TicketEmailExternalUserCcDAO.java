@@ -61,18 +61,17 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
      */
     public int newPrimaryKey( )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, WorkflowTicketingPlugin.getPlugin( ) );
-        daoUtil.executeQuery( );
-
         int nKey = 1;
 
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            nKey = daoUtil.getInt( 1 ) + 1;
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                nKey = daoUtil.getInt( 1 ) + 1;
+            }
         }
-
-        daoUtil.free( );
-
         return nKey;
     }
 
@@ -83,18 +82,19 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
     @Transactional( "workflow.transactionManager" )
     public synchronized void insert( TicketEmailExternalUserCc infosEmailExternalUser )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowTicketingPlugin.getPlugin( ) );
-        infosEmailExternalUser.setIdInfosHistory( newPrimaryKey( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowTicketingPlugin.getPlugin( ) ) )
+        {
+            infosEmailExternalUser.setIdInfosHistory( newPrimaryKey( ) );
 
-        int nIndex = 1;
+            int nIndex = 1;
 
-        daoUtil.setInt( nIndex++, infosEmailExternalUser.getIdInfosHistory( ) );
-        daoUtil.setInt( nIndex++, infosEmailExternalUser.getIdTask( ) );
-        daoUtil.setInt( nIndex++, infosEmailExternalUser.getIdResourceHistory( ) );
-        daoUtil.setString( nIndex++, infosEmailExternalUser.getEmail( ) );
+            daoUtil.setInt( nIndex++, infosEmailExternalUser.getIdInfosHistory( ) );
+            daoUtil.setInt( nIndex++, infosEmailExternalUser.getIdTask( ) );
+            daoUtil.setInt( nIndex++, infosEmailExternalUser.getIdResourceHistory( ) );
+            daoUtil.setString( nIndex++, infosEmailExternalUser.getEmail( ) );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -103,31 +103,31 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
     @Override
     public List<TicketEmailExternalUserCc> loadByIdHistory( int nIdHistory, int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_HISTORY, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdHistory );
-        daoUtil.setInt( 2, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
         TicketEmailExternalUserCc infosEmailExternalUser;
-        List<TicketEmailExternalUserCc> listInfosEmailExternalUser = new ArrayList<TicketEmailExternalUserCc>( );
+        List<TicketEmailExternalUserCc> listInfosEmailExternalUser = new ArrayList<>( );
 
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_HISTORY, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            nIndex = 1;
-            infosEmailExternalUser = new TicketEmailExternalUserCc( );
-            infosEmailExternalUser.setIdInfosHistory( daoUtil.getInt( nIndex++ ) );
-            infosEmailExternalUser.setIdTask( daoUtil.getInt( nIndex++ ) );
-            infosEmailExternalUser.setIdResourceHistory( daoUtil.getInt( nIndex++ ) );
-            infosEmailExternalUser.setEmail( daoUtil.getString( nIndex++ ) );
+            daoUtil.setInt( 1, nIdHistory );
+            daoUtil.setInt( 2, nIdTask );
 
-            listInfosEmailExternalUser.add( infosEmailExternalUser );
+            daoUtil.executeQuery( );
+
+            int nIndex = 1;
+
+
+            while ( daoUtil.next( ) )
+            {
+                nIndex = 1;
+                infosEmailExternalUser = new TicketEmailExternalUserCc( );
+                infosEmailExternalUser.setIdInfosHistory( daoUtil.getInt( nIndex++ ) );
+                infosEmailExternalUser.setIdTask( daoUtil.getInt( nIndex++ ) );
+                infosEmailExternalUser.setIdResourceHistory( daoUtil.getInt( nIndex++ ) );
+                infosEmailExternalUser.setEmail( daoUtil.getString( nIndex++ ) );
+
+                listInfosEmailExternalUser.add( infosEmailExternalUser );
+            }
         }
-
-        daoUtil.free( );
-
         return listInfosEmailExternalUser;
     }
 
@@ -138,11 +138,11 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
     @Transactional( "workflow.transactionManager" )
     public void deleteByIdCc( int nIdCc )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdCc );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdCc );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -152,10 +152,10 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
     @Transactional( "workflow.transactionManager" )
     public void deleteByIdHistory( int nIdHistory )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdHistory );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, WorkflowTicketingPlugin.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdHistory );
+            daoUtil.executeUpdate( );
+        }
     }
 }

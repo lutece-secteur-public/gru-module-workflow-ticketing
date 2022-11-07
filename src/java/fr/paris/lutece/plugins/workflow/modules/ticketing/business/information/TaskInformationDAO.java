@@ -56,14 +56,14 @@ public class TaskInformationDAO implements ITaskInformationDAO
     @Override
     public synchronized void insert( TaskInformation taskInformation, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
+        {
+            daoUtil.setInt( 1, taskInformation.getIdResourceHistory( ) );
+            daoUtil.setInt( 2, taskInformation.getIdTask( ) );
+            daoUtil.setString( 3, taskInformation.getValue( ) );
 
-        daoUtil.setInt( 1, taskInformation.getIdResourceHistory( ) );
-        daoUtil.setInt( 2, taskInformation.getIdTask( ) );
-        daoUtil.setString( 3, taskInformation.getValue( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -74,23 +74,21 @@ public class TaskInformationDAO implements ITaskInformationDAO
     {
         TaskInformation taskInformation = null;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
-
-        daoUtil.setInt( 1, nIdHistory );
-        daoUtil.setInt( 2, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
         {
-            taskInformation = new TaskInformation( );
-            taskInformation.setIdResourceHistory( daoUtil.getInt( 1 ) );
-            taskInformation.setIdTask( daoUtil.getInt( 2 ) );
-            taskInformation.setValue( daoUtil.getString( 3 ) );
+            daoUtil.setInt( 1, nIdHistory );
+            daoUtil.setInt( 2, nIdTask );
+
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                taskInformation = new TaskInformation( );
+                taskInformation.setIdResourceHistory( daoUtil.getInt( 1 ) );
+                taskInformation.setIdTask( daoUtil.getInt( 2 ) );
+                taskInformation.setValue( daoUtil.getString( 3 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return taskInformation;
     }
 
@@ -100,13 +98,13 @@ public class TaskInformationDAO implements ITaskInformationDAO
     @Override
     public void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdHistory );
+            daoUtil.setInt( 2, nIdTask );
 
-        daoUtil.setInt( 1, nIdHistory );
-        daoUtil.setInt( 2, nIdTask );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -115,10 +113,10 @@ public class TaskInformationDAO implements ITaskInformationDAO
     @Override
     public void deleteByTask( int nIdTask, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 }

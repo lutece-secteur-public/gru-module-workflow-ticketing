@@ -70,24 +70,26 @@ public class TaskIndexTicket extends AbstractTicketingTask
         if ( ticket == null )
         {
             AppLogService.error( "No ticket found for idResourecehistory : " + nIdResourceHistory );
-            return strTaskInformation;
-        }
-        int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID, TicketingConstants.PROPERTY_UNSET_INT );
-        State state = WorkflowService.getInstance( ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null );
-
-        IndexerAction indexerAction = new IndexerAction( );
-        indexerAction.setIdTicket( ticket.getId( ) );
-
-        if ( ( state == null ) || ( state.getId( ) == AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ACTION_ID_NEW, 301 ) ) )
-        {
-            indexerAction.setIdTask( IndexerAction.TASK_CREATE );
         }
         else
         {
-            indexerAction.setIdTask( IndexerAction.TASK_MODIFY );
-        }
+            int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID, TicketingConstants.PROPERTY_UNSET_INT );
+            State state = WorkflowService.getInstance( ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null );
 
-        IndexerActionHome.create( indexerAction );
+            IndexerAction indexerAction = new IndexerAction( );
+            indexerAction.setIdTicket( ticket.getId( ) );
+
+            if ( ( state == null ) || ( state.getId( ) == AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ACTION_ID_NEW, 301 ) ) )
+            {
+                indexerAction.setIdTask( IndexerAction.TASK_CREATE );
+            }
+            else
+            {
+                indexerAction.setIdTask( IndexerAction.TASK_MODIFY );
+            }
+
+            IndexerActionHome.create( indexerAction );
+        }
 
         return strTaskInformation;
     }
