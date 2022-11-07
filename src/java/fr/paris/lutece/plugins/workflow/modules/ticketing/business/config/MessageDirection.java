@@ -51,43 +51,43 @@ public enum MessageDirection
     AGENT_TO_USER;
 
     private static final String MESSAGE_PREFIX = "module.workflow.ticketing.task_reply_config.message.direction.";
-    private static Map<Integer, MessageDirection> _mapMessageDirection = new HashMap<Integer, MessageDirection>( );
+    private static Map<Integer, MessageDirection> mapMessageDirection = new HashMap<>( );
 
     static
     {
         for ( MessageDirection enumMessageDirection : EnumSet.allOf( MessageDirection.class ) )
         {
-            _mapMessageDirection.put( enumMessageDirection.ordinal( ), enumMessageDirection );
+            mapMessageDirection.put( enumMessageDirection.ordinal( ), enumMessageDirection );
         }
     }
 
     /**
      * returns MessageDirection enum from id
-     * 
+     *
      * @param nMessageDirectionId
      *            level value
      * @return MessageDirection enum
      */
     public static MessageDirection valueOf( int nMessageDirectionId )
     {
-        return _mapMessageDirection.get( Integer.valueOf( nMessageDirectionId ) );
+        return mapMessageDirection.get( Integer.valueOf( nMessageDirectionId ) );
     }
 
     /**
      * Gives the localized message
-     * 
+     *
      * @param locale
      *            the locale to use
      * @return the message
      */
     public String getLocalizedMessage( Locale locale )
     {
-        return I18nService.getLocalizedString( MESSAGE_PREFIX + this.name( ).toLowerCase( ), locale );
+        return I18nService.getLocalizedString( MESSAGE_PREFIX + name( ).toLowerCase( ), locale );
     }
 
     /**
      * Builds a RefenrenceList object containing all the MessageDirection objects
-     * 
+     *
      * @param locale
      *            the locale used to retrieve the localized messages
      * @return the ReferenceList object

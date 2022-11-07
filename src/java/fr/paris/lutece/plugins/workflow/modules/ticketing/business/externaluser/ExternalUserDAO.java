@@ -102,22 +102,22 @@ public class ExternalUserDAO implements IExternalUserDAO
             strQuery.append( SQL_WHERE_ACTION_RBAC_CLAUSE );
         }
 
-        DAOUtil daoUtil = new DAOUtil( strQuery.toString( ), WorkflowTicketingPlugin.getPlugin( ) );
+        boolean bEmailOk = false;
 
-        int nIndex = 1;
-        daoUtil.setString( nIndex++, strEmail );
-
-        if ( StringUtils.isNotEmpty( strActionId ) )
+        try ( DAOUtil daoUtil = new DAOUtil( strQuery.toString( ), WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            daoUtil.setString( nIndex++, strActionId );
+            int nIndex = 1;
+            daoUtil.setString( nIndex++, strEmail );
+
+            if ( StringUtils.isNotEmpty( strActionId ) )
+            {
+                daoUtil.setString( nIndex++, strActionId );
+            }
+
+            daoUtil.executeQuery( );
+
+            bEmailOk = daoUtil.next( );
         }
-
-        daoUtil.executeQuery( );
-
-        boolean bEmailOk = daoUtil.next( );
-
-        daoUtil.free( );
-
         return bEmailOk;
     }
 
@@ -162,52 +162,52 @@ public class ExternalUserDAO implements IExternalUserDAO
             strQuery.append( SQL_WHERE_ACTION_RBAC_CLAUSE );
         }
 
-        DAOUtil daoUtil = new DAOUtil( strQuery.toString( ), WorkflowTicketingPlugin.getPlugin( ) );
+        Set<ExternalUser> lstExternalUser = new TreeSet<>( new ExternalUserComparator( ) );
 
-        int nIndex = 1;
-
-        if ( StringUtils.isNotEmpty( strIdAttribute ) )
+        try ( DAOUtil daoUtil = new DAOUtil( strQuery.toString( ), WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            daoUtil.setString( nIndex++, strIdAttribute );
+            int nIndex = 1;
+
+            if ( StringUtils.isNotEmpty( strIdAttribute ) )
+            {
+                daoUtil.setString( nIndex++, strIdAttribute );
+            }
+
+            if ( StringUtils.isNotEmpty( strLastname ) )
+            {
+                daoUtil.setString( nIndex++, CONSTANT_PERCENT + strLastname + CONSTANT_PERCENT );
+            }
+
+            if ( StringUtils.isNotEmpty( strEmail ) )
+            {
+                daoUtil.setString( nIndex++, CONSTANT_PERCENT + strEmail + CONSTANT_PERCENT );
+            }
+
+            if ( StringUtils.isNotEmpty( strIdAttribute ) && StringUtils.isNotEmpty( strAttributeValue ) )
+            {
+                daoUtil.setString( nIndex++, CONSTANT_PERCENT + strAttributeValue + CONSTANT_PERCENT );
+
+            }
+
+            if ( StringUtils.isNotEmpty( strActionId ) )
+            {
+                daoUtil.setString( nIndex++, strActionId );
+            }
+
+            daoUtil.executeQuery( );
+
+
+
+            while ( daoUtil.next( ) )
+            {
+                ExternalUser externalUser = new ExternalUser( );
+                externalUser.setLastname( daoUtil.getString( 1 ) );
+                externalUser.setFirstname( daoUtil.getString( 2 ) );
+                externalUser.setEmail( daoUtil.getString( 3 ) );
+                externalUser.setAdditionalAttribute( daoUtil.getString( 4 ) );
+                lstExternalUser.add( externalUser );
+            }
         }
-
-        if ( StringUtils.isNotEmpty( strLastname ) )
-        {
-            daoUtil.setString( nIndex++, CONSTANT_PERCENT + strLastname + CONSTANT_PERCENT );
-        }
-
-        if ( StringUtils.isNotEmpty( strEmail ) )
-        {
-            daoUtil.setString( nIndex++, CONSTANT_PERCENT + strEmail + CONSTANT_PERCENT );
-        }
-
-        if ( StringUtils.isNotEmpty( strIdAttribute ) && StringUtils.isNotEmpty( strAttributeValue ) )
-        {
-            daoUtil.setString( nIndex++, CONSTANT_PERCENT + strAttributeValue + CONSTANT_PERCENT );
-
-        }
-
-        if ( StringUtils.isNotEmpty( strActionId ) )
-        {
-            daoUtil.setString( nIndex++, strActionId );
-        }
-
-        daoUtil.executeQuery( );
-
-        Set<ExternalUser> lstExternalUser = new TreeSet<ExternalUser>( new ExternalUserComparator( ) );
-
-        while ( daoUtil.next( ) )
-        {
-            ExternalUser externalUser = new ExternalUser( );
-            externalUser.setLastname( daoUtil.getString( 1 ) );
-            externalUser.setFirstname( daoUtil.getString( 2 ) );
-            externalUser.setEmail( daoUtil.getString( 3 ) );
-            externalUser.setAdditionalAttribute( daoUtil.getString( 4 ) );
-            lstExternalUser.add( externalUser );
-        }
-
-        daoUtil.free( );
-
         return ( new ArrayList<ExternalUser>( lstExternalUser ) );
     }
 }

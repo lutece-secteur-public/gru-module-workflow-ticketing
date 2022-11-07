@@ -65,17 +65,17 @@ public class EditableTicketDAO implements IEditableTicketDAO
     @Override
     public synchronized void insert( EditableTicket ediableTicket )
     {
-        int nIndex = 1;
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
+            daoUtil.setInt( nIndex++, ediableTicket.getIdHistory( ) );
+            daoUtil.setInt( nIndex++, ediableTicket.getIdTask( ) );
+            daoUtil.setInt( nIndex++, ediableTicket.getIdTicket( ) );
+            daoUtil.setString( nIndex++, ediableTicket.getMessage( ) );
+            daoUtil.setBoolean( nIndex++, ediableTicket.isEdited( ) );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( nIndex++, ediableTicket.getIdHistory( ) );
-        daoUtil.setInt( nIndex++, ediableTicket.getIdTask( ) );
-        daoUtil.setInt( nIndex++, ediableTicket.getIdTicket( ) );
-        daoUtil.setString( nIndex++, ediableTicket.getMessage( ) );
-        daoUtil.setBoolean( nIndex++, ediableTicket.isEdited( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -84,18 +84,17 @@ public class EditableTicketDAO implements IEditableTicketDAO
     @Override
     public void store( EditableTicket editableTicket )
     {
-        int nIndex = 1;
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
+            daoUtil.setString( nIndex++, editableTicket.getMessage( ) );
+            daoUtil.setBoolean( nIndex++, editableTicket.isEdited( ) );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+            daoUtil.setInt( nIndex++, editableTicket.getIdHistory( ) );
+            daoUtil.setInt( nIndex++, editableTicket.getIdTask( ) );
 
-        daoUtil.setString( nIndex++, editableTicket.getMessage( ) );
-        daoUtil.setBoolean( nIndex++, editableTicket.isEdited( ) );
-
-        daoUtil.setInt( nIndex++, editableTicket.getIdHistory( ) );
-        daoUtil.setInt( nIndex++, editableTicket.getIdTask( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -106,27 +105,26 @@ public class EditableTicketDAO implements IEditableTicketDAO
     {
         EditableTicket editableTicket = null;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        int nIndex = 1;
-        daoUtil.setInt( nIndex++, nIdHistory );
-        daoUtil.setInt( nIndex++, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
-            nIndex = 1;
+            int nIndex = 1;
+            daoUtil.setInt( nIndex++, nIdHistory );
+            daoUtil.setInt( nIndex++, nIdTask );
 
-            editableTicket = new EditableTicket( );
-            editableTicket.setIdHistory( daoUtil.getInt( nIndex++ ) );
-            editableTicket.setIdTask( daoUtil.getInt( nIndex++ ) );
-            editableTicket.setIdTicket( daoUtil.getInt( nIndex++ ) );
-            editableTicket.setMessage( daoUtil.getString( nIndex++ ) );
-            editableTicket.setIsEdited( daoUtil.getBoolean( nIndex++ ) );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                nIndex = 1;
+
+                editableTicket = new EditableTicket( );
+                editableTicket.setIdHistory( daoUtil.getInt( nIndex++ ) );
+                editableTicket.setIdTask( daoUtil.getInt( nIndex++ ) );
+                editableTicket.setIdTicket( daoUtil.getInt( nIndex++ ) );
+                editableTicket.setMessage( daoUtil.getString( nIndex++ ) );
+                editableTicket.setIsEdited( daoUtil.getBoolean( nIndex++ ) );
+            }
         }
-
-        daoUtil.free( );
-
         return editableTicket;
     }
 
@@ -138,26 +136,25 @@ public class EditableTicketDAO implements IEditableTicketDAO
     {
         EditableTicket editableTicket = null;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_TICKET, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        int nIndex = 1;
-        daoUtil.setInt( nIndex++, nIdTicket );
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_TICKET, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
-            nIndex = 1;
+            int nIndex = 1;
+            daoUtil.setInt( nIndex++, nIdTicket );
 
-            editableTicket = new EditableTicket( );
-            editableTicket.setIdHistory( daoUtil.getInt( nIndex++ ) );
-            editableTicket.setIdTask( daoUtil.getInt( nIndex++ ) );
-            editableTicket.setIdTicket( daoUtil.getInt( nIndex++ ) );
-            editableTicket.setMessage( daoUtil.getString( nIndex++ ) );
-            editableTicket.setIsEdited( daoUtil.getBoolean( nIndex++ ) );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                nIndex = 1;
+
+                editableTicket = new EditableTicket( );
+                editableTicket.setIdHistory( daoUtil.getInt( nIndex++ ) );
+                editableTicket.setIdTask( daoUtil.getInt( nIndex++ ) );
+                editableTicket.setIdTicket( daoUtil.getInt( nIndex++ ) );
+                editableTicket.setMessage( daoUtil.getString( nIndex++ ) );
+                editableTicket.setIsEdited( daoUtil.getBoolean( nIndex++ ) );
+            }
         }
-
-        daoUtil.free( );
-
         return editableTicket;
     }
 
@@ -167,27 +164,26 @@ public class EditableTicketDAO implements IEditableTicketDAO
     @Override
     public List<EditableTicket> loadByIdTask( int nIdTask )
     {
-        List<EditableTicket> listEditableTickets = new ArrayList<EditableTicket>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        List<EditableTicket> listEditableTickets = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
-            int nIndex = 1;
+            daoUtil.setInt( 1, nIdTask );
 
-            EditableTicket editableTicket = new EditableTicket( );
-            editableTicket.setIdHistory( daoUtil.getInt( nIndex++ ) );
-            editableTicket.setIdTask( daoUtil.getInt( nIndex++ ) );
-            editableTicket.setIdTicket( daoUtil.getInt( nIndex++ ) );
-            editableTicket.setMessage( daoUtil.getString( nIndex++ ) );
-            editableTicket.setIsEdited( daoUtil.getBoolean( nIndex++ ) );
-            listEditableTickets.add( editableTicket );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                int nIndex = 1;
+
+                EditableTicket editableTicket = new EditableTicket( );
+                editableTicket.setIdHistory( daoUtil.getInt( nIndex++ ) );
+                editableTicket.setIdTask( daoUtil.getInt( nIndex++ ) );
+                editableTicket.setIdTicket( daoUtil.getInt( nIndex++ ) );
+                editableTicket.setMessage( daoUtil.getString( nIndex++ ) );
+                editableTicket.setIsEdited( daoUtil.getBoolean( nIndex++ ) );
+                listEditableTickets.add( editableTicket );
+            }
         }
-
-        daoUtil.free( );
-
         return listEditableTickets;
     }
 
@@ -197,13 +193,14 @@ public class EditableTicketDAO implements IEditableTicketDAO
     @Override
     public void deleteByIdHistory( int nIdHistory, int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_HISTORY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        int nIndex = 1;
-        daoUtil.setInt( nIndex++, nIdHistory );
-        daoUtil.setInt( nIndex++, nIdTask );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_HISTORY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
+            daoUtil.setInt( nIndex++, nIdHistory );
+            daoUtil.setInt( nIndex++, nIdTask );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -212,9 +209,10 @@ public class EditableTicketDAO implements IEditableTicketDAO
     @Override
     public void deleteByIdTask( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 }

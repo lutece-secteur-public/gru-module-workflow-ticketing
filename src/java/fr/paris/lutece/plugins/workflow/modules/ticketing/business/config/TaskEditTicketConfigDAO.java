@@ -59,16 +59,16 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
     @Override
     public synchronized void insert( TaskEditTicketConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setInt( nIndex++, config.getIdTask( ) );
+            daoUtil.setInt( nIndex++, config.getMessageDirection( ).ordinal( ) );
+            daoUtil.setInt( nIndex++, config.getIdUserEditionAction( ) );
 
-        daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.setInt( nIndex++, config.getMessageDirection( ).ordinal( ) );
-        daoUtil.setInt( nIndex++, config.getIdUserEditionAction( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -77,16 +77,16 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
     @Override
     public void store( TaskEditTicketConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setInt( nIndex++, config.getMessageDirection( ).ordinal( ) );
+            daoUtil.setInt( nIndex++, config.getIdUserEditionAction( ) );
 
-        daoUtil.setInt( nIndex++, config.getMessageDirection( ).ordinal( ) );
-        daoUtil.setInt( nIndex++, config.getIdUserEditionAction( ) );
-
-        daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.setInt( nIndex++, config.getIdTask( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -96,24 +96,22 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
     public TaskEditTicketConfig load( int nIdTask )
     {
         TaskEditTicketConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
-            config = new TaskEditTicketConfig( );
-            config.setIdTask( daoUtil.getInt( nIndex++ ) );
-            config.setMessageDirection( MessageDirection.valueOf( daoUtil.getInt( nIndex++ ) ) );
-            config.setIdUserEditionAction( daoUtil.getInt( nIndex++ ) );
+            daoUtil.setInt( 1, nIdTask );
+
+            daoUtil.executeQuery( );
+
+            int nIndex = 1;
+
+            if ( daoUtil.next( ) )
+            {
+                config = new TaskEditTicketConfig( );
+                config.setIdTask( daoUtil.getInt( nIndex++ ) );
+                config.setMessageDirection( MessageDirection.valueOf( daoUtil.getInt( nIndex++ ) ) );
+                config.setIdUserEditionAction( daoUtil.getInt( nIndex++ ) );
+            }
         }
-
-        daoUtil.free( );
-
         return config;
     }
 
@@ -123,10 +121,10 @@ public class TaskEditTicketConfigDAO implements ITaskConfigDAO<TaskEditTicketCon
     @Override
     public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 }

@@ -56,38 +56,38 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     @Override
     public synchronized void insert( ResourceHistory resourceHistory, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin ) )
+        {
+            daoUtil.setInt( 1, resourceHistory.getIdHistory( ) );
+            if ( resourceHistory.getIdChannel( ) > 0 )
+            {
+                daoUtil.setInt( 2, resourceHistory.getIdChannel( ) );
+            }
+            else
+            {
+                daoUtil.setIntNull( 2 );
+            }
 
-        daoUtil.setInt( 1, resourceHistory.getIdHistory( ) );
-        if ( resourceHistory.getIdChannel( ) > 0 )
-        {
-            daoUtil.setInt( 2, resourceHistory.getIdChannel( ) );
-        }
-        else
-        {
-            daoUtil.setIntNull( 2 );
-        }
+            if ( resourceHistory.getIdUnitOld( ) > 0 )
+            {
+                daoUtil.setInt( 3, resourceHistory.getIdUnitOld( ) );
+            }
+            else
+            {
+                daoUtil.setIntNull( 3 );
+            }
 
-        if ( resourceHistory.getIdUnitOld( ) > 0 )
-        {
-            daoUtil.setInt( 3, resourceHistory.getIdUnitOld( ) );
-        }
-        else
-        {
-            daoUtil.setIntNull( 3 );
-        }
+            if ( resourceHistory.getIdUnitNew( ) > 0 )
+            {
+                daoUtil.setInt( 4, resourceHistory.getIdUnitNew( ) );
+            }
+            else
+            {
+                daoUtil.setIntNull( 4 );
+            }
 
-        if ( resourceHistory.getIdUnitNew( ) > 0 )
-        {
-            daoUtil.setInt( 4, resourceHistory.getIdUnitNew( ) );
+            daoUtil.executeUpdate( );
         }
-        else
-        {
-            daoUtil.setIntNull( 4 );
-        }
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
     }
 
     /**
@@ -98,21 +98,19 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     {
         ResourceHistory resourceHistory = null;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
-
-        daoUtil.setInt( 1, nIdHistory );
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
         {
-            resourceHistory = new ResourceHistory( );
-            resourceHistory.setIdHistory( daoUtil.getInt( 1 ) );
-            resourceHistory.setIdChannel( daoUtil.getInt( 2 ) );
+            daoUtil.setInt( 1, nIdHistory );
+
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                resourceHistory = new ResourceHistory( );
+                resourceHistory.setIdHistory( daoUtil.getInt( 1 ) );
+                resourceHistory.setIdChannel( daoUtil.getInt( 2 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return resourceHistory;
     }
 
@@ -122,12 +120,12 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     @Override
     public void deleteByHistory( int nIdHistory, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdHistory );
 
-        daoUtil.setInt( 1, nIdHistory );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -136,12 +134,12 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     @Override
     public void deleteByResource( int nIdResource, String strResourceType, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_RESOURCE, plugin );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_RESOURCE, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdResource );
+            daoUtil.setString( 2, strResourceType );
 
-        daoUtil.setInt( 1, nIdResource );
-        daoUtil.setString( 2, strResourceType );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 }

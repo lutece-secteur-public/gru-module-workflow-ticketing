@@ -73,51 +73,48 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
 
     /**
      * Generates a new primary key
-     * 
+     *
      * @return The new primary key
      */
     private int nextPrimaryKey( )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, WorkflowTicketingPlugin.getPlugin( ) );
-        daoUtil.executeQuery( );
-
-        int nKey;
-
-        if ( !daoUtil.next( ) )
+        int nKey = 1;
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            // if the table is empty
-            nKey = 1;
-        }
+            daoUtil.executeQuery( );
 
-        nKey = daoUtil.getInt( 1 ) + 1;
-        daoUtil.free( );
+            if ( daoUtil.next( ) )
+            {
+                nKey = daoUtil.getInt( 1 ) + 1;
+            }
+        }
 
         return nKey;
     }
 
     /**
      * Retrieve the last demande with no response for a given ticket id
-     * 
+     *
      * @param nIdTicket
      *            the ticket id
      * @return the id of TicketingEmailExternalUserMessage
      */
     private int getLastQuestion( int nIdTicket )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_LAST_QUESTION, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTicket );
-        daoUtil.executeQuery( );
-
         int nKey = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_LAST_QUESTION, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            // if the table is not empty
-            nKey = daoUtil.getInt( 1 );
-        }
+            daoUtil.setInt( 1, nIdTicket );
+            daoUtil.executeQuery( );
 
-        daoUtil.free( );
+
+
+            if ( daoUtil.next( ) )
+            {
+                // if the table is not empty
+                nKey = daoUtil.getInt( 1 );
+            }
+        }
 
         return nKey;
     }
@@ -131,19 +128,19 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     {
         emailExternalUserMessage.setIdMessageExternalUser( nextPrimaryKey( ) );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_QUESTION, WorkflowTicketingPlugin.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_QUESTION, WorkflowTicketingPlugin.getPlugin( ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setInt( nIndex++, emailExternalUserMessage.getIdMessageExternalUser( ) );
+            daoUtil.setInt( nIndex++, emailExternalUserMessage.getIdTicket( ) );
+            daoUtil.setString( nIndex++, emailExternalUserMessage.getEmailRecipients( ) );
+            daoUtil.setString( nIndex++, emailExternalUserMessage.getEmailRecipientsCc( ) );
+            daoUtil.setString( nIndex++, emailExternalUserMessage.getMessageQuestion( ) );
+            daoUtil.setString( nIndex++, emailExternalUserMessage.getEmailSubject( ) );
 
-        daoUtil.setInt( nIndex++, emailExternalUserMessage.getIdMessageExternalUser( ) );
-        daoUtil.setInt( nIndex++, emailExternalUserMessage.getIdTicket( ) );
-        daoUtil.setString( nIndex++, emailExternalUserMessage.getEmailRecipients( ) );
-        daoUtil.setString( nIndex++, emailExternalUserMessage.getEmailRecipientsCc( ) );
-        daoUtil.setString( nIndex++, emailExternalUserMessage.getMessageQuestion( ) );
-        daoUtil.setString( nIndex++, emailExternalUserMessage.getEmailSubject( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -164,17 +161,16 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     @Transactional( "workflow.transactionManager" )
     public synchronized int addAnswer( int nIdTicket, String strReponse )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ADD_ANSWER, WorkflowTicketingPlugin.getPlugin( ) );
-
-        int nIndex = 1;
         int nIdMessageAgent = getLastQuestion( nIdTicket );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ADD_ANSWER, WorkflowTicketingPlugin.getPlugin( ) ) )
+        {
+            int nIndex = 1;
 
-        daoUtil.setString( nIndex++, strReponse );
-        daoUtil.setInt( nIndex++, nIdMessageAgent );
+            daoUtil.setString( nIndex++, strReponse );
+            daoUtil.setInt( nIndex++, nIdMessageAgent );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
-
+            daoUtil.executeUpdate( );
+        }
         return nIdMessageAgent;
     }
 
@@ -185,12 +181,12 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     @Transactional( "workflow.transactionManager" )
     public void closeMessagesByIdTicket( int nIdTicket )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_CLOSE_BY_ID_TICKET, WorkflowTicketingPlugin.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_CLOSE_BY_ID_TICKET, WorkflowTicketingPlugin.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdTicket );
 
-        daoUtil.setInt( 1, nIdTicket );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -199,30 +195,29 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     @Override
     public TicketEmailExternalUserMessage loadByIdMessageExternalUser( int nIdMessageExternalUser )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_MESSAGE, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdMessageExternalUser );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
         TicketEmailExternalUserMessage emailExternalUserMessage = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_MESSAGE, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            emailExternalUserMessage = new TicketEmailExternalUserMessage( );
-            emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
-            emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex++ ) );
+            daoUtil.setInt( 1, nIdMessageExternalUser );
+
+            daoUtil.executeQuery( );
+
+            int nIndex = 1;
+
+
+            if ( daoUtil.next( ) )
+            {
+                emailExternalUserMessage = new TicketEmailExternalUserMessage( );
+                emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
+                emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex++ ) );
+            }
         }
-
-        daoUtil.free( );
-
         return emailExternalUserMessage;
     }
 
@@ -232,30 +227,29 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     @Override
     public TicketEmailExternalUserMessage loadFirstByIdTicket( int nIdTicket )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIRST_MESSAGE, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTicket );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
         TicketEmailExternalUserMessage emailExternalUserMessage = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIRST_MESSAGE, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            emailExternalUserMessage = new TicketEmailExternalUserMessage( );
-            emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
-            emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex++ ) );
+            daoUtil.setInt( 1, nIdTicket );
+
+            daoUtil.executeQuery( );
+
+            int nIndex = 1;
+
+
+            if ( daoUtil.next( ) )
+            {
+                emailExternalUserMessage = new TicketEmailExternalUserMessage( );
+                emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
+                emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex++ ) );
+            }
         }
-
-        daoUtil.free( );
-
         return emailExternalUserMessage;
     }
 
@@ -265,30 +259,28 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     @Override
     public TicketEmailExternalUserMessage loadLastByIdTicket( int nIdTicket )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_LAST_MESSAGE, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTicket );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
         TicketEmailExternalUserMessage emailExternalUserMessage = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_LAST_MESSAGE, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            emailExternalUserMessage = new TicketEmailExternalUserMessage( );
-            emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
-            emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex++ ) );
+            daoUtil.setInt( 1, nIdTicket );
+
+            daoUtil.executeQuery( );
+
+            int nIndex = 1;
+
+            if ( daoUtil.next( ) )
+            {
+                emailExternalUserMessage = new TicketEmailExternalUserMessage( );
+                emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
+                emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex++ ) );
+            }
         }
-
-        daoUtil.free( );
-
         return emailExternalUserMessage;
     }
 
@@ -298,32 +290,33 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     @Override
     public List<TicketEmailExternalUserMessage> loadByIdTicketNotClosed( int nIdTicket )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_TICKET_NOT_CLOSED, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTicket );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
-        List<TicketEmailExternalUserMessage> listEmailExternalUserMessage = new ArrayList<TicketEmailExternalUserMessage>( );
+        List<TicketEmailExternalUserMessage> listEmailExternalUserMessage = new ArrayList<>( );
         TicketEmailExternalUserMessage emailExternalUserMessage = null;
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_TICKET_NOT_CLOSED, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            nIndex = 1;
-            emailExternalUserMessage = new TicketEmailExternalUserMessage( );
-            emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
-            emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex++ ) );
-            listEmailExternalUserMessage.add( emailExternalUserMessage );
-        }
+            daoUtil.setInt( 1, nIdTicket );
 
-        daoUtil.free( );
+            daoUtil.executeQuery( );
+
+            int nIndex = 1;
+
+
+            while ( daoUtil.next( ) )
+            {
+                nIndex = 1;
+                emailExternalUserMessage = new TicketEmailExternalUserMessage( );
+                emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
+                emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex++ ) );
+                listEmailExternalUserMessage.add( emailExternalUserMessage );
+            }
+
+        }
 
         return listEmailExternalUserMessage;
     }
@@ -334,33 +327,31 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     @Override
     public List<TicketEmailExternalUserMessage> loadByIdTicketNotClosedOrderDesc( int nIdTicket )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ALL_MESSAGE_ORDER_DESC, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTicket );
-
-        daoUtil.executeQuery( );
-
-        int nIndex;
         List<TicketEmailExternalUserMessage> listEmailExternalUserMessage = new ArrayList<>( );
         TicketEmailExternalUserMessage emailExternalUserMessage;
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ALL_MESSAGE_ORDER_DESC, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            nIndex = 1;
-            emailExternalUserMessage = new TicketEmailExternalUserMessage( );
-            emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
-            emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
-            emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex ) );
-            listEmailExternalUserMessage.add( emailExternalUserMessage );
+            daoUtil.setInt( 1, nIdTicket );
+
+            daoUtil.executeQuery( );
+
+            int nIndex;
+
+            while ( daoUtil.next( ) )
+            {
+                nIndex = 1;
+                emailExternalUserMessage = new TicketEmailExternalUserMessage( );
+                emailExternalUserMessage.setIdMessageExternalUser( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setIdTicket( daoUtil.getInt( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipients( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setEmailRecipientsCc( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageQuestion( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setMessageResponse( daoUtil.getString( nIndex++ ) );
+                emailExternalUserMessage.setIsAnswered( daoUtil.getBoolean( nIndex++ ) );
+                emailExternalUserMessage.setEmailSubject( daoUtil.getString( nIndex ) );
+                listEmailExternalUserMessage.add( emailExternalUserMessage );
+            }
         }
-
-        daoUtil.free( );
-
         return listEmailExternalUserMessage;
     }
 
@@ -371,60 +362,61 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
     @Transactional( "workflow.transactionManager" )
     public void deleteByIdMessageExternalUser( int nIdMessageExternalUser )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdMessageExternalUser );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdMessageExternalUser );
+            daoUtil.executeUpdate( );
+        }
     }
 
+    @Override
     public void update( Map<String, String> data, int id, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_MESSAGE, plugin );
-        int nIndex = 1;
-        for ( Entry<String, String> entry : data.entrySet( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_MESSAGE, plugin ) )
         {
-            daoUtil.setString( nIndex, entry.getValue( ) );
-            nIndex++;
+            int nIndex = 1;
+            for ( Entry<String, String> entry : data.entrySet( ) )
+            {
+                daoUtil.setString( nIndex, entry.getValue( ) );
+                nIndex++;
+            }
+            daoUtil.setInt( nIndex, id );
+            daoUtil.executeUpdate( );
         }
-        daoUtil.setInt( nIndex, id );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
-
     }
 
+    @Override
     public Map<String, String> getHistoryEmailToAnonymize( int idMessage, Plugin plugin )
     {
-        Map<String, String> map = new HashMap<String, String>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MESSAGE_EXTERNAL_USER, plugin );
-        daoUtil.setInt( 1, idMessage );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        Map<String, String> map = new HashMap<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MESSAGE_EXTERNAL_USER, plugin ) )
         {
-            map.put( "message_question", daoUtil.getString( 1 ) );
-            map.put( "message_reponse", daoUtil.getString( 2 ) );
+            daoUtil.setInt( 1, idMessage );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                map.put( "message_question", daoUtil.getString( 1 ) );
+                map.put( "message_reponse", daoUtil.getString( 2 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return map;
     }
 
+    @Override
     public List<Integer> getListIDMessageExternalUser( int idTicket, Plugin plugin )
     {
         List<Integer> list = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ID_MESSAGE_EXTERNAL_USER, plugin );
-        daoUtil.setInt( 1, idTicket );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ID_MESSAGE_EXTERNAL_USER, plugin ) )
         {
-            list.add( daoUtil.getInt( 1 ) );
+            daoUtil.setInt( 1, idTicket );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                list.add( daoUtil.getInt( 1 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return list;
     }
 }

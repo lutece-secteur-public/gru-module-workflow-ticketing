@@ -55,131 +55,129 @@ public class TaskNotifyWaitingTicketConfigDAO implements ITaskConfigDAO<TaskNoti
     @Override
     public void insert( TaskNotifyWaitingTicketConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowTicketingPlugin.getPlugin( ) );
-
-        int nIndex = 1;
-
-        daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.setInt( nIndex++, config.getMessageDirectionExternalUser( ).ordinal( ) );
-
-        if ( config.getIdFollowingAction( ) == null )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            daoUtil.setIntNull( nIndex++ );
-        }
-        else
-        {
-            daoUtil.setInt( nIndex++, config.getIdFollowingAction( ) );
-        }
+            int nIndex = 1;
 
-        if ( config.getIdContactAttribute( ) == null )
-        {
-            daoUtil.setIntNull( nIndex++ );
-        }
-        else
-        {
-            daoUtil.setInt( nIndex++, config.getIdContactAttribute( ) );
-        }
+            daoUtil.setInt( nIndex++, config.getIdTask( ) );
+            daoUtil.setInt( nIndex++, config.getMessageDirectionExternalUser( ).ordinal( ) );
 
-        if ( config.getDefaultSubject( ) == null )
-        {
-            daoUtil.setString( nIndex, StringUtils.EMPTY );
-        }
-        else
-        {
-            daoUtil.setString( nIndex, config.getDefaultSubject( ) );
-        }
+            if ( config.getIdFollowingAction( ) == null )
+            {
+                daoUtil.setIntNull( nIndex++ );
+            }
+            else
+            {
+                daoUtil.setInt( nIndex++, config.getIdFollowingAction( ) );
+            }
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            if ( config.getIdContactAttribute( ) == null )
+            {
+                daoUtil.setIntNull( nIndex++ );
+            }
+            else
+            {
+                daoUtil.setInt( nIndex++, config.getIdContactAttribute( ) );
+            }
+
+            if ( config.getDefaultSubject( ) == null )
+            {
+                daoUtil.setString( nIndex, StringUtils.EMPTY );
+            }
+            else
+            {
+                daoUtil.setString( nIndex, config.getDefaultSubject( ) );
+            }
+
+            daoUtil.executeUpdate( );
+        }
     }
 
     @Override
     public void store( TaskNotifyWaitingTicketConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowTicketingPlugin.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowTicketingPlugin.getPlugin( ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setInt( nIndex++, config.getMessageDirectionExternalUser( ).ordinal( ) );
 
-        daoUtil.setInt( nIndex++, config.getMessageDirectionExternalUser( ).ordinal( ) );
+            if ( config.getIdFollowingAction( ) == null )
+            {
+                daoUtil.setIntNull( nIndex++ );
+            }
+            else
+            {
+                daoUtil.setInt( nIndex++, config.getIdFollowingAction( ) );
+            }
 
-        if ( config.getIdFollowingAction( ) == null )
-        {
-            daoUtil.setIntNull( nIndex++ );
-        }
-        else
-        {
-            daoUtil.setInt( nIndex++, config.getIdFollowingAction( ) );
-        }
+            if ( config.getIdContactAttribute( ) == null )
+            {
+                daoUtil.setIntNull( nIndex++ );
+            }
+            else
+            {
+                daoUtil.setInt( nIndex++, config.getIdContactAttribute( ) );
+            }
 
-        if ( config.getIdContactAttribute( ) == null )
-        {
-            daoUtil.setIntNull( nIndex++ );
+            if ( config.getDefaultSubject( ) == null )
+            {
+                daoUtil.setString( nIndex++, StringUtils.EMPTY );
+            }
+            else
+            {
+                daoUtil.setString( nIndex++, config.getDefaultSubject( ) );
+            }
+            daoUtil.setInt( nIndex, config.getIdTask( ) );
+            daoUtil.executeUpdate( );
         }
-        else
-        {
-            daoUtil.setInt( nIndex++, config.getIdContactAttribute( ) );
-        }
-
-        if ( config.getDefaultSubject( ) == null )
-        {
-            daoUtil.setString( nIndex++, StringUtils.EMPTY );
-        }
-        else
-        {
-            daoUtil.setString( nIndex++, config.getDefaultSubject( ) );
-        }
-        daoUtil.setInt( nIndex, config.getIdTask( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
     }
 
     @Override
     public TaskNotifyWaitingTicketConfig load( int nIdTask )
     {
         TaskNotifyWaitingTicketConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
-            config = new TaskNotifyWaitingTicketConfig( );
-            config.setIdTask( daoUtil.getInt( nIndex++ ) );
-            config.setMessageDirectionExternalUser( MessageDirectionExternalUser.valueOf( daoUtil.getInt( nIndex++ ) ) );
+            daoUtil.setInt( 1, nIdTask );
 
-            String strIdFollowingAction = daoUtil.getString( nIndex++ );
+            daoUtil.executeQuery( );
 
-            if ( StringUtils.isNotEmpty( strIdFollowingAction ) )
+            int nIndex = 1;
+
+            if ( daoUtil.next( ) )
             {
-                config.setIdFollowingAction( Integer.parseInt( strIdFollowingAction ) );
+                config = new TaskNotifyWaitingTicketConfig( );
+                config.setIdTask( daoUtil.getInt( nIndex++ ) );
+                config.setMessageDirectionExternalUser( MessageDirectionExternalUser.valueOf( daoUtil.getInt( nIndex++ ) ) );
+
+                String strIdFollowingAction = daoUtil.getString( nIndex++ );
+
+                if ( StringUtils.isNotEmpty( strIdFollowingAction ) )
+                {
+                    config.setIdFollowingAction( Integer.parseInt( strIdFollowingAction ) );
+                }
+
+                String strIdContactAttribute = daoUtil.getString( nIndex++ );
+
+                if ( StringUtils.isNotEmpty( strIdContactAttribute ) )
+                {
+                    config.setIdContactAttribute( Integer.parseInt( strIdContactAttribute ) );
+                }
+
+                config.setDefaultSubject( daoUtil.getString( nIndex ) );
             }
-
-            String strIdContactAttribute = daoUtil.getString( nIndex++ );
-
-            if ( StringUtils.isNotEmpty( strIdContactAttribute ) )
-            {
-                config.setIdContactAttribute( Integer.parseInt( strIdContactAttribute ) );
-            }
-
-            config.setDefaultSubject( daoUtil.getString( nIndex ) );
         }
-
-        daoUtil.free( );
-
         return config;
     }
 
     @Override
     public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 }

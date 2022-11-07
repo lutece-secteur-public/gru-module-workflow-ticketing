@@ -58,14 +58,16 @@ public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
     @Override
     public synchronized void insert( EditableTicketField editableTicketField )
     {
-        int nIndex = 1;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( nIndex++, editableTicketField.getIdHistory( ) );
-        daoUtil.setInt( nIndex++, editableTicketField.getIdEntry( ) );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
+            daoUtil.setInt( nIndex++, editableTicketField.getIdHistory( ) );
+            daoUtil.setInt( nIndex++, editableTicketField.getIdEntry( ) );
+
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -74,26 +76,25 @@ public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
     @Override
     public List<EditableTicketField> load( int nIdHistory )
     {
-        List<EditableTicketField> listEditableTicketFields = new ArrayList<EditableTicketField>( );
+        List<EditableTicketField> listEditableTicketFields = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, nIdHistory );
-
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
-            int nIndex = 1;
+            daoUtil.setInt( 1, nIdHistory );
 
-            EditableTicketField editableTicketField = new EditableTicketField( );
-            editableTicketField.setIdHistory( daoUtil.getInt( nIndex++ ) );
-            editableTicketField.setIdEntry( daoUtil.getInt( nIndex++ ) );
+            daoUtil.executeQuery( );
 
-            listEditableTicketFields.add( editableTicketField );
+            while ( daoUtil.next( ) )
+            {
+                int nIndex = 1;
+
+                EditableTicketField editableTicketField = new EditableTicketField( );
+                editableTicketField.setIdHistory( daoUtil.getInt( nIndex++ ) );
+                editableTicketField.setIdEntry( daoUtil.getInt( nIndex++ ) );
+
+                listEditableTicketFields.add( editableTicketField );
+            }
         }
-
-        daoUtil.free( );
-
         return listEditableTicketFields;
     }
 
@@ -103,10 +104,11 @@ public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
     @Override
     public void delete( int nIdHistory )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-        daoUtil.setInt( 1, nIdHistory );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, nIdHistory );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 }
