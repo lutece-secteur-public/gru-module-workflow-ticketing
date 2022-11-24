@@ -58,15 +58,15 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
     @Override
     public synchronized void insert( TaskMarkAsUnreadConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setInt( nIndex++, config.getIdTask( ) );
+            daoUtil.setInt( nIndex++, config.getIdMarking( ) );
 
-        daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.setInt( nIndex++, config.getIdMarking( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -75,15 +75,15 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
     @Override
     public void store( TaskMarkAsUnreadConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setInt( nIndex++, config.getIdMarking( ) );
 
-        daoUtil.setInt( nIndex++, config.getIdMarking( ) );
-
-        daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.setInt( nIndex++, config.getIdTask( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -93,22 +93,21 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
     public TaskMarkAsUnreadConfig load( int nIdTask )
     {
         TaskMarkAsUnreadConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
-            config = new TaskMarkAsUnreadConfig( );
-            config.setIdTask( daoUtil.getInt( nIndex++ ) );
-            config.setIdMarking( daoUtil.getInt( nIndex++ ) );
-        }
+            daoUtil.setInt( 1, nIdTask );
 
-        daoUtil.free( );
+            daoUtil.executeQuery( );
+
+            int nIndex = 1;
+
+            if ( daoUtil.next( ) )
+            {
+                config = new TaskMarkAsUnreadConfig( );
+                config.setIdTask( daoUtil.getInt( nIndex++ ) );
+                config.setIdMarking( daoUtil.getInt( nIndex++ ) );
+            }
+        }
 
         return config;
     }
@@ -119,11 +118,11 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
     @Override
     public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -136,18 +135,18 @@ public class TaskMarkAsUnreadConfigDAO implements ITaskConfigDAO<TaskMarkAsUnrea
      */
     public List<Integer> loadTicketIdListByMarkingId( int nIdMarking, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_MARKING_ID, plugin );
-        daoUtil.setInt( 1, nIdMarking );
-        daoUtil.executeQuery( );
+        List<Integer> listIdTask = new ArrayList<>( );
 
-        List<Integer> listIdTask = new ArrayList<Integer>( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_MARKING_ID, plugin ) )
         {
-            listIdTask.add( daoUtil.getInt( 1 ) );
-        }
+            daoUtil.setInt( 1, nIdMarking );
+            daoUtil.executeQuery( );
 
-        daoUtil.free( );
+            while ( daoUtil.next( ) )
+            {
+                listIdTask.add( daoUtil.getInt( 1 ) );
+            }
+        }
 
         return listIdTask;
     }

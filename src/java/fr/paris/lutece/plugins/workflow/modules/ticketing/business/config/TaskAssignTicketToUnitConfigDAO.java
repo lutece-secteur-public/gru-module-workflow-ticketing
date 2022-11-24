@@ -54,19 +54,17 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
     @Override
     public synchronized void insert( TaskAssignTicketToUnitConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setInt( nIndex++, config.getIdTask( ) );
+            daoUtil.setBoolean( nIndex++, config.isLevel1( ) );
+            daoUtil.setBoolean( nIndex++, config.isLevel2( ) );
+            daoUtil.setBoolean( nIndex, config.isLevel3( ) );
 
-        daoUtil.setInt( nIndex++, config.getIdTask( ) );
-        daoUtil.setBoolean( nIndex++, config.isLevel1( ) );
-        daoUtil.setBoolean( nIndex++, config.isLevel2( ) );
-        daoUtil.setBoolean( nIndex, config.isLevel3( ) );
-
-        daoUtil.executeUpdate( );
-
-        daoUtil.free( );
-
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -75,19 +73,17 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
     @Override
     public void store( TaskAssignTicketToUnitConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
 
-        int nIndex = 1;
+            daoUtil.setBoolean( nIndex++, config.isLevel1( ) );
+            daoUtil.setBoolean( nIndex++, config.isLevel2( ) );
+            daoUtil.setBoolean( nIndex++, config.isLevel3( ) );
 
-        daoUtil.setBoolean( nIndex++, config.isLevel1( ) );
-        daoUtil.setBoolean( nIndex++, config.isLevel2( ) );
-        daoUtil.setBoolean( nIndex++, config.isLevel3( ) );
-
-        daoUtil.setInt( nIndex, config.getIdTask( ) );
-        daoUtil.executeUpdate( );
-
-        daoUtil.free( );
-
+            daoUtil.setInt( nIndex, config.getIdTask( ) );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -97,26 +93,24 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
     public TaskAssignTicketToUnitConfig load( int nIdTask )
     {
         TaskAssignTicketToUnitConfig config = null;
-        DAOUtil daoUtil = null;
 
-        daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        int nIndex = 1;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
-            config = new TaskAssignTicketToUnitConfig( );
-            config.setIdTask( daoUtil.getInt( nIndex++ ) );
-            config.setLevel1( daoUtil.getBoolean( nIndex++ ) );
-            config.setLevel2( daoUtil.getBoolean( nIndex++ ) );
-            config.setLevel3( daoUtil.getBoolean( nIndex ) );
-        }
+            daoUtil.setInt( 1, nIdTask );
 
-        daoUtil.free( );
+            daoUtil.executeQuery( );
+
+            int nIndex = 1;
+
+            if ( daoUtil.next( ) )
+            {
+                config = new TaskAssignTicketToUnitConfig( );
+                config.setIdTask( daoUtil.getInt( nIndex++ ) );
+                config.setLevel1( daoUtil.getBoolean( nIndex++ ) );
+                config.setLevel2( daoUtil.getBoolean( nIndex++ ) );
+                config.setLevel3( daoUtil.getBoolean( nIndex ) );
+            }
+        }
 
         return config;
     }
@@ -127,13 +121,11 @@ public class TaskAssignTicketToUnitConfigDAO implements ITaskConfigDAO<TaskAssig
     @Override
     public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-
-        daoUtil.free( );
-
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 
 }
