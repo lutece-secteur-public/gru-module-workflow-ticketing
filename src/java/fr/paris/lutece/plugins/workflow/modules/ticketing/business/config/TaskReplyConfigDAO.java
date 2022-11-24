@@ -57,11 +57,11 @@ public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
     @Override
     public void delete( int nIdTask )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTask );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -70,14 +70,14 @@ public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
     @Override
     public void insert( TaskReplyConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, config.getIdTask( ) );
+            daoUtil.setInt( 2, config.getMessageDirection( ).ordinal( ) );
+            daoUtil.setBoolean( 3, config.isCloseTicket( ) );
 
-        daoUtil.setInt( 1, config.getIdTask( ) );
-        daoUtil.setInt( 2, config.getMessageDirection( ).ordinal( ) );
-        daoUtil.setBoolean( 3, config.isCloseTicket( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -87,22 +87,20 @@ public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
     public TaskReplyConfig load( int nIdTask )
     {
         TaskReplyConfig config = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) );
-
-        daoUtil.setInt( 1, nIdTask );
-
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, WorkflowUtils.getPlugin( ) ) )
         {
-            config = new TaskReplyConfig( );
-            config.setIdTask( daoUtil.getInt( 1 ) );
-            config.setMessageDirection( MessageDirection.valueOf( daoUtil.getInt( 2 ) ) );
-            config.setCloseTicket( daoUtil.getBoolean( 3 ) );
+            daoUtil.setInt( 1, nIdTask );
+
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                config = new TaskReplyConfig( );
+                config.setIdTask( daoUtil.getInt( 1 ) );
+                config.setMessageDirection( MessageDirection.valueOf( daoUtil.getInt( 2 ) ) );
+                config.setCloseTicket( daoUtil.getBoolean( 3 ) );
+            }
         }
-
-        daoUtil.free( );
-
         return config;
     }
 
@@ -112,14 +110,14 @@ public class TaskReplyConfigDAO implements ITaskConfigDAO<TaskReplyConfig>
     @Override
     public void store( TaskReplyConfig config )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, WorkflowUtils.getPlugin( ) ) )
+        {
+            daoUtil.setInt( 1, config.getIdTask( ) );
+            daoUtil.setInt( 2, config.getMessageDirection( ).ordinal( ) );
+            daoUtil.setBoolean( 3, config.isCloseTicket( ) );
+            daoUtil.setInt( 4, config.getIdTask( ) );
 
-        daoUtil.setInt( 1, config.getIdTask( ) );
-        daoUtil.setInt( 2, config.getMessageDirection( ).ordinal( ) );
-        daoUtil.setBoolean( 3, config.isCloseTicket( ) );
-        daoUtil.setInt( 4, config.getIdTask( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.executeUpdate( );
+        }
     }
 }

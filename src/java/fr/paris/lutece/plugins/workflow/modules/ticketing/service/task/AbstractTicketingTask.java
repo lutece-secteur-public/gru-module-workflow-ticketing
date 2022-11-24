@@ -57,7 +57,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 public abstract class AbstractTicketingTask extends SimpleTask
 {
     private static final String LOG_ERROR_SAVE_INFORMATION = "Error when saving message '{0}' for resourceId {1} and taskId {2}";
-    protected final static String REDIRECT_TO_LIST = "list";
+    protected static final String     REDIRECT_TO_LIST           = "list";
 
     // Services
     @Inject
@@ -76,13 +76,13 @@ public abstract class AbstractTicketingTask extends SimpleTask
             {
                 TaskInformation taskInformation = new TaskInformation( );
                 taskInformation.setIdResourceHistory( nIdResourceHistory );
-                taskInformation.setIdTask( this.getId( ) );
+                taskInformation.setIdTask( getId( ) );
                 taskInformation.setValue( strTaskInformation );
                 _taskInformationService.create( taskInformation, WorkflowUtils.getPlugin( ) );
             }
             catch( Exception e )
             {
-                String strErrorMessage = MessageFormat.format( LOG_ERROR_SAVE_INFORMATION, strTaskInformation, nIdResourceHistory, this.getId( ) );
+                String strErrorMessage = MessageFormat.format( LOG_ERROR_SAVE_INFORMATION, strTaskInformation, nIdResourceHistory, getId( ) );
                 AppLogService.error( strErrorMessage );
             }
         }
@@ -94,7 +94,7 @@ public abstract class AbstractTicketingTask extends SimpleTask
     @Override
     public void doRemoveTaskInformation( int nIdHistory )
     {
-        _taskInformationService.removeByHistory( nIdHistory, this.getId( ), WorkflowUtils.getPlugin( ) );
+        _taskInformationService.removeByHistory( nIdHistory, getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
@@ -103,12 +103,12 @@ public abstract class AbstractTicketingTask extends SimpleTask
     @Override
     public void doRemoveConfig( )
     {
-        _taskInformationService.removeByTask( this.getId( ), WorkflowUtils.getPlugin( ) );
+        _taskInformationService.removeByTask( getId( ), WorkflowUtils.getPlugin( ) );
     }
 
     /**
      * Gives the ticket from resourceHistory
-     * 
+     *
      * @param nIdResourceHistory
      *            the resourceHistory id
      * @return the ticket if the resourceHistory corresponds to a ticket, {@code null} otherwise
@@ -120,7 +120,7 @@ public abstract class AbstractTicketingTask extends SimpleTask
 
     /**
      * Process the Ticketing task
-     * 
+     *
      * @param nIdResourceHistory
      *            the resource history id
      * @param request
