@@ -1,1 +1,3 @@
-<@fieldInputText i18nLabelKey="module.workflow.ticketing.task_modify_ticket_nomenclature.labelModifyNomenclature" maxlength= 3 inputName="nomenclature" value="${ticket_nomenclature!''}" i18nHelpBlockKey="module.workflow.ticketing.task_modify_ticket_nomenclature.labelTicketNomenclature.help" />
+<@formGroup labelKey='#i18n{module.workflow.ticketing.task_modify_ticket_nomenclature.labelModifyNomenclature}' helpKey='#i18n{module.workflow.ticketing.task_modify_ticket_nomenclature.labelTicketNomenclature.help}' mandatory=false>
+   <@input type='text' name='nomenclature' value='${ticket_nomenclature!\'\'}' maxlength=3 />
+</@formGroup>
