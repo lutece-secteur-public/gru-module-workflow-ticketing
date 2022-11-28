@@ -6,16 +6,42 @@
 	</div>
 </div>
 
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelLastname" inputName="lastname" mandatory=true value="${ticket.lastname!''}" cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelFirstname" inputName="firstname" mandatory=true value="${ticket.firstname!''}" cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelEmail" inputName="email" value="${ticket.email!''}" cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelFixedPhoneNumber" inputName="fixed_phone_number" value="${ticket.fixedPhoneNumber!''}" maxlength=10 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelMobilePhoneNumber" inputName="mobile_phone_number" value="${ticket.mobilePhoneNumber!''}" maxlength=10 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelAddress" inputName="address" value="${(ticket.ticketAddress.address)!''}" maxlength=76 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelAddressDetail" inputName="address_detail" value="${(ticket.ticketAddress.addressDetail)!''}" maxlength=76 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelPostalCode" inputName="postal_code" value="${(ticket.ticketAddress.postalCode)!''}" maxlength=5 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelCity" inputName="city" value="${(ticket.ticketAddress.city)!''}" maxlength=76 cssClass="form-control input-lg" i18nHelpBlockKey="" />
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelLastname}' class='form-control input-lg' mandatory=true>
+   <@input type='text' name='lastname' value='${ticket.lastname!\'\'}' />
+</@formGroup>
 
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelFirstname}' class='form-control input-lg' mandatory=true>
+   <@input type='text' name='firstname' value='${ticket.firstnamet!\'\'}' />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelEmail}' class='form-control input-lg' mandatory=false>
+   <@input type='text' name='email' value='${ticket.email!\'\'}' />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelFixedPhoneNumber}' class='form-control input-lg' mandatory=false>
+   <@input type='text' name='fixed_phone_number' value='${ticket.fixedPhoneNumber!\'\'}' maxlength=10 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelMobilePhoneNumber}' class='form-control input-lg'  mandatory=false>
+   <@input type='text' name='mobile_phone_number' value='${ticket.mobilePhoneNumber!\'\'}' maxlength=10 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' class='form-control input-lg' mandatory=false>
+   <@input type='text' name='address' value='${(ticket.ticketAddress.address)!\'\'}' maxlength=76 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddressDetail}' class='form-control input-lg' mandatory=false>
+   <@input type='text' name='address_detail' value='${(ticket.ticketAddress.addressDetail)!\'\'}' maxlength=76 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelPostalCode}' class='form-control input-lg' mandatory=false>
+   <@input type='text' name='postal_code' value='${(ticket.ticketAddress.postalCode)!\'\'}' maxlength=5 />
+</@formGroup>
+
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelCity}' class='form-control input-lg' mandatory=false>
+   <@input type='text' name='city' value='${(ticket.ticketAddress.city)!\'\'}' maxlength=76 />
+</@formGroup>
 
 <div class="form-group">
 	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_contact_mode">#i18n{ticketing.modify_ticket.labelContactMode} :</label>
