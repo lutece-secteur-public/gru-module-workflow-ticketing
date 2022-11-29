@@ -5,9 +5,13 @@
 
 <#if units_list?? && units_list?has_content>
     <#if current_unit?? && current_unit?has_content>
-        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit" inputName="id_unit" items=units_list value="${current_unit}" i18nHelpBlockKey="ticketing.task_assign_ticket_to_unit.labelUnit.help" />
+	    <@formGroup labelFor='id_unit' labelKey='#i18n{module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit}' helpKey='#i18n{ticketing.task_assign_ticket_to_unit.labelUnit.help}' mandatory=false>
+			<@select name='id_unit' items=units_list id='id_unit' default_value='${current_unit!\'\'}' />
+	 	</@formGroup>
     <#else>
-        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit" inputName="id_unit" items=units_list value="" i18nHelpBlockKey="ticketing.task_assign_ticket_to_unit.labelUnit.help" />
+	    <@formGroup labelFor='id_unit' labelKey='#i18n{module.workflow.ticketing.task_assign_ticket_to_unit.labelUnit}' helpKey='#i18n{ticketing.task_assign_ticket_to_unit.labelUnit.help}' mandatory=false>
+			<@select name='id_unit' items=units_list id='id_unit' default_value='${current_unit!\'\'}' />
+	 	</@formGroup>    
     </#if>
     
    	<div class="form-group" id="errorEntity" style="display: none;">
