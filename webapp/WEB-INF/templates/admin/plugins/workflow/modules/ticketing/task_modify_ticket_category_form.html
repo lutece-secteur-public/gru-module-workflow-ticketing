@@ -5,7 +5,7 @@
     <div class="form-group">
       <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_category_${depth.depthNumber}">${depth.label}&nbsp;:</label>
 	    <div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
-	      <@comboWithParams name="id_category_${depth.depthNumber}" default_value="" additionalParameters=" id=\"id_category_${depth.depthNumber}\" depth=\"${depth.depthNumber}\" class=\"form-control input-lg\" " items=[] />
+	      <@select name='id_category_${depth.depthNumber}' items=[] default_value='' params='id=\"id_category_${depth.depthNumber}\" depth=\"${depth.depthNumber}\" class=\"form-control input-lg\"' />
 	      <span class="help-block" id="help_message_${depth.depthNumber}"></span>
 	    </div>
     </div>

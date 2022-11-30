@@ -2,7 +2,7 @@
 <div class="form-group">
 	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_user_title">#i18n{ticketing.modify_ticket.labelUserTitle} :</label>
 	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
-		<@comboWithParams name="id_user_title" default_value="${ticket.idUserTitle!''}" additionalParameters=" id=\"id_user_title\" class=\"form-control input-lg\" " items=user_titles_list />
+		<@select name='id_user_title' items=user_titles_list default_value='${ticket.idUserTitle!\'\'}' params='id=\"id_user_title\" class=\"form-control input-lg\"' depth=\"${depth.depthNumber}\"' />
 	</div>
 </div>
 
@@ -46,7 +46,7 @@
 <div class="form-group">
 	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_contact_mode">#i18n{ticketing.modify_ticket.labelContactMode} :</label>
 	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
-		<@comboWithParams name="id_contact_mode" default_value="${ticket.idContactMode!''}" additionalParameters=" id=\"id_contact_mode\" class=\"form-control input-lg\" " items=contact_modes_list />
+		<@select name='id_contact_mode' items=contact_modes_list default_value='${ticket.idContactMode!\'\'}' params='id=\"id_contact_mode\" class=\"form-control input-lg\"' />
 	</div>
 </div>
 
