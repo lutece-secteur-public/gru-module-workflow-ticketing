@@ -13,12 +13,12 @@ VALUES(352,'Signalé', 'Signalement de la sollicitation', 301, 303, 303, 1, 0, 0
 -- Parametrage des 2 boutons           
 INSERT INTO ticketing_param_bouton_action
 (id_action, id_couleur, ordre, icone, id_groupe)
-VALUES(352, 'Noir', 20, 'fa fa-question-circle-o', 2),
-(353, 'Noir', 21, 'fa fa-question-circle-o', 2),
-(354, 'Noir', 22, 'fa fa-question-circle-o', 2),
-(355, 'Noir', 23, 'fa fa-question-circle-o', 2),
-(356, 'Noir', 24, 'fa fa-question-circle-o', 2),
-(357, 'Noir', 25, 'fa fa-question-circle-o', 2);
+VALUES(352, 'Noir', 20, 'far fa-question-circle', 2),
+(353, 'Noir', 21, 'far fa-question-circle', 2),
+(354, 'Noir', 22, 'far fa-question-circle', 2),
+(355, 'Noir', 23, 'far fa-question-circle', 2),
+(356, 'Noir', 24, 'far fa-question-circle', 2),
+(357, 'Noir', 25, 'far fa-question-circle', 2);
 
 -- Ajout de 2 taches
 INSERT INTO workflow_task

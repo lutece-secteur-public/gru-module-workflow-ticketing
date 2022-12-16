@@ -4,7 +4,7 @@
 				#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_history}
 				<br/><br/>
 				<#list list_email_infos as email_info>
-					<i class="fa fa-arrow-right" aria-hidden="true"></i> ${email_info.firstName!} ${email_info.name!} (${email_info.email!}<#if email_info.field?exists> - ${email_info.field}</#if>)<br/>
+					<i class="fas fa-arrow-right" aria-hidden="true"></i> ${email_info.firstName!} ${email_info.name!} (${email_info.email!}<#if email_info.field?exists> - ${email_info.field}</#if>)<br/>
 				</#list>
 			</span>
 			
