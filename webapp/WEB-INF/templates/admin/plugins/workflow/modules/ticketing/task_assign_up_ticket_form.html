@@ -1,10 +1,12 @@
 <@messages errors=errors />
 <input name="redirect" id="redirect" value="list" type="hidden">
 <#if ticket_up_units?? &&  ticket_up_units?has_content>
-<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_up_ticket.labelSupportEntities" inputName="ticket_up_unit_id" items=ticket_up_units value="" /> 
+	<@formGroup labelFor='ticket_up_unit_id' labelKey='#i18n{module.workflow.ticketing.task_assign_up_ticket.labelSupportEntities}' helpKey='#i18n{ticketing.task_assign_ticket_to_user.labelUser.help}' mandatory=false>
+		<@select name='ticket_up_unit_id' items=ticket_up_units id='ticket_up_unit_id' default_value='' />
+	</@formGroup>  
 	<div class="form-group" id="errorEntity" style="display: none;">
          <div class="col-xs-12 col-sm-offset-3 col-sm-6 col-md-6 col-lg-6 alert alert-danger">
-             <i class="fa fa-exclamation-circle"></i>
+             <i class="fas fa-exclamation-circle"></i>
              <span>#i18n{module.workflow.ticketing.task_edit_ticket_form.message.empty.entity}</span>
          </div>
 	</div>

@@ -2,25 +2,51 @@
 <div class="form-group">
 	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_user_title">#i18n{ticketing.modify_ticket.labelUserTitle} :</label>
 	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
-		<@comboWithParams name="id_user_title" default_value="${ticket.idUserTitle!''}" additionalParameters=" id=\"id_user_title\" class=\"form-control input-lg\" " items=user_titles_list />
+		<@select name='id_user_title' items=user_titles_list default_value='${ticket.idUserTitle!\'\'}' class='input-lg' />
 	</div>
 </div>
 
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelLastname" inputName="lastname" mandatory=true value="${ticket.lastname!''}" cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelFirstname" inputName="firstname" mandatory=true value="${ticket.firstname!''}" cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelEmail" inputName="email" value="${ticket.email!''}" cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelFixedPhoneNumber" inputName="fixed_phone_number" value="${ticket.fixedPhoneNumber!''}" maxlength=10 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelMobilePhoneNumber" inputName="mobile_phone_number" value="${ticket.mobilePhoneNumber!''}" maxlength=10 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelAddress" inputName="address" value="${(ticket.ticketAddress.address)!''}" maxlength=76 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelAddressDetail" inputName="address_detail" value="${(ticket.ticketAddress.addressDetail)!''}" maxlength=76 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelPostalCode" inputName="postal_code" value="${(ticket.ticketAddress.postalCode)!''}" maxlength=5 cssClass="form-control input-lg" i18nHelpBlockKey="" />
-<@fieldInputText i18nLabelKey="ticketing.modify_ticket.labelCity" inputName="city" value="${(ticket.ticketAddress.city)!''}" maxlength=76 cssClass="form-control input-lg" i18nHelpBlockKey="" />
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelLastname}' mandatory=true>
+   <@input type='text' name='lastname' value='${ticket.lastname!\'\'}' class='input-lg' />
+</@formGroup>
 
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelFirstname}' mandatory=true>
+   <@input type='text' name='firstname' value='${ticket.firstnamet!\'\'}' class='input-lg'/>
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelEmail}' mandatory=false>
+   <@input type='text' name='email' value='${ticket.email!\'\'}' class='input-lg'/>
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelFixedPhoneNumber}' mandatory=false>
+   <@input type='text' name='fixed_phone_number' value='${ticket.fixedPhoneNumber!\'\'}' class='input-lg' maxlength=10 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelMobilePhoneNumber}' mandatory=false>
+   <@input type='text' name='mobile_phone_number' value='${ticket.mobilePhoneNumber!\'\'}'class='input-lg'  maxlength=10 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' mandatory=false>
+   <@input type='text' name='address' value='${(ticket.ticketAddress.address)!\'\'}' class='input-lg' maxlength=76 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddressDetail}' mandatory=false>
+   <@input type='text' name='address_detail' value='${(ticket.ticketAddress.addressDetail)!\'\'}' class='input-lg' maxlength=76 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelPostalCode}' mandatory=false>
+   <@input type='text' name='postal_code' value='${(ticket.ticketAddress.postalCode)!\'\'}' class='input-lg' maxlength=5 />
+</@formGroup>
+
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelCity}' mandatory=false>
+   <@input type='text' name='city' value='${(ticket.ticketAddress.city)!\'\'}' class='input-lg' maxlength=76 />
+</@formGroup>
 
 <div class="form-group">
 	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_contact_mode">#i18n{ticketing.modify_ticket.labelContactMode} :</label>
 	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
-		<@comboWithParams name="id_contact_mode" default_value="${ticket.idContactMode!''}" additionalParameters=" id=\"id_contact_mode\" class=\"form-control input-lg\" " items=contact_modes_list />
+		<@select name='id_contact_mode' items=contact_modes_list default_value='${ticket.idContactMode!\'\'}' class='input-lg' />
 	</div>
 </div>
 

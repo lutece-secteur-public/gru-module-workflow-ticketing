@@ -1,5 +1,7 @@
 <fieldset>
-    <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_reply_config.labelMessageDirections" inputName="message_direction" items=message_directions_list value="${message_direction}" i18nHelpBlockKey="module.workflow.ticketing.task_reply_config.labelMessageDirections.help" cssClass='' />
+	<@formGroup labelFor='message_direction' labelKey='#i18n{module.workflow.ticketing.task_reply_config.labelMessageDirections}' helpKey='#i18n{module.workflow.ticketing.task_reply_config.labelMessageDirections.help}' mandatory=true>
+		<@select name='message_direction' items=message_directions_list id='message_direction' default_value='${message_direction!\'\'}' />
+	</@formGroup>
 	<div class="form-group">
         <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="close_ticket">#i18n{module.workflow.ticketing.task_reply_config.labelCloseTicket} :</label>
         <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">

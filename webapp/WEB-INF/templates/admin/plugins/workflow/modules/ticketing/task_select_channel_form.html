@@ -2,11 +2,17 @@
 <#if agent_view>
   <#if selectable_channels_list?? && selectable_channels_list?has_content>
     <#if preferred_id_channel?? && preferred_id_channel?has_content>
-      <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_select_channel.labelChannel" inputName="id_channel" items=selectable_channels_list value="${preferred_id_channel}" i18nHelpBlockKey="module.workflow.ticketing.task_select_channel.labelChannel.help" cssClass='' />
+      <@formGroup labelFor='id_channel' labelKey='#i18n{module.workflow.ticketing.task_select_channel.labelChannel}' helpKey='#i18n{module.workflow.ticketing.task_select_channel.labelChannel.help}' mandatory=false>
+		<@select name='id_channel' items=selectable_channels_list id='id_channel' default_value='${preferred_id_channel!\'\'}' />
+	  </@formGroup>
     <#else>
-      <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_select_channel.labelChannel" inputName="id_channel" items=selectable_channels_list value="" i18nHelpBlockKey="module.workflow.ticketing.task_select_channel.labelChannel.help" cssClass='' />
+      <@formGroup labelFor='id_channel' labelKey='#i18n{module.workflow.ticketing.task_select_channel.labelChannel}' helpKey='#i18n{module.workflow.ticketing.task_select_channel.labelChannel.help}' mandatory=false>
+		<@select name='id_channel' items=selectable_channels_list id='id_channel' default_value='${message_direction!\'\'}' />
+	  </@formGroup>
     </#if>
   <#else>
-    <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_select_channel.labelChannel" inputName="id_channel" items=channels_list value="" i18nHelpBlockKey="module.workflow.ticketing.task_select_channel.labelChannel.help" cssClass='' />
+  	<@formGroup labelFor='id_channel' labelKey='#i18n{module.workflow.ticketing.task_select_channel.labelChannel}' helpKey='#i18n{module.workflow.ticketing.task_select_channel.labelChannel.help}' mandatory=false>
+		<@select name='id_channel' items=channels_list id='id_channel' default_value='' />
+	</@formGroup>
   </#if>
 </#if>
