@@ -1,8 +1,16 @@
 <p class="lead">#i18n{module.workflow.ticketing.task_ticket_email_external_user_config.title}</p>
-<@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_ticket_email_external_user_config.label_message_direction" mandatory=true inputName="message_direction" items=message_directions_list value="${message_direction}" i18nHelpBlockKey="module.workflow.ticketing.task_ticket_email_external_user_config.label_message_direction.help"/>
+ <@formGroup labelFor='message_direction' labelKey='#i18n{module.workflow.ticketing.task_ticket_email_external_user_config.label_message_direction}' helpKey='#i18n{module.workflow.ticketing.task_ticket_email_external_user_config.label_message_direction.help}' mandatory=true>
+	<@select name='message_direction' items=message_directions_list id='message_direction' default_value='${message_direction!\'\'}' />
+ </@formGroup>
 
-<@fieldInputText i18nLabelKey="module.workflow.ticketing.task_ticket_email_external_user_config.label_follow_action" mandatory=false inputName="following_action_id" value="${following_action_id}" i18nHelpBlockKey="module.workflow.ticketing.task_ticket_email_external_user_config.label_follow_action.help"/>
+<@formGroup labelKey='#i18n{module.workflow.ticketing.task_ticket_email_external_user_config.label_follow_action}' helpKey='#i18n{module.workflow.ticketing.task_ticket_email_external_user_config.label_follow_action.help}' mandatory=false>
+   <@input type='text' name='following_action_id' value='${following_action_id!\'\'}' />
+</@formGroup>
 
-<@fieldInputText i18nLabelKey="module.workflow.ticketing.task_ticket_email_external_user_config.label_contact_attribute" mandatory=false inputName="contact_attribute_id" value="${contact_attribute_id!''}" i18nHelpBlockKey="module.workflow.ticketing.task_ticket_email_external_user_config.label_contact_attribute.help"/>
+<@formGroup labelKey='#i18n{module.workflow.ticketing.task_ticket_email_external_user_config.label_contact_attribute}' helpKey='#i18n{module.workflow.ticketing.task_ticket_email_external_user_config.label_contact_attribute.help}' mandatory=false>
+   <@input type='text' name='contact_attribute_id' value='${contact_attribute_id!\'\'}' />
+</@formGroup>
 
-<@fieldInputText i18nLabelKey="module.workflow.ticketing.task_ticket_email_external_user_config.label_default_subject" mandatory=false inputName="default_subject" value="${default_subject!''}" i18nHelpBlockKey="module.workflow.ticketing.task_ticket_email_external_user_config.label_default_subject.help"/>
+<@formGroup labelKey='#i18n{module.workflow.ticketing.task_ticket_email_external_user_config.label_default_subject}' helpKey='#i18n{module.workflow.ticketing.task_ticket_email_external_user_config.label_default_subject.help}' mandatory=false>
+   <@input type='text' name='default_subject' value='${default_subject!\'\'}' />
+</@formGroup>

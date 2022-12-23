@@ -25,12 +25,12 @@ INSERT INTO ticketing_couleur_bouton (id_couleur, couleur) VALUES('Rouge clair',
 -- Parametrage des 2 boutons           
 INSERT INTO ticketing_param_bouton_action
 (id_action, id_couleur, ordre, icone, id_groupe)
-VALUES(358, 'Rouge clair', 26, 'fa fa-question-circle-o', 2),
-(359, 'Rouge clair', 27, 'fa fa-question-circle-o', 2),
-(360, 'Rouge clair', 28, 'fa fa-question-circle-o', 2),
-(361, 'Rouge clair', 29, 'fa fa-question-circle-o', 2),
-(362, 'Rouge clair', 30, 'fa fa-question-circle-o', 2),
-(363, 'Rouge clair', 31, 'fa fa-question-circle-o', 2);
+VALUES(358, 'Rouge clair', 26, 'far fa-question-circle', 2),
+(359, 'Rouge clair', 27, 'far fa-question-circle', 2),
+(360, 'Rouge clair', 28, 'far fa-question-circle', 2),
+(361, 'Rouge clair', 29, 'far fa-question-circle', 2),
+(362, 'Rouge clair', 30, 'far fa-question-circle', 2),
+(363, 'Rouge clair', 31, 'far fa-question-circle', 2);
 
 -- Ajout de 2 taches
 INSERT INTO workflow_task

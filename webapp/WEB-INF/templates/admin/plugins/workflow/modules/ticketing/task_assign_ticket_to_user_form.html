@@ -3,9 +3,13 @@
 <input id="former_user" value="${current_user!}" type="hidden">
 <#if users_list?? && users_list?has_content>
     <#if current_user?? && current_user?has_content>
-        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_user.labelUser" inputName="id_user" items=users_list value="${current_user}" i18nHelpBlockKey="ticketing.task_assign_ticket_to_user.labelUser.help" />
+	    <@formGroup labelFor='id_user' labelKey='#i18n{module.workflow.ticketing.task_assign_ticket_to_user.labelUser}' helpKey='#i18n{ticketing.task_assign_ticket_to_user.labelUser.help}' mandatory=false>
+			<@select name='id_user' items=users_list id='id_user' default_value='${current_user!\'\'}' />
+	 	</@formGroup> 
     <#else>
-        <@fieldInputCombo i18nLabelKey="module.workflow.ticketing.task_assign_ticket_to_user.labelUser" inputName="id_user" items=users_list value="" i18nHelpBlockKey="ticketing.task_assign_ticket_to_user.labelUser.help" />
+	    <@formGroup labelFor='id_user' labelKey='#i18n{module.workflow.ticketing.task_assign_ticket_to_user.labelUser}' helpKey='#i18n{ticketing.task_assign_ticket_to_user.labelUser.help}' mandatory=false>
+			<@select name='id_user' items=users_list id='id_user' default_value='' />
+	 	</@formGroup>     
     </#if>
 </#if>
 <script language="javascript">
