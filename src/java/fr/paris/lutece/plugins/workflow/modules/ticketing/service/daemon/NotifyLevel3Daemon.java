@@ -138,7 +138,7 @@ public class NotifyLevel3Daemon extends Daemon
             {
                 ticket = TicketHome.findByPrimaryKey( nIdResource );
 
-                if ( ticket != null )
+                if ( ( ticket != null ) && Boolean.TRUE.equals( ticket.isPossibleToNotify( ticket.getTicketCategory( ) ) ) )
                 {
                     nNbRelance = ticket.getNbRelance( );
                     dateDerniereRelance = ticket.getDateDerniereRelance( );
@@ -199,7 +199,7 @@ public class NotifyLevel3Daemon extends Daemon
         }
 
         sbLog.append( "Nombre de tickets au statut " )
-                .append( _workflowService.getState( nIdStateLevel3, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+        .append( _workflowService.getState( nIdStateLevel3, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
