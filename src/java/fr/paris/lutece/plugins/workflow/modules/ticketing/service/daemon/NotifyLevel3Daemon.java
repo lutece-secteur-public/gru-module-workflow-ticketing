@@ -138,7 +138,7 @@ public class NotifyLevel3Daemon extends Daemon
             {
                 ticket = TicketHome.findByPrimaryKey( nIdResource );
 
-                if ( ticket != null )
+                if ( ( ticket != null ) && Boolean.TRUE.equals( ticket.isPossibleToNotify( ticket.getTicketCategory( ) ) ) )
                 {
                     nNbRelance = ticket.getNbRelance( );
                     dateDerniereRelance = ticket.getDateDerniereRelance( );
@@ -199,7 +199,7 @@ public class NotifyLevel3Daemon extends Daemon
         }
 
         sbLog.append( "Nombre de tickets au statut " )
-                .append( _workflowService.getState( nIdStateLevel3, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+        .append( _workflowService.getState( nIdStateLevel3, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
@@ -306,15 +306,9 @@ public class NotifyLevel3Daemon extends Daemon
     {
         Calendar calendarLimiteRelance = Calendar.getInstance( );
         calendarLimiteRelance.setTime( dateDerniereRelance );
-        // date à 00h 00mn 00s
-        calendarLimiteRelance.set( Calendar.HOUR_OF_DAY, 0 );
-        calendarLimiteRelance.set( Calendar.MINUTE, 0 );
-        calendarLimiteRelance.set( Calendar.SECOND, 0 );
-        calendarLimiteRelance.set( Calendar.MILLISECOND, 0 );
-        calendarLimiteRelance.add( Calendar.DAY_OF_YEAR, nFrequence );
-        // date dernière relance + n jours
-        Date dateLimiteRelance = calendarLimiteRelance.getTime( );
-        return dateLimiteRelance;
+        calendarLimiteRelance.add( Calendar.MINUTE, nFrequence );
+        // date dernière relance + n minutes
+        return calendarLimiteRelance.getTime( );
     }
 
     /**
