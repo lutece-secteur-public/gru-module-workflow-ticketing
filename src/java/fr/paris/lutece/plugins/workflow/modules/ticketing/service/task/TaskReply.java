@@ -109,9 +109,9 @@ public class TaskReply extends AbstractTicketingTask
 
             ticket.setUserMessage( strUserMessage );
 
-            TaskReplyConfig config = _taskConfigService.findByPrimaryKey( this.getId( ) );
+            TaskReplyConfig config = _taskConfigService.findByPrimaryKey( getId( ) );
 
-            if ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) && config.isCloseTicket( ) )
+            if ( ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) ) && config.isCloseTicket( ) )
             {
                 ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
                 ticket.setDateClose( new Timestamp( new java.util.Date( ).getTime( ) ) );
@@ -140,13 +140,13 @@ public class TaskReply extends AbstractTicketingTask
     @Override
     public void doRemoveConfig( )
     {
-        _taskConfigService.remove( this.getId( ) );
+        _taskConfigService.remove( getId( ) );
         super.doRemoveConfig( );
     }
 
     /**
      * Gives the task config service
-     * 
+     *
      * @return the task config service
      */
     public ITaskConfigService getTaskConfigService( )
@@ -156,18 +156,18 @@ public class TaskReply extends AbstractTicketingTask
 
     /**
      * Sets the task config service
-     * 
+     *
      * @param taskConfigService
      *            the task config service
      */
     public void setTaskConfigService( ITaskConfigService taskConfigService )
     {
-        this._taskConfigService = taskConfigService;
+        _taskConfigService = taskConfigService;
     }
 
     /**
      * Fill the user message with the download url links ( Template computed with AppTemplateService )
-     * 
+     *
      * @param strUserMessage
      *            The user message
      * @param request
@@ -176,7 +176,7 @@ public class TaskReply extends AbstractTicketingTask
      */
     private String fillWithDownloadUrls( String strUserMessage, HttpServletRequest request )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_USER_MESSAGE, strUserMessage );
 
         // Save the files in core_phy_file

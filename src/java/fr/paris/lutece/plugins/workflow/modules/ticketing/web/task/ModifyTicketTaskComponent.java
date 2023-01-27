@@ -63,7 +63,6 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.utils.MVCMessage;
 import fr.paris.lutece.util.ErrorMessage;
 import fr.paris.lutece.util.bean.BeanUtil;
@@ -106,9 +105,6 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
 
         Map<String, Object> model = getModel( ticket );
 
-        // Get the id entry for reply attachment files from properties
-        int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID,
-                TicketingConstants.PROPERTY_UNSET_INT );
         model.put( MARK_HANDLER, TicketAsynchronousUploadHandler.getHandler( ) );
         List<Entry> listEntries = new ArrayList<>( );
 

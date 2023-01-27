@@ -111,7 +111,7 @@ public class ExternalUserSearchServlet extends HttpServlet
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * 
+     *
      * @param request
      *            servlet request
      * @param httpResponse
@@ -141,9 +141,9 @@ public class ExternalUserSearchServlet extends HttpServlet
 
         Locale locale = user.getLocale( );
         int searchLimit = _externalUserDAO.getSearchLimit( );
-        Map<String, Object> model = new HashMap<String, Object>( );
-        List<ErrorMessage> listErrors = new ArrayList<ErrorMessage>( );
-        List<ErrorMessage> listInfos = new ArrayList<ErrorMessage>( );
+        Map<String, Object> model = new HashMap<>( );
+        List<ErrorMessage> listErrors = new ArrayList<>( );
+        List<ErrorMessage> listInfos = new ArrayList<>( );
 
         // TMP
         List<ExternalUser> listExternalUsers = _externalUserDAO.findExternalUser( strLastname, null, strIdAttribute, strAttributeValue, strNextActionId );
@@ -188,7 +188,7 @@ public class ExternalUserSearchServlet extends HttpServlet
 
     /**
      * Handles the HTTP <code>GET</code> method.
-     * 
+     *
      * @param request
      *            servlet request
      * @param response
@@ -206,7 +206,7 @@ public class ExternalUserSearchServlet extends HttpServlet
 
     /**
      * Handles the HTTP <code>POST</code> method.
-     * 
+     *
      * @param request
      *            servlet request
      * @param response
@@ -224,7 +224,7 @@ public class ExternalUserSearchServlet extends HttpServlet
 
     /**
      * Returns a short description of the servlet.
-     * 
+     *
      * @return message
      */
     @Override

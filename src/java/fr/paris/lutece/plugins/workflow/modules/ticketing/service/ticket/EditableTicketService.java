@@ -200,7 +200,7 @@ public class EditableTicketService implements IEditableTicketService
     @Override
     public List<Entry> buildListEntriesToEdit( HttpServletRequest request, List<EditableTicketField> listEditableTicketFields )
     {
-        List<Entry> listEntries = new ArrayList<Entry>( );
+        List<Entry> listEntries = new ArrayList<>( );
 
         for ( EditableTicketField editableTicketField : listEditableTicketFields )
         {
@@ -221,7 +221,7 @@ public class EditableTicketService implements IEditableTicketService
     @Override
     public List<Integer> buildListIdEntriesToEdit( HttpServletRequest request, List<EditableTicketField> listEditableTicketFields )
     {
-        List<Integer> listIdEntries = new ArrayList<Integer>( );
+        List<Integer> listIdEntries = new ArrayList<>( );
 
         for ( EditableTicketField editableTicketField : listEditableTicketFields )
         {

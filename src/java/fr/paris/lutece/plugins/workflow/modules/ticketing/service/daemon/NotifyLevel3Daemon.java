@@ -210,7 +210,7 @@ public class NotifyLevel3Daemon extends Daemon
 
     /**
      * Vérifie les paramètres configurés
-     * 
+     *
      * @param sbLog
      *            logs
      * @return true si conf OK, false sinon
@@ -250,7 +250,7 @@ public class NotifyLevel3Daemon extends Daemon
 
     /**
      * Relance si pas de date de dernière relance
-     * 
+     *
      * @param ticket
      *            ticket
      * @param dateExecution
@@ -271,7 +271,7 @@ public class NotifyLevel3Daemon extends Daemon
 
     /**
      * Relance avec contrôle de la date de dernière relance
-     * 
+     *
      * @param ticket
      *            ticket
      * @param dateDerniereRelance
@@ -312,13 +312,12 @@ public class NotifyLevel3Daemon extends Daemon
         calendarLimiteRelance.set( Calendar.MILLISECOND, 0 );
         calendarLimiteRelance.add( Calendar.DAY_OF_YEAR, nFrequence );
         // date dernière relance + n jours
-        Date dateLimiteRelance = calendarLimiteRelance.getTime( );
-        return dateLimiteRelance;
+        return calendarLimiteRelance.getTime( );
     }
 
     /**
      * Gère le retour en fonction de la dernière action manuelle
-     * 
+     *
      * @param ticket
      *            ticket
      * @param dateExecution

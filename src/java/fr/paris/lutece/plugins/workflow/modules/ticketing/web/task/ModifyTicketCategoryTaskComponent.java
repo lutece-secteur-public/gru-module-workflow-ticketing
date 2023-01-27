@@ -99,7 +99,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskModifyTicketCategoryConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskModifyTicketCategoryConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         EntryFilter entryFilter = new EntryFilter( );
         entryFilter.setResourceType( TicketingConstants.RESOURCE_TYPE_INPUT );
@@ -109,7 +109,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
 
         List<Entry> lReferenceEntry = EntryHome.getEntryList( entryFilter );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_CONFIG, config );
         model.put( MARK_CONFIG_ALL_ENTRY, mergeConfigAndReference( config, lReferenceEntry ) );
 
@@ -142,7 +142,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
     @Override
     public String doSaveConfig( HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskModifyTicketCategoryConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskModifyTicketCategoryConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         String [ ] tSelectedEntries = new String [ ] { };
         config.clearSelectedEntries( );
 
@@ -156,7 +156,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             config.addSelectedEntry( Integer.parseInt( strSelectedEntry ) );
         }
 
-        this.getTaskConfigService( ).update( config );
+        getTaskConfigService( ).update( config );
 
         return null;
     }
@@ -196,14 +196,14 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
         // Check if a category have been selected
         if ( !categoryValidatorResult.isTicketCategoryValid( ) )
         {
-            categoryValidatorResult.getListValidationErrors( ).stream( ).forEach( ( error ) -> listErrors.add( error ) );
+            categoryValidatorResult.getListValidationErrors( ).stream( ).forEach( listErrors::add );
         }
 
         // Validate the selection of items
         if ( categoryValidatorResult.isTicketCategoryValid( ) )
         {
             List<GenericAttributeError> listFormErrors = new ArrayList<>( );
-            TaskModifyTicketCategoryConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+            TaskModifyTicketCategoryConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
             List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), config.getSelectedEntries( ) );
 
             boolean hasFFError = false;

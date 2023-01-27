@@ -52,7 +52,7 @@ public enum MessageDirectionExternalUser
     RE_AGENT_TO_EXTERNAL_USER;
 
     private static final String MESSAGE_PREFIX = "module.workflow.ticketing.task_ticket_email_external_user.message.direction.";
-    private static Map<Integer, MessageDirectionExternalUser> _mapMessageDirection = new HashMap<Integer, MessageDirectionExternalUser>( );
+    private static Map<Integer, MessageDirectionExternalUser> _mapMessageDirection = new HashMap<>( );
 
     static
     {
@@ -64,7 +64,7 @@ public enum MessageDirectionExternalUser
 
     /**
      * returns MessageDirectionExternalUser enum from id
-     * 
+     *
      * @param nMessageDirectionExternalUserId
      *            level value
      * @return MessageDirectionExternalUser enum
@@ -76,19 +76,19 @@ public enum MessageDirectionExternalUser
 
     /**
      * Gives the localized message
-     * 
+     *
      * @param locale
      *            the locale to use
      * @return the message
      */
     public String getLocalizedMessage( Locale locale )
     {
-        return I18nService.getLocalizedString( MESSAGE_PREFIX + this.name( ).toLowerCase( ), locale );
+        return I18nService.getLocalizedString( MESSAGE_PREFIX + name( ).toLowerCase( ), locale );
     }
 
     /**
      * Builds a RefenrenceList object containing all the MessageDirectionExternalUser objects
-     * 
+     *
      * @param locale
      *            the locale used to retrieve the localized messages
      * @return the ReferenceList object

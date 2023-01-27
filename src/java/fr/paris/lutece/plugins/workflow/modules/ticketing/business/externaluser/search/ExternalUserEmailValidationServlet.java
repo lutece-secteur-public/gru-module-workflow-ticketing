@@ -109,7 +109,7 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
         }
 
         Locale locale = user.getLocale( );
-        Map<String, String> mapErrors = new HashMap<String, String>( );
+        Map<String, String> mapErrors = new HashMap<>( );
         mapErrors.put( ERROR_INVALID_EMAIL, StringUtils.EMPTY );
         mapErrors.put( ERROR_INVALID_EMAIL_CC, StringUtils.EMPTY );
 
@@ -170,7 +170,7 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
 
     /**
      * Handles the HTTP <code>GET</code> method.
-     * 
+     *
      * @param request
      *            servlet request
      * @param response
@@ -188,7 +188,7 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
 
     /**
      * Handles the HTTP <code>POST</code> method.
-     * 
+     *
      * @param request
      *            servlet request
      * @param response
@@ -206,7 +206,7 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
 
     /**
      * Returns a short description of the servlet.
-     * 
+     *
      * @return message
      */
     @Override
