@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.externaluser;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import org.apache.commons.lang.StringUtils;
@@ -40,8 +41,13 @@ import org.apache.commons.lang.StringUtils;
 /**
  * Comparator for ExternalUser
  */
-public class ExternalUserComparator implements Comparator<ExternalUser>
+public class ExternalUserComparator implements Comparator<ExternalUser>, Serializable
 {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -4877792520955232251L;
+
     /**
      * {@inheritDoc}
      */
@@ -205,16 +211,10 @@ public class ExternalUserComparator implements Comparator<ExternalUser>
                     nCompare = 1;
                 }
                 else
-                    if ( isDigit( strChunk1.charAt( 0 ) ) )
-                    {
-                        // in this case strChunk1 is not numeric
-                        nCompare = -1;
-                    }
-                    else
-                    {
-                        // in this case both are string
-                        nCompare = strChunk1.compareTo( strChunk2 );
-                    }
+                {
+                    // in this case both are string
+                    nCompare = strChunk1.compareTo( strChunk2 );
+                }
 
             if ( nCompare != 0 )
             {
