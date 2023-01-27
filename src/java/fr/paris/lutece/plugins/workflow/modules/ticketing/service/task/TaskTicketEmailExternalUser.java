@@ -144,7 +144,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
 
     /**
      * Process agent to external user task
-     * 
+     *
      * @param nIdResourceHistory
      *            resourceHistory ID
      * @param ticket
@@ -181,7 +181,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
 
         // Create resource infos item
         String [ ] emailRecipients = null;
-        if ( strEmailRecipients != null && !strEmailRecipients.isEmpty( ) )
+        if ( ( strEmailRecipients != null ) && !strEmailRecipients.isEmpty( ) )
         {
             emailRecipients = strEmailRecipients.split( SEMICOLON );
 
@@ -197,7 +197,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
                 List<ExternalUser> listUsers = _externalUserDAO.findExternalUser( user.getLastName( ), user.getEmail( ),
                         String.valueOf( config.getIdContactAttribute( ) ), null, null );
 
-                if ( listUsers != null && listUsers.size( ) > 0 )
+                if ( ( listUsers != null ) && !listUsers.isEmpty( ) )
                 {
                     infosEmailExternalUser.setField( listUsers.iterator( ).next( ).getAdditionalAttribute( ) );
                 }
@@ -209,7 +209,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
         }
 
         String [ ] emailRecipientsCc = null;
-        if ( strEmailRecipientsCc != null && !strEmailRecipientsCc.isEmpty( ) )
+        if ( ( strEmailRecipientsCc != null ) && !strEmailRecipientsCc.isEmpty( ) )
         {
             emailRecipientsCc = strEmailRecipientsCc.split( SEMICOLON );
             for ( int i = 0; i < emailRecipientsCc.length; i++ )
@@ -225,7 +225,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
 
     /**
      * Process agent to external user task (recontact)
-     * 
+     *
      * @param nIdResourceHistory
      *            resourceHistory ID
      * @param ticket
@@ -266,7 +266,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
 
     /**
      * Process external user to agent task (response)
-     * 
+     *
      * @param nIdResourceHistory
      *            resourceHistory ID
      * @param ticket

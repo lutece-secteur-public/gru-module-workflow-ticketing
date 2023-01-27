@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.CommentValue;
 import fr.paris.lutece.plugins.workflow.modules.comment.business.TaskCommentConfig;
@@ -97,7 +98,7 @@ public class TicketingCommentTaskComponent extends CommentTaskComponent
     {
         Map<String, Object> model = taskComponent.getModel( taskComponent.getTicket( nIdResource, strResourceType ) );
 
-        TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskCommentConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         String strComment = request.getParameter( PARAMETER_COMMENT_VALUE + "_" + task.getId( ) );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, strComment );
@@ -123,25 +124,22 @@ public class TicketingCommentTaskComponent extends CommentTaskComponent
     {
         CommentValue commentValue = _commentValueService.findByPrimaryKey( nIdHistory, task.getId( ), WorkflowUtils.getPlugin( ) );
 
-        if ( commentValue != null && StringUtils.isNotBlank( commentValue.getValue( ) ) )
+        if ( ( commentValue != null ) && StringUtils.isNotBlank( commentValue.getValue( ) ) && ( _contentPostProcessor != null ) )
         {
-            if ( _contentPostProcessor != null )
-            {
-                String strComment = commentValue.getValue( );
-                strComment = _contentPostProcessor.process( request, strComment );
-                commentValue.setValue( strComment );
-            }
+            String strComment = commentValue.getValue( );
+            strComment = _contentPostProcessor.process( request, strComment );
+            commentValue.setValue( strComment );
         }
 
-        Map<String, Object> model = new HashMap<String, Object>( );
-        TaskCommentConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        Map<String, Object> model = new HashMap<>( );
+        TaskCommentConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         AdminUser userConnected = AdminUserService.getAdminUser( request );
 
         model.put( MARK_ID_HISTORY, nIdHistory );
         model.put( MARK_TASK, task );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, commentValue );
-        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, userConnected ) );
+        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, ( User ) userConnected ) );
         model.put( MARK_IS_OWNER, _commentValueService.isOwner( nIdHistory, userConnected ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_INFORMATION, locale, model );

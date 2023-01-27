@@ -72,7 +72,7 @@ public class MarkAsUnreadTaskComponent extends TicketingTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         TaskMarkAsUnreadConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         List<Marking> listMarkings = MarkingHome.getMarkingsList( );

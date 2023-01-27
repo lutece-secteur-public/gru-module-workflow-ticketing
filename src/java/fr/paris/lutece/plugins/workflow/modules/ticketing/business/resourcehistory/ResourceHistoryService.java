@@ -108,9 +108,10 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
      *            the workflow id
      * @return the list of id_history/channel associated to a ticket resource
      */
+    @Override
     public Map<String, Channel> getChannelHistoryMap( int nIdResource, String strResourceType, int nIdWorkflow )
     {
-        Map<String, Channel> mapHistoryChannel = new HashMap<String, Channel>( );
+        Map<String, Channel> mapHistoryChannel = new HashMap<>( );
 
         List<fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory> listResourceHistory = _resourceHistoryService
                 .getAllHistoryByResource( nIdResource, strResourceType, nIdWorkflow );
