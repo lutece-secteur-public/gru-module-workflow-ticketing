@@ -54,7 +54,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
-public class NotifyDaemon extends Daemon
+public class NotifyUsagerDaemon extends Daemon
 {
 
     // Services
@@ -65,51 +65,35 @@ public class NotifyDaemon extends Daemon
             TicketingConstants.PROPERTY_UNSET_INT );
 
     /**
-     * Statut "En attente d'une réponse"
+     * Statut "En attente de compléments par l'usager"
      */
-    private int nIdStateWaiting = AppPropertiesService.getPropertyInt( "workflow.ticketing.state.id.waiting", TicketingConstants.PROPERTY_UNSET_INT );
+    private int                                  nIdStateWaitingUsager                    = AppPropertiesService.getPropertyInt( "workflow.ticketing.state.id.waiting.usager",
+            TicketingConstants.PROPERTY_UNSET_INT );
 
     /**
-     * Action "Relance automatique"
+     * Action "Relance automatique usager"
      */
-    private int nIdActionRelance = AppPropertiesService.getPropertyInt( "workflow.ticketing.action.id.notify", TicketingConstants.PROPERTY_UNSET_INT );
+    private int                                  nIdActionRelance                           = AppPropertiesService.getPropertyInt( "workflow.ticketing.action.id.notify.usager",
+            TicketingConstants.PROPERTY_UNSET_INT );
 
     /*
      * Actions manuelles de sollicitation
      */
-    // cas : action manuelle = "Solliciter un acteur terrain" [à partir d'un niveau 2] (id 317 en PROD)
-    private int nIdActionSolliciterFromTerrainNiv2 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.sollicite.terrain_deux",
-            TicketingConstants.PROPERTY_UNSET_INT );
-    // cas : action manuelle = "Solliciter un acteur terrain" [à partir d'un niveau 3] (id 319)
-    private int nIdActionSolliciterFromTerrainNiv3 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.sollicite.terrain_trois",
-            TicketingConstants.PROPERTY_UNSET_INT );
-    // cas : action manuelle = "Solliciter un contributeur" [à partir d'un niveau 2] (id 326)
-    private int nIdActionSolliciterFromContribNiv2 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.sollicite.contrib_deux",
-            TicketingConstants.PROPERTY_UNSET_INT );
-    // cas : actionmanuelle = "Solliciter un contributeur" [à partir d'un niveau 3] (id 329)
-    private int nIdActionSolliciterFromContribNiv3 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.sollicite.contrib_un",
+    // cas : action manuelle = "Demander compléments"
+    private int                                  nIdActionDemandeComplementUsager           = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.ask.complement.usager",
             TicketingConstants.PROPERTY_UNSET_INT );
 
     /*
      * Actions "Retour de la sollicitation"
      */
-    // cas : Si dernière action manuelle = "Solliciter un acteur terrain" [à partir d'un niveau 2] (id 317 en PROD), état d'arrivée = "À traiter"
-    private int nIdActionRetourFromTerrainNiv2 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.return.sollicite.terrain_deux",
-            TicketingConstants.PROPERTY_UNSET_INT );
-    // cas : Si dernière action manuelle = "Solliciter un acteur terrain" [à partir d'un niveau 3] (id 319), état d'arrivée = "Escaladé niveau 3"
-    private int nIdActionRetourFromTerrainNiv3 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.return.sollicite.terrain_trois",
-            TicketingConstants.PROPERTY_UNSET_INT );
-    // cas : Si dernière action manuelle = "Solliciter un contributeur" [à partir d'un niveau 2] (id 326) état d'arrivée = "À traiter"
-    private int nIdActionRetourFromContribNiv2 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.return.sollicite.contrib_deux",
-            TicketingConstants.PROPERTY_UNSET_INT );
-    // cas : Si dernière action manuelle = "Solliciter un contributeur" [à partir d'un niveau 3] (id 329), état d'arrivée = "Escaladé niveau 3"
-    private int nIdActionRetourFromContribNiv3 = AppPropertiesService.getPropertyInt( "workflow-ticketing.actions.id.return.sollicite.contrib_un",
+    // cas : Si dernière action manuelle = "Demander compléments", état d'arrivée = "traité"
+    private int                                  nIdActionRetourFromDemandeComplementUsager = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.return.ask.complement.usager",
             TicketingConstants.PROPERTY_UNSET_INT );
 
     // nombre de relances maximum avant retour de la sollicitation
-    private int nbRelanceMax = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_NB_MAX, 3 );
+    private int                                  nbRelanceMax                               = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_USAGER_NB_MAX, 1 );
     // durée en jours entre chaque relance
-    private int nFrequence = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_FREQUENCE, 10 );
+    private int                                  nFrequence                                 = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_USAGER_FREQUENCE, 15 );
 
     @Override
     public void run( )
@@ -133,14 +117,14 @@ public class NotifyDaemon extends Daemon
         int nNbTicketRelance = 0;
         int nNbTicketRetour = 0;
 
-        // step 0: récupération des ressources au statut "En attente d'une reponse"
+        // step 0: récupération des ressources au statut "En attente de compléments par l'usager"
 
-        List<Integer> listResourceWaitingId = _workflowService.getResourceIdListByIdState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE );
+        List<Integer> listResourceWaitingId = _workflowService.getResourceIdListByIdState( nIdStateWaitingUsager, Ticket.TICKET_RESOURCE_TYPE );
 
         if ( ( listResourceWaitingId == null ) || listResourceWaitingId.isEmpty( ) )
         {
             // pas de ticket
-            sbLog.append( "Aucun ticket au statut en attente d'une réponse" );
+            sbLog.append( "Aucun ticket au statut en attente de compléments par l'usager" );
             return sbLog.toString( );
         }
 
@@ -168,10 +152,7 @@ public class NotifyDaemon extends Daemon
                         for ( ResourceHistory resourceHistory : allHistory )
                         {
                             // pas de dernière relance, récupération de la date de dernière sollicitation
-                            if ( ( resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromTerrainNiv2 )
-                                    || ( resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromTerrainNiv3 )
-                                    || ( resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromContribNiv2 )
-                                    || ( resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromContribNiv3 ) )
+                            if ( ( resourceHistory.getAction( ).getId( ) == nIdActionDemandeComplementUsager ) )
                             {
                                 int nRelance = processRelance( ticket, resourceHistory.getCreationDate( ), dateExecution );
                                 nNbTicketRelance = nNbTicketRelance + nRelance;
@@ -189,7 +170,7 @@ public class NotifyDaemon extends Daemon
                         }
                         else
                         {
-                            int nRelance = processRetour( ticket, dateExecution );
+                            int nRelance = processRetour( ticket, dateDerniereRelance, dateExecution );
                             nNbTicketRetour = nNbTicketRetour + nRelance;
                             isTicketUpdated = ( nRelance == 1 );
                         }
@@ -219,7 +200,7 @@ public class NotifyDaemon extends Daemon
         }
 
         sbLog.append( "Nombre de tickets au statut " )
-        .append( _workflowService.getState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+        .append( _workflowService.getState( nIdStateWaitingUsager, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
@@ -250,9 +231,7 @@ public class NotifyDaemon extends Daemon
             return false;
         }
 
-        if ( ( nIdActionRelance <= 0 ) || ( nIdStateWaiting <= 0 ) || ( nIdActionSolliciterFromTerrainNiv2 <= 0 ) || ( nIdActionSolliciterFromTerrainNiv3 <= 0 )
-                || ( nIdActionSolliciterFromContribNiv2 <= 0 ) || ( nIdActionSolliciterFromContribNiv3 <= 0 ) || ( nIdActionRetourFromTerrainNiv2 <= 0 )
-                || ( nIdActionRetourFromTerrainNiv3 <= 0 ) || ( nIdActionRetourFromContribNiv2 <= 0 ) || ( nIdActionRetourFromContribNiv3 <= 0 ) )
+        if ( ( nIdActionRelance <= 0 ) || ( nIdStateWaitingUsager <= 0 ) || ( nIdActionDemandeComplementUsager <= 0 ) || ( nIdActionRetourFromDemandeComplementUsager <= 0 ) )
         {
             sbLog.append( "Paramétrage des id de workflow GRU incorrect, vérifier fichiers properties" );
             AppLogService.error( "Paramétrage des id de workflow GRU incorrect, vérifier fichiers properties" );
@@ -268,27 +247,6 @@ public class NotifyDaemon extends Daemon
         }
 
         return true;
-    }
-
-    /**
-     * Relance si pas de date de dernière relance
-     *
-     * @param ticket
-     *            ticket
-     * @param dateExecution
-     *            date d'exécution
-     */
-    private void processRelanceNoDate( Ticket ticket, Date dateExecution )
-    {
-        ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-        ticket.setNbRelance( 1 );
-
-        // mise à jour du ticket (sans màj de la date d'update)
-        // update date true si retour de sollicitation, false si relance auto
-        TicketHome.update( ticket, false );
-
-        // Relance automatique
-        _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRelance, null, null, null, true );
     }
 
     /**
@@ -333,73 +291,34 @@ public class NotifyDaemon extends Daemon
      *            date d'exécution
      * @return nombre de tickets en retour (0 ou 1)
      */
-    private int processRetour( Ticket ticket, Date dateExecution )
+    private int processRetour( Ticket ticket, Timestamp dateDerniereRelance, Date dateExecution )
     {
-        // retour sollicitation
-        int nIdDerniereActionManuelle = getLastManualActionSollicitation( ticket.getId( ), nIdWorkflow );
+        Date dateLimiteRelance = getDatelimiteRelance( dateDerniereRelance );
 
-        if ( nIdDerniereActionManuelle == nIdActionSolliciterFromTerrainNiv2 )
+        if ( dateLimiteRelance.before( dateExecution ) )
         {
-            ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-            // remise à 0
-            ticket.setNbRelance( 0 );
+            // retour sollicitation
+            int nIdDerniereActionManuelle = getLastManualActionSollicitation( ticket.getId( ), nIdWorkflow );
 
-            // mise à jour du ticket
-            // update date true si retour de sollicitation, false si relance auto
-            TicketHome.update( ticket, true );
-
-            _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromTerrainNiv2, null, null, null, true );
-
-            return 1;
-        }
-        else
-            if ( nIdDerniereActionManuelle == nIdActionSolliciterFromTerrainNiv3 )
+            if ( nIdDerniereActionManuelle == nIdActionDemandeComplementUsager )
             {
                 ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
+                // remise à 0
                 ticket.setNbRelance( 0 );
 
                 // mise à jour du ticket
                 // update date true si retour de sollicitation, false si relance auto
                 TicketHome.update( ticket, true );
 
-                _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromTerrainNiv3, null, null, null, true );
+                _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromDemandeComplementUsager, null, null, null, true );
 
                 return 1;
             }
             else
-                if ( nIdDerniereActionManuelle == nIdActionSolliciterFromContribNiv2 )
-                {
-                    ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-                    ticket.setNbRelance( 0 );
-
-                    // mise à jour du ticket
-                    // update date true si retour de sollicitation, false si relance auto
-                    TicketHome.update( ticket, true );
-
-                    _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromContribNiv2, null, null, null, true );
-
-                    return 1;
-                }
-                else
-                    if ( nIdDerniereActionManuelle == nIdActionSolliciterFromContribNiv3 )
-                    {
-                        ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-                        ticket.setNbRelance( 0 );
-
-                        // mise à jour du ticket
-                        // update date true si retour de sollicitation, false si relance auto
-                        TicketHome.update( ticket, true );
-
-                        _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromContribNiv3, null, null, null,
-                                true );
-
-                        return 1;
-                    }
-                    else
-                    {
-                        AppLogService.error( "Dernière action manuelle non trouvée pour le ticket " + ticket.getId( ) );
-                    }
-
+            {
+                AppLogService.error( "Dernière action manuelle non trouvée pour le ticket " + ticket.getId( ) );
+            }
+        }
         return 0;
     }
 
@@ -413,13 +332,9 @@ public class NotifyDaemon extends Daemon
     private Date getDatelimiteRelance( Timestamp dateDerniereRelance )
     {
         Calendar calendarLimiteRelance = Calendar.getInstance( );
-        // date à 00h 00mn 00s
-        calendarLimiteRelance.set( Calendar.HOUR_OF_DAY, 0 );
-        calendarLimiteRelance.set( Calendar.MINUTE, 0 );
-        calendarLimiteRelance.set( Calendar.SECOND, 0 );
-        calendarLimiteRelance.set( Calendar.MILLISECOND, 0 );
-        calendarLimiteRelance.add( Calendar.DAY_OF_YEAR, nFrequence );
-        // date dernière relance + n jours
+        calendarLimiteRelance.setTime( dateDerniereRelance );
+        calendarLimiteRelance.add( Calendar.MINUTE, nFrequence );
+        // date dernière relance + n minutes
         return calendarLimiteRelance.getTime( );
     }
 
@@ -443,8 +358,7 @@ public class NotifyDaemon extends Daemon
             {
                 ResourceHistory resourceHistory = listAllHistoryByResource.get( i );
                 int nIdAction = resourceHistory.getAction( ).getId( );
-                if ( ( nIdAction == nIdActionSolliciterFromTerrainNiv2 ) || ( nIdAction == nIdActionSolliciterFromTerrainNiv3 )
-                        || ( nIdAction == nIdActionSolliciterFromContribNiv2 ) || ( nIdAction == nIdActionSolliciterFromContribNiv3 ) )
+                if ( ( nIdAction == nIdActionDemandeComplementUsager ) )
                 {
                     return nIdAction;
                 }

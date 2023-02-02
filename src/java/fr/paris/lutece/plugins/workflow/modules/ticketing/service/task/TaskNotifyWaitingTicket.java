@@ -170,11 +170,6 @@ public class TaskNotifyWaitingTicket extends SimpleTask
             strEmailRecipientsCc = request.getParameter( PARAMETER_EMAIL_RECIPIENTS_CC + UNDERSCORE + getId( ) );
             strSubject = request.getParameter( PARAMETER_EMAIL_SUBJECT + UNDERSCORE + getId( ) );
         }
-        else
-        {
-            // cas daemon
-            throw new UnsupportedOperationException( );
-        }
 
         // Create message item
         TicketEmailExternalUserMessage emailExternalUserMessage = new TicketEmailExternalUserMessage( );
@@ -194,7 +189,7 @@ public class TaskNotifyWaitingTicket extends SimpleTask
 
         // Create resource infos item
         String [ ] emailRecipients;
-        if ( strEmailRecipients != null && !strEmailRecipients.isEmpty( ) )
+        if ( ( strEmailRecipients != null ) && !strEmailRecipients.isEmpty( ) )
         {
             emailRecipients = strEmailRecipients.split( SEMICOLON );
 
@@ -210,7 +205,7 @@ public class TaskNotifyWaitingTicket extends SimpleTask
                 List<ExternalUser> listUsers = _externalUserDAO.findExternalUser( user.getLastName( ), user.getEmail( ),
                         String.valueOf( config.getIdContactAttribute( ) ), null, null );
 
-                if ( listUsers != null && !listUsers.isEmpty( ) )
+                if ( ( listUsers != null ) && !listUsers.isEmpty( ) )
                 {
                     infosEmailExternalUser.setField( listUsers.iterator( ).next( ).getAdditionalAttribute( ) );
                 }
@@ -222,7 +217,7 @@ public class TaskNotifyWaitingTicket extends SimpleTask
         }
 
         String [ ] emailRecipientsCc;
-        if ( strEmailRecipientsCc != null && !strEmailRecipientsCc.isEmpty( ) )
+        if ( ( strEmailRecipientsCc != null ) && !strEmailRecipientsCc.isEmpty( ) )
         {
             emailRecipientsCc = strEmailRecipientsCc.split( SEMICOLON );
             for ( String recipientCc : emailRecipientsCc )
@@ -251,7 +246,7 @@ public class TaskNotifyWaitingTicket extends SimpleTask
         TicketEmailExternalUserMessage firstEmailsAgentDemand = _ticketEmailExternalUserDemandDAO.loadLastByIdTicket( ticket.getId( ) );
 
         String strAgentMessage = StringUtils.EMPTY;
-        if ( request != null && request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) ) != null )
+        if ( ( request != null ) && ( request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) ) != null ) )
         {
             strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + getId( ) );
         }
