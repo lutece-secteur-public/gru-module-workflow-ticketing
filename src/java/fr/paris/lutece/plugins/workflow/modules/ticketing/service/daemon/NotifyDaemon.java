@@ -64,6 +64,7 @@ public class NotifyDaemon extends Daemon
     private int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID,
             TicketingConstants.PROPERTY_UNSET_INT );
 
+    private int                                  isMinuteMode                       = AppPropertiesService.getPropertyInt( "workflow.ticketing.delai.minute", TicketingConstants.PROPERTY_UNSET_INT );
     /**
      * Statut "En attente d'une réponse"
      */
@@ -137,7 +138,7 @@ public class NotifyDaemon extends Daemon
 
         List<Integer> listResourceWaitingId = _workflowService.getResourceIdListByIdState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE );
 
-        if ( listResourceWaitingId == null || listResourceWaitingId.isEmpty( ) )
+        if ( ( listResourceWaitingId == null ) || listResourceWaitingId.isEmpty( ) )
         {
             // pas de ticket
             sbLog.append( "Aucun ticket au statut en attente d'une réponse" );
@@ -160,7 +161,7 @@ public class NotifyDaemon extends Daemon
                     nNbRelance = ticket.getNbRelance( );
                     dateDerniereRelance = ticket.getDateDerniereRelance( );
 
-                    if ( dateDerniereRelance == null || nNbRelance == 0 )
+                    if ( ( dateDerniereRelance == null ) || ( nNbRelance == 0 ) )
                     {
                         List<ResourceHistory> allHistory = _resourceHistoryService.getAllHistoryByResource( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
                                 nIdWorkflow );
@@ -168,10 +169,10 @@ public class NotifyDaemon extends Daemon
                         for ( ResourceHistory resourceHistory : allHistory )
                         {
                             // pas de dernière relance, récupération de la date de dernière sollicitation
-                            if ( resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromTerrainNiv2
-                                    || resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromTerrainNiv3
-                                    || resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromContribNiv2
-                                    || resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromContribNiv3 )
+                            if ( ( resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromTerrainNiv2 )
+                                    || ( resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromTerrainNiv3 )
+                                    || ( resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromContribNiv2 )
+                                    || ( resourceHistory.getAction( ).getId( ) == nIdActionSolliciterFromContribNiv3 ) )
                             {
                                 int nRelance = processRelance( ticket, resourceHistory.getCreationDate( ), dateExecution );
                                 nNbTicketRelance = nNbTicketRelance + nRelance;
@@ -199,7 +200,7 @@ public class NotifyDaemon extends Daemon
             {
                 AppLogService.error( "Erreur du traitement du ticket " + nIdResource, e );
 
-                if ( ticket != null && ticket.getNbRelance( ) != nNbRelance )
+                if ( ( ticket != null ) && ( ticket.getNbRelance( ) != nNbRelance ) )
                 {
                     // si le ticket a été mis à jour mais a eu une erreur
                     ticket.setNbRelance( nNbRelance );
@@ -219,7 +220,7 @@ public class NotifyDaemon extends Daemon
         }
 
         sbLog.append( "Nombre de tickets au statut " )
-                .append( _workflowService.getState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+        .append( _workflowService.getState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
@@ -230,7 +231,7 @@ public class NotifyDaemon extends Daemon
 
     /**
      * Vérifie les paramètres configurés
-     * 
+     *
      * @param sbLog
      *            logs
      * @return true si conf OK, false sinon
@@ -250,9 +251,9 @@ public class NotifyDaemon extends Daemon
             return false;
         }
 
-        if ( nIdActionRelance <= 0 || nIdStateWaiting <= 0 || nIdActionSolliciterFromTerrainNiv2 <= 0 || nIdActionSolliciterFromTerrainNiv3 <= 0
-                || nIdActionSolliciterFromContribNiv2 <= 0 || nIdActionSolliciterFromContribNiv3 <= 0 || nIdActionRetourFromTerrainNiv2 <= 0
-                || nIdActionRetourFromTerrainNiv3 <= 0 || nIdActionRetourFromContribNiv2 <= 0 || nIdActionRetourFromContribNiv3 <= 0 )
+        if ( ( nIdActionRelance <= 0 ) || ( nIdStateWaiting <= 0 ) || ( nIdActionSolliciterFromTerrainNiv2 <= 0 ) || ( nIdActionSolliciterFromTerrainNiv3 <= 0 )
+                || ( nIdActionSolliciterFromContribNiv2 <= 0 ) || ( nIdActionSolliciterFromContribNiv3 <= 0 ) || ( nIdActionRetourFromTerrainNiv2 <= 0 )
+                || ( nIdActionRetourFromTerrainNiv3 <= 0 ) || ( nIdActionRetourFromContribNiv2 <= 0 ) || ( nIdActionRetourFromContribNiv3 <= 0 ) )
         {
             sbLog.append( "Paramétrage des id de workflow GRU incorrect, vérifier fichiers properties" );
             AppLogService.error( "Paramétrage des id de workflow GRU incorrect, vérifier fichiers properties" );
@@ -272,7 +273,7 @@ public class NotifyDaemon extends Daemon
 
     /**
      * Relance si pas de date de dernière relance
-     * 
+     *
      * @param ticket
      *            ticket
      * @param dateExecution
@@ -293,7 +294,7 @@ public class NotifyDaemon extends Daemon
 
     /**
      * Relance avec contrôle de la date de dernière relance
-     * 
+     *
      * @param ticket
      *            ticket
      * @param dateDerniereRelance
@@ -304,16 +305,7 @@ public class NotifyDaemon extends Daemon
      */
     private int processRelance( Ticket ticket, Timestamp dateDerniereRelance, Date dateExecution )
     {
-        Calendar calendarLimiteRelance = Calendar.getInstance( );
-        calendarLimiteRelance.setTime( dateDerniereRelance );
-        // date à 00h 00mn 00s
-        calendarLimiteRelance.set( Calendar.HOUR_OF_DAY, 0 );
-        calendarLimiteRelance.set( Calendar.MINUTE, 0 );
-        calendarLimiteRelance.set( Calendar.SECOND, 0 );
-        calendarLimiteRelance.set( Calendar.MILLISECOND, 0 );
-        calendarLimiteRelance.add( Calendar.DAY_OF_YEAR, nFrequence );
-        // date dernière relance + n jours
-        Date dateLimiteRelance = calendarLimiteRelance.getTime( );
+        Date dateLimiteRelance = getDatelimiteRelance( dateDerniereRelance );
 
         if ( dateLimiteRelance.before( dateExecution ) )
         {
@@ -335,7 +327,7 @@ public class NotifyDaemon extends Daemon
 
     /**
      * Gère le retour en fonction de la dernière action manuelle
-     * 
+     *
      * @param ticket
      *            ticket
      * @param dateExecution
@@ -413,6 +405,36 @@ public class NotifyDaemon extends Daemon
     }
 
     /**
+     * Renvoie la date de prochaine relance
+     *
+     * @param dateDerniereRelance
+     *            date de dernière relance
+     * @return date limite de relance
+     */
+    private Date getDatelimiteRelance( Timestamp dateDerniereRelance )
+    {
+        Calendar calendarLimiteRelance = Calendar.getInstance( );
+
+        if ( isMinuteMode == 1 )
+        {
+            calendarLimiteRelance.setTime( dateDerniereRelance );
+            calendarLimiteRelance.add( Calendar.MINUTE, nFrequence );
+            // date dernière relance + n minutes
+        }
+        else
+        {
+            // date à 00h 00mn 00s
+            calendarLimiteRelance.set( Calendar.HOUR_OF_DAY, 0 );
+            calendarLimiteRelance.set( Calendar.MINUTE, 0 );
+            calendarLimiteRelance.set( Calendar.SECOND, 0 );
+            calendarLimiteRelance.set( Calendar.MILLISECOND, 0 );
+            calendarLimiteRelance.add( Calendar.DAY_OF_YEAR, nFrequence );
+            // date dernière relance + n jours
+        }
+        return calendarLimiteRelance.getTime( );
+    }
+
+    /**
      *
      * @param nIdResource
      *            identifiant de la ressource
@@ -425,15 +447,15 @@ public class NotifyDaemon extends Daemon
         List<ResourceHistory> listAllHistoryByResource = _resourceHistoryService.getAllHistoryByResource( nIdResource, Ticket.TICKET_RESOURCE_TYPE,
                 nIdWorkflow );
 
-        if ( listAllHistoryByResource != null && !listAllHistoryByResource.isEmpty( ) )
+        if ( ( listAllHistoryByResource != null ) && !listAllHistoryByResource.isEmpty( ) )
         {
             // récupération de la dernière action manuelle de sollicitation (itération inverse)
             for ( int i = listAllHistoryByResource.size( ); i-- > 0; )
             {
                 ResourceHistory resourceHistory = listAllHistoryByResource.get( i );
                 int nIdAction = resourceHistory.getAction( ).getId( );
-                if ( nIdAction == nIdActionSolliciterFromTerrainNiv2 || nIdAction == nIdActionSolliciterFromTerrainNiv3
-                        || nIdAction == nIdActionSolliciterFromContribNiv2 || nIdAction == nIdActionSolliciterFromContribNiv3 )
+                if ( ( nIdAction == nIdActionSolliciterFromTerrainNiv2 ) || ( nIdAction == nIdActionSolliciterFromTerrainNiv3 )
+                        || ( nIdAction == nIdActionSolliciterFromContribNiv2 ) || ( nIdAction == nIdActionSolliciterFromContribNiv3 ) )
                 {
                     return nIdAction;
                 }

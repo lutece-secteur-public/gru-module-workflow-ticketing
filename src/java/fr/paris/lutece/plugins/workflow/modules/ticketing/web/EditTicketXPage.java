@@ -245,7 +245,7 @@ public class EditTicketXPage implements XPageApplication
         String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), true, request );
         TicketAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( TaskEditTicketConstants.MARK_EDITABLE_TICKET, editableTicket );
         model.put( TicketingConstants.MARK_TICKET, ticket );
         model.put( MARK_ID_ACTION, request.getParameter( TicketingConstants.PARAMETER_WORKFLOW_ID_ACTION ) );

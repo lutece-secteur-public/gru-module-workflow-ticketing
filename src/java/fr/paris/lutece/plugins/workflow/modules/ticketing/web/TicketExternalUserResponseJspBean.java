@@ -294,7 +294,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( TicketingConstants.MARK_AVATAR_AVAILABLE, _bAvatarAvailable );
         model.put( MARK_USER_ADMIN, userAdmin );
         model.put( MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM, WorkflowService.getInstance( ).getDisplayTasksForm( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
-                externalUserConfig.getIdFollowingAction( ), request, getLocale( ) ) );
+                externalUserConfig.getIdFollowingAction( ), request, getLocale( ), userAdmin ) );
         model.put( TicketingConstants.MARK_FORM_ACTION, getActionUrl( TicketingConstants.ACTION_DO_PROCESS_WORKFLOW_ACTION, request ) );
         model.put( MARK_ID_ACTION, externalUserConfig.getIdFollowingAction( ) );
         model.put( MARK_ID_TICKET, ticket.getId( ) );

@@ -120,7 +120,7 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
                 {
                     List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
 
-                    if ( ( unitsList != null ) && ( unitsList.size( ) > 0 ) )
+                    if ( ( unitsList != null ) && ( !unitsList.isEmpty( ) ) )
                     {
                         assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
                         ticket.setAssigneeUnit( assigneeUnit );
@@ -134,9 +134,9 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
 
                 strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
                         ( strCurrentUnit != null ) ? strCurrentUnit : StringUtils.EMPTY,
-                        ( ticket.getAssigneeUser( ) != null ) ? ( ticket.getAssigneeUser( ).getFirstname( ) + " " + ticket.getAssigneeUser( ).getLastname( ) )
-                                : I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER, Locale.FRENCH ),
-                        ( ticket.getAssigneeUnit( ) != null ) ? ticket.getAssigneeUnit( ).getName( ) : StringUtils.EMPTY );
+                                ( ticket.getAssigneeUser( ) != null ) ? ( ticket.getAssigneeUser( ).getFirstname( ) + " " + ticket.getAssigneeUser( ).getLastname( ) )
+                                        : I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER, Locale.FRENCH ),
+                                        ( ticket.getAssigneeUnit( ) != null ) ? ticket.getAssigneeUnit( ).getName( ) : StringUtils.EMPTY );
             }
             else
             {
@@ -151,7 +151,7 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
 
     /**
      * Get the user assigning up the ticket corresponding to the resource of the resourceHistory id
-     * 
+     *
      * @param nIdResourceHistory
      *            the resourceHistory id
      * @return the user assigning up the ticket corresponding to the resource of the resourceHistory id , {@code null} otherwise
@@ -160,7 +160,7 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
     {
         ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
 
-        List<Integer> listIdResource = new ArrayList<Integer>( );
+        List<Integer> listIdResource = new ArrayList<>( );
         listIdResource.add( resourceHistory.getIdResource( ) );
 
         List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource, resourceHistory.getResourceType( ),
