@@ -51,7 +51,7 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
     public TaskModifyTicketCategoryConfig( )
     {
         super( );
-        _listSelectedEntries = new ArrayList<Integer>( );
+        _listSelectedEntries = new ArrayList<>( );
     }
 
     /**
@@ -76,6 +76,6 @@ public class TaskModifyTicketCategoryConfig extends TaskConfig
      */
     public void clearSelectedEntries( )
     {
-        _listSelectedEntries = new ArrayList<Integer>( );
+        _listSelectedEntries = new ArrayList<>( );
     }
 }

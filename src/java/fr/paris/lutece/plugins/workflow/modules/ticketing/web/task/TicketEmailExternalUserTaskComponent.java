@@ -182,7 +182,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
                 .loadByIdMessageExternalUser( emailExternalUserHistory.getIdMessageExternalUser( ) );
         TaskTicketEmailExternalUserConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         String messageQuestion = mailExternalUserMessage != null ? mailExternalUserMessage.getMessageQuestion( ) : "";
         if ( ( config != null ) && ( config.getMessageDirectionExternalUser( ) == MessageDirectionExternalUser.AGENT_TO_EXTERNAL_USER ) )
@@ -199,7 +199,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
                 sbInfosCc.append( emailExternalUserCc.getEmail( ) ).append( DISPLAY_SEMICOLON );
             }
 
-            if ( ( sbInfosCc != null ) && ( sbInfosCc.length( ) > 0 ) )
+            if ( sbInfosCc.length( ) > 0 )
             {
                 sbInfosCc.setLength( sbInfosCc.length( ) - 3 );
             }
@@ -274,7 +274,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
             }
         }
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_CONFIG, config );
 
         String strLabelContactAttribute = StringUtils.EMPTY;
@@ -409,7 +409,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         TaskTicketEmailExternalUserConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         ReferenceList listMessageDirections = MessageDirectionExternalUser.getReferenceList( locale );

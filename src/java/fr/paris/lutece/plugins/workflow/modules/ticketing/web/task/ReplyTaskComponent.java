@@ -84,11 +84,11 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskReplyConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskReplyConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         ReferenceList listMessageDirections = MessageDirection.getReferenceList( locale );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
 
         model.put( MARK_MESSAGE_DIRECTIONS_LIST, listMessageDirections );
 
@@ -117,7 +117,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         int nMessageDirectionId = Integer.parseInt( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
         boolean bCloseTicket = Boolean.parseBoolean( request.getParameter( PARAMETER_CLOSE_TICKET ) );
 
-        TaskReplyConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskReplyConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bConfigToCreate = false;
 
         if ( config == null )
@@ -132,11 +132,11 @@ public class ReplyTaskComponent extends TicketingTaskComponent
 
         if ( bConfigToCreate )
         {
-            this.getTaskConfigService( ).create( config );
+            getTaskConfigService( ).create( config );
         }
         else
         {
-            this.getTaskConfigService( ).update( config );
+            getTaskConfigService( ).update( config );
         }
 
         return null;
@@ -149,7 +149,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
-        TaskReplyConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskReplyConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         boolean bIsAgentView = false;
 
         if ( config.getMessageDirection( ) == MessageDirection.AGENT_TO_USER )

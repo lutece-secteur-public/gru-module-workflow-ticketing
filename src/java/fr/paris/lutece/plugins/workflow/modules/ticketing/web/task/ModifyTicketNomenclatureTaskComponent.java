@@ -76,7 +76,7 @@ public class ModifyTicketNomenclatureTaskComponent extends TicketingTaskComponen
         Ticket ticket = getTicket( nIdHistory, strResourceType );
         String strNomenclature = ticket.getNomenclature( );
 
-        Map<String, String> model = new HashMap<String, String>( );
+        Map<String, String> model = new HashMap<>( );
 
         model.put( MARK_TICKET_NOMENCLATURE, strNomenclature );
 

@@ -99,8 +99,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     @Override
     public String getDisplayConfigForm( HttpServletRequest request, Locale locale, ITask task )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
-        TaskEditTicketConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        Map<String, Object> model = new HashMap<>( );
+        TaskEditTicketConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         ReferenceList listMessageDirections = MessageDirection.getReferenceList( locale );
 
@@ -133,7 +133,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         int nMessageDirectionId = Integer.parseInt( request.getParameter( PARAMETER_MESSAGE_DIRECTION ) );
         int nIdUserEditionAction = Integer.parseInt( request.getParameter( PARAMETER_ID_USER_EDITION_ACTION ) );
 
-        TaskEditTicketConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskEditTicketConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         Boolean bConfigToCreate = false;
 
         if ( config == null )
@@ -148,11 +148,11 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         if ( bConfigToCreate )
         {
-            this.getTaskConfigService( ).create( config );
+            getTaskConfigService( ).create( config );
         }
         else
         {
-            this.getTaskConfigService( ).update( config );
+            getTaskConfigService( ).update( config );
         }
 
         return null;
@@ -164,7 +164,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     @Override
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        TaskEditTicketConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskEditTicketConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         if ( config == null )
         {
@@ -173,7 +173,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         MessageDirection messageDirection = config.getMessageDirection( );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( MARK_CONFIG, config );
         model.put( MARK_AGENT_VIEW, messageDirection == MessageDirection.AGENT_TO_USER );
 
@@ -182,7 +182,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         if ( messageDirection == MessageDirection.AGENT_TO_USER )
         {
             List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), null );
-            List<Entry> listEntryWithoutComment = new ArrayList<Entry>( );
+            List<Entry> listEntryWithoutComment = new ArrayList<>( );
 
             for ( Entry entry : listEntry )
             {
@@ -223,7 +223,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     public String doValidateTask( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         String strAgentMessage = request.getParameter( PARAMETER_MESSAGE + UNDERSCORE + task.getId( ) );
-        TaskEditTicketConfig config = this.getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        TaskEditTicketConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
 
         if ( config == null )
         {

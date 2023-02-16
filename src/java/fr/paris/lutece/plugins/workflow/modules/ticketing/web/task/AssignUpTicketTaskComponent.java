@@ -165,7 +165,7 @@ public class AssignUpTicketTaskComponent extends TicketingTaskComponent
 
         lstRefSupportEntities = getUnitsList( adminUser, levelList );
 
-        if ( ( lstRefSupportEntities == null ) || ( lstRefSupportEntities.size( ) == 0 ) )
+        if ( ( lstRefSupportEntities == null ) || ( lstRefSupportEntities.isEmpty( ) ) )
         {
             request.setAttribute( ATTRIBUTE_HIDE_NEXT_STEP_BUTTON, Boolean.TRUE );
             addError( I18nService.getLocalizedString( MESSAGE_NO_SUPPORT_ENTITY_FOUND, locale ) );
