@@ -63,6 +63,8 @@ public class NotifyUsagerDaemon extends Daemon
 
     private int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID,
             TicketingConstants.PROPERTY_UNSET_INT );
+    private int                                  isMinuteMode                               = AppPropertiesService.getPropertyInt( "workflow.ticketing.delai.minute",
+            TicketingConstants.PROPERTY_UNSET_INT );
 
     /**
      * Statut "En attente de compléments par l'usager"
@@ -332,11 +334,26 @@ public class NotifyUsagerDaemon extends Daemon
     private Date getDatelimiteRelance( Timestamp dateDerniereRelance )
     {
         Calendar calendarLimiteRelance = Calendar.getInstance( );
-        calendarLimiteRelance.setTime( dateDerniereRelance );
-        calendarLimiteRelance.add( Calendar.MINUTE, nFrequence );
-        // date dernière relance + n minutes
+
+        if ( isMinuteMode == 1 )
+        {
+            calendarLimiteRelance.setTime( dateDerniereRelance );
+            calendarLimiteRelance.add( Calendar.MINUTE, nFrequence );
+            // date dernière relance + n minutes
+        }
+        else
+        {
+            // date à 00h 00mn 00s
+            calendarLimiteRelance.set( Calendar.HOUR_OF_DAY, 0 );
+            calendarLimiteRelance.set( Calendar.MINUTE, 0 );
+            calendarLimiteRelance.set( Calendar.SECOND, 0 );
+            calendarLimiteRelance.set( Calendar.MILLISECOND, 0 );
+            calendarLimiteRelance.add( Calendar.DAY_OF_YEAR, nFrequence );
+            // date dernière relance + n jours
+        }
         return calendarLimiteRelance.getTime( );
     }
+
 
     /**
      *
