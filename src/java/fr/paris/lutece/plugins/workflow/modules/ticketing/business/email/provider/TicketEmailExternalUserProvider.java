@@ -256,7 +256,7 @@ public class TicketEmailExternalUserProvider implements IProvider
             collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_SUBJECT, _emailExternalUserMessage.getEmailSubject( ) ) );
         }
 
-        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, String.valueOf( _ticket.getNbRelance( ) + 1 ) ) );
+        collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_NB_AUTOMATIC_NOTIFICATION, String.valueOf( _ticket.getNbRelance( ) ) ) );
         if ( _ticket.getDateDerniereRelance( ) != null )
         {
             Calendar calendarDerniereRelance = Calendar.getInstance( );
