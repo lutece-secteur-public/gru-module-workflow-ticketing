@@ -242,7 +242,20 @@
 	<bean id="workflow-ticketing.assignTicketToUserTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.AssignTicketToUserTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeAssignTicketToUser" />
-		
+
+	<!-- Task ReAssign ticket for user deleled or desactived -->
+	<bean id="workflow-ticketing.taskReassignTicketToUnitForAUserNotAvailable"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReassignTicketToUnitForAUserNotAvailable"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeReassignTicketToUnitForAUserNotAvalaible"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskReassignTicketToUnitForAUserNotAvailable" p:titleI18nKey="module.workflow.ticketing.task_reassign_ticket_to_unit_for_a_user_not_avalaible.title"
+		p:beanName="workflow-ticketing.taskReassignTicketToUnitForAUserNotAvailable"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.reassignUnitTicketTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ReassignUnitTicketTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeReassignTicketToUnitForAUserNotAvalaible" />
+	
 	<!-- Task Modify Ticket's Nomenclature -->
 	<bean id="workflow-ticketing.taskModifyTicketNomenclature" 
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketNomenclature" 
