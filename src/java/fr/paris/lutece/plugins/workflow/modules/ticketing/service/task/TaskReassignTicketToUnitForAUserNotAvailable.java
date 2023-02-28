@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
+import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.resourcehistory.IResourceWorkflowHistoryDAO;
 import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -57,6 +58,7 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehisto
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
+import fr.paris.lutece.portal.service.admin.AdminAuthenticationService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
@@ -91,6 +93,9 @@ public class TaskReassignTicketToUnitForAUserNotAvailable extends AbstractTicket
         int nUserId = Integer.parseInt( strUserId );
 
         AdminUser user = AdminUserHome.findByPrimaryKey( nUserId );
+
+        AdminUser adminUser = AdminAuthenticationService.getInstance( ).getRegisteredUser( request );
+
         if ( null != user )
         {
             // unite pour le tranfsert des tickets
@@ -118,15 +123,21 @@ public class TaskReassignTicketToUnitForAUserNotAvailable extends AbstractTicket
                 if ( ( unitToTransfer != null ) )
                 {
                     AssigneeUnit assigneeOldUnit = null;
-                    if ( null != ticket.getAssignerUnit( ) )
+                    if ( null != ticket.getAssigneeUnit( ) )
                     {
-                        assigneeOldUnit = ticket.getAssignerUnit( );
+                        assigneeOldUnit = ticket.getAssigneeUnit( );
                     }
 
                     AssigneeUnit assigneeNewUnit = new AssigneeUnit( unitToTransfer );
+                    AssigneeUser assigner = new AssigneeUser( adminUser );
 
-                    ticket.setAssignerUnit( assigneeNewUnit );
-                    ticket.setAssignerUser( null );
+                    ticket.setAssignerUser( assigner );
+                    ticket.setAssignerUnit( assigneeOldUnit );
+                    assigneeNewUnit.setUnitId( unitToTransfer.getIdUnit( ) );
+                    assigneeNewUnit.setName( unitToTransfer.getLabel( ) );
+                    ticket.setAssigneeUnit( assigneeNewUnit );
+                    ticket.setAssigneeUser( null );
+
                     TicketHome.update( ticket );
 
                     immediateTicketIndexingWaiting( ticket );
