@@ -9,20 +9,24 @@ VALUES(367, 'Réassignation entité (utilisateur supprimé ou inactif)', 'Réass
 -- tache reassignation tickets
 INSERT INTO workflow_task
 (id_task, task_type_key, id_action, display_order)
-VALUES(643, 'taskReassignTicketToUnitForAUserNotAvailable', 367, 1),
-(644, 'taskTicketingMarkAsUnread', 367, 2),
-(645, 'taskReassignTicketToUnitForAUserNotAvailable', 368, 1),
-(646, 'taskTicketingMarkAsUnread', 368, 2),
-(647, 'taskReassignTicketToUnitForAUserNotAvailable', 369, 1),
-(648, 'taskTicketingMarkAsUnread', 369, 2),
-(649, 'taskReassignTicketToUnitForAUserNotAvailable', 370, 1),
-(650, 'taskTicketingMarkAsUnread', 370, 2);
+VALUES(636, 'taskReassignTicketToUnitForAUserNotAvailable', 367, 1),
+(637, 'taskTicketingMarkAsUnread', 367, 2),
+(638, 'taskReassignTicketToUnitForAUserNotAvailable', 368, 1),
+(639, 'taskTicketingMarkAsUnread', 368, 2),
+(640, 'taskReassignTicketToUnitForAUserNotAvailable', 369, 1),
+(641, 'taskTicketingMarkAsUnread', 369, 2),
+(642, 'taskReassignTicketToUnitForAUserNotAvailable', 370, 1),
+(643, 'taskTicketingMarkAsUnread', 370, 2);
+(644, 'taskTicketingReplyAssignUpTicket', 347, 1);
+
+-- devient deuxieme tache pour action 347
+ALTER TABLE workflow_task set display_order = 2 WHERE id_task= 596;
 
 -- mettre marquage non lu apres reassignation
 INSERT INTO workflow_task_ticketing_mark_unread_config
 (id_task, id_marking)
-VALUES(644, 1),
-(646, 1),
-(648, 1),
-(650, 1);
+VALUES(637, 1),
+(639, 1),
+(641, 1),
+(643, 1);
 
