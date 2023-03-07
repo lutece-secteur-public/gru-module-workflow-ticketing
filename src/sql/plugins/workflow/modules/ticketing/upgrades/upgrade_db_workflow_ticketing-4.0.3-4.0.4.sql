@@ -16,11 +16,11 @@ VALUES(636, 'taskReassignTicketToUnitForAUserNotAvailable', 367, 1),
 (640, 'taskReassignTicketToUnitForAUserNotAvailable', 369, 1),
 (641, 'taskTicketingMarkAsUnread', 369, 2),
 (642, 'taskReassignTicketToUnitForAUserNotAvailable', 370, 1),
-(643, 'taskTicketingMarkAsUnread', 370, 2);
+(643, 'taskTicketingMarkAsUnread', 370, 2),
 (644, 'taskTicketingReplyAssignUpTicket', 347, 1);
 
 -- devient deuxieme tache pour action 347
-ALTER TABLE workflow_task set display_order = 2 WHERE id_task= 596;
+UPDATE workflow_task set display_order = 2 WHERE id_task= 596;
 
 -- mettre marquage non lu apres reassignation
 INSERT INTO workflow_task_ticketing_mark_unread_config
