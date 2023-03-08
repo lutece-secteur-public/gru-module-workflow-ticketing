@@ -144,7 +144,10 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
             }
         }
 
-        request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
+        if ( request != null )
+        {
+            request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
+        }
 
         return strTaskInformation;
     }
