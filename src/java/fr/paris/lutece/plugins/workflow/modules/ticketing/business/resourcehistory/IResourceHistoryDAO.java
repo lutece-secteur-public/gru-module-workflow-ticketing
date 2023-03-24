@@ -84,4 +84,15 @@ public interface IResourceHistoryDAO
      *            the plugin
      */
     void deleteByResource( int nIdResource, String strResourceType, Plugin plugin );
+
+    /**
+     * Load a record by primary key id_history and old unit
+     *
+     * @param nIdHistory
+     *            the history id
+     * @param plugin
+     *            the plugin
+     * @return ResourceHistory Object
+     */
+    ResourceHistory loadUnitOld( int nIdHistory, Plugin plugin );
 }
