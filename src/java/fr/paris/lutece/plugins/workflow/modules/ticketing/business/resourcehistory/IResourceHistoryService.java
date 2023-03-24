@@ -72,4 +72,15 @@ public interface IResourceHistoryService
      * @return the ResourceHistory Object
      */
     ResourceHistory findByPrimaryKey( int nIdHistory, Plugin plugin );
+
+    /**
+     * Load the ResourceHistory Object id_history and old unit
+     *
+     * @param nIdHistory
+     *            the history id
+     * @param plugin
+     *            the plugin
+     * @return the ResourceHistory Object
+     */
+    ResourceHistory findOldUnitByPrimaryKey( int nIdHistory, Plugin plugin );
 }

@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 import java.text.MessageFormat;
 import java.util.Locale;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,6 +48,9 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
@@ -62,6 +66,10 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
 
     // PARAMETERS
     public static final String PARAMETER_TICKET_UP_ASSIGNEE_UNIT_ID = "ticket_up_unit_id";
+
+    // Services
+    @Inject
+    protected IResourceHistoryService _resourceHistoryServiceTicketing;
 
     @Override
     public String getTitle( Locale locale )
@@ -98,25 +106,35 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
                     request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                 }
 
+                int oldUnit = ticket.getAssigneeUnit( ).getUnitId( );
                 AssigneeUser assigneeUser = ticket.getAssigneeUser( );
 
                 String strFormerUserInfos = ( assigneeUser == null )
                         ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER, Locale.FRENCH )
-                        : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
-                        strFormerUserInfos, unit.getLabel( ) );
+                                : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+                        strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
+                                strFormerUserInfos, unit.getLabel( ) );
 
-                ticket.setAssignerUser( ticket.getAssigneeUser( ) );
-                ticket.setAssignerUnit( ticket.getAssigneeUnit( ) );
-                ticket.setAssigneeUser( null );
-                assigneeUnit.setUnitId( unit.getIdUnit( ) );
-                assigneeUnit.setName( unit.getLabel( ) );
-                ticket.setAssigneeUnit( assigneeUnit );
-                ticket.setAssigneeUser( null );
+                        ticket.setAssignerUser( ticket.getAssigneeUser( ) );
+                        ticket.setAssignerUnit( ticket.getAssigneeUnit( ) );
+                        ticket.setAssigneeUser( null );
+                        assigneeUnit.setUnitId( unit.getIdUnit( ) );
+                        assigneeUnit.setName( unit.getLabel( ) );
+                        ticket.setAssigneeUnit( assigneeUnit );
+                        ticket.setAssigneeUser( null );
 
-                TicketHome.update( ticket );
+                        TicketHome.update( ticket );
+
+                        // insert in workflow_resource_history_ticketing
+                        ResourceHistory resourceHistory = new ResourceHistory( );
+                        resourceHistory.setIdHistory( nIdResourceHistory );
+                        resourceHistory.setIdChannel( ticket.getChannel( ).getId( ) );
+                        resourceHistory.setIdUnitOld( oldUnit );
+                        resourceHistory.setIdUnitNew( unit.getIdUnit( ) );
+                        _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin( ) );
             }
         }
+
 
         if ( request != null )
         {

@@ -49,6 +49,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
             + "(id_history,id_channel, id_unit_old, id_unit_new ) VALUES( ?, ?, ?, ? )";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_resource_history_ticketing WHERE id_history=?";
     private static final String SQL_QUERY_DELETE_BY_RESOURCE = "DELETE wrht FROM workflow_resource_history wrh, workflow_resource_history_ticketing wrht WHERE wrh.id_history = wrht.id_history AND wrh.id_resource = ? AND wrh.resource_type = ?";
+    private static final String SQL_QUERY_FIND_OLD_UNIT_BY_PRIMARY_KEY = "SELECT id_history, id_unit_old FROM workflow_resource_history_ticketing WHERE id_history=?";
 
     /**
      * {@inheritDoc}
@@ -109,6 +110,30 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
                 resourceHistory = new ResourceHistory( );
                 resourceHistory.setIdHistory( daoUtil.getInt( 1 ) );
                 resourceHistory.setIdChannel( daoUtil.getInt( 2 ) );
+            }
+        }
+        return resourceHistory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResourceHistory loadUnitOld( int nIdHistory, Plugin plugin )
+    {
+        ResourceHistory resourceHistory = null;
+
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_OLD_UNIT_BY_PRIMARY_KEY, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdHistory );
+
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                resourceHistory = new ResourceHistory( );
+                resourceHistory.setIdHistory( daoUtil.getInt( 1 ) );
+                resourceHistory.setIdUnitOld( daoUtil.getInt( 2 ) );
             }
         }
         return resourceHistory;
