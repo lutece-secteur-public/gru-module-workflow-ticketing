@@ -157,4 +157,14 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
             }
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResourceHistory findOldUnitByPrimaryKey( int nIdHistory, Plugin plugin )
+    {
+        return _dao.loadUnitOld( nIdHistory, plugin );
+    }
+
 }

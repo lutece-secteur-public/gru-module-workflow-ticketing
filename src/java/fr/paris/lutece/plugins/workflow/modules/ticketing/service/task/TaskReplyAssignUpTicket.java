@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +51,8 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryService;
+import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
@@ -71,6 +74,10 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
     private static final String PROPERTY_ASSIGN_TO_UNIT_ACTION_ID = "workflow-ticketing.workflow.action.id.assignToUnit";
     private static final int ASSIGN_UP_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_UP_ACTION_ID, 304 );
     private static final int ASSIGN_TO_UNIT_ACTION_ID = AppPropertiesService.getPropertyInt( PROPERTY_ASSIGN_TO_UNIT_ACTION_ID, 305 );
+
+    // Services
+    @Inject
+    protected IResourceHistoryService _resourceHistoryServiceTicketing;
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -97,6 +104,8 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
             }
 
             AdminUser user = getAssigner( nIdResourceHistory );
+            Unit unit = getAssignerUnitBeforeRelance( nIdResourceHistory );
+
 
             if ( ( user != null ) && ( user.getUserId( ) != assigneeUser.getAdminUserId( ) ) )
             {
@@ -111,9 +120,10 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
                     request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                 }
 
-                if ( ticket.getAssignerUnit( ) != null )
+                if ( unit != null )
                 {
-                    ticket.setAssigneeUnit( ticket.getAssignerUnit( ) );
+                    AssigneeUnit assigneeUnitOld = new AssigneeUnit( unit );
+                    ticket.setAssigneeUnit( assigneeUnitOld );
 
                 }
                 else
@@ -183,6 +193,42 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
         }
 
         return ( isAssignUpActionFound ? AdminUserHome.findUserByLogin( resourceHistory.getUserAccessCode( ) ) : null );
+
+    }
+
+    /**
+     * Get the unit assigning up the ticket corresponding to the resource of the resourceHistory id
+     *
+     * @param nIdResourceHistory
+     *            the resourceHistory id
+     * @return the unit assigning up the ticket corresponding to the resource of the resourceHistory id , {@code null} otherwise
+     */
+    protected Unit getAssignerUnitBeforeRelance( int nIdResourceHistory )
+    {
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+
+        List<Integer> listIdResource = new ArrayList<>( );
+        listIdResource.add( resourceHistory.getIdResource( ) );
+
+        List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource, resourceHistory.getResourceType( ), resourceHistory.getWorkflow( ).getId( ) );
+
+        boolean isAssignUpActionFound = false;
+        ListIterator<Integer> iterator = listIdHistory.listIterator( listIdHistory.size( ) );
+        fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryTicketing = null;
+
+        while ( !isAssignUpActionFound && iterator.hasPrevious( ) )
+        {
+            resourceHistory = _resourceHistoryService.findByPrimaryKey( iterator.previous( ) );
+
+            if ( ( resourceHistory.getAction( ).getId( ) == ASSIGN_UP_ACTION_ID ) || ( resourceHistory.getAction( ).getId( ) == ASSIGN_TO_UNIT_ACTION_ID ) )
+            {
+                isAssignUpActionFound = true;
+                resourceHistoryTicketing = _resourceHistoryServiceTicketing.findOldUnitByPrimaryKey( resourceHistory.getId( ), WorkflowUtils.getPlugin( ) );
+            }
+        }
+
+        return ( resourceHistoryTicketing != null ? UnitHome.findByPrimaryKey( resourceHistoryTicketing.getIdUnitOld( ) ) : null );
+
     }
 
     @Override
