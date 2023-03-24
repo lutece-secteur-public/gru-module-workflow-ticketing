@@ -107,6 +107,11 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
                 }
 
                 int oldUnit = ticket.getAssigneeUnit( ).getUnitId( );
+                if ( oldUnit == 0 )
+                {
+                    // cas id=0 Mairie de Paris
+                    oldUnit = -100;
+                }
                 AssigneeUser assigneeUser = ticket.getAssigneeUser( );
 
                 String strFormerUserInfos = ( assigneeUser == null )

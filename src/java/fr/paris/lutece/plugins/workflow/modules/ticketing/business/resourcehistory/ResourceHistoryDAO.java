@@ -69,14 +69,20 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
                 daoUtil.setIntNull( 2 );
             }
 
-            if ( resourceHistory.getIdUnitOld( ) > 0 )
+            if ( resourceHistory.getIdUnitOld( ) == -100 )
             {
-                daoUtil.setInt( 3, resourceHistory.getIdUnitOld( ) );
+                // cas id=0 Mairie de Paris
+                daoUtil.setInt( 3, 0 );
             }
             else
-            {
-                daoUtil.setIntNull( 3 );
-            }
+                if ( resourceHistory.getIdUnitOld( ) > 0 )
+                {
+                    daoUtil.setInt( 3, resourceHistory.getIdUnitOld( ) );
+                }
+                else
+                {
+                    daoUtil.setIntNull( 3 );
+                }
 
             if ( resourceHistory.getIdUnitNew( ) > 0 )
             {
