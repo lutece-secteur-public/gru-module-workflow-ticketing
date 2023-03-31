@@ -271,7 +271,7 @@ public class TaskEditTicket extends AbstractTicketingTask
             {
                 Response response = iterator.next( );
 
-                if ( response.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) )
+                if ( ( response.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) ) && ( response.getFile( ) == null ) )
                 {
                     iterator.remove( );
                 }
@@ -289,10 +289,6 @@ public class TaskEditTicket extends AbstractTicketingTask
             for ( Response response : ticket.getListResponse( ) )
             {
                 ResponseHome.create( response );
-                if ( response.getFile( ) != null )
-                {
-                    // TicketFileHome.migrateToBlob( response.getFile( ) );
-                }
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             }
         }
