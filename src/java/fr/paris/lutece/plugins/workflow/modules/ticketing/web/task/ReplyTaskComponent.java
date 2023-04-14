@@ -40,6 +40,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
@@ -70,6 +71,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     private static final String MARK_LIST_ID_TICKETS = "list_id_tickets";
     private static final String MARK_HANDLER = "upload_handler";
     private static final String MARK_ENTRY_ATTACHED_FILE = "entry_attached_files";
+    private static final String MARK_EMAIL_EXIST             = "ticket_email_exist";
 
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
@@ -151,6 +153,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
         TaskReplyConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
         boolean bIsAgentView = false;
+        boolean bIsTicketEmailExist = false;
 
         if ( config.getMessageDirection( ) == MessageDirection.AGENT_TO_USER )
         {
@@ -159,6 +162,9 @@ public class ReplyTaskComponent extends TicketingTaskComponent
             ModelUtils.storeUserSignature( request, model );
         }
 
+        Ticket ticketFound = ( Ticket ) model.get( "ticket" );
+        bIsTicketEmailExist = ( ( null != ticketFound.getEmail( ) ) && !ticketFound.getEmail( ).equals( "" ) );
+
         // Get the id entry for reply attments files from properties
         int nIdEntryReplyAttachedFiles = AppPropertiesService.getPropertyInt( TicketingConstants.PROPERTY_ENTRY_REPLY_ATTACHMENTS_ID,
                 TicketingConstants.PROPERTY_UNSET_INT );
@@ -166,6 +172,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
         model.put( MARK_HANDLER, TicketAsynchronousUploadHandler.getHandler( ) );
         model.put( MARK_ENTRY_ATTACHED_FILE, _ticketFormService.getHtmlEntry( nIdEntryReplyAttachedFiles, false, request ) );
         model.put( MARK_AGENT_VIEW, bIsAgentView );
+        model.put( MARK_EMAIL_EXIST, bIsTicketEmailExist );
         model.put( MARK_LIST_ID_TICKETS, request.getParameterValues( TicketingConstants.PARAMETER_ID_TICKET ) );
 
         ModelUtils.storeRichText( request, model );

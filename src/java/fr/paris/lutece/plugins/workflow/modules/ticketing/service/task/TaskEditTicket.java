@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
+import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -271,7 +272,7 @@ public class TaskEditTicket extends AbstractTicketingTask
             {
                 Response response = iterator.next( );
 
-                if ( response.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) )
+                if ( ( response.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) ) && ( response.getFile( ) == null ) )
                 {
                     iterator.remove( );
                 }
@@ -289,10 +290,6 @@ public class TaskEditTicket extends AbstractTicketingTask
             for ( Response response : ticket.getListResponse( ) )
             {
                 ResponseHome.create( response );
-                if ( response.getFile( ) != null )
-                {
-                    // TicketFileHome.migrateToBlob( response.getFile( ) );
-                }
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             }
         }
@@ -302,7 +299,12 @@ public class TaskEditTicket extends AbstractTicketingTask
             sbEntries.delete( sbEntries.length( ) - SEPARATOR.length( ), sbEntries.length( ) );
         }
 
+        // Date execution
+        Date dateExecution = new Date( );
         ticket.setUserMessage( strUserMessage );
+        ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
+        // remise à 0
+        ticket.setNbRelance( 0 );
         TicketHome.update( ticket );
 
         editableTicket.setIsEdited( true );
