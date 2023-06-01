@@ -334,10 +334,10 @@ public class NotifyUsagerDaemon extends Daemon
     private Date getDatelimiteRelance( Timestamp dateDerniereRelance )
     {
         Calendar calendarLimiteRelance = Calendar.getInstance( );
+        calendarLimiteRelance.setTime( dateDerniereRelance );
 
         if ( isMinuteMode == 1 )
         {
-            calendarLimiteRelance.setTime( dateDerniereRelance );
             calendarLimiteRelance.add( Calendar.MINUTE, nFrequence );
             // date dernière relance + n minutes
         }
