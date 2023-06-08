@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,6 +53,7 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -167,7 +169,10 @@ public class AssignTicketToUnitTaskComponent extends TicketingTaskComponent
             }
             else
             {
-                model.put( MARK_UNITS_LIST, unitsList );
+                List<ReferenceItem> unitListOrderByName = unitsList.stream( ).sorted( ( u1, u2 ) -> u1.getName( ).compareToIgnoreCase( u2.getName( ) ) )
+                        .collect( Collectors.toList( ) );
+
+                model.put( MARK_UNITS_LIST, unitListOrderByName );
             }
         }
 
