@@ -3,9 +3,14 @@
     <#include "/admin/util/editor/editor.html" />
     <#if config.isMessageToExternalUser(  ) >
 	<div class="row form-group">
+		<input id="idTask" name="idTask" type=hidden value=${config.idTask} /> 
 		<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="email_recipients_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients}&nbsp;*&nbsp;:</label>
 		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
 			<input class="form-control" id="email_recipients_${config.idTask}" name="email_recipients_${config.idTask}" type="text" value="" maxlength='255' />
+			<div onclick="seeAllEmailsA()" data-toggle="collapse" data-target="#emailResultDisplayA">
+     			<i class="fas fa-question-circle" class="btn btn-primary" data-toggle="tooltip"  title="#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_all_emails_tooltip}"></i>#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_all_emails}
+			</div>
+			<div id="emailResultDisplayA"></div>
 		</div>
 		<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
 			<span id="search_results_button" onclick="showSearchResponse_${config.idTask}()" class="btn btn-primary">#i18n{module.workflow.ticketing.task_ticket_email_external_user.search.button}</span>
@@ -21,12 +26,20 @@
         <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="email_recipients_cc_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_cc}&nbsp;:</label>
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <input class="form-control" id="email_recipients_cc_${config.idTask}" name="email_recipients_cc_${config.idTask}" type="text" value="" maxlength='255' />
+            <div onclick="seeAllEmailsCc()" data-toggle="collapse" data-target="#emailResultDisplayCc">
+     			<i class="fas fa-question-circle" class="btn btn-primary" data-toggle="tooltip"  title="#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_all_emails_tooltip}"></i> #i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_all_emails}
+			</div>
+			<div id="emailResultDisplayCc"></div>
         </div>
     </div>
-    <div class="row form-group">
-        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="email_recipients_cc_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_cc}&nbsp;:</label>
+    <div class="row form-group" style="display:none;">
+        <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="email_recipients_cci_${config.idTask}">#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_cci}&nbsp;:</label>
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <input class="form-control" id="email_recipients_cc_${config.idTask}" name="email_recipients_cc_${config.idTask}" type="text" value="" maxlength='255' />
+            <input class="form-control" id="email_recipients_cci_${config.idTask}" name="email_recipients_cci_${config.idTask}" type="text" value="" maxlength='255' />
+            <div onclick="seeAllEmailsCci()" data-toggle="collapse" data-target="#emailResultDisplayCci">
+     			<i class="fas fa-question-circle" class="btn btn-primary" data-toggle="tooltip"  title="#i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_all_emails_tooltip}"></i> #i18n{module.workflow.ticketing.task_ticket_email_external_user_form.label_email_recipients_all_emails}
+			</div>
+			<div id="emailResultDisplayCci"></div>
         </div>
     </div>
     <div class="row form-group">
@@ -100,6 +113,30 @@
             $("#wf_action_form").submit();
         };
     });
+    
+	var numbertask = $("#idTask").val();
+
+	function seeAllEmailsA() {
+		var emailList = $("#email_recipients_" + numbertask).val().replaceAll(";","<br>");
+		
+		$("#emailResultDisplayA").html(emailList);
+		$("#emailResultDisplayA").val(emailList);
+	}
+	
+	function seeAllEmailsCc() {
+		var emailList = $("#email_recipients_cc_" + numbertask).val().replaceAll(";","<br>");
+		
+		$("#emailResultDisplayCc").html(emailList);
+		$("#emailResultDisplayCc").val(emailList);
+	}
+	
+	function seeAllEmailsCci() {
+		var emailList = $("#email_recipients_cci_" + numbertask).val().replaceAll(";","<br>");
+		
+		$("#emailResultDisplayCci").html(emailList);
+		$("#emailResultDisplayCci").val(emailList);
+	}
+
 
     </script>
 	<#else>
