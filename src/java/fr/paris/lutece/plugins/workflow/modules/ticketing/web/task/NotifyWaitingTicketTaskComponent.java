@@ -360,7 +360,7 @@ public class NotifyWaitingTicketTaskComponent extends TicketingTaskComponent
     {
         List<ExternalUser> listExternalUsers = new ArrayList<>( );
 
-        if ( strEmailRecipients != null )
+        if ( ( strEmailRecipients != null ) && ( !"".equals( strEmailRecipients ) ) )
         {
             for ( String email : strEmailRecipients.split( ";" ) )
             {
