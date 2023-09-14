@@ -451,10 +451,11 @@ public class NotifyDaemon extends Daemon
         List<ResourceHistory> listAllHistoryByResource = _resourceHistoryService.getAllHistoryByResource( nIdResource, Ticket.TICKET_RESOURCE_TYPE,
                 nIdWorkflow );
 
+
         if ( ( listAllHistoryByResource != null ) && !listAllHistoryByResource.isEmpty( ) )
         {
-            // récupération de la dernière action manuelle de sollicitation (itération inverse)
-            for ( int i = listAllHistoryByResource.size( ); i-- > 0; )
+            // récupération de la dernière action manuelle de sollicitation
+            for ( int i = 0; i < listAllHistoryByResource.size( ); i++ )
             {
                 ResourceHistory resourceHistory = listAllHistoryByResource.get( i );
                 int nIdAction = resourceHistory.getAction( ).getId( );
