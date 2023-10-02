@@ -33,7 +33,7 @@
 			<div class="info_user col-xs-12 col-sm-12 col-md-9 col-lg-9 control-label left">
 				<#list list_file_init as file>
 				    <div class="">
-				        <a class="pull-left" href="${list_url_init[file.idFile?string]}">${file.title}</a><br/>
+				        <a title="${file.title}" class="pull-left text-long" href="${list_url_init[file.idFile?string]}">${file.title}</a><br/>
 				    </div>
 	  			</#list>
 	   	 	</div>
@@ -77,7 +77,7 @@
 		      <#list external_user_message.uploadedFiles as file_uploaded>
 			    <#if file_uploaded?has_content >
 			    <div class="clearfix">
-			        <a class="pull-left" href="${list_url[file_uploaded.idUploadFile?string]}">${file_uploaded.file.title}</a>    
+			        <a title="${file_uploaded.file.title}" class="pull-left text-long" href="${list_url[file_uploaded.idUploadFile?string]}">${file_uploaded.file.title}</a>    
 			    </div>
 			    </#if>
 			  </#list>		
