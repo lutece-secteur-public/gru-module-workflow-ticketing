@@ -111,6 +111,7 @@ public class EditTicketXPage implements XPageApplication
 
     // Parameters
     private static final String PARAMETER_ACTION = "action";
+    private static final String              PARAMETER_USER_MESSAGE               = "user_message";
 
     // ACTIONS
     private static final String ACTION_DO_MODIFY_TICKET = "do_modify_ticket";
@@ -281,29 +282,28 @@ public class EditTicketXPage implements XPageApplication
     {
         boolean bIsActionProccessed = false;
         String strAction = request.getParameter( PARAMETER_ACTION );
+        String userMessage = request.getParameter( PARAMETER_USER_MESSAGE );
 
-        if ( StringUtils.isNotBlank( strAction ) )
+        if ( StringUtils.isNotBlank( strAction ) && ( ACTION_DO_MODIFY_TICKET.equals( strAction ) ) && StringUtils.isNotBlank( userMessage ) )
         {
-            if ( ACTION_DO_MODIFY_TICKET.equals( strAction ) )
+            TicketUtils.registerAdminUserFront( request );
+
+            try
             {
-                TicketUtils.registerAdminUserFront( request );
+                Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
 
-                try
-                {
-                    Ticket ticket = WorkflowTicketingUtils.findTicketByIdHistory( editableTicket.getIdHistory( ) );
+                _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdAction, null, request, request.getLocale( ), false );
 
-                    _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdAction, null, request, request.getLocale( ), false );
+                bIsActionProccessed = true;
 
-                    bIsActionProccessed = true;
-
-                    // Immediate indexation of the Ticket
-                    immediateTicketIndexing( ticket.getId( ), request );
-                }
-                finally
-                {
-                    TicketUtils.unregisterAdminUserFront( request );
-                }
+                // Immediate indexation of the Ticket
+                immediateTicketIndexing( ticket.getId( ), request );
             }
+            finally
+            {
+                TicketUtils.unregisterAdminUserFront( request );
+            }
+
         }
 
         return bIsActionProccessed;

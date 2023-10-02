@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><plug-in>
     <name>workflow-ticketing</name>
     <class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin</class>
-    <version>4.2.1</version>
+    <version>4.2.2-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
