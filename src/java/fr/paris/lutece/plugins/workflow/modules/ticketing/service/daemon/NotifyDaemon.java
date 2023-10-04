@@ -64,7 +64,7 @@ public class NotifyDaemon extends Daemon
     private int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID,
             TicketingConstants.PROPERTY_UNSET_INT );
 
-    private int                                  isMinuteMode                       = AppPropertiesService.getPropertyInt( "workflow.ticketing.delai.minute", TicketingConstants.PROPERTY_UNSET_INT );
+    private int isMinuteMode = AppPropertiesService.getPropertyInt( "workflow.ticketing.delai.minute", TicketingConstants.PROPERTY_UNSET_INT );
     /**
      * Statut "En attente d'une réponse"
      */
@@ -220,7 +220,7 @@ public class NotifyDaemon extends Daemon
         }
 
         sbLog.append( "Nombre de tickets au statut " )
-        .append( _workflowService.getState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+                .append( _workflowService.getState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
@@ -381,7 +381,8 @@ public class NotifyDaemon extends Daemon
                         // update date true si retour de sollicitation, false si relance auto
                         TicketHome.update( ticket, true );
 
-                        _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromContribNiv2, null, null, null, true );
+                        _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromContribNiv2, null, null, null,
+                                true );
 
                         return 1;
                     }
@@ -450,7 +451,6 @@ public class NotifyDaemon extends Daemon
     {
         List<ResourceHistory> listAllHistoryByResource = _resourceHistoryService.getAllHistoryByResource( nIdResource, Ticket.TICKET_RESOURCE_TYPE,
                 nIdWorkflow );
-
 
         if ( ( listAllHistoryByResource != null ) && !listAllHistoryByResource.isEmpty( ) )
         {

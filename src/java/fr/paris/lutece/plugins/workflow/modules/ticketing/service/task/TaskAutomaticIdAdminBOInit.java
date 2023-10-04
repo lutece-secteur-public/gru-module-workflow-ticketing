@@ -52,7 +52,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskAutomaticIdAdminBOInit extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_ADMIN_BO_TICKET                               = "module.workflow.ticketing.task_automatic_id_bo_admin.labelAdmin";
+    private static final String MESSAGE_ADMIN_BO_TICKET = "module.workflow.ticketing.task_automatic_id_bo_admin.labelAdmin";
     private static final String MESSAGE_AUTOMATIC_ADMIN_BO_INFORMATION = "module.workflow.ticketing.task_automatic_id_bo_admin.information";
 
     @Override

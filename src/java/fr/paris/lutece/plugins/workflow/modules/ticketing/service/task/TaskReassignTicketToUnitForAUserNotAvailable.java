@@ -70,16 +70,15 @@ public class TaskReassignTicketToUnitForAUserNotAvailable extends AbstractTicket
 {
     // Messages
     private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT = "module.workflow.ticketing.task_assign_ticket_to_unit.labelAssignTicketToUnit";
-    private static final String       MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION = "module.workflow.ticketing.task_reassign_ticket_to_unit.information";
-    private static final String       MESSAGE_REASSIGN_TICKET_NO_MODIFICATIONS_INFORMATION = "module.workflow.ticketing.task_reassign_ticket.no_modifications_information";
-
+    private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION = "module.workflow.ticketing.task_reassign_ticket_to_unit.information";
+    private static final String MESSAGE_REASSIGN_TICKET_NO_MODIFICATIONS_INFORMATION = "module.workflow.ticketing.task_reassign_ticket.no_modifications_information";
 
     // PARAMETERS
     public static final String PARAMETER_ASSIGNEE_UNIT = "id_unit";
 
-    private TicketReassignUnitResourceService _ticketReassignUnitResourceService                   = SpringContextService.getBean( TicketReassignUnitResourceService.BEAN_NAME );
+    private TicketReassignUnitResourceService _ticketReassignUnitResourceService = SpringContextService.getBean( TicketReassignUnitResourceService.BEAN_NAME );
 
-    IResourceWorkflowHistoryDAO                         dao                                                  = SpringContextService.getBean( "ticketing.resourceWorkflowHistoryDAO" );
+    IResourceWorkflowHistoryDAO dao = SpringContextService.getBean( "ticketing.resourceWorkflowHistoryDAO" );
 
     // Services
     @Inject
@@ -145,8 +144,8 @@ public class TaskReassignTicketToUnitForAUserNotAvailable extends AbstractTicket
                     request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, ( assigneeNewUnit != assigneeOldUnit ) );
                     request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
 
-                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ), user.getFirstName( ), user.getLastName( ),
-                            unitToTransfer.getLabel( ) );
+                    strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_INFORMATION, Locale.FRENCH ),
+                            user.getFirstName( ), user.getLastName( ), unitToTransfer.getLabel( ) );
 
                     // insert in workflow_resource_history_ticketing
                     ResourceHistory resourceHistory = new ResourceHistory( );
@@ -172,7 +171,6 @@ public class TaskReassignTicketToUnitForAUserNotAvailable extends AbstractTicket
         }
         return strTaskInformation;
     }
-
 
     @Override
     public String getTitle( Locale locale )

@@ -62,12 +62,11 @@ public class TicketAnonymisationDaemon extends Daemon
     private static final int DELAI_ANONYMISATION = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_DELAI, 10 );
     private static final int TICKET_STATUS_ARCHIVE = AppPropertiesService.getPropertyInt( "ticketing.daemon.anonymisation.state.id.archive", 308 );
 
-    private static ITicketEmailExternalUserMessageDAO dao                   = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
-    private static Plugin                             plugin                = WorkflowTicketingPlugin.getPlugin( );
+    private static ITicketEmailExternalUserMessageDAO dao = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
+    private static Plugin plugin = WorkflowTicketingPlugin.getPlugin( );
 
-    private static final String                       REGEX_EMAIL2          = "[A-Za-z0-9+-_.]+@([A-Za-z0-9+-.]+\\.[A-Za-z]{2,4})";
-    private static final String                       REGEX_TELEPHONE2      = "[0-9]{2}([-. ]?([0-9]{2})){4}";
-
+    private static final String REGEX_EMAIL2 = "[A-Za-z0-9+-_.]+@([A-Za-z0-9+-.]+\\.[A-Za-z]{2,4})";
+    private static final String REGEX_TELEPHONE2 = "[0-9]{2}([-. ]?([0-9]{2})){4}";
 
     /*
      * Constructor
@@ -203,7 +202,8 @@ public class TicketAnonymisationDaemon extends Daemon
             {
                 TicketIndexer ticketIndexer = new TicketIndexer( );
                 ticketIndexer.indexTicket( ticket );
-            } catch ( TicketIndexerException ticketIndexerException )
+            }
+            catch( TicketIndexerException ticketIndexerException )
             {
                 sb.add( "Le ticket id " + idTicket + "anonymisé est en attente pour indexation" );
 

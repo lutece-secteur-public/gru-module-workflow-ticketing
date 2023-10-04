@@ -116,30 +116,29 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
 
                 String strFormerUserInfos = ( assigneeUser == null )
                         ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER, Locale.FRENCH )
-                                : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
-                        strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
-                                strFormerUserInfos, unit.getLabel( ) );
+                        : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
+                        strFormerUserInfos, unit.getLabel( ) );
 
-                        ticket.setAssignerUser( ticket.getAssigneeUser( ) );
-                        ticket.setAssignerUnit( ticket.getAssigneeUnit( ) );
-                        ticket.setAssigneeUser( null );
-                        assigneeUnit.setUnitId( unit.getIdUnit( ) );
-                        assigneeUnit.setName( unit.getLabel( ) );
-                        ticket.setAssigneeUnit( assigneeUnit );
-                        ticket.setAssigneeUser( null );
+                ticket.setAssignerUser( ticket.getAssigneeUser( ) );
+                ticket.setAssignerUnit( ticket.getAssigneeUnit( ) );
+                ticket.setAssigneeUser( null );
+                assigneeUnit.setUnitId( unit.getIdUnit( ) );
+                assigneeUnit.setName( unit.getLabel( ) );
+                ticket.setAssigneeUnit( assigneeUnit );
+                ticket.setAssigneeUser( null );
 
-                        TicketHome.update( ticket );
+                TicketHome.update( ticket );
 
-                        // insert in workflow_resource_history_ticketing
-                        ResourceHistory resourceHistory = new ResourceHistory( );
-                        resourceHistory.setIdHistory( nIdResourceHistory );
-                        resourceHistory.setIdChannel( ticket.getChannel( ).getId( ) );
-                        resourceHistory.setIdUnitOld( oldUnit );
-                        resourceHistory.setIdUnitNew( unit.getIdUnit( ) );
-                        _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin( ) );
+                // insert in workflow_resource_history_ticketing
+                ResourceHistory resourceHistory = new ResourceHistory( );
+                resourceHistory.setIdHistory( nIdResourceHistory );
+                resourceHistory.setIdChannel( ticket.getChannel( ).getId( ) );
+                resourceHistory.setIdUnitOld( oldUnit );
+                resourceHistory.setIdUnitNew( unit.getIdUnit( ) );
+                _resourceHistoryServiceTicketing.create( resourceHistory, WorkflowUtils.getPlugin( ) );
             }
         }
-
 
         if ( request != null )
         {

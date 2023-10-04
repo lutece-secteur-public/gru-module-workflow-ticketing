@@ -82,7 +82,7 @@ public class ModifyTicketCategoryJspBean extends MVCAdminJspBean
     public String getTicketForm( HttpServletRequest request )
     {
         // Check user rights
-        if ( !RBACService.isAuthorized( new Ticket( ), TicketResourceIdService.PERMISSION_VIEW, ( User ) getUser( ) ) )
+        if ( !RBACService.isAuthorized( new Ticket( ), TicketResourceIdService.PERMISSION_VIEW, (User) getUser( ) ) )
         {
             return redirect( request, AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP ) );
         }

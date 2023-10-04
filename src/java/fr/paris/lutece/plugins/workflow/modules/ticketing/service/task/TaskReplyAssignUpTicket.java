@@ -106,7 +106,6 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
             AdminUser user = getAssigner( nIdResourceHistory );
             Unit unit = getAssignerUnitBeforeRelance( nIdResourceHistory );
 
-
             if ( ( user != null ) && ( user.getUserId( ) != assigneeUser.getAdminUserId( ) ) )
             {
                 assigneeUser.setAdminUserId( user.getUserId( ) );
@@ -144,9 +143,9 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
 
                 strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
                         ( strCurrentUnit != null ) ? strCurrentUnit : StringUtils.EMPTY,
-                                ( ticket.getAssigneeUser( ) != null ) ? ( ticket.getAssigneeUser( ).getFirstname( ) + " " + ticket.getAssigneeUser( ).getLastname( ) )
-                                        : I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER, Locale.FRENCH ),
-                                        ( ticket.getAssigneeUnit( ) != null ) ? ticket.getAssigneeUnit( ).getName( ) : StringUtils.EMPTY );
+                        ( ticket.getAssigneeUser( ) != null ) ? ( ticket.getAssigneeUser( ).getFirstname( ) + " " + ticket.getAssigneeUser( ).getLastname( ) )
+                                : I18nService.getLocalizedString( MESSAGE_REPLY_ASSIGN_TICKET_NO_CURRENT_USER, Locale.FRENCH ),
+                        ( ticket.getAssigneeUnit( ) != null ) ? ticket.getAssigneeUnit( ).getName( ) : StringUtils.EMPTY );
             }
             else
             {
@@ -210,7 +209,8 @@ public class TaskReplyAssignUpTicket extends AbstractTicketingTask
         List<Integer> listIdResource = new ArrayList<>( );
         listIdResource.add( resourceHistory.getIdResource( ) );
 
-        List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource, resourceHistory.getResourceType( ), resourceHistory.getWorkflow( ).getId( ) );
+        List<Integer> listIdHistory = _resourceHistoryService.getListHistoryIdByListIdResourceId( listIdResource, resourceHistory.getResourceType( ),
+                resourceHistory.getWorkflow( ).getId( ) );
 
         boolean isAssignUpActionFound = false;
         ListIterator<Integer> iterator = listIdHistory.listIterator( listIdHistory.size( ) );

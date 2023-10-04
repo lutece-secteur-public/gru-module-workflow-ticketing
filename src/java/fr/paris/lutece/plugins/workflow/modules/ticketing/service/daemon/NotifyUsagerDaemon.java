@@ -63,39 +63,37 @@ public class NotifyUsagerDaemon extends Daemon
 
     private int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID,
             TicketingConstants.PROPERTY_UNSET_INT );
-    private int                                  isMinuteMode                               = AppPropertiesService.getPropertyInt( "workflow.ticketing.delai.minute",
-            TicketingConstants.PROPERTY_UNSET_INT );
+    private int isMinuteMode = AppPropertiesService.getPropertyInt( "workflow.ticketing.delai.minute", TicketingConstants.PROPERTY_UNSET_INT );
 
     /**
      * Statut "En attente de compléments par l'usager"
      */
-    private int                                  nIdStateWaitingUsager                    = AppPropertiesService.getPropertyInt( "workflow.ticketing.state.id.waiting.usager",
+    private int nIdStateWaitingUsager = AppPropertiesService.getPropertyInt( "workflow.ticketing.state.id.waiting.usager",
             TicketingConstants.PROPERTY_UNSET_INT );
 
     /**
      * Action "Relance automatique usager"
      */
-    private int                                  nIdActionRelance                           = AppPropertiesService.getPropertyInt( "workflow.ticketing.action.id.notify.usager",
-            TicketingConstants.PROPERTY_UNSET_INT );
+    private int nIdActionRelance = AppPropertiesService.getPropertyInt( "workflow.ticketing.action.id.notify.usager", TicketingConstants.PROPERTY_UNSET_INT );
 
     /*
      * Actions manuelles de sollicitation
      */
     // cas : action manuelle = "Demander compléments"
-    private int                                  nIdActionDemandeComplementUsager           = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.ask.complement.usager",
+    private int nIdActionDemandeComplementUsager = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.ask.complement.usager",
             TicketingConstants.PROPERTY_UNSET_INT );
 
     /*
      * Actions "Retour de la sollicitation"
      */
     // cas : Si dernière action manuelle = "Demander compléments", état d'arrivée = "traité"
-    private int                                  nIdActionRetourFromDemandeComplementUsager = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.return.ask.complement.usager",
+    private int nIdActionRetourFromDemandeComplementUsager = AppPropertiesService.getPropertyInt( "workflow.ticketing.actions.id.return.ask.complement.usager",
             TicketingConstants.PROPERTY_UNSET_INT );
 
     // nombre de relances maximum avant retour de la sollicitation
-    private int                                  nbRelanceMax                               = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_USAGER_NB_MAX, 1 );
+    private int nbRelanceMax = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_USAGER_NB_MAX, 1 );
     // durée en jours entre chaque relance
-    private int                                  nFrequence                                 = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_USAGER_FREQUENCE, 15 );
+    private int nFrequence = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_RELANCE_USAGER_FREQUENCE, 15 );
 
     @Override
     public void run( )
@@ -202,7 +200,7 @@ public class NotifyUsagerDaemon extends Daemon
         }
 
         sbLog.append( "Nombre de tickets au statut " )
-        .append( _workflowService.getState( nIdStateWaitingUsager, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+                .append( _workflowService.getState( nIdStateWaitingUsager, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
@@ -233,7 +231,8 @@ public class NotifyUsagerDaemon extends Daemon
             return false;
         }
 
-        if ( ( nIdActionRelance <= 0 ) || ( nIdStateWaitingUsager <= 0 ) || ( nIdActionDemandeComplementUsager <= 0 ) || ( nIdActionRetourFromDemandeComplementUsager <= 0 ) )
+        if ( ( nIdActionRelance <= 0 ) || ( nIdStateWaitingUsager <= 0 ) || ( nIdActionDemandeComplementUsager <= 0 )
+                || ( nIdActionRetourFromDemandeComplementUsager <= 0 ) )
         {
             sbLog.append( "Paramétrage des id de workflow GRU incorrect, vérifier fichiers properties" );
             AppLogService.error( "Paramétrage des id de workflow GRU incorrect, vérifier fichiers properties" );
@@ -312,7 +311,8 @@ public class NotifyUsagerDaemon extends Daemon
                 // update date true si retour de sollicitation, false si relance auto
                 TicketHome.update( ticket, true );
 
-                _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromDemandeComplementUsager, null, null, null, true );
+                _workflowService.doProcessAction( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdActionRetourFromDemandeComplementUsager, null, null, null,
+                        true );
 
                 return 1;
             }
@@ -353,7 +353,6 @@ public class NotifyUsagerDaemon extends Daemon
         }
         return calendarLimiteRelance.getTime( );
     }
-
 
     /**
      *

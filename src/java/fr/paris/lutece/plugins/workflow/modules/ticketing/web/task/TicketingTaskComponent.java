@@ -79,8 +79,6 @@ public class TicketingTaskComponent extends SimpleTaskComponent
     private static final String MARK_ERRORS = "errors";
     private static final String MARK_TICKET = "ticket";
 
-
-
     // SERVICES
     @Inject
     private ITaskInformationService _taskInformationService;
@@ -220,7 +218,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
         for ( AssigneeUnit unit : listUnitByLevel )
         {
 
-            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, ( User ) user ) )
+            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, (User) user ) )
             {
                 lstRef.addItem( unit.getUnitId( ), unit.getName( ) );
             }
@@ -246,7 +244,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
         for ( Integer level : levelList )
         {
             listUnitByLevel
-            .addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
+                    .addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
         }
         ReferenceList lstRef = new ReferenceList( listUnitByLevel.size( ) );
         ReferenceItem emptyReferenceItem = new ReferenceItem( );
@@ -258,7 +256,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
         for ( AssigneeUnit unit : listUnitByLevel )
         {
 
-            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, ( User ) user ) )
+            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, (User) user ) )
             {
                 lstRef.addItem( unit.getUnitId( ), unit.getName( ) );
             }
@@ -283,7 +281,8 @@ public class TicketingTaskComponent extends SimpleTaskComponent
 
         for ( Integer level : levelList )
         {
-            listUnitByLevel.addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
+            listUnitByLevel
+                    .addAll( SupportEntityHome.getSupportEntityListByLevel( level ).stream( ).map( SupportEntity::getUnit ).collect( Collectors.toList( ) ) );
         }
         ReferenceList lstRef = new ReferenceList( listUnitByLevel.size( ) );
         ReferenceItem emptyReferenceItem = new ReferenceItem( );
@@ -295,7 +294,7 @@ public class TicketingTaskComponent extends SimpleTaskComponent
         for ( AssigneeUnit unit : listUnitByLevel )
         {
 
-            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, ( User ) user ) )
+            if ( RBACService.isAuthorized( unit, AssigneeUnit.PERMISSION_ASSIGN, (User) user ) )
             {
                 lstRef.addItem( unit.getUnitId( ), unit.getName( ) );
             }
