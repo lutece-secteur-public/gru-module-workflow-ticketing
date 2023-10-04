@@ -73,7 +73,8 @@ public class TaskIndexTicket extends AbstractTicketingTask
         }
         else
         {
-            int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID, TicketingConstants.PROPERTY_UNSET_INT );
+            int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID,
+                    TicketingConstants.PROPERTY_UNSET_INT );
             State state = WorkflowService.getInstance( ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null );
 
             IndexerAction indexerAction = new IndexerAction( );

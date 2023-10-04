@@ -139,7 +139,7 @@ public class TicketingCommentTaskComponent extends CommentTaskComponent
         model.put( MARK_TASK, task );
         model.put( MARK_CONFIG, config );
         model.put( MARK_COMMENT_VALUE, commentValue );
-        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, ( User ) userConnected ) );
+        model.put( MARK_HAS_PERMISSION_DELETE, RBACService.isAuthorized( commentValue, CommentResourceIdService.PERMISSION_DELETE, (User) userConnected ) );
         model.put( MARK_IS_OWNER, _commentValueService.isOwner( nIdHistory, userConnected ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_COMMENT_INFORMATION, locale, model );

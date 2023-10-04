@@ -114,7 +114,6 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
 
             daoUtil.executeQuery( );
 
-
             while ( daoUtil.next( ) )
             {
                 int nIndex = 1;

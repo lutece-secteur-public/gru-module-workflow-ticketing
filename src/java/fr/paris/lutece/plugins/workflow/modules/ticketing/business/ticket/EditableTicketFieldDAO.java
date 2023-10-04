@@ -59,7 +59,6 @@ public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
     public synchronized void insert( EditableTicketField editableTicketField )
     {
 
-
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
         {
             int nIndex = 1;

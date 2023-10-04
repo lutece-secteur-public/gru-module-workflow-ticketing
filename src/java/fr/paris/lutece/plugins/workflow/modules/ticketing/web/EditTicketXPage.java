@@ -111,7 +111,7 @@ public class EditTicketXPage implements XPageApplication
 
     // Parameters
     private static final String PARAMETER_ACTION = "action";
-    private static final String              PARAMETER_USER_MESSAGE               = "user_message";
+    private static final String PARAMETER_USER_MESSAGE = "user_message";
 
     // ACTIONS
     private static final String ACTION_DO_MODIFY_TICKET = "do_modify_ticket";

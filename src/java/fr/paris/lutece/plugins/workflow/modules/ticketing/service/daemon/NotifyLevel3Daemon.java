@@ -65,7 +65,7 @@ public class NotifyLevel3Daemon extends Daemon
 
     private int nIdWorkflow = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_TICKET_WORKFLOW_ID,
             TicketingConstants.PROPERTY_UNSET_INT );
-    private int                                  isMinuteMode              = AppPropertiesService.getPropertyInt( "workflow.ticketing.delai.minute", TicketingConstants.PROPERTY_UNSET_INT );
+    private int isMinuteMode = AppPropertiesService.getPropertyInt( "workflow.ticketing.delai.minute", TicketingConstants.PROPERTY_UNSET_INT );
 
     /**
      * Statut "Escaladé niveau 3"
@@ -200,7 +200,7 @@ public class NotifyLevel3Daemon extends Daemon
         }
 
         sbLog.append( "Nombre de tickets au statut " )
-        .append( _workflowService.getState( nIdStateLevel3, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+                .append( _workflowService.getState( nIdStateLevel3, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 

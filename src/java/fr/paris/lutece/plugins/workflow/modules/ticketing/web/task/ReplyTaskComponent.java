@@ -71,7 +71,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
     private static final String MARK_LIST_ID_TICKETS = "list_id_tickets";
     private static final String MARK_HANDLER = "upload_handler";
     private static final String MARK_ENTRY_ATTACHED_FILE = "entry_attached_files";
-    private static final String MARK_EMAIL_EXIST             = "ticket_email_exist";
+    private static final String MARK_EMAIL_EXIST = "ticket_email_exist";
 
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
@@ -162,7 +162,7 @@ public class ReplyTaskComponent extends TicketingTaskComponent
             ModelUtils.storeUserSignature( request, model );
         }
 
-        Ticket ticketFound = ( Ticket ) model.get( "ticket" );
+        Ticket ticketFound = (Ticket) model.get( "ticket" );
         bIsTicketEmailExist = ( ( null != ticketFound.getEmail( ) ) && !ticketFound.getEmail( ).equals( "" ) );
 
         // Get the id entry for reply attments files from properties

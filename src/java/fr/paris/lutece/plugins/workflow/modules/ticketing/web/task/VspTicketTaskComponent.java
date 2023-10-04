@@ -74,7 +74,6 @@ public class VspTicketTaskComponent extends TicketingTaskComponent
 
         model.put( MARK_VSP_RULE_ACTIVE_LIST, vspRuleList );
 
-
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_VSP_TICKET_FORM, locale, model );
 
         return template.getHtml( );

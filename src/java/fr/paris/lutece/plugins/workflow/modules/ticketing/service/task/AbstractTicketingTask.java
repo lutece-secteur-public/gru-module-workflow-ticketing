@@ -57,7 +57,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 public abstract class AbstractTicketingTask extends SimpleTask
 {
     private static final String LOG_ERROR_SAVE_INFORMATION = "Error when saving message '{0}' for resourceId {1} and taskId {2}";
-    protected static final String     REDIRECT_TO_LIST           = "list";
+    protected static final String REDIRECT_TO_LIST = "list";
 
     // Services
     @Inject

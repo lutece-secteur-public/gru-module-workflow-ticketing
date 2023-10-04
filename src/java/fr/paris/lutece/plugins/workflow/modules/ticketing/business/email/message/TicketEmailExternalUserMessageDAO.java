@@ -52,21 +52,22 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
 {
     private static final String SQL_QUERY_NEW_PK = " SELECT max( id_message_external_user ) FROM workflow_ticketing_email_external_user ";
     private static final String SQL_QUERY_LAST_QUESTION = " SELECT max( id_message_external_user ) FROM workflow_ticketing_email_external_user WHERE id_ticket = ? AND is_answered = 0";
-    private static final String SQL_QUERY_SELECT                          = " SELECT id_message_external_user, id_ticket, email_recipients, email_recipients_cc, message_question, message_response, is_answered, email_subject FROM workflow_ticketing_email_external_user ";
-    private static final String SQL_QUERY_FIND_BY_ID_MESSAGE              = SQL_QUERY_SELECT + " WHERE id_message_external_user = ? ";
+    private static final String SQL_QUERY_SELECT = " SELECT id_message_external_user, id_ticket, email_recipients, email_recipients_cc, message_question, message_response, is_answered, email_subject FROM workflow_ticketing_email_external_user ";
+    private static final String SQL_QUERY_FIND_BY_ID_MESSAGE = SQL_QUERY_SELECT + " WHERE id_message_external_user = ? ";
     private static final String SQL_QUERY_INSERT_QUESTION = " INSERT INTO workflow_ticketing_email_external_user ( id_message_external_user, id_ticket, email_recipients, email_recipients_cc, message_question, email_subject ) "
             + " VALUES ( ?,?,?,?,?,? ) ";
     private static final String SQL_QUERY_ADD_ANSWER = " UPDATE workflow_ticketing_email_external_user SET message_response = ?, is_answered = 1 WHERE id_message_external_user = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_ticketing_email_external_user WHERE id_message_external_user = ? ";
-    private static final String SQL_QUERY_FIND_BY_ID_TICKET_NOT_CLOSED    = SQL_QUERY_SELECT + " WHERE id_ticket = ? AND is_answered = 0 ORDER BY id_message_external_user ASC ";
+    private static final String SQL_QUERY_FIND_BY_ID_TICKET_NOT_CLOSED = SQL_QUERY_SELECT
+            + " WHERE id_ticket = ? AND is_answered = 0 ORDER BY id_message_external_user ASC ";
     private static final String SQL_QUERY_CLOSE_BY_ID_TICKET = " UPDATE workflow_ticketing_email_external_user SET is_answered = 1 WHERE id_ticket = ? ";
     private static final String SQL_QUERY_FIRST_MESSAGE = " SELECT min(id_message_external_user), id_ticket, email_recipients, email_recipients_cc, message_question, message_response, is_answered, email_subject FROM workflow_ticketing_email_external_user "
             + " WHERE id_ticket = ? AND is_answered = 0 ";
-    private static final String SQL_QUERY_LAST_MESSAGE                    = SQL_QUERY_SELECT + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC LIMIT 1";
-    private static final String SQL_QUERY_ALL_MESSAGE_ORDER_DESC          = SQL_QUERY_SELECT + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC";
+    private static final String SQL_QUERY_LAST_MESSAGE = SQL_QUERY_SELECT + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC LIMIT 1";
+    private static final String SQL_QUERY_ALL_MESSAGE_ORDER_DESC = SQL_QUERY_SELECT + " WHERE id_ticket = ? ORDER BY id_message_external_user DESC";
     private static final String SQL_QUERY_SELECT_ID_MESSAGE_EXTERNAL_USER = "SELECT id_message_external_user FROM workflow_ticketing_email_external_user wteeu WHERE id_ticket = ?";
-    private static final String SQL_QUERY_SELECT_MESSAGE_EXTERNAL_USER    = "SELECT message_question, message_response FROM workflow_ticketing_email_external_user wteeu WHERE id_message_external_user = ?";
-    private static final String SQL_QUERY_UPDATE_MESSAGE                  = "UPDATE workflow_ticketing_email_external_user SET email_recipients = NULL, email_recipients_cc = NULL, message_question = ?, message_response = ? WHERE id_message_external_user = ?";
+    private static final String SQL_QUERY_SELECT_MESSAGE_EXTERNAL_USER = "SELECT message_question, message_response FROM workflow_ticketing_email_external_user wteeu WHERE id_message_external_user = ?";
+    private static final String SQL_QUERY_UPDATE_MESSAGE = "UPDATE workflow_ticketing_email_external_user SET email_recipients = NULL, email_recipients_cc = NULL, message_question = ?, message_response = ? WHERE id_message_external_user = ?";
 
     /**
      * Generates a new primary key
@@ -103,8 +104,6 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
         {
             daoUtil.setInt( 1, nIdTicket );
             daoUtil.executeQuery( );
-
-
 
             if ( daoUtil.next( ) )
             {
@@ -201,7 +200,6 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
 
             int nIndex = 1;
 
-
             if ( daoUtil.next( ) )
             {
                 emailExternalUserMessage = new TicketEmailExternalUserMessage( );
@@ -232,7 +230,6 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
             daoUtil.executeQuery( );
 
             int nIndex = 1;
-
 
             if ( daoUtil.next( ) )
             {
@@ -296,7 +293,6 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
             daoUtil.executeQuery( );
 
             int nIndex = 1;
-
 
             while ( daoUtil.next( ) )
             {
