@@ -225,7 +225,6 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                     externalUserConfig = _taskTicketExternalUserConfigService.findByPrimaryKey( externalUserHistory.getIdTask( ) );
                 }
 
-
                 List<UploadFile> listFileUploadTemp = FactoryDOA.getUploadFileDAO( ).load( externalUserHistory.getIdResourceHistory( ),
                         WorkflowUtils.getPlugin( ) );
 
@@ -246,7 +245,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                 }
             }
 
-            if ( !listFileUpload.isEmpty( ))
+            if ( !listFileUpload.isEmpty( ) )
             {
                 String strBaseUrl = AppPathService.getBaseUrl( request );
 
@@ -265,11 +264,11 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
         Ticket ticket = TicketHome.findByPrimaryKey( requiredEmailExternalUserMessage.getIdTicket( ) );
 
-        if( null != ticket.getListResponse( ) )
+        if ( null != ticket.getListResponse( ) )
         {
             for ( Response response : ticket.getListResponse( ) )
             {
-                if( null != response.getFile( ) )
+                if ( null != response.getFile( ) )
                 {
                     listFileInit.add( response.getFile( ) );
                     String strBaseUrl = AppPathService.getBaseUrl( request );

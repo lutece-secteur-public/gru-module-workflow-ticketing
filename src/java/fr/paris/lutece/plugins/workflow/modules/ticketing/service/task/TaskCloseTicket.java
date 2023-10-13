@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
-import java.text.MessageFormat;
+import java.sql.Timestamp;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,69 +41,41 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
-import fr.paris.lutece.portal.business.user.AdminUser;
-import fr.paris.lutece.portal.business.user.AdminUserHome;
+import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
- * This class represents a task that sends ticket store the admin user who created the sollicitation BO
+ * This class represents a task to reply to a ticket
  *
  */
-public class TaskAutomaticIdAdminBOInit extends AbstractTicketingTask
+public class TaskCloseTicket extends AbstractTicketingTask
 {
-    // Messages
-    private static final String MESSAGE_ADMIN_BO_TICKET = "module.workflow.ticketing.task_automatic_id_bo_admin.labelAdmin";
-    private static final String MESSAGE_AUTOMATIC_ADMIN_BO_INFORMATION = "module.workflow.ticketing.task_automatic_id_bo_admin.information";
+    private static final String MESSAGE_CLOSE = "module.workflow.ticketing.task_close_ticket.labelClose";
+    private static final String MESSAGE_CLOSE_MESSAGE = "module.workflow.ticketing.task_close_ticket.information.message";
 
     @Override
-    public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    public String getTitle( Locale locale )
+    {
+        return I18nService.getLocalizedString( MESSAGE_CLOSE, locale );
+    }
+
+    @Override
+    protected String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
 
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ticket.getIdAdminBOInit( ) > 0 )
+        if ( ticket != null )
         {
-            String strCompletedAdminName = getCompletedNameBOAdmin( ticket );
-            strTaskInformation += formatInfoMessageInit( MESSAGE_AUTOMATIC_ADMIN_BO_INFORMATION, strCompletedAdminName, locale );
+            ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
+            ticket.setDateClose( new Timestamp( new java.util.Date( ).getTime( ) ) );
+
+            TicketHome.update( ticket );
+            strTaskInformation = I18nService.getLocalizedString( MESSAGE_CLOSE_MESSAGE, locale );
         }
-
         return strTaskInformation;
-    }
-
-    @Override
-    public String getTitle( Locale locale )
-    {
-        return I18nService.getLocalizedString( MESSAGE_ADMIN_BO_TICKET, locale );
-    }
-
-    /**
-     * Return the message formated for the name an of informations of the ticket
-     *
-     * @param strKey
-     *            : the key of the message
-     * @param strValue
-     *            : the value
-     * @param locale
-     * @return the message formated
-     */
-    private String formatInfoMessageInit( String strKey, String strValue, Locale locale )
-    {
-        return MessageFormat.format( I18nService.getLocalizedString( strKey, locale ), strValue );
-    }
-
-    /**
-     * Return the completesd name for the admin user BO who created the ticket
-     *
-     * @param ticket
-     *            : the ticket created
-     *
-     * @return the message formated
-     */
-    private String getCompletedNameBOAdmin( Ticket ticket )
-    {
-        AdminUser adminUser = AdminUserHome.findByPrimaryKey( ticket.getIdAdminBOInit( ) );
-        return adminUser.getFirstName( ) + " " + adminUser.getLastName( );
     }
 }

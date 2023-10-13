@@ -56,17 +56,14 @@ public class ExternalUserDAO implements IExternalUserDAO
     private static final String CONSTANT_PERCENT = "%";
 
     // SQL
-    private static final String SQL_INNER                               = "INNER JOIN core_user_role ur ON ur.id_user = u.id_user INNER JOIN core_admin_role role ON role.role_key = ur.role_key INNER JOIN core_admin_role_resource rr ON rr.role_key = role.role_key ";
-    private static final String SQL_SELECT_USER_ADMIN = "SELECT u.last_name, u.first_name, u.email, f.user_field_value FROM core_admin_user u "
-            + SQL_INNER
+    private static final String SQL_INNER = "INNER JOIN core_user_role ur ON ur.id_user = u.id_user INNER JOIN core_admin_role role ON role.role_key = ur.role_key INNER JOIN core_admin_role_resource rr ON rr.role_key = role.role_key ";
+    private static final String SQL_SELECT_USER_ADMIN = "SELECT u.last_name, u.first_name, u.email, f.user_field_value FROM core_admin_user u " + SQL_INNER
             + "INNER JOIN core_user_right r ON u.id_user = r.id_user " + "LEFT JOIN core_admin_user_field f ON u.id_user = f.id_user AND f.id_attribute = ? "
             + "WHERE u.status = 0 AND r.id_right = 'TICKETING_EXTERNAL_USER' AND rr.resource_type = 'WORKFLOW_ACTION_TYPE' ";
     private static final String SQL_SELECT_USER_ADMIN_WITHOUT_ATTRIBUTE = "SELECT u.last_name, u.first_name, u.email, NULL FROM core_admin_user u INNER JOIN core_user_right r ON u.id_user = r.id_user "
-            + SQL_INNER
-            + "WHERE u.status = 0 AND r.id_right = 'TICKETING_EXTERNAL_USER' ";
+            + SQL_INNER + "WHERE u.status = 0 AND r.id_right = 'TICKETING_EXTERNAL_USER' ";
     private static final String SQL_VALID_EMAIL_USER_ADMIN = "SELECT u.first_name, u.email FROM core_admin_user u INNER JOIN core_user_right r ON u.id_user = r.id_user "
-            + SQL_INNER
-            + " WHERE u.status = 0 AND r.id_right = 'TICKETING_EXTERNAL_USER' AND u.email = ? ";
+            + SQL_INNER + " WHERE u.status = 0 AND r.id_right = 'TICKETING_EXTERNAL_USER' AND u.email = ? ";
     private static final String SQL_WHERE_LASTNAME_CLAUSE = " u.last_name LIKE ? ";
     private static final String SQL_WHERE_EMAIL_CLAUSE = " u.email LIKE ? ";
     private static final String SQL_WHERE_ADDITIONAL_ATTRIBUTE_CLAUSE = " f.user_field_value LIKE ? ";
@@ -196,8 +193,6 @@ public class ExternalUserDAO implements IExternalUserDAO
             }
 
             daoUtil.executeQuery( );
-
-
 
             while ( daoUtil.next( ) )
             {

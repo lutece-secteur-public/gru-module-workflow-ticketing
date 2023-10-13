@@ -53,7 +53,7 @@ public class TaskAssignTicketToRQ extends AbstractTicketingTask
     // Messages
     private static final String MESSAGE_ASSIGN_TICKET_TO_USER = "module.workflow.ticketing.task_assign_ticket_to_user.labelAssignTicketToUser";
     private static final String MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION = "module.workflow.ticketing.task_assign_ticket_to_user.information";
-    
+
     // Services
     @Inject
     protected IResourceHistoryService _resourceHistoryServiceTicketing;
@@ -63,11 +63,12 @@ public class TaskAssignTicketToRQ extends AbstractTicketingTask
     {
         String strTaskInformation = StringUtils.EMPTY;
         String strCurrentUser;
-        
+
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
-        
-        if( ticket != null && ticket.getTicketAddress( ) != null && ticket.getTicketAddress( ).getQuartier( ) != null && ticket.getTicketAddress( ).getQuartier( ).getRespQuartier( ) != null )
+
+        if ( ticket != null && ticket.getTicketAddress( ) != null && ticket.getTicketAddress( ).getQuartier( ) != null
+                && ticket.getTicketAddress( ).getQuartier( ).getRespQuartier( ) != null )
         {
             User respQuartier = ticket.getTicketAddress( ).getQuartier( ).getRespQuartier( );
             AssigneeUser assigneeUser = new AssigneeUser( );
@@ -76,21 +77,20 @@ public class TaskAssignTicketToRQ extends AbstractTicketingTask
             assigneeUser.setLastname( respQuartier.getLastName( ) );
             assigneeUser.setEmail( respQuartier.getEmail( ) );
             strCurrentUser = assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( );
-            if( assigneeUser.getAdminUserId( ) != 0 )
+            if ( assigneeUser.getAdminUserId( ) != 0 )
             {
                 ticket.setAssigneeUser( assigneeUser );
                 TicketHome.update( ticket );
-                
+
                 strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ),
                         strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
             }
         }
-        
-        
+
         return strTaskInformation;
-        
+
     }
-    
+
     @Override
     public String getTitle( Locale locale )
     {

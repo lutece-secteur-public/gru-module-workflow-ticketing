@@ -104,7 +104,7 @@ public class ExternalUserSearchServlet extends HttpServlet
     private static final String KEY_INFOS_LIMIT_RESULT = "module.workflow.ticketing.task_ticket_email_external_user.info.search.limit_result";
 
     // BEAN
-    private final IExternalUserDAO        _externalUserDAO         = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
+    private final IExternalUserDAO _externalUserDAO = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
 
     // SERVICE
     private static final AttributeService _attributeService = AttributeService.getInstance( );

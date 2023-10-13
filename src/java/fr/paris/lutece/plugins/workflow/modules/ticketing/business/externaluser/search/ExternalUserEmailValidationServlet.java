@@ -84,7 +84,7 @@ public class ExternalUserEmailValidationServlet extends HttpServlet
     private static final String LOG_UNAUTHENTICATED_USER = "Calling ExternalUserEmailValidationServlet with unauthenticated user";
 
     // BEAN
-    private final IExternalUserDAO _externalUserDAO         = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
+    private final IExternalUserDAO _externalUserDAO = SpringContextService.getBean( IExternalUserDAO.BEAN_SERVICE );
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.

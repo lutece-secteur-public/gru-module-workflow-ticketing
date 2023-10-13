@@ -103,7 +103,6 @@ public class TaskModifyTicketCategoryConfigDAO implements ITaskConfigDAO<TaskMod
             daoUtil.setInt( 1, nIdTask );
             daoUtil.executeQuery( );
 
-
             config.setIdTask( nIdTask );
 
             while ( daoUtil.next( ) )

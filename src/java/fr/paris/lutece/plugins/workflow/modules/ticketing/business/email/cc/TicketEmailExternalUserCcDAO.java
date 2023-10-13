@@ -115,7 +115,6 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
 
             int nIndex = 1;
 
-
             while ( daoUtil.next( ) )
             {
                 nIndex = 1;

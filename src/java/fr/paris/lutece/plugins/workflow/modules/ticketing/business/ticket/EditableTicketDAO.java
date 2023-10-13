@@ -47,12 +47,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class EditableTicketDAO implements IEditableTicketDAO
 {
-    private static final String SQL_SELECT                     = " SELECT id_history, id_task, id_ticket, message, is_edited ";
-    private static final String SQL_QUERY_SELECT               = SQL_SELECT + " FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? AND id_task = ? ";
-    private static final String SQL_QUERY_SELECT_BY_ID_TASK    = SQL_SELECT + " FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
+    private static final String SQL_SELECT = " SELECT id_history, id_task, id_ticket, message, is_edited ";
+    private static final String SQL_QUERY_SELECT = SQL_SELECT + " FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? AND id_task = ? ";
+    private static final String SQL_QUERY_SELECT_BY_ID_TASK = SQL_SELECT + " FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
     private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_editable_ticket ( id_history, id_task, id_ticket, message, is_edited ) "
             + " VALUES ( ?,?,?,?,? ) ";
-    private static final String SQL_QUERY_SELECT_BY_ID_TICKET  = SQL_SELECT + " FROM workflow_task_ticketing_editable_ticket WHERE id_ticket = ? AND is_edited = 0 ";
+    private static final String SQL_QUERY_SELECT_BY_ID_TICKET = SQL_SELECT
+            + " FROM workflow_task_ticketing_editable_ticket WHERE id_ticket = ? AND is_edited = 0 ";
     private static final String SQL_QUERY_DELETE_BY_ID_HISTORY = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? AND id_task = ? ";
     private static final String SQL_QUERY_DELETE_BY_TASK = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
     private static final String SQL_QUERY_UPDATE = " UPDATE workflow_task_ticketing_editable_ticket SET message = ?, is_edited = ? WHERE id_history = ? AND id_task = ? ";

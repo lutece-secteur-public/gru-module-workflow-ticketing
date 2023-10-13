@@ -408,6 +408,19 @@
 		<bean id="workflow-ticketing.automaticIdAdminBOInit"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeAutomaticIdAdminBOInit" />
+        
+    <!-- Task Auto close ticket -->
+	<bean id="workflow-ticketing.taskCloseTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskCloseTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeCloseTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskCloseTicket" p:titleI18nKey="module.workflow.ticketing.task_close_ticket.title"
+		p:beanName="workflow-ticketing.taskCloseTicket"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+		<bean id="workflow-ticketing.closeTicket"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeCloseTicket" />
 		
 	<!-- Task Sphinx -->
 	<bean id="workflow-ticketing.taskSphinx"

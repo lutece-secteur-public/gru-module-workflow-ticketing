@@ -56,28 +56,28 @@ public class TaskVspTicket extends AbstractTicketingTask
     private static final String MESSAGE_VSP_TICKET = "module.workflow.ticketing.task_signalement_ticket.labelVspTicket";
     private static final String MESSAGE_TICKET_VSP_RULE_INFORMATION = "module.workflow.ticketing.task_vsp_ticket.information";
 
-
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
         String strTaskInformation = StringUtils.EMPTY;
 
-        String[ ] vspRulesChoice = request.getParameterMap( ).get( TicketingConstants.PARAMETER_VSP_RULES_CHOICE );
+        String [ ] vspRulesChoice = request.getParameterMap( ).get( TicketingConstants.PARAMETER_VSP_RULES_CHOICE );
 
         // We get the ticket for vsp
         Ticket ticket = getTicket( nIdResourceHistory );
-
 
         String currentVSP = ticket.getVspRule( );
         String newRules = "";
         String oldRules = "";
 
         // Compare the vsp rules and write historic only when vspRules change
-        if( !cleanArray( vspRulesChoice ).equals( currentVSP )  ) {
+        if ( !cleanArray( vspRulesChoice ).equals( currentVSP ) )
+        {
 
             newRules = ticket.getlistVspRuleslabel( cleanArray( vspRulesChoice ) );
 
-            if ( ( null != currentVSP) ) {
+            if ( ( null != currentVSP ) )
+            {
                 oldRules = ticket.getlistVspRuleslabel( currentVSP );
             }
             strTaskInformation += formatInfoMessage( MESSAGE_TICKET_VSP_RULE_INFORMATION, oldRules, newRules, locale );
@@ -108,7 +108,7 @@ public class TaskVspTicket extends AbstractTicketingTask
      */
     private String formatInfoMessage( String strKey, String strOldValue, String strNewValue, Locale locale )
     {
-        return MessageFormat.format( I18nService.getLocalizedString( strKey, locale ),  strOldValue, strNewValue );
+        return MessageFormat.format( I18nService.getLocalizedString( strKey, locale ), strOldValue, strNewValue );
     }
 
     /**
@@ -118,9 +118,9 @@ public class TaskVspTicket extends AbstractTicketingTask
      *            : array of ids rules
      * @return the string formated
      */
-    private String cleanArray( String[] ruleList ) {
-        return Arrays.toString( ruleList ).replace("[","").replace("]","").replace( ", ", ";" ).trim();
+    private String cleanArray( String [ ] ruleList )
+    {
+        return Arrays.toString( ruleList ).replace( "[", "" ).replace( "]", "" ).replace( ", ", ";" ).trim( );
     }
-
 
 }
