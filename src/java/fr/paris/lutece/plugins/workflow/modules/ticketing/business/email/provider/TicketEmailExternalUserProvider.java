@@ -74,6 +74,7 @@ public class TicketEmailExternalUserProvider implements IProvider
     // PROPERTY KEY
     private static final String PROPERTY_SMS_SENDER_NAME = "workflow-ticketing.gruprovider.sms.sendername";
     private static final String PROPERTY_RESPONSE_URL = "workflow-ticketing.workflow.task_ticket_email_external_user.url_response";
+    private static final String                EMAIL_ALTERNATIVE_NO_SENDER                     = AppPropertiesService.getProperty( "workflow.ticketing.email.alternatif.no.sender" );
     // MESSAGE KEY
     private static final String MESSAGE_MARKER_TICKET_REFERENCE = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.reference";
     private static final String MESSAGE_MARKER_TICKET_CHANNEL = "module.workflow.ticketing.task_ticket_email_external_user_config.label_entry.ticket_channel";
@@ -134,6 +135,12 @@ public class TicketEmailExternalUserProvider implements IProvider
             {
                 // supprime les destinataires inactifs
                 _emailExternalUserMessage.setEmailRecipients( cleanInactiveUserFromList( emailListRecipients ) );
+            }
+
+            // Si apres le clean il n'y a plus de destinataire
+            if ( _emailExternalUserMessage.getEmailRecipients( ).isEmpty( ) )
+            {
+                _emailExternalUserMessage.setEmailRecipients( EMAIL_ALTERNATIVE_NO_SENDER );
             }
 
             if ( !_emailExternalUserMessage.getEmailRecipientsCc( ).isEmpty( ) )
