@@ -421,6 +421,19 @@
 		<bean id="workflow-ticketing.closeTicket"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeCloseTicket" />
+        
+        <!-- Task Auto delete date closed ticket -->
+	<bean id="workflow-ticketing.taskDeleteDateClosedTicket"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskDeleteDateClosedTicket"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeDeleteDateClosedTicket"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskDeleteDateClosedTicket" p:titleI18nKey="module.workflow.ticketing.task_delete_date_closed_ticket.title"
+		p:beanName="workflow-ticketing.taskDeleteDateClosedTicket"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+		<bean id="workflow-ticketing.deleteDateClosedTicket"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeDeleteDateClosedTicket" />
 		
 	<!-- Task Sphinx -->
 	<bean id="workflow-ticketing.taskSphinx"
