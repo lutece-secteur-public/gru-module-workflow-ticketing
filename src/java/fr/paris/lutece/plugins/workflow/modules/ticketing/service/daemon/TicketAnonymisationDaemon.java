@@ -42,11 +42,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 
+import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
+import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
 import fr.paris.lutece.plugins.ticketing.business.search.TicketIndexer;
 import fr.paris.lutece.plugins.ticketing.business.search.TicketIndexerException;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.service.category.TicketCategoryService;
 import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketIndexerActionUtil;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
@@ -54,19 +57,23 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicket
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.util.sql.TransactionManager;
 
+/**
+ *
+ */
 public class TicketAnonymisationDaemon extends Daemon
 {
 
-    private static final int DELAI_ANONYMISATION = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_DELAI, 10 );
-    private static final int TICKET_STATUS_ARCHIVE = AppPropertiesService.getPropertyInt( "ticketing.daemon.anonymisation.state.id.archive", 308 );
+    private static final int                          DELAI_ANONYMISATION           = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_DELAI, 1096 );
+    private static final int                          MAX_ANONYMISATION_PAR_DOMAINE = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_TICKET_MAX_DOMAINE, 200 );
 
-    private static ITicketEmailExternalUserMessageDAO dao = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
-    private static Plugin plugin = WorkflowTicketingPlugin.getPlugin( );
+    private static ITicketEmailExternalUserMessageDAO dao                           = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
+    private static Plugin                             plugin                        = WorkflowTicketingPlugin.getPlugin( );
 
-    private static final String REGEX_EMAIL2 = "[A-Za-z0-9+-_.]+@([A-Za-z0-9+-.]+\\.[A-Za-z]{2,4})";
-    private static final String REGEX_TELEPHONE2 = "[0-9]{2}([-. ]?([0-9]{2})){4}";
+    private static final String                       REGEX_EMAIL2                  = "[A-Za-z0-9+-_.]+@([A-Za-z0-9+-.]+\\.[A-Za-z]{2,4})";
+    private static final String                       REGEX_TELEPHONE2              = "[0-9]{2}([-. ]?([0-9]{2})){4}";
 
     /*
      * Constructor
@@ -84,60 +91,120 @@ public class TicketAnonymisationDaemon extends Daemon
     {
         StringJoiner sb = new StringJoiner( "\n\r" );
 
-        sb.add( "Début de l'anomymisation" );
+        sb.add( "Début de l'anonymisation" );
         anonymisation( sb );
-        sb.add( "Fin de l'anomymisation" );
+        sb.add( "Fin de l'anonymisation" );
         setLastRunLogs( sb.toString( ) );
 
     }
 
     private void anonymisation( StringJoiner sb )
     {
-        String date = dateForAnonymisation( sb );
-        List<Ticket> listTickets = TicketHome.getForAnonymisation( date, TICKET_STATUS_ARCHIVE );
+        List<Integer> allIdDomaines = TicketCategoryHome.selectIdCategoriesDomainList( );
 
-        if ( !listTickets.isEmpty( ) )
+        for ( Integer idCategory : allIdDomaines )
         {
-            sb.add( "nombre de tickets à anonymiser : " + listTickets.size( ) );
-        }
-        else
-        {
-            sb.add( "aucun ticket à anonymiser" );
-        }
+            TicketCategory categorieDomaine = TicketCategoryService.getInstance( true ).findCategoryById( idCategory );
 
-        for ( Ticket ticket : listTickets )
-        {
-            // suppression des données sensibles dans l'historique
-            anonymizeTicketHistoryData( ticket );
-            // anonymisation du ticket
-
-            String newComment = sanitizeCommentTicket( ticket );
-            ticket.setTicketComment( newComment );
-            ticket.setFirstname( ticket.getReference( ) );
-            ticket.setLastname( ticket.getReference( ) );
-            ticket.setIdUserTitle( 0 );
-            ticket.setEmail( ticket.getReference( ) + "@yopmail.com" );
-            ticket.setFixedPhoneNumber( null );
-            ticket.setMobilePhoneNumber( null );
-            ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
-            ticket.setAnonymisation( 1 );
-            TicketHome.update( ticket );
-            indexingTicketAnonymize( ticket.getId( ), sb );
-            sb.add( "Id Ticket anonymisé: " + ticket.getId( ) );
+            if ( null != categorieDomaine )
+            {
+                try
+                {
+                    TransactionManager.beginTransaction( plugin );
+                    anonymizeByDomaine( categorieDomaine, sb );
+                    TransactionManager.commitTransaction( plugin );
+                } catch ( Exception e )
+                {
+                    TransactionManager.rollBack( plugin );
+                    sb.add( "Annulation de l'anonymisation pour le domaine" + categorieDomaine.getLabel( ) );
+                    AppLogService.error( e );
+                }
+            }
         }
     }
 
-    private String dateForAnonymisation( StringJoiner sb )
+    private void anonymizeByDomaine( TicketCategory categorieDomaine, StringJoiner sb )
+    {
+        List<Integer> allChildrenForADomaine = TicketCategoryService.getInstance( true ).getAllChildren( categorieDomaine );
+
+        int delaiAnonymisation = ( !categorieDomaine.getDelaiAnonymisation( ).isEmpty( ) ) ? Integer.parseInt( categorieDomaine.getDelaiAnonymisation( ).trim( ) ) : DELAI_ANONYMISATION;
+
+        if ( !allChildrenForADomaine.isEmpty( ) )
+        {
+            java.sql.Date date = findDateClotureForAnonymisationDomaine( delaiAnonymisation, categorieDomaine, sb );
+
+            List<Integer> listIdTickets = TicketHome.getForAnonymisationForDomaine( date, allChildrenForADomaine, MAX_ANONYMISATION_PAR_DOMAINE );
+
+            if ( !listIdTickets.isEmpty( ) )
+            {
+                sb.add( "nombre de tickets à anonymiser : " + listIdTickets.size( ) );
+                for ( Integer idTicket : listIdTickets )
+                {
+                    Ticket ticket = TicketHome.findByPrimaryKeyWithoutFiles( idTicket );
+                    // suppression des données sensibles dans l'historique
+                    anonymizeTicketHistoryData( ticket );
+
+                    // anonymisation du ticket
+                    String newComment = sanitizeCommentTicket( ticket );
+                    ticket.setTicketComment( newComment );
+                    ticket.setFirstname( ticket.getReference( ) );
+                    ticket.setLastname( ticket.getReference( ) );
+                    ticket.setIdUserTitle( 0 );
+                    ticket.setEmail( ticket.getReference( ) + "@yopmail.com" );
+                    ticket.setFixedPhoneNumber( null );
+                    ticket.setMobilePhoneNumber( null );
+                    ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
+                    ticket.setAnonymisation( 1 );
+                    TicketHome.update( ticket );
+                    anoymizeAddress( ticket.getId( ) );
+                    indexingTicketAnonymize( ticket.getId( ), sb );
+
+                    // suppression des pieces jointes
+                    deleteAttachmentTicket( ticket, sb );
+                    sb.add( "Id Ticket anonymisé: " + ticket.getId( ) );
+                }
+            } else
+            {
+                sb.add( "aucun ticket à anonymiser " );
+            }
+        }
+
+    }
+
+    private java.sql.Date findDateClotureForAnonymisationDomaine( int delaiAnonymisation, TicketCategory category, StringJoiner sb )
     {
         Date date = new Date( );
-        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
-        SimpleDateFormat sdf2 = new SimpleDateFormat( "dd/MM/yyyy" );
+        SimpleDateFormat sdf = new SimpleDateFormat( "dd/MM/yyyy" );
         Calendar calDate = Calendar.getInstance( );
         calDate.setTime( date );
-        calDate.add( Calendar.DAY_OF_YEAR, -DELAI_ANONYMISATION );
+        calDate.add( Calendar.DAY_OF_YEAR, -delaiAnonymisation );
         date = calDate.getTime( );
-        sb.add( "anonymisation tickets archivés avant le " + sdf2.format( date ) );
-        return sdf.format( date );
+        sb.add( "- anonymisation des tickets du domaine " + category.getLabel( ) + " dont la date de clôture est plus ancienne que le " + sdf.format( date ) );
+        return new java.sql.Date( date.getTime( ) );
+    }
+
+    public void anoymizeAddress( int idTicket )
+    {
+        TicketHome.anonymizeAddress( idTicket );
+    }
+
+    public void deleteAttachmentTicket( Ticket ticket, StringJoiner sb )
+    {
+        List<Integer> coreFilesId = TicketHome.getIdAttachmentCoreFileListByTicket( ticket.getId( ) );
+
+        if ( !coreFilesId.isEmpty( ) )
+        {
+            List<Integer> corePhysicalFilesId = TicketHome.getIdAttachmentCorePhysicalFileListByTicket( coreFilesId );
+
+            if ( !corePhysicalFilesId.isEmpty( ) )
+            {
+                TicketHome.deleteCorePhysicalFile( corePhysicalFilesId );
+                sb.add( "id fichiers physical supprimés : " + corePhysicalFilesId.toString( ) );
+            }
+
+            TicketHome.deleteCoreFile( coreFilesId );
+            sb.add( "id fichiers core supprimés : " + coreFilesId.toString( ) );
+        }
     }
 
     public void anonymizeTicketHistoryData( Ticket ticket )
@@ -153,31 +220,35 @@ public class TicketAnonymisationDaemon extends Daemon
             }
             dao.update( data, idEmailExternalUser, plugin );
         }
-
     }
 
     private String sanitizeCommentTicket( Ticket ticket )
     {
-        String anonymizeCommemtTicket = ticket.getTicketComment( );
+        String anonymizeCommemtTicket = "";
 
-        anonymizeCommemtTicket = sanitizeValue( anonymizeCommemtTicket, "(?i)" + ticket.getFirstname( ), "" );
-        anonymizeCommemtTicket = sanitizeValue( anonymizeCommemtTicket, "(?i)" + ticket.getLastname( ), "" );
-        anonymizeCommemtTicket = sanitizeValue( anonymizeCommemtTicket, REGEX_EMAIL2, "" );
-        anonymizeCommemtTicket = sanitizeValue( anonymizeCommemtTicket, REGEX_TELEPHONE2, "" );
-
+        if ( ( null != ticket.getTicketComment( ) ) && !ticket.getTicketComment( ).trim( ).isEmpty( ) )
+        {
+            anonymizeCommemtTicket = sanitizeValue( anonymizeCommemtTicket, "(?i)" + ticket.getFirstname( ), "" );
+            anonymizeCommemtTicket = sanitizeValue( anonymizeCommemtTicket, "(?i)" + ticket.getLastname( ), "" );
+            anonymizeCommemtTicket = sanitizeValue( anonymizeCommemtTicket, REGEX_EMAIL2, "" );
+            anonymizeCommemtTicket = sanitizeValue( anonymizeCommemtTicket, REGEX_TELEPHONE2, "" );
+        }
         return anonymizeCommemtTicket;
-
     }
 
     private String sanitizeEntryMessage( Ticket ticket, String messageToAnonymise )
     {
-        String anonymizeMessageTicket = messageToAnonymise;
+        String anonymizeMessageTicket = "";
 
-        anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + ticket.getFirstname( ), "" );
-        anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + ticket.getLastname( ), "" );
-        anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, REGEX_EMAIL2, "" );
-        anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, REGEX_TELEPHONE2, "" );
+        if ( ( null != messageToAnonymise ) && !messageToAnonymise.trim( ).isEmpty( ) )
+        {
+            anonymizeMessageTicket = messageToAnonymise;
 
+            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + ticket.getFirstname( ), "" );
+            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + ticket.getLastname( ), "" );
+            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, REGEX_EMAIL2, "" );
+            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, REGEX_TELEPHONE2, "" );
+        }
         return anonymizeMessageTicket;
 
     }
@@ -202,10 +273,9 @@ public class TicketAnonymisationDaemon extends Daemon
             {
                 TicketIndexer ticketIndexer = new TicketIndexer( );
                 ticketIndexer.indexTicket( ticket );
-            }
-            catch( TicketIndexerException ticketIndexerException )
+            } catch ( TicketIndexerException ticketIndexerException )
             {
-                sb.add( "Le ticket id " + idTicket + "anonymisé est en attente pour indexation" );
+                sb.add( "Le ticket id " + idTicket + " anonymisé est en attente pour indexation" );
 
                 // The indexation of the Ticket fail, we will store the Ticket in the table for the daemon
                 IndexerActionHome.create( TicketIndexerActionUtil.createIndexerActionFromTicket( ticket ) );
