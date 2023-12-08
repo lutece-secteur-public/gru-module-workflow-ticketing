@@ -60,8 +60,9 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.sql.TransactionManager;
 
+
 /**
- *
+ * Daemon used to anonymize Tickets
  */
 public class TicketAnonymisationDaemon extends Daemon
 {
@@ -98,6 +99,12 @@ public class TicketAnonymisationDaemon extends Daemon
 
     }
 
+    /**
+     * Anonymize the ticket
+     *
+     * @param sb
+     *            the logs
+     */
     private void anonymisation( StringJoiner sb )
     {
         List<Integer> allIdDomaines = TicketCategoryHome.selectIdCategoriesDomainList( );
@@ -123,6 +130,14 @@ public class TicketAnonymisationDaemon extends Daemon
         }
     }
 
+    /**
+     * Anomynize by domaine
+     *
+     * @param categorieDomaine
+     *            the category domaine
+     * @param sb
+     *            The logs
+     */
     private void anonymizeByDomaine( TicketCategory categorieDomaine, StringJoiner sb )
     {
         List<Integer> allChildrenForADomaine = TicketCategoryService.getInstance( true ).getAllChildren( categorieDomaine );
@@ -168,9 +183,19 @@ public class TicketAnonymisationDaemon extends Daemon
                 sb.add( "aucun ticket à anonymiser " );
             }
         }
-
     }
 
+    /**
+     * Find the date closed max for a domaine accross a delay
+     *
+     * @param delaiAnonymisation
+     *            the delay for a domaine
+     * @param category
+     *            the category of the ticket to anonymize
+     * @param sb
+     *            the logs
+     * @return
+     */
     private java.sql.Date findDateClotureForAnonymisationDomaine( int delaiAnonymisation, TicketCategory category, StringJoiner sb )
     {
         Date date = new Date( );
@@ -183,11 +208,24 @@ public class TicketAnonymisationDaemon extends Daemon
         return new java.sql.Date( date.getTime( ) );
     }
 
+    /**
+     * Call anonymizeAddress
+     *
+     * @param idTicket
+     *            the id of the ticket to anonymize
+     */
     public void anoymizeAddress( int idTicket )
     {
         TicketHome.anonymizeAddress( idTicket );
     }
 
+    /**
+     * Delete attachemant for a ticket core_file and core_physical_fle
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     * @param sb
+     */
     public void deleteAttachmentTicket( Ticket ticket, StringJoiner sb )
     {
         List<Integer> coreFilesId = TicketHome.getIdAttachmentCoreFileListByTicket( ticket.getId( ) );
@@ -207,6 +245,12 @@ public class TicketAnonymisationDaemon extends Daemon
         }
     }
 
+    /**
+     * Anonymize historic data with message exchanges
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     */
     public void anonymizeTicketHistoryData( Ticket ticket )
     {
         List<Integer> listEmailExternalUser = dao.getListIDMessageExternalUser( ticket.getId( ), plugin );
@@ -222,6 +266,13 @@ public class TicketAnonymisationDaemon extends Daemon
         }
     }
 
+    /**
+     * Anonymize comments
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     * @return the clear comment
+     */
     private String sanitizeCommentTicket( Ticket ticket )
     {
         String anonymizeCommemtTicket = "";
@@ -236,6 +287,15 @@ public class TicketAnonymisationDaemon extends Daemon
         return anonymizeCommemtTicket;
     }
 
+    /**
+     * Anonymize messages
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     * @param messageToAnonymise
+     *            the message to anonymize
+     * @return the final clear message
+     */
     private String sanitizeEntryMessage( Ticket ticket, String messageToAnonymise )
     {
         String anonymizeMessageTicket = "";
@@ -253,6 +313,17 @@ public class TicketAnonymisationDaemon extends Daemon
 
     }
 
+    /**
+     * Replace a comment by a substitute
+     *
+     * @param comment
+     *
+     * @param valueToAnonymise
+     *
+     * @param substitute
+     *
+     * @return a clear value in a comment
+     */
     private String sanitizeValue( String comment, String valueToAnonymise, String substitute )
     {
         return comment.replaceAll( valueToAnonymise, substitute );
