@@ -237,11 +237,9 @@ public class TicketAnonymisationDaemon extends Daemon
             if ( !corePhysicalFilesId.isEmpty( ) )
             {
                 TicketHome.deleteCorePhysicalFile( corePhysicalFilesId );
-                sb.add( "id fichiers physical supprimés : " + corePhysicalFilesId.toString( ) );
             }
 
             TicketHome.deleteCoreFile( coreFilesId );
-            sb.add( "id fichiers core supprimés : " + coreFilesId.toString( ) );
         }
     }
 
