@@ -1,50 +1,74 @@
-<script src="js/bootstrap-datepicker.js"></script>
-<script src="js/locales/bootstrap-datepicker.fr.js" charset="utf-8"></script>
 <#if config?exists>
-    <input name="redirect" id="redirect" value="list" type="hidden">    
+    <input name="redirect" id="redirect" value="list" type="hidden">
     <#if agent_view >
-        <#include "/admin/util/editor/editor.html" />
-        <#if list_entries?? && list_entries?size &gt; 0>
-            <p class="lead">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelListEntries}</p>
-                <#list list_entries as entry>
-                    <div>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}" 
-                                onchange="javascript:toggleEditableFieldsMessage(${config.idTask});" />
-                            ${entry.title}
-                        </label>
-                    </div>
-                </#list>
-                <div id="editable_fields_message_${config.idTask}">
-                    <div class="alert alert-warning" style="margin:10px 0 0 0;">
-                        <i class="fas fa-exclamation-circle"></i> #i18n{module.workflow.ticketing.task_edit_ticket_form.message.noAdditionalFieldSelected}
-                    </div>
-                </div>
-            </p>
+      <#include "/admin/util/editor/editor.html" />
+      <input id="ticket_email_exist" name="ticket_email_exist" value="${ticket_email_exist?c}" type="hidden"></input>
+	  <#assign displayAlertEmail = ticket_email_exist>
+      <#if list_entries?? && list_entries?size &gt; 0>
+        <div class="form-group">
+          <label class="col-xs-12 col-sm-3 control-label">
+            #i18n{module.workflow.ticketing.task_edit_ticket_form.labelListEntries} :
+          </label>
+          <div class="col-xs-12 col-sm-9">
+          <#list list_entries as entry>
+            <div>
+              <label class="checkbox-inline">
+                <input type="checkbox" class="checkbox" name="ids_entry_${config.idTask}" value="${entry.idEntry}"
+                    onchange="javascript:toggleEditableFieldsMessage(${config.idTask});" > 
+                      ${entry.title}
+              </label>
+            </div>
+          </#list>
+            <div id="editable_fields_message_${config.idTask}">
+              <div class="alert alert-warning" style="margin:10px 0 0 0;">
+                <i class="fas fa-exclamation-circle"></i> #i18n{module.workflow.ticketing.task_edit_ticket_form.message.noAdditionalFieldSelected}
+              </div>
+            </div>
+         </div>
+        </div>
         </#if>
         <script type="text/javascript" >
-            function toggleEditableFieldsMessage(idTask) {
-                if ($("input[name=ids_entry_" + idTask + "]:checked").length > 0) {
-                    $("#editable_fields_message_" + idTask).hide();
-                } else {
-                    $("#editable_fields_message_" + idTask).show();
-                }
+          function toggleEditableFieldsMessage(idTask) {
+            if ($("input[name=ids_entry_" + idTask + "]:checked").length > 0) {
+              $("#editable_fields_message_" + idTask).hide();
+            } else {
+              $("#editable_fields_message_" + idTask).show();
             }
+          }
         </script>
         <hr>
-        <label for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelAgentMessage} *</label>
-        <textarea class="richtext" class="ticketing input-xxlarge" name="message_${config.idTask}"><p>${user_signature}</p></textarea>
-        <@initEditor />
-    
+      <div class="form-group">
+        <label class="col-xs-12 col-sm-3 control-label" for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelAgentMessage} * :</label>
+        <div class="col-xs-12 col-sm-9">
+          <textarea class="ticketing richtext form-control" rows="6" name="message_${config.idTask}"><p>${user_signature}</p></textarea>
+        </div>
+      </div>
+      <@initEditor />
     <#else>
-        <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
-        <#if entries_html_form??>
-            ${entries_html_form}
-        </#if>
-        
-        <label for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelUserMessage}</label>
-        <textarea class="ticketing input-xxlarge" name="user_message"></textarea>
-        <@addRequiredJsFiles />
-        <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
+        <#if entries_html_form?? && entries_html_form?has_content>
+	        <div class="form-group">
+	          <label class="col-xs-12 col-sm-3 control-label" for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelFieldsToModify}&nbsp;:</label>
+	          <div class="col-xs-12 col-sm-9">
+	            <div class="col-xs-12">
+	              <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
+	              ${entries_html_form}
+	              <@addRequiredJsFiles />
+	              <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
+	            </div>
+	          </div>
+	        </div>
+     	</#if>
+	        <div class="form-group">
+	          <label class="col-xs-12 col-sm-3 control-label" for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelUserMessage} :</label>
+	          <div class="col-xs-12 col-sm-9">
+	              <textarea rows="6" class="form-control" name="user_message"></textarea>
+	          </div>
+	        </div>
     </#if>
+    <#if displayAlertEmail?? && displayAlertEmail == false>
+ 		<div class="col-xs-12 col-sm-offset-3 col-sm-9 col-md-9 col-lg-9 alert alert-warning mt-15">
+       		<i class="fas fa-exclamation-circle"></i>
+       		<span>#i18n{module.workflow.ticketing.task_reply.message.email.not.found}</span>
+     	</div>
+	</#if>   
 </#if>

@@ -77,6 +77,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     private static final String MARK_LIST_ENTRIES = "list_entries";
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
+    private static final String    MARK_EMAIL_EXIST                 = "ticket_email_exist";
 
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
@@ -165,6 +166,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
         TaskEditTicketConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
+        boolean bIsTicketEmailExist = false;
 
         if ( config == null )
         {
@@ -178,6 +180,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
         model.put( MARK_AGENT_VIEW, messageDirection == MessageDirection.AGENT_TO_USER );
 
         Ticket ticket = getTicket( nIdResource, strResourceType );
+        bIsTicketEmailExist = ( ( null != ticket.getEmail( ) ) && !ticket.getEmail( ).equals( "" ) );
+        model.put( MARK_EMAIL_EXIST, bIsTicketEmailExist );
 
         if ( messageDirection == MessageDirection.AGENT_TO_USER )
         {
