@@ -47,6 +47,7 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig;
@@ -78,6 +79,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
     private static final String    MARK_EMAIL_EXIST                 = "ticket_email_exist";
+    private static final String    MARK_LIST_ID_TICKETS             = "list_id_tickets";
+
 
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
@@ -175,7 +178,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
 
         MessageDirection messageDirection = config.getMessageDirection( );
 
-        Map<String, Object> model = new HashMap<>( );
+        Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
         model.put( MARK_CONFIG, config );
         model.put( MARK_AGENT_VIEW, messageDirection == MessageDirection.AGENT_TO_USER );
 
@@ -197,6 +200,7 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
             }
 
             model.put( MARK_LIST_ENTRIES, listEntryWithoutComment );
+            model.put( MARK_LIST_ID_TICKETS, request.getParameterValues( TicketingConstants.PARAMETER_ID_TICKET ) );
 
             ModelUtils.storeUserSignature( request, model );
             ModelUtils.storeRichText( request, model );

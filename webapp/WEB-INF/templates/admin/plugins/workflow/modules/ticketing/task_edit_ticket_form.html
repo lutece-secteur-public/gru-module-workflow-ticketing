@@ -26,6 +26,7 @@
             </div>
          </div>
         </div>
+        <hr>
         </#if>
         <script type="text/javascript" >
           function toggleEditableFieldsMessage(idTask) {
@@ -36,7 +37,16 @@
             }
           }
         </script>
-        <hr>
+	    <div class="form-group">
+			<div class="col-xs-12">
+	            <div class="pull-right">
+	                <a id="search_results_button" onclick="showSearchResponse()" class="btn btn-primary" >#i18n{module.workflow.ticketing.task_reply.button.searchResponse}</a>
+	            </div>
+	        </div>
+		</div>
+		<div id="search_results_div">
+			<#include "/admin/plugins/ticketing/search/search_response.html" />
+		</div>
       <div class="form-group">
         <label class="col-xs-12 col-sm-3 control-label" for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelAgentMessage} * :</label>
         <div class="col-xs-12 col-sm-9">
@@ -44,6 +54,39 @@
         </div>
       </div>
       <@initEditor />
+      <script>
+	   $( function(){
+            $("#search_results_div").hide();
+            //unregister previous listeners
+            $(document).off('click','a[name^="response_"]');
+            $(window).keydown(function(event){
+                //do not submit when enter key is pressed
+                if(event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+		 });
+		function showSearchResponse() {
+			$("#search_results_div").toggle();
+			//start search
+			if( $("#search_results_div").is(':visible') ) {
+				$("#query").focus();
+				if( $("#query").val() != '' ){
+					$("#search_button").click();
+				}	
+			}
+		}
+		$(document).on('click','a[name^="response_"]', {} ,function(event) {
+			var element = "#content_"+event.target.name;
+					parent.tinymce.activeEditor.insertContent($(element).html());
+		});
+	</script>
+	<#if list_id_tickets?? && list_id_tickets?has_content>
+		<#list list_id_tickets as id_ticket >
+			<input name="selected_tickets" value="${id_ticket}" type="hidden"></input>
+		</#list>
+	</#if>
     <#else>
         <#if entries_html_form?? && entries_html_form?has_content>
 	        <div class="form-group">
