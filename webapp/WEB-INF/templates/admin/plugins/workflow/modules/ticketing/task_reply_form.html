@@ -1,4 +1,6 @@
 <#if agent_view>
+	<input id="ticket_email_exist" name="ticket_email_exist" value="${ticket_email_exist?c}" type="hidden"></input>
+	<#assign displayAlertEmail = ticket_email_exist>
 	<div class="form-group">
 		<div class="col-xs-12">
             <div class="pull-right">
@@ -49,8 +51,6 @@
 			<input name="selected_tickets" value="${id_ticket}" type="hidden"></input>
 		</#list>
 	</#if>
-	<input id="ticket_email_exist" name="ticket_email_exist" value="${ticket_email_exist?c}" type="hidden"></input>
-	<#assign displayAlertEmail = ticket_email_exist>
   <label class="col-xs-12 col-sm-3 control-label" for="user_message">#i18n{module.workflow.ticketing.task_reply.labelMyReply}</label>
   <div class="col-xs-12 col-sm-9">
     <textarea name="user_message" id="user_message" class="ticketing form-control<#if agent_view> richtext</#if>">
@@ -65,10 +65,10 @@
        <@addRequiredJsFiles />
        <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
  </#if>
- <#if displayAlertEmail == false >
- 	<div class="col-xs-12 col-sm-offset-3 col-sm-9 col-md-9 col-lg-9 alert alert-warning">
-       <i class="fas fa-exclamation-circle"></i>
-       <span>#i18n{module.workflow.ticketing.task_reply.message.email.not.found}</span>
-     </div>
- </#if>
+ <#if displayAlertEmail?? && displayAlertEmail == false>
+	<div class="col-xs-12 col-sm-offset-3 col-sm-9 col-md-9 col-lg-9 alert alert-warning">
+   		<i class="fas fa-exclamation-circle"></i>
+   		<span>#i18n{module.workflow.ticketing.task_reply.message.email.not.found}</span>
+ 	</div>
+</#if>
  
