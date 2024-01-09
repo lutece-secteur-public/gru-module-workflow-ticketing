@@ -176,7 +176,6 @@ public class TicketAnonymisationDaemon extends Daemon
 
                     // suppression des pieces jointes
                     deleteAttachmentTicket( ticket, sb );
-                    sb.add( "Id Ticket anonymisé: " + ticket.getId( ) );
                 }
             } else
             {
