@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory;
 
+import java.util.List;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
 /**
@@ -42,9 +44,12 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
  */
 public interface IResourceHistoryDAO
 {
+    /** The Constant BEAN_SERVICE. */
+    String BEAN_SERVICE = "workflow-ticketing.resourceHistoryDAO";
+
     /**
      * Insert new record
-     * 
+     *
      * @param resourceHistory
      *            the ResourceHistory Object
      * @param plugin
@@ -54,7 +59,7 @@ public interface IResourceHistoryDAO
 
     /**
      * Load a record by primary key
-     * 
+     *
      * @param nIdHistory
      *            the history id
      * @param plugin
@@ -65,7 +70,7 @@ public interface IResourceHistoryDAO
 
     /**
      * Remove resourceHistory by history
-     * 
+     *
      * @param nIdHistory
      *            the History id
      * @param plugin
@@ -75,7 +80,7 @@ public interface IResourceHistoryDAO
 
     /**
      * Remove resourceHistory by resource
-     * 
+     *
      * @param nIdResource
      *            the resource id
      * @param strResourceType
@@ -95,4 +100,14 @@ public interface IResourceHistoryDAO
      * @return ResourceHistory Object
      */
     ResourceHistory loadUnitOld( int nIdHistory, Plugin plugin );
+
+    /**
+     * Get the list of id history for a resource(ticket)
+     *
+     * @param idTicket
+     *            the ticket id
+     * @param plugin
+     *            the plugin
+     */
+    List<Integer> getIdHistoryListByResource( int idTicket, Plugin plugin );
 }
