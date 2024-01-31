@@ -53,9 +53,11 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.category.TicketCategoryService;
 import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketIndexerActionUtil;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.anonymisation.IAnonymisationDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.ITaskInformationDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryDAO;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.IEditableTicketDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -76,6 +78,10 @@ public class TicketAnonymisationDaemon extends Daemon
     private static ITicketEmailExternalUserMessageDAO dao                           = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
     private static ITaskInformationDAO                daoTaskInfo                   = SpringContextService.getBean( ITaskInformationDAO.BEAN_SERVICE );
     private static IResourceHistoryDAO                daoResourceHist               = SpringContextService.getBean( IResourceHistoryDAO.BEAN_SERVICE );
+    private static IEditableTicketDAO                 daoEditableTicketHist         = SpringContextService.getBean( IEditableTicketDAO.BEAN_SERVICE );
+    private static IAnonymisationDAO                  daoAnonymisation              = SpringContextService.getBean( IAnonymisationDAO.BEAN_SERVICE );
+
+
     private static Plugin                             plugin                        = WorkflowTicketingPlugin.getPlugin( );
 
     private static final String                       REGEX_EMAIL2                  = "[A-Za-z0-9+-_.]+@([A-Za-z0-9+-.]+\\.[A-Za-z]{2,4})";
@@ -161,6 +167,8 @@ public class TicketAnonymisationDaemon extends Daemon
                         // anonymisation du ticket
                         String newComment = sanitizeCommentTicket( ticket );
                         ticket.setTicketComment( newComment );
+                        String userMessage = sanitizeUserMessageTicket( ticket );
+                        ticket.setUserMessage( userMessage );
                         ticket.setFirstname( ticket.getReference( ) );
                         ticket.setLastname( ticket.getReference( ) );
                         ticket.setIdUserTitle( 0 );
@@ -169,7 +177,9 @@ public class TicketAnonymisationDaemon extends Daemon
                         ticket.setMobilePhoneNumber( null );
                         ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
                         ticket.setAnonymisation( 1 );
-
+                        anoymizeAddress( ticket.getId( ) );
+                        TicketHome.update( ticket );
+                        indexingTicketAnonymize( ticket.getId( ), sb );
                     }catch ( Exception e )
                     {
                         TransactionManager.rollBack( plugin );
@@ -177,9 +187,6 @@ public class TicketAnonymisationDaemon extends Daemon
                         AppLogService.error( e );
                     }
                     TransactionManager.commitTransaction( plugin );
-                    anoymizeAddress( ticket.getId( ) );
-                    TicketHome.update( ticket );
-                    indexingTicketAnonymize( ticket.getId( ), sb );
                 }
             } else
             {
@@ -306,36 +313,156 @@ public class TicketAnonymisationDaemon extends Daemon
     private void anonymizeTicketHistoryFromAgent( Ticket ticket )
     {
         List<Integer> idResponseTotal = new ArrayList<>( );
+        List<Integer> idCoreUpload = new ArrayList<>( );
 
         List<Integer> idHistoryList = daoResourceHist.getIdHistoryListByResource( ticket.getId( ), plugin );
         for ( int idHistory : idHistoryList )
         {
-            String value = daoTaskInfo.getInfoHistoryValueByIdHistory( idHistory, plugin );
-            if ( value.contains( "a href=" ) )
-            {
-                List<Integer> idResponseListForAgent = extractIdResponse( value );
-                idResponseTotal.addAll( idResponseListForAgent );
-            }
-            if ( value.contains( "MESSAGE-IN-WORKFLOW" ) )
-            {
-                anonymizeCommentFromAgent( ticket, value );
-            }
+            // table workflow_task_ticketing_information
+            List<Integer> idHistInfo = anoymiseFromTaskInfo( ticket, idHistory );
+            idResponseTotal.addAll( idHistInfo );
+            // table workflow_task_ticketing_editable_ticket
+            anoymiseFromEditableTicket( ticket, idHistory );
+            // table workflow_task_notify_gru_history
+            anoymiseNotifyGruHistory( ticket, idHistory );
+            // table workflow_task_comment_value
+            anoymiseCommentValue( ticket, idHistory );
+            // table workflow_task_upload_files
+            idCoreUpload = anonymiseUploadFiles( ticket, idHistory );
+            cleanUploadFiles( idHistory );
         }
         List<Integer> coreIdFileAgent = findAgentAttachment( idResponseTotal );
+        coreIdFileAgent.addAll( idCoreUpload );
 
         deleteAttachment( coreIdFileAgent );
     }
 
+
+    private List<Integer> anoymiseFromTaskInfo( Ticket ticket, int idHistory )
+    {
+        String valueInfo = daoTaskInfo.getInfoHistoryValueByIdHistory( idHistory, plugin );
+        List<Integer> idResponseTotal = new ArrayList<>( );
+        if ( !valueInfo.isEmpty( ) )
+        {
+            if ( valueInfo.contains( "a href=" ) )
+            {
+                List<Integer> idResponseListForAgent = extractIdResponse( valueInfo );
+                idResponseTotal.addAll( idResponseListForAgent );
+            }
+            if ( valueInfo.contains( "MESSAGE-IN-WORKFLOW" ) )
+            {
+                anonymizeCommentFromAgent( ticket, idHistory, valueInfo );
+            }
+        }
+        return idResponseTotal;
+    }
+
     /**
-     * Anonymize historic data with message exchanges From Agent
+     * Anonymize historic data with comment in specific task From Agent
      *
      * @param ticket
      *            the ticket to anonymize
      */
-    private void anonymizeCommentFromAgent( Ticket ticket, String value )
+    private void anonymizeCommentFromAgent( Ticket ticket, int idHistory, String value )
     {
         String newValue = sanitizeEntryMessage( ticket, value );
-        daoTaskInfo.update( ticket.getId( ), newValue, plugin );
+        daoTaskInfo.update( idHistory, newValue, plugin );
+    }
+
+    /**
+     * Anonymize historic data with Editable ticket
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     * @param idHistory
+     *            the id history
+     * @param value
+     *            the value to update
+     */
+    private void anoymiseFromEditableTicket( Ticket ticket, int idHistory )
+    {
+        String valueMessage = daoEditableTicketHist.loadByIdHistory( idHistory );
+        if ( !valueMessage.isEmpty( ) )
+        {
+            String newValue = sanitizeEntryMessage( ticket, valueMessage );
+            daoEditableTicketHist.storeAnonymisation( newValue, idHistory );
+        }
+    }
+
+    /**
+     * Anonymize historic data with notifygru history
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     * @param idHistory
+     *            the id history
+     * @param value
+     *            the value to update
+     */
+    private void anoymiseNotifyGruHistory( Ticket ticket, int idHistory )
+    {
+        String valueNotifyMessage = daoAnonymisation.loadMessageNotifyHIstory( idHistory, plugin );
+        if ( !valueNotifyMessage.isEmpty( ) )
+        {
+            String newValue = sanitizeEntryMessage( ticket, valueNotifyMessage );
+            daoAnonymisation.storeAnonymisationNotifyGruHistory( newValue, idHistory );
+        }
+
+    }
+
+    /**
+     * Anonymize historic data of commment task
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     * @param idHistory
+     *            the id history
+     * @param value
+     *            the value to update
+     */
+    private void anoymiseCommentValue( Ticket ticket, int idHistory )
+    {
+        String valueComment = daoAnonymisation.loadCommentValue( idHistory, plugin );
+        if ( !valueComment.isEmpty( ) )
+        {
+            String newValue = sanitizeEntryMessage( ticket, valueComment );
+            daoAnonymisation.storeAnonymisationCommentValue( newValue, idHistory );
+        }
+    }
+
+    /**
+     * Anonymize historic data of commment task
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     * @param idHistory
+     *            the id history
+     * @param value
+     *            the value to update
+     */
+    private List<Integer> anonymiseUploadFiles( Ticket ticket, int idHistory )
+    {
+        List<Integer> uploadIdFilesHistoryList = new ArrayList<>( );
+        List<Integer> uploadIdList = daoAnonymisation.getIdUploadFilesByIdHistory( idHistory, plugin );
+        if ( !uploadIdList.isEmpty( ) )
+        {
+            for ( Integer idFile : uploadIdList )
+            {
+                uploadIdFilesHistoryList.add( idFile );
+            }
+        }
+        return uploadIdFilesHistoryList;
+    }
+
+    /**
+     * Anonymize historic data with comment in specific task From Agent
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     */
+    private void cleanUploadFiles( Ticket ticket, int idHistory )
+    {
+        // clean fron uploafILe
     }
 
     /**
@@ -407,6 +534,28 @@ public class TicketAnonymisationDaemon extends Daemon
     }
 
     /**
+     * Anonymize user message
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     * @return the clear user message
+     */
+    private String sanitizeUserMessageTicket( Ticket ticket )
+    {
+        String anonymizeUserMessageTicket = "";
+
+        if ( ( null != ticket.getUserMessage( ) ) && !ticket.getUserMessage( ).trim( ).isEmpty( ) )
+        {
+            anonymizeUserMessageTicket = ticket.getUserMessage( );
+            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + ticket.getFirstname( ), "" );
+            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + ticket.getLastname( ), "" );
+            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, REGEX_EMAIL2, "" );
+            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, REGEX_TELEPHONE2, "" );
+        }
+        return anonymizeUserMessageTicket;
+    }
+
+    /**
      * Anonymize comments
      *
      * @param ticket
@@ -427,7 +576,6 @@ public class TicketAnonymisationDaemon extends Daemon
         }
         return anonymizeCommentTicket;
     }
-
 
     /**
      * Anonymize messages

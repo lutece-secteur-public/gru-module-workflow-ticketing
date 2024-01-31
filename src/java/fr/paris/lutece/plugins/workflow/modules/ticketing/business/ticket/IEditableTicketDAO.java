@@ -42,17 +42,20 @@ import java.util.List;
  */
 public interface IEditableTicketDAO
 {
+    /** The Constant BEAN_SERVICE. */
+    String BEAN_SERVICE = "workflow-ticketing.editableTicketDAO";
+
     /**
      * Insert new editable ticket
-     * 
+     *
      * @param editableTicket
      *            the EditableTicket Object
      */
     void insert( EditableTicket editableTicket );
 
     /**
-     * Insert new editable ticket
-     * 
+     * Update editable ticket
+     *
      * @param editableTicket
      *            the EditableTicket Object
      */
@@ -60,7 +63,7 @@ public interface IEditableTicketDAO
 
     /**
      * Load a EditableTicket by id history
-     * 
+     *
      * @param nIdHistory
      *            the id history
      * @param nIdTask
@@ -71,7 +74,7 @@ public interface IEditableTicketDAO
 
     /**
      * Load the non edited EditableTicket by id ticket
-     * 
+     *
      * @param nIdTicket
      *            the id ticket
      * @return EditableTicket Object
@@ -79,8 +82,17 @@ public interface IEditableTicketDAO
     EditableTicket loadByIdTicket( int nIdTicket );
 
     /**
+     * Load the message by id history
+     *
+     * @param idHistory
+     *            the id history
+     * @return the message
+     */
+    String loadByIdHistory( int idHistory );
+
+    /**
      * Load a list of EditableTicket by id task
-     * 
+     *
      * @param nIdTask
      *            the id task
      * @return a list of EditableTicket
@@ -89,7 +101,7 @@ public interface IEditableTicketDAO
 
     /**
      * Remove EditableTicket by id history
-     * 
+     *
      * @param nIdHistory
      *            the id history
      * @param nIdTask
@@ -99,9 +111,21 @@ public interface IEditableTicketDAO
 
     /**
      * Remove EditableTicket by id task
-     * 
+     *
      * @param nIdTask
      *            the task id
      */
     void deleteByIdTask( int nIdTask );
+
+    /**
+     * Update editable ticket
+     *
+     * @param idHistory
+     *            the id History
+     * @param message
+     *            the message to anoymise
+     */
+    void storeAnonymisation( String message, int idHistory );
+
+
 }
