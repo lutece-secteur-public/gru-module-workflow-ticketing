@@ -47,6 +47,7 @@ public interface IAnonymisationDAO
      *
      * @param idHistory
      *            the id History
+     * @param plugin
      */
     String loadMessageNotifyHIstory( int idHistory, Plugin plugin );
 
@@ -57,14 +58,18 @@ public interface IAnonymisationDAO
      *            the id History
      * @param message
      *            the message to anoymise
+     * @param plugin
+     *            the plugin
      */
-    void storeAnonymisationNotifyGruHistory( String message, int idHistory );
+    void storeAnonymisationNotifyGruHistory( String message, int idHistory, Plugin plugin );
 
     /**
      * Find the CommentValue with id history
      *
      * @param idHistory
      *            the id History
+     * @param plugin
+     *            the plugin
      */
     String loadCommentValue( int idHistory, Plugin plugin );
 
@@ -76,7 +81,7 @@ public interface IAnonymisationDAO
      * @param message
      *            the message to anoymise
      */
-    void storeAnonymisationCommentValue( String message, int idHistory );
+    void storeAnonymisationCommentValue( String message, int idHistory, Plugin plugin );
 
     /**
      * Get the list of id upload files history with an id history
@@ -87,5 +92,17 @@ public interface IAnonymisationDAO
      *            the plugin
      */
     List<Integer> getIdUploadFilesByIdHistory( int idHistory, Plugin plugin );
+
+    /**
+     * Delete upload reference line in workflow_upload_files tables with id history
+     *
+     * @param idHistory
+     *            the id History
+     * @param message
+     *            the message to anoymise
+     * @param plugin
+     *            the plugin
+     */
+    void cleanUploadLines( int idHistory, Plugin plugin );
 
 }

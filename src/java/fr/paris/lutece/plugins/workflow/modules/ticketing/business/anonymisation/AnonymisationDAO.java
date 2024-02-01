@@ -36,9 +36,7 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.anonymisatio
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 public class AnonymisationDAO implements IAnonymisationDAO
@@ -48,6 +46,7 @@ public class AnonymisationDAO implements IAnonymisationDAO
     private static final String SQL_QUERY_SELECT_EMAIL_COMMENT_VALUE_HISTORY         = "SELECT comment_value FROM workflow_task_comment_value WHERE id_history = ?";
     private static final String SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY = "UPDATE workflow_task_comment_value SET comment_value=? WHERE id_history = ?";
     private static final String SQL_QUERY_SELECT_UPLOAD_FILES_HISTORY                = "SELECT id_file FROM workflow_task_upload_files WHERE id_history = ?";
+    private static final String SQL_QUERY_DELETE_UPLOAD_FILE_REFERENCE_FOR_ANONYMISATION = "DELETE FROM workflow_task_upload_files WHERE id_history = ?";
 
 
     /**
@@ -75,9 +74,9 @@ public class AnonymisationDAO implements IAnonymisationDAO
      * {@inheritDoc}
      */
     @Override
-    public void storeAnonymisationNotifyGruHistory( String message, int idHistory )
+    public void storeAnonymisationNotifyGruHistory( String message, int idHistory, Plugin plugin )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++, message );
@@ -112,9 +111,9 @@ public class AnonymisationDAO implements IAnonymisationDAO
      * {@inheritDoc}
      */
     @Override
-    public void storeAnonymisationCommentValue( String message, int idHistory )
+    public void storeAnonymisationCommentValue( String message, int idHistory, Plugin plugin )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++, message );
@@ -144,6 +143,20 @@ public class AnonymisationDAO implements IAnonymisationDAO
             }
         }
         return uploadIdFilesHistoryList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void cleanUploadLines( int idHistory, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_UPLOAD_FILE_REFERENCE_FOR_ANONYMISATION, plugin ) )
+        {
+            daoUtil.setInt( 1, idHistory );
+
+            daoUtil.executeUpdate( );
+        }
     }
 
 }

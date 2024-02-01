@@ -313,7 +313,7 @@ public class TicketAnonymisationDaemon extends Daemon
     private void anonymizeTicketHistoryFromAgent( Ticket ticket )
     {
         List<Integer> idResponseTotal = new ArrayList<>( );
-        List<Integer> idCoreUpload = new ArrayList<>( );
+        List<Integer> idCoreUploadFinal = new ArrayList<>( );
 
         List<Integer> idHistoryList = daoResourceHist.getIdHistoryListByResource( ticket.getId( ), plugin );
         for ( int idHistory : idHistoryList )
@@ -328,16 +328,22 @@ public class TicketAnonymisationDaemon extends Daemon
             // table workflow_task_comment_value
             anoymiseCommentValue( ticket, idHistory );
             // table workflow_task_upload_files
-            idCoreUpload = anonymiseUploadFiles( ticket, idHistory );
-            cleanUploadFiles( idHistory );
+            List<Integer> idCoreUploadFound = anonymiseUploadFiles( idHistory );
+            idCoreUploadFinal.addAll( idCoreUploadFound );
+            cleanUploadFiles( idHistory, plugin );
         }
         List<Integer> coreIdFileAgent = findAgentAttachment( idResponseTotal );
-        coreIdFileAgent.addAll( idCoreUpload );
+        coreIdFileAgent.addAll( idCoreUploadFinal );
 
         deleteAttachment( coreIdFileAgent );
     }
 
-
+    /**
+     * Anonymize historic data From task info table
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     */
     private List<Integer> anoymiseFromTaskInfo( Ticket ticket, int idHistory )
     {
         String valueInfo = daoTaskInfo.getInfoHistoryValueByIdHistory( idHistory, plugin );
@@ -366,7 +372,11 @@ public class TicketAnonymisationDaemon extends Daemon
     private void anonymizeCommentFromAgent( Ticket ticket, int idHistory, String value )
     {
         String newValue = sanitizeEntryMessage( ticket, value );
-        daoTaskInfo.update( idHistory, newValue, plugin );
+        if ( !value.equals( newValue ) )
+        {
+            daoTaskInfo.update( idHistory, newValue, plugin );
+        }
+
     }
 
     /**
@@ -382,10 +392,13 @@ public class TicketAnonymisationDaemon extends Daemon
     private void anoymiseFromEditableTicket( Ticket ticket, int idHistory )
     {
         String valueMessage = daoEditableTicketHist.loadByIdHistory( idHistory );
-        if ( !valueMessage.isEmpty( ) )
+        if ( ( null != valueMessage ) && !valueMessage.isEmpty( ) )
         {
             String newValue = sanitizeEntryMessage( ticket, valueMessage );
-            daoEditableTicketHist.storeAnonymisation( newValue, idHistory );
+            if ( !valueMessage.equals( newValue ) )
+            {
+                daoEditableTicketHist.storeAnonymisation( newValue, idHistory );
+            }
         }
     }
 
@@ -402,10 +415,13 @@ public class TicketAnonymisationDaemon extends Daemon
     private void anoymiseNotifyGruHistory( Ticket ticket, int idHistory )
     {
         String valueNotifyMessage = daoAnonymisation.loadMessageNotifyHIstory( idHistory, plugin );
-        if ( !valueNotifyMessage.isEmpty( ) )
+        if ( ( null != valueNotifyMessage ) && !valueNotifyMessage.isEmpty( ) )
         {
             String newValue = sanitizeEntryMessage( ticket, valueNotifyMessage );
-            daoAnonymisation.storeAnonymisationNotifyGruHistory( newValue, idHistory );
+            if ( !valueNotifyMessage.equals( newValue ) )
+            {
+                daoAnonymisation.storeAnonymisationNotifyGruHistory( newValue, idHistory, plugin );
+            }
         }
 
     }
@@ -423,15 +439,18 @@ public class TicketAnonymisationDaemon extends Daemon
     private void anoymiseCommentValue( Ticket ticket, int idHistory )
     {
         String valueComment = daoAnonymisation.loadCommentValue( idHistory, plugin );
-        if ( !valueComment.isEmpty( ) )
+        if ( ( null != valueComment ) && !valueComment.isEmpty( ) )
         {
             String newValue = sanitizeEntryMessage( ticket, valueComment );
-            daoAnonymisation.storeAnonymisationCommentValue( newValue, idHistory );
+            if ( !valueComment.equals( newValue ) )
+            {
+                daoAnonymisation.storeAnonymisationCommentValue( newValue, idHistory, plugin );
+            }
         }
     }
 
     /**
-     * Anonymize historic data of commment task
+     * Anonymize historic data of upload files
      *
      * @param ticket
      *            the ticket to anonymize
@@ -440,11 +459,11 @@ public class TicketAnonymisationDaemon extends Daemon
      * @param value
      *            the value to update
      */
-    private List<Integer> anonymiseUploadFiles( Ticket ticket, int idHistory )
+    private List<Integer> anonymiseUploadFiles( int idHistory )
     {
         List<Integer> uploadIdFilesHistoryList = new ArrayList<>( );
         List<Integer> uploadIdList = daoAnonymisation.getIdUploadFilesByIdHistory( idHistory, plugin );
-        if ( !uploadIdList.isEmpty( ) )
+        if ( ( null != uploadIdList ) && !uploadIdList.isEmpty( ) )
         {
             for ( Integer idFile : uploadIdList )
             {
@@ -455,14 +474,14 @@ public class TicketAnonymisationDaemon extends Daemon
     }
 
     /**
-     * Anonymize historic data with comment in specific task From Agent
+     * Anonymize historic data in upload files table
      *
      * @param ticket
      *            the ticket to anonymize
      */
-    private void cleanUploadFiles( Ticket ticket, int idHistory )
+    private void cleanUploadFiles( int idHistory, Plugin plugin )
     {
-        // clean fron uploafILe
+        daoAnonymisation.cleanUploadLines( idHistory, plugin );
     }
 
     /**
