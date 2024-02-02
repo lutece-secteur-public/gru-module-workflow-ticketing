@@ -42,9 +42,12 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
  */
 public interface ITaskInformationDAO
 {
+    /** The Constant BEAN_SERVICE. */
+    String BEAN_SERVICE = "workflow-ticketing.taskInformationDAO";
+
     /**
      * Insert new record
-     * 
+     *
      * @param taskInformation
      *            the TaskInformation Object
      * @param plugin
@@ -54,7 +57,7 @@ public interface ITaskInformationDAO
 
     /**
      * Load a record by primary key
-     * 
+     *
      * @param nIdHistory
      *            the action history id
      * @param nIdTask
@@ -66,8 +69,20 @@ public interface ITaskInformationDAO
     TaskInformation load( int nIdHistory, int nIdTask, Plugin plugin );
 
     /**
+     * Upadte the value info
+     *
+     * @param idHistory
+     *            the history id
+     * @param infoValue
+     *            the info value
+     * @param plugin
+     *            the plugin
+     */
+    void update( int idHistory, String infoValue, Plugin plugin );
+
+    /**
      * Remove information by history
-     * 
+     *
      * @param nIdHistory
      *            the History id
      * @param nIdTask
@@ -79,11 +94,22 @@ public interface ITaskInformationDAO
 
     /**
      * Remove information by task
-     * 
+     *
      * @param nIdTask
      *            the task id
      * @param plugin
      *            the plugin
      */
     void deleteByTask( int nIdTask, Plugin plugin );
+
+    /**
+     * Get the value in history
+     *
+     * @param idHistory
+     *            the history id
+     * @param plugin
+     *            the plugin
+     */
+    String getInfoHistoryValueByIdHistory( int idHistory, Plugin plugin );
+
 }

@@ -31,83 +31,78 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.business.anonymisation;
 
 import java.util.List;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-/**
- *
- * IResourceHistoryDAO
- *
- */
-public interface IResourceHistoryDAO
+public interface IAnonymisationDAO
 {
     /** The Constant BEAN_SERVICE. */
-    String BEAN_SERVICE = "workflow-ticketing.resourceHistoryDAO";
+    String BEAN_SERVICE = "workflow-ticketing.anonymisationDAO";
 
     /**
-     * Insert new record
+     * Find the notifygruHistory with id history
      *
-     * @param resourceHistory
-     *            the ResourceHistory Object
+     * @param idHistory
+     *            the id History
+     * @param plugin
+     */
+    String loadMessageNotifyHIstory( int idHistory, Plugin plugin );
+
+    /**
+     * Update notifygruHistory
+     *
+     * @param idHistory
+     *            the id History
+     * @param message
+     *            the message to anoymise
      * @param plugin
      *            the plugin
      */
-    void insert( ResourceHistory resourceHistory, Plugin plugin );
+    void storeAnonymisationNotifyGruHistory( String message, int idHistory, Plugin plugin );
 
     /**
-     * Load a record by primary key
+     * Find the CommentValue with id history
      *
-     * @param nIdHistory
+     * @param idHistory
+     *            the id History
+     * @param plugin
+     *            the plugin
+     */
+    String loadCommentValue( int idHistory, Plugin plugin );
+
+    /**
+     * Update CommentValue
+     *
+     * @param idHistory
+     *            the id History
+     * @param message
+     *            the message to anoymise
+     */
+    void storeAnonymisationCommentValue( String message, int idHistory, Plugin plugin );
+
+    /**
+     * Get the list of id upload files history with an id history
+     *
+     * @param idHistory
      *            the history id
      * @param plugin
      *            the plugin
-     * @return ResourceHistory Object
      */
-    ResourceHistory load( int nIdHistory, Plugin plugin );
+    List<Integer> getIdUploadFilesByIdHistory( int idHistory, Plugin plugin );
 
     /**
-     * Remove resourceHistory by history
+     * Delete upload reference line in workflow_upload_files tables with id history
      *
-     * @param nIdHistory
-     *            the History id
+     * @param idHistory
+     *            the id History
+     * @param message
+     *            the message to anoymise
      * @param plugin
      *            the plugin
      */
-    void deleteByHistory( int nIdHistory, Plugin plugin );
+    void cleanUploadLines( int idHistory, Plugin plugin );
 
-    /**
-     * Remove resourceHistory by resource
-     *
-     * @param nIdResource
-     *            the resource id
-     * @param strResourceType
-     *            the resource type
-     * @param plugin
-     *            the plugin
-     */
-    void deleteByResource( int nIdResource, String strResourceType, Plugin plugin );
-
-    /**
-     * Load a record by primary key id_history and old unit
-     *
-     * @param nIdHistory
-     *            the history id
-     * @param plugin
-     *            the plugin
-     * @return ResourceHistory Object
-     */
-    ResourceHistory loadUnitOld( int nIdHistory, Plugin plugin );
-
-    /**
-     * Get the list of id history for a resource(ticket)
-     *
-     * @param idTicket
-     *            the ticket id
-     * @param plugin
-     *            the plugin
-     */
-    List<Integer> getIdHistoryListByResource( int idTicket, Plugin plugin );
 }

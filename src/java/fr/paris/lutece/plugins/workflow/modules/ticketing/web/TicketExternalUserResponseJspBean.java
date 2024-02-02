@@ -70,7 +70,6 @@ import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
-import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -130,9 +129,6 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     // Views
     private static final String VIEW_TICKET_EXTERNAL_USER_RESPONSE = "externalUserReponse";
 
-    // Other constants
-    private boolean _bAvatarAvailable;
-
     /**
      * DAO beans and service
      */
@@ -151,7 +147,6 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         _ticketEmailExternalUserMessageDAO = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
         _taskTicketExternalUserConfigService = SpringContextService.getBean( TaskTicketEmailExternalUser.BEAN_TICKET_CONFIG_SERVICE );
         _resourceHistoryService = SpringContextService.getBean( ResourceHistoryService.BEAN_SERVICE );
-        _bAvatarAvailable = ( PluginService.getPlugin( TicketingConstants.PLUGIN_AVATAR ) != null );
     }
 
     public String getTimeout( HttpServletRequest request )
@@ -290,7 +285,6 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_MAP_FILE_URL, mapFileUrl );
         model.put( MARK_MAP_FILE_URL_INIT, mapFileInitUrl );
         model.put( MARK_USER_FACTORY, UserFactory.getInstance( ) );
-        model.put( TicketingConstants.MARK_AVATAR_AVAILABLE, _bAvatarAvailable );
         model.put( MARK_USER_ADMIN, userAdmin );
         model.put( MARK_TASK_TICKET_EMAIL_EXTERNAL_USER_FORM, WorkflowService.getInstance( ).getDisplayTasksForm( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
                 externalUserConfig.getIdFollowingAction( ), request, getLocale( ), userAdmin ) );

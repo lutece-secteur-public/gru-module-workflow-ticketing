@@ -52,11 +52,6 @@
 			<#assign user=user_factory.create(user_admin.userId)>
 			
             <div class="info_user col-xs-12 col-sm-12 col-md-3 col-lg-3 control-label right" data-key-id="${user.idUser}" data-container="body" data-toggle="popover" data-placement="top">
-				<#if avatar_available>
-					<div class="form-control-static pull-right">
-						<img class="fa direct-chat-img" src="servlet/plugins/adminavatar/avatar?id_user=${user_admin.userId}">
-					</div>
-				</#if>
 				<div class="pull-right">
 					<em>${user_admin.firstName} ${user_admin.lastName}</em>&nbsp;&nbsp;<br/>
 					<em>${external_user_message.dateCreate?date}</em>&nbsp;&nbsp;<br/>
