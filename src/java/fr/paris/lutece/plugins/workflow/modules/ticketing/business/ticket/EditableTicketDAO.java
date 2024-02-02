@@ -57,6 +57,8 @@ public class EditableTicketDAO implements IEditableTicketDAO
     private static final String SQL_QUERY_DELETE_BY_ID_HISTORY = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? AND id_task = ? ";
     private static final String SQL_QUERY_DELETE_BY_TASK = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
     private static final String SQL_QUERY_UPDATE = " UPDATE workflow_task_ticketing_editable_ticket SET message = ?, is_edited = ? WHERE id_history = ? AND id_task = ? ";
+    private static final String SQL_QUERY_UPDATE_ANONYMISATION = " UPDATE workflow_task_ticketing_editable_ticket SET message = ? WHERE id_history = ? ";
+    private static final String SQL_QUERY_SELECT_BY_ID_HISTORY = " SELECT message FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? ";
 
     /**
      * {@inheritDoc}
@@ -91,6 +93,22 @@ public class EditableTicketDAO implements IEditableTicketDAO
 
             daoUtil.setInt( nIndex++, editableTicket.getIdHistory( ) );
             daoUtil.setInt( nIndex++, editableTicket.getIdTask( ) );
+
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void storeAnonymisation( String message, int idHistory )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            int nIndex = 1;
+            daoUtil.setString( nIndex++, message );
+            daoUtil.setInt( nIndex++, idHistory );
 
             daoUtil.executeUpdate( );
         }
@@ -155,6 +173,26 @@ public class EditableTicketDAO implements IEditableTicketDAO
             }
         }
         return editableTicket;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String loadByIdHistory( int idHistory )
+    {
+        String message = "";
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_HISTORY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        {
+            daoUtil.setInt( 1, idHistory );
+            daoUtil.executeQuery( );
+
+            if ( daoUtil.next( ) )
+            {
+                message = daoUtil.getString( 1 );
+            }
+        }
+        return message;
     }
 
     /**
