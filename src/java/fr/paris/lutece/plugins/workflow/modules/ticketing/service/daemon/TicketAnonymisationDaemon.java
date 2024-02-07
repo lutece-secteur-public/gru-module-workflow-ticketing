@@ -38,10 +38,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
+
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
@@ -177,7 +180,8 @@ public class TicketAnonymisationDaemon extends Daemon
                         ticket.setMobilePhoneNumber( null );
                         ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
                         ticket.setAnonymisation( 1 );
-                        anoymizeAddress( ticket.getId( ) );
+                        anonymizeAddress( ticket.getId( ) );
+                        ticket.setTicketAddress( null );
                         TicketHome.update( ticket );
                         indexingTicketAnonymize( ticket.getId( ), sb );
                     }catch ( Exception e )
@@ -226,7 +230,7 @@ public class TicketAnonymisationDaemon extends Daemon
      * @param idTicket
      *            the id of the ticket to anonymize
      */
-    public void anoymizeAddress( int idTicket )
+    public void anonymizeAddress( int idTicket )
     {
         TicketHome.anonymizeAddress( idTicket );
     }
@@ -332,17 +336,24 @@ public class TicketAnonymisationDaemon extends Daemon
             idCoreUploadFinal.addAll( idCoreUploadFound );
             cleanUploadFiles( idHistory, plugin );
         }
-        List<Integer> coreIdFileAgent = findAgentAttachment( idResponseTotal );
-        coreIdFileAgent.addAll( idCoreUploadFinal );
+        if ( !idResponseTotal.isEmpty( ) )
+        {
+            List<Integer> coreIdFileAgent = findAgentAttachment( idResponseTotal );
+            coreIdFileAgent.addAll( idCoreUploadFinal );
 
-        deleteAttachment( coreIdFileAgent );
+            deleteAttachment( coreIdFileAgent );
+        } else if ( !idCoreUploadFinal.isEmpty( ) )
+        {
+            deleteAttachment( idCoreUploadFinal );
+        }
+
     }
 
     /**
      * Anonymize historic data From task info table
      *
      * @param ticket
-     *            the ticket to anonymize
+     *            the ticket to anonymizes
      */
     private List<Integer> anoymiseFromTaskInfo( Ticket ticket, int idHistory )
     {
@@ -350,14 +361,15 @@ public class TicketAnonymisationDaemon extends Daemon
         List<Integer> idResponseTotal = new ArrayList<>( );
         if ( !valueInfo.isEmpty( ) )
         {
+            if ( valueInfo.contains( "MESSAGE-IN-WORKFLOW" ) || valueInfo.contains( "<b>" ) )
+            {
+                anonymizeCommentFromAgent( ticket, idHistory, valueInfo );
+            }
             if ( valueInfo.contains( "a href=" ) )
             {
                 List<Integer> idResponseListForAgent = extractIdResponse( valueInfo );
                 idResponseTotal.addAll( idResponseListForAgent );
-            }
-            if ( valueInfo.contains( "MESSAGE-IN-WORKFLOW" ) )
-            {
-                anonymizeCommentFromAgent( ticket, idHistory, valueInfo );
+                deleteHrefNotStillUsedInTaskInfo( valueInfo, idHistory );
             }
         }
         return idResponseTotal;
@@ -414,16 +426,43 @@ public class TicketAnonymisationDaemon extends Daemon
      */
     private void anoymiseNotifyGruHistory( Ticket ticket, int idHistory )
     {
-        String valueNotifyMessage = daoAnonymisation.loadMessageNotifyHIstory( idHistory, plugin );
-        if ( ( null != valueNotifyMessage ) && !valueNotifyMessage.isEmpty( ) )
+        Map<String, String> valueNotifyMessages = daoAnonymisation.loadMessageNotifyHIstoryTotal( idHistory, plugin );
+        Map<String, String> cleanValueNotifyMessages = new HashMap<>( );
+        if ( ( null != valueNotifyMessages ) && !valueNotifyMessages.isEmpty( ) )
         {
-            String newValue = sanitizeEntryMessage( ticket, valueNotifyMessage );
-            if ( !valueNotifyMessage.equals( newValue ) )
+            for ( Map.Entry<String, String> mapEntry : valueNotifyMessages.entrySet( ) )
             {
-                daoAnonymisation.storeAnonymisationNotifyGruHistory( newValue, idHistory, plugin );
+                if ( null != mapEntry.getValue( ) )
+                {
+                    String newValue = sanitizeEntryMessage( ticket, mapEntry.getValue( ) );
+                    String cleanHrefValue = cleanHrefNotStillUsedInNotifyHistory( newValue );
+                    if ( !( mapEntry.getValue( ) ).equals( cleanHrefValue ) )
+                    {
+                        cleanValueNotifyMessages.put( mapEntry.getKey( ), cleanHrefValue );
+                    } else
+                    {
+                        cleanValueNotifyMessages.put( mapEntry.getKey( ), mapEntry.getValue( ) );
+                    }
+                }
+            }
+            if ( !valueNotifyMessages.equals( cleanValueNotifyMessages ) )
+            {
+                daoAnonymisation.storeAnonymisationNotifyGruHistoryTotal( cleanValueNotifyMessages, idHistory, plugin );
             }
         }
+    }
 
+    public String cleanHrefNotStillUsedInNotifyHistory( String valueInfo )
+    {
+        String finalValue = valueInfo;
+        String[] partPhrase = valueInfo.split( " " );
+        List<String> stringWithoutHref = cleanPJStockInString( partPhrase );
+
+        if ( !String.join( " ", partPhrase ).equals( String.join( " ", stringWithoutHref ) ) )
+        {
+            finalValue = String.join( " ", stringWithoutHref );
+        }
+        return finalValue;
     }
 
     /**
@@ -527,6 +566,35 @@ public class TicketAnonymisationDaemon extends Daemon
 
     }
 
+    public void deleteHrefNotStillUsedInTaskInfo( String valueInfo, int idHistory )
+    {
+        String[] partPhrase = valueInfo.split( " " );
+        List<String> stringWithoutHref = cleanPJStockInString( partPhrase );
+
+        if ( !String.join( " ", partPhrase ).equals( String.join( " ", stringWithoutHref ) ) )
+        {
+            daoTaskInfo.update( idHistory, String.join( " ", stringWithoutHref ), plugin );
+        }
+    }
+
+
+
+    private List<String> cleanPJStockInString( String[] partPhrase )
+    {
+        List<String> stringWithoutHref = new ArrayList<>( );
+        if ( partPhrase.length > 1 )
+        {
+            for ( int i = 0; i < partPhrase.length; i++ )
+            {
+                if ( !partPhrase[i].startsWith( "<a" ) && !partPhrase[i].startsWith( "href" ) )
+                {
+                    stringWithoutHref.add( partPhrase[i] );
+                }
+            }
+        }
+        return stringWithoutHref;
+    }
+
     //////// FIN AGENT ////
 
     /////////// AUTRE /////
@@ -567,7 +635,11 @@ public class TicketAnonymisationDaemon extends Daemon
         {
             anonymizeUserMessageTicket = ticket.getUserMessage( );
             anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + ticket.getFirstname( ), "" );
+            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + StringUtils.stripAccents( ticket.getFirstname( ) ), "" );
+            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + convertToaccenthtml( ticket.getFirstname( ) ), "" );
             anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + ticket.getLastname( ), "" );
+            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + StringUtils.stripAccents( ticket.getLastname( ) ), "" );
+            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + convertToaccenthtml( ticket.getLastname( ) ), "" );
             anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, REGEX_EMAIL2, "" );
             anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, REGEX_TELEPHONE2, "" );
         }
@@ -589,7 +661,11 @@ public class TicketAnonymisationDaemon extends Daemon
         {
             anonymizeCommentTicket = ticket.getTicketComment( );
             anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, "(?i)" + ticket.getFirstname( ), "" );
+            anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, "(?i)" + StringUtils.stripAccents( ticket.getFirstname( ) ), "" );
+            anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, "(?i)" + convertToaccenthtml( ticket.getFirstname( ) ), "" );
             anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, "(?i)" + ticket.getLastname( ), "" );
+            anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, "(?i)" + StringUtils.stripAccents( ticket.getLastname( ) ), "" );
+            anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, "(?i)" + convertToaccenthtml( ticket.getLastname( ) ), "" );
             anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, REGEX_EMAIL2, "" );
             anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, REGEX_TELEPHONE2, "" );
         }
@@ -614,7 +690,11 @@ public class TicketAnonymisationDaemon extends Daemon
             anonymizeMessageTicket = messageToAnonymise;
 
             anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + ticket.getFirstname( ), "" );
+            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + StringUtils.stripAccents( ticket.getFirstname( ) ), "" );
+            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + convertToaccenthtml( ticket.getFirstname( ) ), "" );
             anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + ticket.getLastname( ), "" );
+            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + StringUtils.stripAccents( ticket.getLastname( ) ), "" );
+            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + convertToaccenthtml( ticket.getLastname( ) ), "" );
             anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, REGEX_EMAIL2, "" );
             anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, REGEX_TELEPHONE2, "" );
         }
@@ -661,6 +741,29 @@ public class TicketAnonymisationDaemon extends Daemon
                 IndexerActionHome.create( TicketIndexerActionUtil.createIndexerActionFromTicket( ticket ) );
             }
         }
+    }
+
+    private String convertToaccenthtml( String str )
+    {
+        str = str.replaceAll( "á", "&aacute;" );
+        str = str.replaceAll( "â", "&acirc;" );
+        str = str.replaceAll( "é", "&eacute;" );
+        str = str.replaceAll( "è", "&egrave;" );
+        str = str.replaceAll( "ë", "&euml;" );
+        str = str.replaceAll( "É", "&Eacute;" );
+        str = str.replaceAll( "È", "&Egrave;" );
+        str = str.replaceAll( "í", "&iacute;" );
+        str = str.replaceAll( "ï", "&iuml;" );
+        str = str.replaceAll( "î", "&icirc;" );
+        str = str.replaceAll( "ó", "&oacute;" );
+        str = str.replaceAll( "ô", "&ocirc;" );
+        str = str.replaceAll( "œ", "&oelig;" );
+        str = str.replaceAll( "æ", "&aelig;" );
+        str = str.replaceAll( "ú", "&uacute;" );
+        str = str.replaceAll( "ñ", "&ntilde;" );
+        str = str.replaceAll( "ç", "&ccedil;" );
+
+        return str;
     }
 
 }
