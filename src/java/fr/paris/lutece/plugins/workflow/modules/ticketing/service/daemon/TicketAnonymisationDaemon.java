@@ -46,6 +46,7 @@ import java.util.StringJoiner;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
@@ -180,9 +181,10 @@ public class TicketAnonymisationDaemon extends Daemon
                         ticket.setMobilePhoneNumber( null );
                         ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
                         ticket.setAnonymisation( 1 );
-                        anonymizeAddress( ticket.getId( ) );
-                        ticket.setTicketAddress( null );
+                        TicketAddress cleanAddress = new TicketAddress( );
+                        ticket.setTicketAddress( cleanAddress );
                         TicketHome.update( ticket );
+                        anonymizeAddress( ticket.getId( ) );
                         indexingTicketAnonymize( ticket.getId( ), sb );
                     }catch ( Exception e )
                     {
@@ -365,11 +367,12 @@ public class TicketAnonymisationDaemon extends Daemon
             {
                 anonymizeCommentFromAgent( ticket, idHistory, valueInfo );
             }
-            if ( valueInfo.contains( "a href=" ) )
+            String valueInfoUpdated = daoTaskInfo.getInfoHistoryValueByIdHistory( idHistory, plugin );
+            if ( valueInfoUpdated.contains( "a href=" ) )
             {
-                List<Integer> idResponseListForAgent = extractIdResponse( valueInfo );
+                List<Integer> idResponseListForAgent = extractIdResponse( valueInfoUpdated );
                 idResponseTotal.addAll( idResponseListForAgent );
-                deleteHrefNotStillUsedInTaskInfo( valueInfo, idHistory );
+                deleteHrefNotStillUsedInTaskInfo( valueInfoUpdated, idHistory );
             }
         }
         return idResponseTotal;
@@ -388,7 +391,6 @@ public class TicketAnonymisationDaemon extends Daemon
         {
             daoTaskInfo.update( idHistory, newValue, plugin );
         }
-
     }
 
     /**
