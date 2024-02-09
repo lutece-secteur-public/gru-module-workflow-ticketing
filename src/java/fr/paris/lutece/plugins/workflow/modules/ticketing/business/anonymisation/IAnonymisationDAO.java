@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.anonymisation;
 
 import java.util.List;
+import java.util.Map;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
@@ -43,33 +44,13 @@ public interface IAnonymisationDAO
     String BEAN_SERVICE = "workflow-ticketing.anonymisationDAO";
 
     /**
-     * Find the notifygruHistory with id history
-     *
-     * @param idHistory
-     *            the id History
-     * @param plugin
-     */
-    String loadMessageNotifyHIstory( int idHistory, Plugin plugin );
-
-    /**
-     * Update notifygruHistory
-     *
-     * @param idHistory
-     *            the id History
-     * @param message
-     *            the message to anoymise
-     * @param plugin
-     *            the plugin
-     */
-    void storeAnonymisationNotifyGruHistory( String message, int idHistory, Plugin plugin );
-
-    /**
      * Find the CommentValue with id history
      *
      * @param idHistory
      *            the id History
      * @param plugin
      *            the plugin
+     * @return the comment value
      */
     String loadCommentValue( int idHistory, Plugin plugin );
 
@@ -90,6 +71,7 @@ public interface IAnonymisationDAO
      *            the history id
      * @param plugin
      *            the plugin
+     * @return the id upload list
      */
     List<Integer> getIdUploadFilesByIdHistory( int idHistory, Plugin plugin );
 
@@ -104,5 +86,29 @@ public interface IAnonymisationDAO
      *            the plugin
      */
     void cleanUploadLines( int idHistory, Plugin plugin );
+
+
+    /**
+     * Get the map of all the messages and their column from notify history table for an id history
+     *
+     * @param idHistory
+     *            the history id
+     * @param plugin
+     *            the plugin
+     * @return the map of colonne, message
+     */
+    Map<String, String> loadMessageNotifyHIstoryTotal( int idHistory, Plugin plugin );
+
+    /**
+     * Update the messages in the matching column from notify history table for an id history
+     *
+     * @param idHistory
+     *            the id History
+     * @param messagesList
+     *            the map of column and messages to update
+     * @param plugin
+     *            the plugin
+     */
+    void storeAnonymisationNotifyGruHistoryTotal( Map<String, String> messagesList, int idHistory, Plugin plugin );
 
 }

@@ -34,57 +34,84 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.anonymisation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 public class AnonymisationDAO implements IAnonymisationDAO
 {
-    private static final String SQL_QUERY_SELECT_EMAIL_MESSAGE_NOTIFY_GRU_HISTORY    = "SELECT message_email FROM workflow_task_notify_gru_history WHERE id_history = ?";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY    = "UPDATE workflow_task_notify_gru_history SET message_email =? WHERE id_history = ?";
-    private static final String SQL_QUERY_SELECT_EMAIL_COMMENT_VALUE_HISTORY         = "SELECT comment_value FROM workflow_task_comment_value WHERE id_history = ?";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY = "UPDATE workflow_task_comment_value SET comment_value=? WHERE id_history = ?";
-    private static final String SQL_QUERY_SELECT_UPLOAD_FILES_HISTORY                = "SELECT id_file FROM workflow_task_upload_files WHERE id_history = ?";
-    private static final String SQL_QUERY_DELETE_UPLOAD_FILE_REFERENCE_FOR_ANONYMISATION = "DELETE FROM workflow_task_upload_files WHERE id_history = ?";
-
+    private static final String SQL_QUERY_SELECT_EMAIL_COMMENT_VALUE_HISTORY                = "SELECT comment_value FROM workflow_task_comment_value WHERE id_history = ?";
+    private static final String SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY        = "UPDATE workflow_task_comment_value SET comment_value=? WHERE id_history = ?";
+    private static final String SQL_QUERY_SELECT_UPLOAD_FILES_HISTORY                       = "SELECT id_file FROM workflow_task_upload_files WHERE id_history = ?";
+    private static final String SQL_QUERY_DELETE_UPLOAD_FILE_REFERENCE_FOR_ANONYMISATION    = "DELETE FROM workflow_task_upload_files WHERE id_history = ?";
+    private static final String SQL_QUERY_SELECT_MESSAGE_NOTIFY_GRU_HISTORY_TOTAL           = "SELECT message_email, message_guichet, message_agent,message_broadcast,message_sms FROM workflow_task_notify_gru_history WHERE id_history = ?";
+    private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY_TOTAL     = "UPDATE workflow_task_notify_gru_history SET ";
+    private static final String SQL_QUERY_WHERE_ID_HISTORY                                  = " WHERE id_history = ?";
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public String loadMessageNotifyHIstory( int idHistory, Plugin plugin )
+    public Map<String, String> loadMessageNotifyHIstoryTotal( int idHistory, Plugin plugin )
     {
-        String message = "";
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_EMAIL_MESSAGE_NOTIFY_GRU_HISTORY, plugin ) )
+        Map<String, String> messageListHistory = new HashMap<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MESSAGE_NOTIFY_GRU_HISTORY_TOTAL, plugin ) )
         {
             daoUtil.setInt( 1, idHistory );
             daoUtil.executeQuery( );
 
             if ( daoUtil.next( ) )
             {
-                message = daoUtil.getString( 1 );
+                messageListHistory.put( "message_email", daoUtil.getString( 1 ) );
+                messageListHistory.put( "message_guichet", daoUtil.getString( 2 ) );
+                messageListHistory.put( "message_agent", daoUtil.getString( 3 ) );
+                messageListHistory.put( "message_broadcast", daoUtil.getString( 4 ) );
+                messageListHistory.put( "message_sms", daoUtil.getString( 5 ) );
 
             }
         }
-        return message;
+        return messageListHistory;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void storeAnonymisationNotifyGruHistory( String message, int idHistory, Plugin plugin )
+    public void storeAnonymisationNotifyGruHistoryTotal( Map<String, String> messagesList, int idHistory, Plugin plugin )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY, plugin ) )
+        StringBuilder sbSQL = new StringBuilder( );
+        sbSQL.append( SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY_TOTAL );
+        int nbCount = 1;
+
+        for ( Map.Entry<String, String> mapEntry : messagesList.entrySet( ) )
+        {
+            sbSQL.append( mapEntry.getKey( ) + " = ? " );
+            if ( nbCount < messagesList.size( ) )
+            {
+                sbSQL.append( ", " );
+            }
+            nbCount++;
+        }
+
+        sbSQL.append( SQL_QUERY_WHERE_ID_HISTORY );
+
+        try ( DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), plugin ) )
         {
             int nIndex = 1;
-            daoUtil.setString( nIndex++, message );
-            daoUtil.setInt( nIndex++, idHistory );
+
+            for ( Map.Entry<String, String> mapEntry : messagesList.entrySet( ) )
+            {
+                daoUtil.setString( nIndex++, mapEntry.getValue( ) );
+            }
+            daoUtil.setInt( nIndex, idHistory );
 
             daoUtil.executeUpdate( );
         }
     }
+
 
     /**
      * {@inheritDoc }
