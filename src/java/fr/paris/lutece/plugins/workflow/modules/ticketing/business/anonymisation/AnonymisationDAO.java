@@ -43,23 +43,10 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 public class AnonymisationDAO implements IAnonymisationDAO
 {
-    private static final String SQL_QUERY_SELECT_EMAIL_MESSAGE_NOTIFY_GRU_HISTORY           = "SELECT message_email FROM workflow_task_notify_gru_history WHERE id_history = ?";
-    private static final String SQL_QUERY_SELECT_GUICHET_MESSAGE_NOTIFY_GRU_HISTORY         = "SELECT message_guichet FROM workflow_task_notify_gru_history WHERE id_history = ?";
-    private static final String SQL_QUERY_SELECT_AGENT_MESSAGE_NOTIFY_GRU_HISTORY           = "SELECT message_agent FROM workflow_task_notify_gru_history WHERE id_history = ?";
-    private static final String SQL_QUERY_SELECT_BROADCAST_MESSAGE_NOTIFY_GRU_HISTORY       = "SELECT message_broadcast FROM workflow_task_notify_gru_history WHERE id_history = ?";
-    private static final String SQL_QUERY_SELECT_SMS_MESSAGE_NOTIFY_GRU_HISTORY             = "SELECT message_sms FROM workflow_task_notify_gru_history WHERE id_history = ?";
-
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_EMAIL_HISTORY     = "UPDATE workflow_task_notify_gru_history SET message_email =? WHERE id_history = ?";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_GUICHET_HISTORY   = "UPDATE workflow_task_notify_gru_history SET message_guichet = ? WHERE id_history = ?";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_AGENT_HISTORY     = "UPDATE workflow_task_notify_gru_history SET message_agent = ? WHERE id_history = ?";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_BROADCAST_HISTORY = "UPDATE workflow_task_notify_gru_history SET message_broadcast = ? WHERE id_history = ?";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_SMS_HISTORY       = "UPDATE workflow_task_notify_gru_history SET message_sms = ? WHERE id_history = ?";
-
     private static final String SQL_QUERY_SELECT_EMAIL_COMMENT_VALUE_HISTORY                = "SELECT comment_value FROM workflow_task_comment_value WHERE id_history = ?";
     private static final String SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY        = "UPDATE workflow_task_comment_value SET comment_value=? WHERE id_history = ?";
     private static final String SQL_QUERY_SELECT_UPLOAD_FILES_HISTORY                       = "SELECT id_file FROM workflow_task_upload_files WHERE id_history = ?";
     private static final String SQL_QUERY_DELETE_UPLOAD_FILE_REFERENCE_FOR_ANONYMISATION    = "DELETE FROM workflow_task_upload_files WHERE id_history = ?";
-
     private static final String SQL_QUERY_SELECT_MESSAGE_NOTIFY_GRU_HISTORY_TOTAL           = "SELECT message_email, message_guichet, message_agent,message_broadcast,message_sms FROM workflow_task_notify_gru_history WHERE id_history = ?";
     private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY_TOTAL     = "UPDATE workflow_task_notify_gru_history SET ";
     private static final String SQL_QUERY_WHERE_ID_HISTORY                                  = " WHERE id_history = ?";

@@ -89,12 +89,25 @@ public interface IAnonymisationDAO
 
 
     /**
-     * {@inheritDoc }
+     * Get the map of all the messages and their column from notify history table for an id history
+     *
+     * @param idHistory
+     *            the history id
+     * @param plugin
+     *            the plugin
+     * @return the map of colonne, message
      */
     Map<String, String> loadMessageNotifyHIstoryTotal( int idHistory, Plugin plugin );
 
     /**
-     * {@inheritDoc}
+     * Update the messages in the matching column from notify history table for an id history
+     *
+     * @param idHistory
+     *            the id History
+     * @param messagesList
+     *            the map of column and messages to update
+     * @param plugin
+     *            the plugin
      */
     void storeAnonymisationNotifyGruHistoryTotal( Map<String, String> messagesList, int idHistory, Plugin plugin );
 
