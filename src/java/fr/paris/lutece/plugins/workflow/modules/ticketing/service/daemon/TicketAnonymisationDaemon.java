@@ -38,11 +38,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 
+import org.apache.commons.lang3.StringUtils;
+
+import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
@@ -115,7 +119,7 @@ public class TicketAnonymisationDaemon extends Daemon
      * @param sb
      *            the logs
      */
-    private void anonymisation( StringJoiner sb )
+    public void anonymisation( StringJoiner sb )
     {
         List<Integer> allIdDomaines = TicketCategoryHome.selectIdCategoriesDomainList( );
 
@@ -177,8 +181,10 @@ public class TicketAnonymisationDaemon extends Daemon
                         ticket.setMobilePhoneNumber( null );
                         ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
                         ticket.setAnonymisation( 1 );
-                        anoymizeAddress( ticket.getId( ) );
+                        TicketAddress cleanAddress = new TicketAddress( );
+                        ticket.setTicketAddress( cleanAddress );
                         TicketHome.update( ticket );
+                        anonymizeAddress( ticket.getId( ) );
                         indexingTicketAnonymize( ticket.getId( ), sb );
                     }catch ( Exception e )
                     {
@@ -197,6 +203,8 @@ public class TicketAnonymisationDaemon extends Daemon
 
     }
 
+    ////// GENERAL
+
     /**
      * Find the date closed max for a domaine accross a delay
      *
@@ -206,7 +214,7 @@ public class TicketAnonymisationDaemon extends Daemon
      *            the category of the ticket to anonymize
      * @param sb
      *            the logs
-     * @return
+     * @return the date for cloture for a domaine
      */
     private java.sql.Date findDateClotureForAnonymisationDomaine( int delaiAnonymisation, TicketCategory category, StringJoiner sb )
     {
@@ -221,33 +229,76 @@ public class TicketAnonymisationDaemon extends Daemon
     }
 
     /**
-     * Call anonymizeAddress
-     *
-     * @param idTicket
-     *            the id of the ticket to anonymize
-     */
-    public void anoymizeAddress( int idTicket )
-    {
-        TicketHome.anonymizeAddress( idTicket );
-    }
-
-    //////////////// GENERAL /////////
-
-    /**
      * Anonymize historic data with message exchanges
      *
      * @param ticket
      *            the ticket to anonymize
      */
-    public void anonymizeTicketHistoryData( Ticket ticket )
+    private void anonymizeTicketHistoryData( Ticket ticket )
     {
         anonymizeTicketHistoryFromUsager( ticket );
         anonymizeTicketHistoryFromAgent( ticket );
     }
 
-    //////////////// FIN GENERAL /////////
+    /**
+     * Call anonymizeAddress
+     *
+     * @param idTicket
+     *            the id of the ticket to anonymize
+     */
+    private void anonymizeAddress( int idTicket )
+    {
+        TicketHome.anonymizeAddress( idTicket );
+    }
 
-    ////// USAGER ////
+    /**
+     * Delete attachemant for a ticket core_file and core_physical_fle
+     *
+     * @param ticket
+     *            the ticket to anonymize
+     * @param sb
+     */
+    private void deleteAttachment( List<Integer> coreFileId )
+    {
+        if ( !coreFileId.isEmpty( ) )
+        {
+            List<Integer> corePhysicalFilesId = TicketHome.getIdAttachmentCorePhysicalFileListByTicket( coreFileId );
+
+            if ( !corePhysicalFilesId.isEmpty( ) )
+            {
+                TicketHome.deleteCorePhysicalFile( corePhysicalFilesId );
+            }
+            TicketHome.deleteCoreFile( coreFileId );
+        }
+    }
+
+    /**
+     * Immediate indexation of a Ticket for the anonymisation
+     *
+     * @param idTicket
+     *            the id of the Ticket to index
+     */
+    protected void indexingTicketAnonymize( int idTicket, StringJoiner sb )
+    {
+        Ticket ticket = TicketHome.findByPrimaryKey( idTicket );
+        if ( ticket != null )
+        {
+            try
+            {
+                TicketIndexer ticketIndexer = new TicketIndexer( );
+                ticketIndexer.indexTicket( ticket );
+            } catch ( TicketIndexerException ticketIndexerException )
+            {
+                sb.add( "Le ticket id " + idTicket + " anonymisé est en attente pour indexation" );
+
+                // The indexation of the Ticket fail, we will store the Ticket in the table for the daemon
+                IndexerActionHome.create( TicketIndexerActionUtil.createIndexerActionFromTicket( ticket ) );
+            }
+        }
+    }
+
+
+    ////// USAGER
 
     /**
      * Anonymize historic data with message exchanges From Usager
@@ -300,9 +351,8 @@ public class TicketAnonymisationDaemon extends Daemon
         deleteAttachment( usagerAttachment );
     }
 
-    //////// FIN USAGER ////
 
-    ////// AGENT ////
+    ////// AGENT
 
     /**
      * Anonymize historic data with message exchanges From Usager
@@ -328,21 +378,28 @@ public class TicketAnonymisationDaemon extends Daemon
             // table workflow_task_comment_value
             anoymiseCommentValue( ticket, idHistory );
             // table workflow_task_upload_files
-            List<Integer> idCoreUploadFound = anonymiseUploadFiles( idHistory );
+            List<Integer> idCoreUploadFound = findUploadFiles( idHistory );
             idCoreUploadFinal.addAll( idCoreUploadFound );
             cleanUploadFiles( idHistory, plugin );
         }
-        List<Integer> coreIdFileAgent = findAgentAttachment( idResponseTotal );
-        coreIdFileAgent.addAll( idCoreUploadFinal );
+        if ( !idResponseTotal.isEmpty( ) )
+        {
+            List<Integer> coreIdFileAgent = findAgentAttachment( idResponseTotal );
+            coreIdFileAgent.addAll( idCoreUploadFinal );
 
-        deleteAttachment( coreIdFileAgent );
+            deleteAttachment( coreIdFileAgent );
+        } else if ( !idCoreUploadFinal.isEmpty( ) )
+        {
+            deleteAttachment( idCoreUploadFinal );
+        }
+
     }
 
     /**
      * Anonymize historic data From task info table
      *
      * @param ticket
-     *            the ticket to anonymize
+     *            the ticket to anonymizes
      */
     private List<Integer> anoymiseFromTaskInfo( Ticket ticket, int idHistory )
     {
@@ -350,14 +407,16 @@ public class TicketAnonymisationDaemon extends Daemon
         List<Integer> idResponseTotal = new ArrayList<>( );
         if ( !valueInfo.isEmpty( ) )
         {
-            if ( valueInfo.contains( "a href=" ) )
-            {
-                List<Integer> idResponseListForAgent = extractIdResponse( valueInfo );
-                idResponseTotal.addAll( idResponseListForAgent );
-            }
-            if ( valueInfo.contains( "MESSAGE-IN-WORKFLOW" ) )
+            if ( valueInfo.contains( "MESSAGE-IN-WORKFLOW" ) || valueInfo.contains( "<b>" ) )
             {
                 anonymizeCommentFromAgent( ticket, idHistory, valueInfo );
+            }
+            String valueInfoUpdated = daoTaskInfo.getInfoHistoryValueByIdHistory( idHistory, plugin );
+            if ( valueInfoUpdated.contains( "a href=" ) )
+            {
+                List<Integer> idResponseListForAgent = extractIdResponse( valueInfoUpdated );
+                idResponseTotal.addAll( idResponseListForAgent );
+                deleteHrefNotStillUsedInTaskInfo( valueInfoUpdated, idHistory );
             }
         }
         return idResponseTotal;
@@ -376,7 +435,6 @@ public class TicketAnonymisationDaemon extends Daemon
         {
             daoTaskInfo.update( idHistory, newValue, plugin );
         }
-
     }
 
     /**
@@ -414,16 +472,50 @@ public class TicketAnonymisationDaemon extends Daemon
      */
     private void anoymiseNotifyGruHistory( Ticket ticket, int idHistory )
     {
-        String valueNotifyMessage = daoAnonymisation.loadMessageNotifyHIstory( idHistory, plugin );
-        if ( ( null != valueNotifyMessage ) && !valueNotifyMessage.isEmpty( ) )
+        Map<String, String> valueNotifyMessages = daoAnonymisation.loadMessageNotifyHIstoryTotal( idHistory, plugin );
+        Map<String, String> cleanValueNotifyMessages = new HashMap<>( );
+        if ( ( null != valueNotifyMessages ) && !valueNotifyMessages.isEmpty( ) )
         {
-            String newValue = sanitizeEntryMessage( ticket, valueNotifyMessage );
-            if ( !valueNotifyMessage.equals( newValue ) )
+            for ( Map.Entry<String, String> mapEntry : valueNotifyMessages.entrySet( ) )
             {
-                daoAnonymisation.storeAnonymisationNotifyGruHistory( newValue, idHistory, plugin );
+                if ( null != mapEntry.getValue( ) )
+                {
+                    String newValue = sanitizeEntryMessage( ticket, mapEntry.getValue( ) );
+                    String cleanHrefValue = cleanHrefNotStillUsedInNotifyHistory( newValue );
+                    if ( !( mapEntry.getValue( ) ).equals( cleanHrefValue ) )
+                    {
+                        cleanValueNotifyMessages.put( mapEntry.getKey( ), cleanHrefValue );
+                    } else
+                    {
+                        cleanValueNotifyMessages.put( mapEntry.getKey( ), mapEntry.getValue( ) );
+                    }
+                }
+            }
+            if ( !valueNotifyMessages.equals( cleanValueNotifyMessages ) )
+            {
+                daoAnonymisation.storeAnonymisationNotifyGruHistoryTotal( cleanValueNotifyMessages, idHistory, plugin );
             }
         }
+    }
 
+    /**
+     * Clean the value if a href exists in a notify value history
+     *
+     * @param valueNotify
+     *            the value to clean for link
+     * @return the info value without file link
+     */
+    private String cleanHrefNotStillUsedInNotifyHistory( String valueNotify )
+    {
+        String finalValue = valueNotify;
+        String[] partPhrase = valueNotify.split( " " );
+        List<String> stringWithoutHref = cleanPJStockInString( partPhrase );
+
+        if ( !String.join( " ", partPhrase ).equals( String.join( " ", stringWithoutHref ) ) )
+        {
+            finalValue = String.join( " ", stringWithoutHref );
+        }
+        return finalValue;
     }
 
     /**
@@ -450,16 +542,13 @@ public class TicketAnonymisationDaemon extends Daemon
     }
 
     /**
-     * Anonymize historic data of upload files
+     * Find id file from workflow_task_upload_files
      *
-     * @param ticket
-     *            the ticket to anonymize
      * @param idHistory
      *            the id history
-     * @param value
-     *            the value to update
+     * @return the list of id file from workflow_task_upload_files
      */
-    private List<Integer> anonymiseUploadFiles( int idHistory )
+    private List<Integer> findUploadFiles( int idHistory )
     {
         List<Integer> uploadIdFilesHistoryList = new ArrayList<>( );
         List<Integer> uploadIdList = daoAnonymisation.getIdUploadFilesByIdHistory( idHistory, plugin );
@@ -489,13 +578,22 @@ public class TicketAnonymisationDaemon extends Daemon
      *
      * @param idResponseList
      *            the list of id response
+     *
+     * @return the list id_file from genatt_response
      */
-    public List<Integer> findAgentAttachment( List<Integer> idResponseList )
+    private List<Integer> findAgentAttachment( List<Integer> idResponseList )
     {
         return TicketHome.getCoreFileForAgent( idResponseList );
     }
 
-    public List<Integer> extractIdResponse( String value )
+    /**
+     * Extract from historic data from task info table info value
+     *
+     * @param value
+     *            the value which maybe contains id response
+     * @return The list of id response
+     */
+    private List<Integer> extractIdResponse( String value )
     {
         List<Integer> idResponseList = new ArrayList<>( );
         String[] partPhrase = value.split( "id_response=" );
@@ -507,7 +605,6 @@ public class TicketAnonymisationDaemon extends Daemon
                 StringBuilder idReponseBuild = new StringBuilder( );
                 for ( int j = 0; j < partPhrase[i].length( ); j++ )
                 {
-
                     char charPart = partPhrase[i].charAt(j);
                     if ( Character.isDigit( charPart ) )
                     {
@@ -527,30 +624,50 @@ public class TicketAnonymisationDaemon extends Daemon
 
     }
 
-    //////// FIN AGENT ////
-
-    /////////// AUTRE /////
-
     /**
-     * Delete attachemant for a ticket core_file and core_physical_fle
+     * Update the value if a href deleted in a info value
      *
-     * @param ticket
-     *            the ticket to anonymize
-     * @param sb
+     * @param valueInfo
+     *            the value to clean for link
+     * @param idHistory
+     *            the id of history data
      */
-    private void deleteAttachment( List<Integer> coreFileId )
+    private void deleteHrefNotStillUsedInTaskInfo( String valueInfo, int idHistory )
     {
-        if ( !coreFileId.isEmpty( ) )
-        {
-            List<Integer> corePhysicalFilesId = TicketHome.getIdAttachmentCorePhysicalFileListByTicket( coreFileId );
+        String[] partPhrase = valueInfo.split( " " );
+        List<String> stringWithoutHref = cleanPJStockInString( partPhrase );
 
-            if ( !corePhysicalFilesId.isEmpty( ) )
-            {
-                TicketHome.deleteCorePhysicalFile( corePhysicalFilesId );
-            }
-            TicketHome.deleteCoreFile( coreFileId );
+        if ( !String.join( " ", partPhrase ).equals( String.join( " ", stringWithoutHref ) ) )
+        {
+            daoTaskInfo.update( idHistory, String.join( " ", stringWithoutHref ), plugin );
         }
     }
+
+    /**
+     * Clean the link to download file from task info table value split in array
+     *
+     * @param partPhrase
+     *            the info value in a string array
+     * @return The list of part of the string array without the link to file or response
+     */
+    private List<String> cleanPJStockInString( String[] partPhrase )
+    {
+        List<String> stringWithoutHref = new ArrayList<>( );
+        if ( partPhrase.length > 1 )
+        {
+            for ( int i = 0; i < partPhrase.length; i++ )
+            {
+                if ( !partPhrase[i].startsWith( "<a" ) && !partPhrase[i].startsWith( "href" ) )
+                {
+                    stringWithoutHref.add( partPhrase[i] );
+                }
+            }
+        }
+        return stringWithoutHref;
+    }
+
+
+    ////// UTIL
 
     /**
      * Anonymize user message
@@ -566,10 +683,7 @@ public class TicketAnonymisationDaemon extends Daemon
         if ( ( null != ticket.getUserMessage( ) ) && !ticket.getUserMessage( ).trim( ).isEmpty( ) )
         {
             anonymizeUserMessageTicket = ticket.getUserMessage( );
-            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + ticket.getFirstname( ), "" );
-            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, "(?i)" + ticket.getLastname( ), "" );
-            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, REGEX_EMAIL2, "" );
-            anonymizeUserMessageTicket = sanitizeValue( anonymizeUserMessageTicket, REGEX_TELEPHONE2, "" );
+            anonymizeUserMessageTicket = sanitizeAllValues( ticket, anonymizeUserMessageTicket );
         }
         return anonymizeUserMessageTicket;
     }
@@ -588,10 +702,7 @@ public class TicketAnonymisationDaemon extends Daemon
         if ( ( null != ticket.getTicketComment( ) ) && !ticket.getTicketComment( ).trim( ).isEmpty( ) )
         {
             anonymizeCommentTicket = ticket.getTicketComment( );
-            anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, "(?i)" + ticket.getFirstname( ), "" );
-            anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, "(?i)" + ticket.getLastname( ), "" );
-            anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, REGEX_EMAIL2, "" );
-            anonymizeCommentTicket = sanitizeValue( anonymizeCommentTicket, REGEX_TELEPHONE2, "" );
+            anonymizeCommentTicket = sanitizeAllValues( ticket, anonymizeCommentTicket );
         }
         return anonymizeCommentTicket;
     }
@@ -612,15 +723,11 @@ public class TicketAnonymisationDaemon extends Daemon
         if ( ( null != messageToAnonymise ) && !messageToAnonymise.trim( ).isEmpty( ) )
         {
             anonymizeMessageTicket = messageToAnonymise;
-
-            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + ticket.getFirstname( ), "" );
-            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, "(?i)" + ticket.getLastname( ), "" );
-            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, REGEX_EMAIL2, "" );
-            anonymizeMessageTicket = sanitizeValue( anonymizeMessageTicket, REGEX_TELEPHONE2, "" );
+            anonymizeMessageTicket = sanitizeAllValues( ticket, anonymizeMessageTicket );
         }
         return anonymizeMessageTicket;
-
     }
+
 
     /**
      * Replace a comment by a substitute
@@ -639,28 +746,56 @@ public class TicketAnonymisationDaemon extends Daemon
     }
 
     /**
-     * Immediate indexation of a Ticket for the anonymisation
+     * Sanitize messages with accent and htmlEncode
      *
-     * @param idTicket
-     *            the id of the Ticket to index
+     * @param ticket
+     *            the ticket to anonymize
+     * @param messageToSanitize
+     *            the message to anonymize
+     * @return the final sanitized message
      */
-    protected void indexingTicketAnonymize( int idTicket, StringJoiner sb )
+    private String sanitizeAllValues( Ticket ticket, String messageToSanitize )
     {
-        Ticket ticket = TicketHome.findByPrimaryKey( idTicket );
-        if ( ticket != null )
-        {
-            try
-            {
-                TicketIndexer ticketIndexer = new TicketIndexer( );
-                ticketIndexer.indexTicket( ticket );
-            } catch ( TicketIndexerException ticketIndexerException )
-            {
-                sb.add( "Le ticket id " + idTicket + " anonymisé est en attente pour indexation" );
+        messageToSanitize = sanitizeValue( messageToSanitize, "(?i)" + ticket.getFirstname( ), "" );
+        messageToSanitize = sanitizeValue( messageToSanitize, "(?i)" + StringUtils.stripAccents( ticket.getFirstname( ) ), "" );
+        messageToSanitize = sanitizeValue( messageToSanitize, "(?i)" + convertToaccenthtml( ticket.getFirstname( ) ), "" );
+        messageToSanitize = sanitizeValue( messageToSanitize, "(?i)" + ticket.getLastname( ), "" );
+        messageToSanitize = sanitizeValue( messageToSanitize, "(?i)" + StringUtils.stripAccents( ticket.getLastname( ) ), "" );
+        messageToSanitize = sanitizeValue( messageToSanitize, "(?i)" + convertToaccenthtml( ticket.getLastname( ) ), "" );
+        messageToSanitize = sanitizeValue( messageToSanitize, REGEX_EMAIL2, "" );
+        messageToSanitize = sanitizeValue( messageToSanitize, REGEX_TELEPHONE2, "" );
 
-                // The indexation of the Ticket fail, we will store the Ticket in the table for the daemon
-                IndexerActionHome.create( TicketIndexerActionUtil.createIndexerActionFromTicket( ticket ) );
-            }
-        }
+        return messageToSanitize;
+    }
+
+    /**
+     * Convert a string with accent in accent htmlEncode For anonymisation with htmlEncoding
+     *
+     * @param str
+     *            the string to convert
+     * @return the final converted string in htmlEncoding
+     */
+    private String convertToaccenthtml( String str )
+    {
+        str = str.replaceAll( "á", "&aacute;" );
+        str = str.replaceAll( "â", "&acirc;" );
+        str = str.replaceAll( "é", "&eacute;" );
+        str = str.replaceAll( "è", "&egrave;" );
+        str = str.replaceAll( "ë", "&euml;" );
+        str = str.replaceAll( "É", "&Eacute;" );
+        str = str.replaceAll( "È", "&Egrave;" );
+        str = str.replaceAll( "í", "&iacute;" );
+        str = str.replaceAll( "ï", "&iuml;" );
+        str = str.replaceAll( "î", "&icirc;" );
+        str = str.replaceAll( "ó", "&oacute;" );
+        str = str.replaceAll( "ô", "&ocirc;" );
+        str = str.replaceAll( "œ", "&oelig;" );
+        str = str.replaceAll( "æ", "&aelig;" );
+        str = str.replaceAll( "ú", "&uacute;" );
+        str = str.replaceAll( "ñ", "&ntilde;" );
+        str = str.replaceAll( "ç", "&ccedil;" );
+
+        return str;
     }
 
 }
