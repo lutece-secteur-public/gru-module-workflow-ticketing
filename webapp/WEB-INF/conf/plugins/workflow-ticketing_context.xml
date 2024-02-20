@@ -387,16 +387,6 @@
     <bean id="workflow-ticketing.selectRegisterTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeRegisterChannel" />
-
-	<!-- Task Auto assignment Direction -->
-	<bean id="workflow-ticketing.taskAutomaticAssignmentDirection"
-		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAutomaticAssignmentDirection"
-		scope="prototype" />
-	<bean id="workflow-ticketing.taskTypeAutomaticAssignmentDirection"
-		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-		p:key="taskAutomaticAssignmentDirection" p:titleI18nKey="module.workflow.ticketing.task_automatic_assignment_direction_title"
-		p:beanName="workflow-ticketing.taskAutomaticAssignmentDirection"
-		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
 		
 	<!-- Task Auto Admin connected -->
 	<bean id="workflow-ticketing.taskAutomaticIdAdminBOInit"
@@ -407,7 +397,7 @@
 		p:key="taskAutomaticIdAdminBOInit" p:titleI18nKey="module.workflow.ticketing.task_automatic_id_bo_admin.title"
 		p:beanName="workflow-ticketing.taskAutomaticIdAdminBOInit"
 		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
-		<bean id="workflow-ticketing.automaticIdAdminBOInit"
+	<bean id="workflow-ticketing.automaticIdAdminBOInit"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeAutomaticIdAdminBOInit" />
         
@@ -420,7 +410,7 @@
 		p:key="taskCloseTicket" p:titleI18nKey="module.workflow.ticketing.task_close_ticket.title"
 		p:beanName="workflow-ticketing.taskCloseTicket"
 		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
-		<bean id="workflow-ticketing.closeTicket"
+	<bean id="workflow-ticketing.closeTicket"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeCloseTicket" />
         
@@ -433,7 +423,7 @@
 		p:key="taskDeleteDateClosedTicket" p:titleI18nKey="module.workflow.ticketing.task_delete_date_closed_ticket.title"
 		p:beanName="workflow-ticketing.taskDeleteDateClosedTicket"
 		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
-		<bean id="workflow-ticketing.deleteDateClosedTicket"
+	<bean id="workflow-ticketing.deleteDateClosedTicket"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeDeleteDateClosedTicket" />
 		
@@ -538,16 +528,16 @@
 	</bean>
 	
 	<!-- SignRequest for ExternalUser -->
-   <bean id="workflow-ticketing.externaluser.requestAuthentication"
+	<bean id="workflow-ticketing.externaluser.requestAuthentication"
       class="fr.paris.lutece.util.signrequest.RequestHashAuthenticator">
-      <property name="hashService" ref="workflow-ticketing.hashService" />
-      <property name="signatureElements">
-         <list>
-            <value>id_message_external_user</value>
-         </list>
-      </property>
-      <property name="privateKey">
-         <value>wkFFemailAgent</value>
-      </property>
-   </bean>
+		<property name="hashService" ref="workflow-ticketing.hashService" />
+		<property name="signatureElements">
+            <list>
+	            <value>id_message_external_user</value>
+	        </list>
+		</property>
+		<property name="privateKey">
+			<value>wkFFemailAgent</value>
+		</property>
+	</bean>
 </beans>
