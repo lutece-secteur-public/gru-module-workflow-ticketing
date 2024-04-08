@@ -87,7 +87,6 @@ public interface IAnonymisationDAO
      */
     void cleanUploadLines( int idHistory, Plugin plugin );
 
-
     /**
      * Get the map of all the messages and their column from notify history table for an id history
      *

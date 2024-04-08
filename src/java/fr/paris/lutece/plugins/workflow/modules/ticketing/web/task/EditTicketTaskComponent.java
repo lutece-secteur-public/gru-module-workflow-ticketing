@@ -78,9 +78,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     private static final String MARK_LIST_ENTRIES = "list_entries";
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
-    private static final String    MARK_EMAIL_EXIST                 = "ticket_email_exist";
-    private static final String    MARK_LIST_ID_TICKETS             = "list_id_tickets";
-
+    private static final String MARK_EMAIL_EXIST = "ticket_email_exist";
+    private static final String MARK_LIST_ID_TICKETS = "list_id_tickets";
 
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
