@@ -127,5 +127,4 @@ public interface IEditableTicketDAO
      */
     void storeAnonymisation( String message, int idHistory );
 
-
 }

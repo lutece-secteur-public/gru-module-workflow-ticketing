@@ -45,10 +45,10 @@ public class TaskInformationDAO implements ITaskInformationDAO
 {
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_task,information_value  "
             + "FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
-    private static final String SQL_QUERY_FIND_BY_ID_HISTORY  = "SELECT  information_value FROM workflow_task_ticketing_information WHERE id_history=?";
+    private static final String SQL_QUERY_FIND_BY_ID_HISTORY = "SELECT  information_value FROM workflow_task_ticketing_information WHERE id_history=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_ticketing_information "
             + "(id_history,id_task,information_value ) VALUES( ?, ?, ? )";
-    private static final String SQL_QUERY_UPDATE              = "UPDATE workflow_task_ticketing_information SET information_value=? WHERE id_history = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_information SET information_value=? WHERE id_history = ?";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
     private static final String SQL_QUERY_DELETE_BY_TASK = "DELETE FROM workflow_task_ticketing_information WHERE id_task=?";
 
