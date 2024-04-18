@@ -71,6 +71,8 @@
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.ticket.EditableTicketService" />
     <bean id="workflow-ticketing.resourceHistoryService"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistoryService" />
+    <bean id="workflow-ticketing.automaticAssignmentAgentParisFamilleService"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.assignment.AutomaticAssignmentAgentParisFamilleService" />
     <bean id="workflow-ticketing.taskTicketEmailExternalUserConfigService"
         class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
         p:taskConfigDAO-ref="workflow-ticketing.taskTicketEmailExternalUserConfigDAO" />
@@ -86,6 +88,7 @@
 	<bean id="workflow-ticketing.taskAssignTicketToUnitConfigService"
         class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
         p:taskConfigDAO-ref="workflow-ticketing.taskAssignTicketToUnitConfigDAO" />
+        
 
 	<!-- Task config -->
 	<bean id="workflow-ticketing.taskReplyConfig"
@@ -400,6 +403,19 @@
 	<bean id="workflow-ticketing.automaticIdAdminBOInit"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeAutomaticIdAdminBOInit" />
+                       
+    <!-- Task Auto Agent Paris Famille Assignment Ticket -->
+	<bean id="workflow-ticketing.taskAutomaticAgentAssignmentParisFamille"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAutomaticAgentAssignmentParisFamille"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAutomaticAgentAssignmentParisFamille"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskAutomaticAgentAssignmentParisFamille" p:titleI18nKey="module.workflow.ticketing.task_automatic_agent_assignment_paris_famille.title"
+		p:beanName="workflow-ticketing.taskAutomaticAgentAssignmentParisFamille"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.automaticAgentAssignmentParisFamille"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeAutomaticAgentAssignmentParisFamille" />
         
     <!-- Task Auto close ticket -->
 	<bean id="workflow-ticketing.taskCloseTicket"
