@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.service.AssignmentParisFamilleService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
@@ -80,38 +81,45 @@ public class TaskAutomaticAgentAssignmentParisFamille extends AbstractTicketingT
         if ( ( ticket.getTicketDomain( ) != null ) && ticket.getTicketDomain( ).getLabel( ).equalsIgnoreCase( AppPropertiesService.getProperty( PROPERTY_PARIS_FAMILLE_DOMAIN_LABEL ) )
                 && !ticket.getLastname( ).isEmpty( ) )
         {
-            AdminUser adminUser = _automaticAssignmentAgentParisFamilleService.getAssignedParisFamilleAgent( ticket.getLastname( ) );
+            String lastNameClassicAlphabet = AssignmentParisFamilleService.convertSpecialCharOrAccentToClassicChar( ticket.getLastname( ).trim( ).toLowerCase( ) );
+            AdminUser adminUser = _automaticAssignmentAgentParisFamilleService.getAssignedParisFamilleAgent( lastNameClassicAlphabet );
+
             if ( adminUser != null )
             {
-                AssigneeUser assigneeUser = new AssigneeUser( adminUser );
-                ticket.setAssigneeUser( assigneeUser );
-
-                List<Unit> listUnit = UnitHome.findByIdUser( adminUser.getUserId( ) );
-                AssigneeUnit assigneeUnit = null;
-
-                if ( ( listUnit != null ) && ( !listUnit.isEmpty( ) ) )
-                {
-                    assigneeUnit = new AssigneeUnit( listUnit.get( 0 ) );
-                }
-
-                if ( assigneeUnit != null )
-                {
-                    if ( ( ticket.getAssigneeUnit( ).getUnitId( ) != assigneeUnit.getUnitId( ) ) && ( request != null ) )
-                    {
-                        request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
-                    }
-
-                    ticket.setAssigneeUnit( assigneeUnit );
-                }
-
-                TicketHome.update( ticket );
-
-                strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AGENT_AUTOMATIC_ASSIGNATION_INFORMATION, Locale.FRENCH ),
-                        adminUser.getFirstName( ) + " " + adminUser.getLastName( ), ticket.getAssigneeUnit( ).getName( ) );
+                strTaskInformation = returnInfoWhenAssignUserAndUnit( adminUser, ticket, request );
             }
         }
 
         return strTaskInformation;
+    }
+
+    private String returnInfoWhenAssignUserAndUnit( AdminUser adminUser, Ticket ticket, HttpServletRequest request )
+    {
+        AssigneeUser assigneeUser = new AssigneeUser( adminUser );
+        ticket.setAssigneeUser( assigneeUser );
+
+        List<Unit> listUnit = UnitHome.findByIdUser( adminUser.getUserId( ) );
+        AssigneeUnit assigneeUnit = null;
+
+        if ( ( listUnit != null ) && ( !listUnit.isEmpty( ) ) )
+        {
+            assigneeUnit = new AssigneeUnit( listUnit.get( 0 ) );
+        }
+
+        if ( assigneeUnit != null )
+        {
+            if ( ( ticket.getAssigneeUnit( ).getUnitId( ) != assigneeUnit.getUnitId( ) ) && ( request != null ) )
+            {
+                request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
+            }
+
+            ticket.setAssigneeUnit( assigneeUnit );
+        }
+
+        TicketHome.update( ticket );
+
+        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AGENT_AUTOMATIC_ASSIGNATION_INFORMATION, Locale.FRENCH ),
+                adminUser.getFirstName( ) + " " + adminUser.getLastName( ), ticket.getAssigneeUnit( ).getName( ) );
     }
 
     @Override
