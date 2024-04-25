@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.assignment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,8 +53,10 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
  * AutomaticAssignmentAgentParisFamilleService
  *
  */
-public class AutomaticAssignmentAgentParisFamilleService implements IAutomaticAssignmentAgentParisFamilleService
+public class AutomaticAssignmentAgentParisFamilleService implements IAutomaticAssignmentAgentParisFamilleService, Serializable
 {
+    private static final long          serialVersionUID                = 8336971306691462909L;
+
     public static final String         BEAN_NAME = "workflow-ticketing.automaticAssignmentAgentParisFamilleService";
 
     private static final String        GUID_AGENT_DEFAUT_PARIS_FAMILLE = "ticketing.configuration.agent.paris.famille.defaut";
