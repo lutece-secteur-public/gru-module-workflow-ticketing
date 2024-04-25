@@ -44,6 +44,7 @@ import fr.paris.lutece.plugins.ticketing.business.assignmentparisfamille.Assignm
 import fr.paris.lutece.plugins.ticketing.business.assignmentparisfamille.IAssignmentParisFamilleDAO;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
+import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 
 /**
@@ -54,6 +55,8 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 public class AutomaticAssignmentAgentParisFamilleService implements IAutomaticAssignmentAgentParisFamilleService
 {
     public static final String         BEAN_NAME = "workflow-ticketing.automaticAssignmentAgentParisFamilleService";
+
+    private static final String        GUID_AGENT_DEFAUT_PARIS_FAMILLE = "ticketing.configuration.agent.paris.famille.defaut";
 
     @Inject
     private IAssignmentParisFamilleDAO _dao;
@@ -77,6 +80,7 @@ public class AutomaticAssignmentAgentParisFamilleService implements IAutomaticAs
         List<AssignmentParisFamille> assignmentsCompatiblesList = new ArrayList<>( );
         AdminUser agentParisFamille = null;
         AssignmentParisFamille assignment = null;
+        String guidAgent = null;
         for ( AssignmentParisFamille assignmentParisFamille : assignmentsList )
         {
             if ( ( assignmentParisFamille.getAssignmentRangeStart( ).compareToIgnoreCase( lastName ) <= 0 ) && ( assignmentParisFamille.getAssignmentRangeEnd( ).compareToIgnoreCase( lastName ) > 0 ) )
@@ -84,6 +88,7 @@ public class AutomaticAssignmentAgentParisFamilleService implements IAutomaticAs
                 assignmentsCompatiblesList.add( assignmentParisFamille );
             }
         }
+        // assignation des 2 plages vides comme defaut si le nom usager ne correspond à aucun intervalle de lettres
         if ( assignmentsCompatiblesList.isEmpty( ) )
         {
             Optional<AssignmentParisFamille> assignmentOptional = assignmentsList.stream( ).filter( a -> a.getAssignmentRangeStart( ).equals( "" ) )
@@ -93,19 +98,22 @@ public class AutomaticAssignmentAgentParisFamilleService implements IAutomaticAs
             if ( assignmentOptional.isPresent( ) )
             {
                 assignment = assignmentOptional.get( );
-            } else
-            {
-                assignment = AssignmentParisFamilleHome.findByPrimaryKey( -1 );
             }
-            assignmentsCompatiblesList.add( assignment );
         } else
         {
+            // assignation trouvee dans un intervalle de lettres
             assignment = AssignmentParisFamilleHome.findByPrimaryKey( assignmentsCompatiblesList.get( 0 ).getId( ) );
         }
         if ( ( null != assignment ) && !assignment.getGuid( ).isEmpty( ) )
         {
-            agentParisFamille = AdminUserHome.findUserByLogin( assignment.getGuid( ) );
+            guidAgent = assignment.getGuid( );
+        } else
+        {
+            // agent par defaut en cas de suppression assignation des 2 plages vides
+            guidAgent = DatastoreService.getDataValue( GUID_AGENT_DEFAUT_PARIS_FAMILLE, "C3CAA162EC6B11E6A6EDF5019677183C00000000" );
         }
+
+        agentParisFamille = AdminUserHome.findUserByLogin( guidAgent );
 
         return agentParisFamille;
     }
