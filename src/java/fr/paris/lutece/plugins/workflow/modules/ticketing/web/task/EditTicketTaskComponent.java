@@ -46,6 +46,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.service.EntryService;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
@@ -198,6 +199,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
                 }
             }
 
+            listEntryWithoutComment = EntryService.getService( ).listWithoutFFAccountNumber( listEntryWithoutComment );
+
             model.put( MARK_LIST_ENTRIES, listEntryWithoutComment );
             model.put( MARK_LIST_ID_TICKETS, request.getParameterValues( TicketingConstants.PARAMETER_ID_TICKET ) );
 
@@ -211,6 +214,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
             List<Integer> listIdEntries = _editableTicketService.buildListIdEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
 
             List<Entry> listEntries = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), listIdEntries );
+
+            listEntries = EntryService.getService( ).listWithoutFFAccountNumber( listEntries );
 
             String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), false, request );
 
