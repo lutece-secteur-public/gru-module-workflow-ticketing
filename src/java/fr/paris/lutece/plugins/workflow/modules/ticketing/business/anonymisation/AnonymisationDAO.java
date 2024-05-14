@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2023, City of Paris
+ * Copyright (c) 2002-2024, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,13 +43,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 public class AnonymisationDAO implements IAnonymisationDAO
 {
-    private static final String SQL_QUERY_SELECT_EMAIL_COMMENT_VALUE_HISTORY                = "SELECT comment_value FROM workflow_task_comment_value WHERE id_history = ?";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY        = "UPDATE workflow_task_comment_value SET comment_value=? WHERE id_history = ?";
-    private static final String SQL_QUERY_SELECT_UPLOAD_FILES_HISTORY                       = "SELECT id_file FROM workflow_task_upload_files WHERE id_history = ?";
-    private static final String SQL_QUERY_DELETE_UPLOAD_FILE_REFERENCE_FOR_ANONYMISATION    = "DELETE FROM workflow_task_upload_files WHERE id_history = ?";
-    private static final String SQL_QUERY_SELECT_MESSAGE_NOTIFY_GRU_HISTORY_TOTAL           = "SELECT message_email, message_guichet, message_agent,message_broadcast,message_sms FROM workflow_task_notify_gru_history WHERE id_history = ?";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY_TOTAL     = "UPDATE workflow_task_notify_gru_history SET ";
-    private static final String SQL_QUERY_WHERE_ID_HISTORY                                  = " WHERE id_history = ?";
+    private static final String SQL_QUERY_SELECT_EMAIL_COMMENT_VALUE_HISTORY = "SELECT comment_value FROM workflow_task_comment_value WHERE id_history = ?";
+    private static final String SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY = "UPDATE workflow_task_comment_value SET comment_value=? WHERE id_history = ?";
+    private static final String SQL_QUERY_SELECT_UPLOAD_FILES_HISTORY = "SELECT id_file FROM workflow_task_upload_files WHERE id_history = ?";
+    private static final String SQL_QUERY_DELETE_UPLOAD_FILE_REFERENCE_FOR_ANONYMISATION = "DELETE FROM workflow_task_upload_files WHERE id_history = ?";
+    private static final String SQL_QUERY_SELECT_MESSAGE_NOTIFY_GRU_HISTORY_TOTAL = "SELECT message_email, message_guichet, message_agent,message_broadcast,message_sms FROM workflow_task_notify_gru_history WHERE id_history = ?";
+    private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY_TOTAL = "UPDATE workflow_task_notify_gru_history SET ";
+    private static final String SQL_QUERY_WHERE_ID_HISTORY = " WHERE id_history = ?";
 
     /**
      * {@inheritDoc }
@@ -111,7 +111,6 @@ public class AnonymisationDAO implements IAnonymisationDAO
             daoUtil.executeUpdate( );
         }
     }
-
 
     /**
      * {@inheritDoc }

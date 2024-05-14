@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2023, City of Paris
+ * Copyright (c) 2002-2024, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,27 +69,26 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.sql.TransactionManager;
 
-
 /**
  * Daemon used to anonymize Tickets
  */
 public class TicketAnonymisationDaemon extends Daemon
 {
 
-    private static final int                          DELAI_ANONYMISATION           = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_DELAI, 1096 );
-    private static final int                          MAX_ANONYMISATION_PAR_DOMAINE = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_TICKET_MAX_DOMAINE, 200 );
+    private static final int DELAI_ANONYMISATION = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_DELAI, 1096 );
+    private static final int MAX_ANONYMISATION_PAR_DOMAINE = PluginConfigurationService
+            .getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_TICKET_MAX_DOMAINE, 200 );
 
-    private static ITicketEmailExternalUserMessageDAO dao                           = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
-    private static ITaskInformationDAO                daoTaskInfo                   = SpringContextService.getBean( ITaskInformationDAO.BEAN_SERVICE );
-    private static IResourceHistoryDAO                daoResourceHist               = SpringContextService.getBean( IResourceHistoryDAO.BEAN_SERVICE );
-    private static IEditableTicketDAO                 daoEditableTicketHist         = SpringContextService.getBean( IEditableTicketDAO.BEAN_SERVICE );
-    private static IAnonymisationDAO                  daoAnonymisation              = SpringContextService.getBean( IAnonymisationDAO.BEAN_SERVICE );
+    private static ITicketEmailExternalUserMessageDAO dao = SpringContextService.getBean( ITicketEmailExternalUserMessageDAO.BEAN_SERVICE );
+    private static ITaskInformationDAO daoTaskInfo = SpringContextService.getBean( ITaskInformationDAO.BEAN_SERVICE );
+    private static IResourceHistoryDAO daoResourceHist = SpringContextService.getBean( IResourceHistoryDAO.BEAN_SERVICE );
+    private static IEditableTicketDAO daoEditableTicketHist = SpringContextService.getBean( IEditableTicketDAO.BEAN_SERVICE );
+    private static IAnonymisationDAO daoAnonymisation = SpringContextService.getBean( IAnonymisationDAO.BEAN_SERVICE );
 
+    private static Plugin plugin = WorkflowTicketingPlugin.getPlugin( );
 
-    private static Plugin                             plugin                        = WorkflowTicketingPlugin.getPlugin( );
-
-    private static final String                       REGEX_EMAIL2                  = "[A-Za-z0-9+-_.]+@([A-Za-z0-9+-.]+\\.[A-Za-z]{2,4})";
-    private static final String                       REGEX_TELEPHONE2              = "[0-9]{2}([-. ]?([0-9]{2})){4}";
+    private static final String REGEX_EMAIL2 = "[A-Za-z0-9+-_.]+@([A-Za-z0-9+-.]+\\.[A-Za-z]{2,4})";
+    private static final String REGEX_TELEPHONE2 = "[0-9]{2}([-. ]?([0-9]{2})){4}";
 
     /*
      * Constructor
@@ -147,7 +146,9 @@ public class TicketAnonymisationDaemon extends Daemon
 
         List<Integer> allChildrenForADomaine = TicketCategoryService.getInstance( true ).getAllChildren( categorieDomaine );
 
-        int delaiAnonymisation = ( !categorieDomaine.getDelaiAnonymisation( ).trim( ).isEmpty( ) ) ? Integer.parseInt( categorieDomaine.getDelaiAnonymisation( ).trim( ) ) : DELAI_ANONYMISATION;
+        int delaiAnonymisation = ( !categorieDomaine.getDelaiAnonymisation( ).trim( ).isEmpty( ) )
+                ? Integer.parseInt( categorieDomaine.getDelaiAnonymisation( ).trim( ) )
+                : DELAI_ANONYMISATION;
 
         if ( !allChildrenForADomaine.isEmpty( ) )
         {
@@ -186,7 +187,8 @@ public class TicketAnonymisationDaemon extends Daemon
                         TicketHome.update( ticket );
                         anonymizeAddress( ticket.getId( ) );
                         indexingTicketAnonymize( ticket.getId( ), sb );
-                    }catch ( Exception e )
+                    }
+                    catch( Exception e )
                     {
                         TransactionManager.rollBack( plugin );
                         sb.add( "Annulation de l'anonymisation pour le domaine" + categorieDomaine.getLabel( ) );
@@ -194,12 +196,12 @@ public class TicketAnonymisationDaemon extends Daemon
                     }
                     TransactionManager.commitTransaction( plugin );
                 }
-            } else
+            }
+            else
             {
                 sb.add( "aucun ticket à anonymiser " );
             }
         }
-
 
     }
 
@@ -287,7 +289,8 @@ public class TicketAnonymisationDaemon extends Daemon
             {
                 TicketIndexer ticketIndexer = new TicketIndexer( );
                 ticketIndexer.indexTicket( ticket );
-            } catch ( TicketIndexerException ticketIndexerException )
+            }
+            catch( TicketIndexerException ticketIndexerException )
             {
                 sb.add( "Le ticket id " + idTicket + " anonymisé est en attente pour indexation" );
 
@@ -296,7 +299,6 @@ public class TicketAnonymisationDaemon extends Daemon
             }
         }
     }
-
 
     ////// USAGER
 
@@ -351,7 +353,6 @@ public class TicketAnonymisationDaemon extends Daemon
         deleteAttachment( usagerAttachment );
     }
 
-
     ////// AGENT
 
     /**
@@ -388,10 +389,12 @@ public class TicketAnonymisationDaemon extends Daemon
             coreIdFileAgent.addAll( idCoreUploadFinal );
 
             deleteAttachment( coreIdFileAgent );
-        } else if ( !idCoreUploadFinal.isEmpty( ) )
-        {
-            deleteAttachment( idCoreUploadFinal );
         }
+        else
+            if ( !idCoreUploadFinal.isEmpty( ) )
+            {
+                deleteAttachment( idCoreUploadFinal );
+            }
 
     }
 
@@ -485,7 +488,8 @@ public class TicketAnonymisationDaemon extends Daemon
                     if ( !( mapEntry.getValue( ) ).equals( cleanHrefValue ) )
                     {
                         cleanValueNotifyMessages.put( mapEntry.getKey( ), cleanHrefValue );
-                    } else
+                    }
+                    else
                     {
                         cleanValueNotifyMessages.put( mapEntry.getKey( ), mapEntry.getValue( ) );
                     }
@@ -508,7 +512,7 @@ public class TicketAnonymisationDaemon extends Daemon
     private String cleanHrefNotStillUsedInNotifyHistory( String valueNotify )
     {
         String finalValue = valueNotify;
-        String[] partPhrase = valueNotify.split( " " );
+        String [ ] partPhrase = valueNotify.split( " " );
         List<String> stringWithoutHref = cleanPJStockInString( partPhrase );
 
         if ( !String.join( " ", partPhrase ).equals( String.join( " ", stringWithoutHref ) ) )
@@ -596,20 +600,21 @@ public class TicketAnonymisationDaemon extends Daemon
     private List<Integer> extractIdResponse( String value )
     {
         List<Integer> idResponseList = new ArrayList<>( );
-        String[] partPhrase = value.split( "id_response=" );
+        String [ ] partPhrase = value.split( "id_response=" );
 
         if ( partPhrase.length > 1 )
         {
             for ( int i = 0; i < partPhrase.length; i++ )
             {
                 StringBuilder idReponseBuild = new StringBuilder( );
-                for ( int j = 0; j < partPhrase[i].length( ); j++ )
+                for ( int j = 0; j < partPhrase [i].length( ); j++ )
                 {
-                    char charPart = partPhrase[i].charAt(j);
+                    char charPart = partPhrase [i].charAt( j );
                     if ( Character.isDigit( charPart ) )
                     {
                         idReponseBuild.append( charPart );
-                    } else
+                    }
+                    else
                     {
                         break;
                     }
@@ -634,7 +639,7 @@ public class TicketAnonymisationDaemon extends Daemon
      */
     private void deleteHrefNotStillUsedInTaskInfo( String valueInfo, int idHistory )
     {
-        String[] partPhrase = valueInfo.split( " " );
+        String [ ] partPhrase = valueInfo.split( " " );
         List<String> stringWithoutHref = cleanPJStockInString( partPhrase );
 
         if ( !String.join( " ", partPhrase ).equals( String.join( " ", stringWithoutHref ) ) )
@@ -650,22 +655,21 @@ public class TicketAnonymisationDaemon extends Daemon
      *            the info value in a string array
      * @return The list of part of the string array without the link to file or response
      */
-    private List<String> cleanPJStockInString( String[] partPhrase )
+    private List<String> cleanPJStockInString( String [ ] partPhrase )
     {
         List<String> stringWithoutHref = new ArrayList<>( );
         if ( partPhrase.length > 1 )
         {
             for ( int i = 0; i < partPhrase.length; i++ )
             {
-                if ( !partPhrase[i].startsWith( "<a" ) && !partPhrase[i].startsWith( "href" ) )
+                if ( !partPhrase [i].startsWith( "<a" ) && !partPhrase [i].startsWith( "href" ) )
                 {
-                    stringWithoutHref.add( partPhrase[i] );
+                    stringWithoutHref.add( partPhrase [i] );
                 }
             }
         }
         return stringWithoutHref;
     }
-
 
     ////// UTIL
 
@@ -727,7 +731,6 @@ public class TicketAnonymisationDaemon extends Daemon
         }
         return anonymizeMessageTicket;
     }
-
 
     /**
      * Replace a comment by a substitute

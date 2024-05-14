@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2023, City of Paris
+ * Copyright (c) 2002-2024, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -220,7 +220,7 @@ public class NotifyDaemon extends Daemon
         }
 
         sbLog.append( "Nombre de tickets au statut " )
-                .append( _workflowService.getState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+        .append( _workflowService.getState( nIdStateWaiting, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
