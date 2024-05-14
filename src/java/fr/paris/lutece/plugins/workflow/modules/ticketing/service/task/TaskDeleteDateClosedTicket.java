@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2023, City of Paris
+ * Copyright (c) 2002-2024, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class TaskDeleteDateClosedTicket extends AbstractTicketingTask
 {
-    private static final String MESSAGE_DELETE_DATE_CLOSED         = "module.workflow.ticketing.task_delete_date_closed_ticket.labelClose";
+    private static final String MESSAGE_DELETE_DATE_CLOSED = "module.workflow.ticketing.task_delete_date_closed_ticket.labelClose";
     private static final String MESSAGE_DELETE_DATE_CLOSED_MESSAGE = "module.workflow.ticketing.task_delete_date_closed_ticket.information.message";
 
     @Override

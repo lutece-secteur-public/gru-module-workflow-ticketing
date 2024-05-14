@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2023, City of Paris
+ * Copyright (c) 2002-2024, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,7 +86,6 @@ public interface IAnonymisationDAO
      *            the plugin
      */
     void cleanUploadLines( int idHistory, Plugin plugin );
-
 
     /**
      * Get the map of all the messages and their column from notify history table for an id history

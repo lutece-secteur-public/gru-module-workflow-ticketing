@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2023, City of Paris
+ * Copyright (c) 2002-2024, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ public class ResourceHistoryDAO implements IResourceHistoryDAO
     private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_resource_history_ticketing WHERE id_history=?";
     private static final String SQL_QUERY_DELETE_BY_RESOURCE = "DELETE wrht FROM workflow_resource_history wrh, workflow_resource_history_ticketing wrht WHERE wrh.id_history = wrht.id_history AND wrh.id_resource = ? AND wrh.resource_type = ?";
     private static final String SQL_QUERY_FIND_OLD_UNIT_BY_PRIMARY_KEY = "SELECT id_history, id_unit_old FROM workflow_resource_history_ticketing WHERE id_history=?";
-    private static final String SQL_QUERY_FIND_BY_ID_RESOURCE          = "SELECT id_history FROM workflow_resource_history WHERE id_resource = ?";
+    private static final String SQL_QUERY_FIND_BY_ID_RESOURCE = "SELECT id_history FROM workflow_resource_history WHERE id_resource = ?";
 
     /**
      * {@inheritDoc}

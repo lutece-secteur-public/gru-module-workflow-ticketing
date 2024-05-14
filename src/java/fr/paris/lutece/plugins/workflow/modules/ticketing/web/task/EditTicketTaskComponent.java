@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2023, City of Paris
+ * Copyright (c) 2002-2024, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
+import fr.paris.lutece.plugins.ticketing.service.EntryService;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
@@ -78,9 +79,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
     private static final String MARK_LIST_ENTRIES = "list_entries";
     private static final String MARK_MESSAGE_DIRECTIONS_LIST = "message_directions_list";
     private static final String MARK_MESSAGE_DIRECTION = "message_direction";
-    private static final String    MARK_EMAIL_EXIST                 = "ticket_email_exist";
-    private static final String    MARK_LIST_ID_TICKETS             = "list_id_tickets";
-
+    private static final String MARK_EMAIL_EXIST = "ticket_email_exist";
+    private static final String MARK_LIST_ID_TICKETS = "list_id_tickets";
 
     // Parameters
     private static final String PARAMETER_MESSAGE_DIRECTION = "message_direction";
@@ -199,6 +199,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
                 }
             }
 
+            listEntryWithoutComment = EntryService.getService( ).listWithoutFFAccountNumber( listEntryWithoutComment );
+
             model.put( MARK_LIST_ENTRIES, listEntryWithoutComment );
             model.put( MARK_LIST_ID_TICKETS, request.getParameterValues( TicketingConstants.PARAMETER_ID_TICKET ) );
 
@@ -212,6 +214,8 @@ public class EditTicketTaskComponent extends TicketingTaskComponent
             List<Integer> listIdEntries = _editableTicketService.buildListIdEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
 
             List<Entry> listEntries = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), listIdEntries );
+
+            listEntries = EntryService.getService( ).listWithoutFFAccountNumber( listEntries );
 
             String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), false, request );
 

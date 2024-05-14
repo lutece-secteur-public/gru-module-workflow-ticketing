@@ -31,51 +31,25 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.config;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.service.assignment;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import fr.paris.lutece.plugins.workflowcore.business.config.TaskConfig;
+import fr.paris.lutece.portal.business.user.AdminUser;
 
 /**
  *
+ * Automatic assignment service interface
+ *
  */
-public class TaskModifyTicketCategoryConfig extends TaskConfig
+public interface IAutomaticAssignmentAgentParisFamilleService
 {
-    private List<Integer> _listSelectedEntries;
+
 
     /**
-     * Default constructor, init list
+     * Find the Paris Famille Agent to assigned to accross usager lastname
+     *
+     * @param lastName
+     * @return The Paris Famille Agent assigned
      */
-    public TaskModifyTicketCategoryConfig( )
-    {
-        super( );
-        _listSelectedEntries = new ArrayList<>( );
-    }
+    AdminUser getAssignedParisFamilleAgent( String lastName );
 
-    /**
-     * @return the _lSelectedEntries
-     */
-    public List<Integer> getSelectedEntries( )
-    {
-        return _listSelectedEntries;
-    }
-
-    /**
-     * @param _nSelectedEntry
-     *            Selected Entry
-     */
-    public void addSelectedEntry( Integer _nSelectedEntry )
-    {
-        _listSelectedEntries.add( _nSelectedEntry );
-    }
-
-    /**
-     * remove all selected entries
-     */
-    public void clearSelectedEntries( )
-    {
-        _listSelectedEntries = new ArrayList<>( );
-    }
 }
