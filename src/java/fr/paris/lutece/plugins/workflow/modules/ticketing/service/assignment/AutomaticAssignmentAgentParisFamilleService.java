@@ -91,34 +91,76 @@ public class AutomaticAssignmentAgentParisFamilleService implements IAutomaticAs
                 assignmentsCompatiblesList.add( assignmentParisFamille );
             }
         }
-        // assignation des 2 plages vides comme defaut si le nom usager ne correspond à aucun intervalle de lettres
-        if ( assignmentsCompatiblesList.isEmpty( ) )
-        {
-            Optional<AssignmentParisFamille> assignmentOptional = assignmentsList.stream( ).filter( a -> a.getAssignmentRangeStart( ).equals( "" ) )
-                    .filter( a -> a.getAssignmentRangeEnd( ).equals( "" ) )
-                    .findFirst( );
 
-            if ( assignmentOptional.isPresent( ) )
-            {
-                assignment = assignmentOptional.get( );
-            }
-        } else
+        if ( !assignmentsCompatiblesList.isEmpty( ) )
         {
             // assignation trouvee dans un intervalle de lettres
             assignment = AssignmentParisFamilleHome.findByPrimaryKey( assignmentsCompatiblesList.get( 0 ).getId( ) );
+            guidAgent = getAgent( assignment );
+            agentParisFamille = AdminUserHome.findUserByLogin( guidAgent );
         }
+
+        if ( ( null == agentParisFamille ) || !agentParisFamille.isStatusActive( ) )
+        {
+            assignment = findAssigmentRangeEmpty( assignmentsList );
+            guidAgent = getAgent( assignment );
+            agentParisFamille = AdminUserHome.findUserByLogin( guidAgent );
+        }
+
+        return agentParisFamille;
+    }
+
+    /**
+     * Get AssignmentParisFamille with 2 ranges empty
+     *
+     * @param assignmentsList
+     * @return assignment The assignmentParisFamille with 2 ranges empty
+     */
+    private AssignmentParisFamille findAssigmentRangeEmpty( List<AssignmentParisFamille> assignmentsList )
+    {
+        AssignmentParisFamille assignment = null;
+        Optional<AssignmentParisFamille> assignmentOptional = assignmentsList.stream( ).filter( a -> a.getAssignmentRangeStart( ).equals( "" ) ).filter( a -> a.getAssignmentRangeEnd( ).equals( "" ) )
+                .findFirst( );
+
+        if ( assignmentOptional.isPresent( ) )
+        {
+            assignment = assignmentOptional.get( );
+        }
+
+        return assignment;
+    }
+
+    /**
+     * Get the agent guid for an agent accross the intervalle or defaut agent
+     *
+     * @param assignment
+     * @return guidAgent The agent guid for an agent accross the intervalle or defaut agent
+     *
+     */
+    private String getAgent( AssignmentParisFamille assignment )
+    {
+        String guidAgent = null;
         if ( ( null != assignment ) && !assignment.getGuid( ).isEmpty( ) )
         {
             guidAgent = assignment.getGuid( );
         } else
         {
             // agent par defaut en cas de suppression assignation des 2 plages vides
-            guidAgent = DatastoreService.getDataValue( GUID_AGENT_DEFAUT_PARIS_FAMILLE, "C3CAA162EC6B11E6A6EDF5019677183C00000000" );
+            guidAgent = getDefautAgentGuid( );
+
         }
+        return guidAgent;
+    }
 
-        agentParisFamille = AdminUserHome.findUserByLogin( guidAgent );
 
-        return agentParisFamille;
+    /**
+     * Get the agent default guid
+     *
+     * @returnthe the agent default guid
+     */
+    private String getDefautAgentGuid( )
+    {
+        return DatastoreService.getDataValue( GUID_AGENT_DEFAUT_PARIS_FAMILLE, "C3CAA162EC6B11E6A6EDF5019677183C00000000" );
     }
 
 }

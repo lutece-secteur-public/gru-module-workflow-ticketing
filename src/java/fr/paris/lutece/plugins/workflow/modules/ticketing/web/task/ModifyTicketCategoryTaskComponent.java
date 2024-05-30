@@ -56,6 +56,7 @@ import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketCategoryValidator;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketCategoryValidatorResult;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskModifyTicketCategoryConfig;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.utils.UtilConstants;
 import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -216,7 +217,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
                 {
                     for ( GenericAttributeError error : listFormErrors )
                     {
-                        if ( error.getErrorMessage( ).contains( "Facil'Famille" ) || error.getErrorMessage( ).contains( "facil'familles" ) )
+                        if ( error.getErrorMessage( ).contains( "Facil'Famille" ) || error.getErrorMessage( ).contains( UtilConstants.CATEGORY_LABEL_PARIS_FAMILLE ) )
                         {
                             hasFFError = true;
                             break;
@@ -311,7 +312,7 @@ public class ModifyTicketCategoryTaskComponent extends TicketingTaskComponent
             else
                 if ( category.getDepth( ).getDepthNumber( ) == 1 )
                 {
-                    return category.getLabel( ).equals( "facil'familles" );
+                    return category.getLabel( ).equals( UtilConstants.CATEGORY_LABEL_PARIS_FAMILLE );
                 }
                 else
                 {
