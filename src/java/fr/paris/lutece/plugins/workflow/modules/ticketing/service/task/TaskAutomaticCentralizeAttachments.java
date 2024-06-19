@@ -73,6 +73,25 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
     private static final String        MESSAGE_AUTOMATIC_CENTRALIZATION_PJ             = "module.workflow.ticketing.task_automatic_centralize_attachments.labelAutomaticCentralization";
     private static final String        MESSAGE_AUTOMATIC_CENTRALIZATION_PJ_INFORMATION = "module.workflow.ticketing.task_automatic_centralize_attachments.information";
     @Override
+    public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    {
+        // We get the ticket to modify
+        Ticket ticket = getTicket( nIdResourceHistory );
+
+        try
+        {
+            TransactionManager.beginTransaction( _plugin );
+        } catch ( Exception e )
+        {
+            TransactionManager.rollBack( _plugin );
+            AppLogService.error( e );
+        }
+        TransactionManager.commitTransaction( _plugin );
+
+        // no information stored in the history
+        return null;
+    }
+    @Override
     public String getTitle( Locale locale )
     {
         return I18nService.getLocalizedString( MESSAGE_AUTOMATIC_CENTRALIZATION_PJ, locale );
