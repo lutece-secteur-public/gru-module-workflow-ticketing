@@ -81,6 +81,8 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
         try
         {
             TransactionManager.beginTransaction( _plugin );
+            // recuperation des PJ usager
+            managePjforS3ForUsager( ticket );
         } catch ( Exception e )
         {
             TransactionManager.rollBack( _plugin );
@@ -90,6 +92,114 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
 
         // no information stored in the history
         return null;
+    }
+    /**
+     * Manage pj for usager
+     *
+     * @param ticket
+     *            the ticket
+     */
+    private void managePjforS3ForUsager( Ticket ticket )
+    {
+        List<Integer> usagerAttachment = TicketTransfertPjService.findUsagerAttachment( ticket );
+
+        if ( ( null != usagerAttachment ) && !usagerAttachment.isEmpty( ) )
+        {
+            // usager true
+            insertTicketPjAndUpdateFileName( usagerAttachment, ticket, true );
+        }
+    }
+
+    /**
+     * Keep in list only the id_file still exists in core_file
+     *
+     * @param idFileList
+     *            the list of id file
+     * @return the clean list of id file
+     */
+    private List<Integer> cleanIdCoreList( List<Integer> idFileList )
+    {
+        List<Integer> cleanidList = new ArrayList<>( );
+        for ( Integer idFile : idFileList )
+        {
+            if ( TicketPjHome.isFileExistInCoreFile( idFile ) && !TicketPjHome.isFileExistInTicketPj( idFile ) )
+            {
+                cleanidList.add( idFile );
+            }
+        }
+        return cleanidList;
+    }
+    /**
+     * Insert pj in ticketing_ticket_pj and update file name in core_file with a id File list
+     *
+     * @param idFileList
+     *            the id pj list
+     * @param ticket
+     *            the ticket
+     * @param isUsagerPj
+     *            true if the pj is from usager otherwise false
+     */
+    private void insertTicketPjAndUpdateFileName( List<Integer> idFileList, Ticket ticket, boolean isUsagerPj )
+    {
+        idFileList = cleanIdCoreList( idFileList );
+        insertTicketPj( idFileList, ticket, isUsagerPj );
+        updateFileName( idFileList, ticket );
+    }
+
+    /**
+     * Update the name of file in core_file
+     *
+     * @param idFileList
+     *            the id file list
+     * @param ticket
+     *            the ticket
+     */
+    private void updateFileName( List<Integer> idFileList, Ticket ticket )
+    {
+        for ( Integer idFile : idFileList )
+        {
+            File file = FileHome.findByPrimaryKey( idFile );
+            if ( null != file )
+            {
+                String newNameForS3 = TicketTransfertPjService.nomDepotFichierUsager( ticket.getId( ), file.getTitle( ) );
+                TicketPjHome.storeFileName( newNameForS3, idFile );
+            }
+        }
+    }
+
+    /**
+     * Insert pj in ticketing_ticket_pj from id file list
+     *
+     * @param idFileList
+     *            the id file list
+     * @param ticket
+     *            the ticket
+     * @param isUsagerPj
+     *            true if the pj is from usager otherwise false
+     */
+    private void insertTicketPj( List<Integer> idFileList, Ticket ticket, boolean isUsagerPj )
+    {
+        if ( ( null != idFileList ) && !idFileList.isEmpty( ) )
+        {
+            for ( Integer idFile : idFileList )
+            {
+                TicketPj pj = new TicketPj( );
+                pj.setIdTicket( ticket.getId( ) );
+                pj.setIdFile( idFile );
+                for ( Response response : ticket.getListResponse( ) )
+                {
+                    if ( ( null != response.getFile( ) ) && ( response.getFile( ).getIdFile( ) == idFile ) )
+                    {
+                        pj.setIdResponse( response.getIdResponse( ) );
+                        break;
+                    }
+                }
+                pj.setUrlTicketing( "" );
+                pj.setStockageTicketing( 0 );
+                pj.setUsager( isUsagerPj );
+                TicketPjHome.create( pj );
+            }
+        }
     }
     @Override
     public String getTitle( Locale locale )
