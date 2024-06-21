@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -42,8 +41,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -70,8 +67,14 @@ import fr.paris.lutece.util.sql.TransactionManager;
 public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
 {
     // Messages
-    private static final String        MESSAGE_AUTOMATIC_CENTRALIZATION_PJ             = "module.workflow.ticketing.task_automatic_centralize_attachments.labelAutomaticCentralization";
-    private static final String        MESSAGE_AUTOMATIC_CENTRALIZATION_PJ_INFORMATION = "module.workflow.ticketing.task_automatic_centralize_attachments.information";
+    private static final String        MESSAGE_AUTOMATIC_CENTRALIZATION_PJ = "module.workflow.ticketing.task_automatic_centralize_attachments.labelAutomaticCentralization";
+
+    private static IResourceHistoryDAO _daoResourceHist                        = SpringContextService.getBean( IResourceHistoryDAO.BEAN_SERVICE );
+    private static IAnonymisationDAO   _daoAnonymisation                       = SpringContextService.getBean( IAnonymisationDAO.BEAN_SERVICE );
+    private static ITaskInformationDAO _daoTaskInfo                            = SpringContextService.getBean( ITaskInformationDAO.BEAN_SERVICE );
+
+    private static Plugin              _plugin                                = WorkflowTicketingPlugin.getPlugin( );
+
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
@@ -81,8 +84,33 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
         try
         {
             TransactionManager.beginTransaction( _plugin );
+
             // recuperation des PJ usager
             managePjforS3ForUsager( ticket );
+
+            // recuperation des PJ agent par id_history
+            List<Integer> idResponseTotal = new ArrayList<>( );
+            List<Integer> idCoreUploadFinal = new ArrayList<>( );
+
+            List<Integer> idHistoryList = _daoResourceHist.getIdHistoryListByResource( ticket.getId( ), _plugin );
+            for ( int idHistory : idHistoryList )
+            {
+                // tables workflow_task_ticketing_information et workflow_task_notify_gru_history
+                idResponseTotal = searchPjFromTaskInfoAndNotifyHistory( idHistory, idResponseTotal );
+
+                // table workflow_task_upload_files
+                idCoreUploadFinal = searchPjFromTaskUploadFiles( idHistory, idCoreUploadFinal );
+            }
+
+            if ( !idResponseTotal.isEmpty( ) )
+            {
+                managePjforS3WithIdResponse( idResponseTotal, ticket );
+            }
+            if ( !idCoreUploadFinal.isEmpty( ) )
+            {
+                // usager false
+                managePjforS3ForAgent( idCoreUploadFinal, ticket, false );
+            }
         } catch ( Exception e )
         {
             TransactionManager.rollBack( _plugin );
@@ -93,6 +121,51 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
         // no information stored in the history
         return null;
     }
+
+    /**
+     * Search ditinct id_core from workflow_task_upload_files
+     *
+     * @param idHistory
+     *            the id history
+     * @param idCoreUploadFinal
+     *            the list of id file to complete
+     * @return the list of distinct id_file
+     */
+    private List<Integer> searchPjFromTaskUploadFiles( int idHistory, List<Integer> idCoreUploadFinal )
+    {
+        List<Integer> idCoreUploadList = findIsFileFromTaskUploadFiles( idHistory, idCoreUploadFinal );
+        if ( !idCoreUploadList.isEmpty( ) )
+        {
+            idCoreUploadFinal.addAll( idCoreUploadList );
+        }
+        return idCoreUploadFinal.stream( ).distinct( ).collect( Collectors.toList( ) );
+    }
+
+    /**
+     * Search list of distinct id_response
+     *
+     * @param idHistory
+     *            the id history
+     * @param idResponseTotal
+     *            the list of id response to complete
+     * @return the list of distinct id_response
+     */
+    private List<Integer> searchPjFromTaskInfoAndNotifyHistory( int idHistory, List<Integer> idResponseTotal )
+    {
+        List<Integer> idResponseTaskInfoList = findIdResponseFromTaskInfo( idHistory, idResponseTotal );
+        List<Integer> idResponseNotifyHistoryList = findIdResponseFromNotifyHistory( idHistory, idResponseTotal );
+
+        if ( !idResponseTaskInfoList.isEmpty( ) )
+        {
+            idResponseTotal.addAll( idResponseTaskInfoList );
+        }
+        if ( !idResponseNotifyHistoryList.isEmpty( ) )
+        {
+            idResponseTotal.addAll( idResponseNotifyHistoryList );
+        }
+        return idResponseTotal.stream( ).distinct( ).collect( Collectors.toList( ) );
+    }
+
     /**
      * Manage pj for usager
      *
@@ -129,6 +202,89 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
         }
         return cleanidList;
     }
+
+    /**
+     * Manage pj for agent
+     *
+     * @param idCoreUploadFinal
+     *            the list of id file to complete
+     * @param ticket
+     *            the ticket
+     * @param isUsagerPj
+     *            true if the pj is from usager otherwise false
+     */
+    private void managePjforS3ForAgent( List<Integer> idCoreUploadFinal, Ticket ticket, boolean isUsagerPj )
+    {
+        insertTicketPjAndUpdateFileName( idCoreUploadFinal, ticket, isUsagerPj );
+    }
+
+    /**
+     * Manage Pj fron id_response list
+     *
+     * @param idResponseTotal
+     *            the list of id response to complete
+     * @param ticket
+     *            the ticket
+     */
+    private void managePjforS3WithIdResponse( List<Integer> idResponseTotal, Ticket ticket )
+    {
+        Map<Integer, Integer> coreIdFileAgentFromIdResponseList = TicketHome.selectCoreFileForAgentPjMap( idResponseTotal );
+
+        if ( !coreIdFileAgentFromIdResponseList.isEmpty( ) )
+        {
+            // usager false
+            insertTicketPjAndUpdateFileNameFromMap( coreIdFileAgentFromIdResponseList, ticket, false );
+        }
+    }
+
+    /**
+     * Find the final list of id core from workflow_task_upload_files
+     *
+     * @param idHistory
+     *            the id history
+     * @param idCoreUploadFinal
+     *            the list of id file to complete
+     * @return the final list of id core from workflow_task_upload_files
+     */
+    private List<Integer> findIsFileFromTaskUploadFiles( int idHistory, List<Integer> idCoreUploadFinal )
+    {
+        List<Integer> idCoreUploadFound = TicketTransfertPjService.findUploadFiles( idHistory );
+        idCoreUploadFinal.addAll( idCoreUploadFound );
+        return idCoreUploadFinal;
+    }
+
+    /**
+     * Find the final list of id core from workflow_task_ticketing_information
+     *
+     * @param idHistory
+     *            the id history
+     * @param idResponseTotal
+     *            the list of id response to complete
+     * @return the final list of id core from workflow_task_ticketing_information
+     */
+    private List<Integer> findIdResponseFromTaskInfo( int idHistory, List<Integer> idResponseTotal )
+    {
+        List<Integer> idResponseFromTaskInfo = ticketTaskInfoService( idHistory );
+        idResponseTotal.addAll( idResponseFromTaskInfo );
+        return idResponseTotal;
+    }
+
+    /**
+     * Find the final list of id core from workflow_task_notify_gru_history
+     *
+     * @param idHistory
+     *            the id history
+     * @param idResponseTotal
+     *            the list of id response to complete
+     * @return the final list of id core from workflow_task_notify_gru_history
+     */
+    private List<Integer> findIdResponseFromNotifyHistory( int idHistory, List<Integer> idResponseTotal )
+    {
+        List<Integer> idResponseFromNotifyHistory = ticketNotifyHsitoryService( idHistory );
+        idResponseTotal.addAll( idResponseFromNotifyHistory );
+        return idResponseTotal;
+    }
+
     /**
      * Insert pj in ticketing_ticket_pj and update file name in core_file with a id File list
      *
@@ -143,6 +299,23 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
     {
         idFileList = cleanIdCoreList( idFileList );
         insertTicketPj( idFileList, ticket, isUsagerPj );
+        updateFileName( idFileList, ticket );
+    }
+
+    /**
+     * Insert pj in ticketing_ticket_pj and update file name in core_file with from id file and id response map
+     *
+     * @param coreIdFileAgent
+     *            the id file list
+     * @param ticket
+     *            the ticket
+     * @param isUsagerPj
+     *            true if the pj is from usager otherwise false
+     */
+    private void insertTicketPjAndUpdateFileNameFromMap( Map<Integer, Integer> coreIdFileAgent, Ticket ticket, boolean isUsagerPj )
+    {
+        insertTicketPjFromMap( coreIdFileAgent, ticket, isUsagerPj );
+        List<Integer> idFileList = new ArrayList<>( coreIdFileAgent.values( ) );
         updateFileName( idFileList, ticket );
     }
 
@@ -201,9 +374,88 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
             }
         }
     }
+
+    /**
+     * Insert pj in ticketing_ticket_pj from id file and id response map
+     *
+     * @param idsMaps
+     *            the id file id response map
+     * @param ticket
+     *            the ticket
+     * @param isUsagerPj
+     *            true if the pj is from usager otherwise false
+     */
+    private void insertTicketPjFromMap( Map<Integer, Integer> idsMaps, Ticket ticket, boolean isUsagerPj )
+    {
+        if ( ( null != idsMaps ) && !idsMaps.isEmpty( ) )
+        {
+            for ( Entry<Integer, Integer> entry : idsMaps.entrySet( ) )
+            {
+                if ( !TicketPjHome.isCoupleIdFileIdResponseExistInTicketPj( entry.getKey( ), entry.getValue( ) ) )
+                {
+                    TicketPj pj = new TicketPj( );
+                    pj.setIdTicket( ticket.getId( ) );
+                    pj.setIdFile( entry.getValue( ) );
+                    pj.setIdResponse( entry.getKey( ) );
+                    pj.setUrlTicketing( "" );
+                    pj.setStockageTicketing( 0 );
+                    pj.setUsager( isUsagerPj );
+                    TicketPjHome.create( pj );
+                }
+            }
+        }
+    }
+
+    /**
+     * find historic data From task info table
+     *
+     * @param ticket
+     *            the ticket to anonymizes
+     */
+    private List<Integer> ticketTaskInfoService( int idHistory )
+    {
+        String valueInfo = _daoTaskInfo.getInfoHistoryValueByIdHistory( idHistory, _plugin );
+        List<Integer> idResponseTotal = new ArrayList<>( );
+        if ( !valueInfo.isEmpty( ) )
+        {
+            String valueInfoUpdated = _daoTaskInfo.getInfoHistoryValueByIdHistory( idHistory, _plugin );
+            if ( valueInfoUpdated.contains( "a href=" ) )
+            {
+                List<Integer> idResponseListForAgent = TicketTransfertPjService.extractIdResponse( valueInfoUpdated );
+                idResponseTotal.addAll( idResponseListForAgent );
+            }
+        }
+        return idResponseTotal;
+    }
+
+    /**
+     * find historic data From task info table
+     *
+     * @param ticket
+     *            the ticket to anonymizes
+     */
+    private List<Integer> ticketNotifyHsitoryService( int idHistory )
+    {
+        Map<String, String> valueNotifyMessages = _daoAnonymisation.loadMessageNotifyHIstoryTotal( idHistory, _plugin );
+        List<Integer> idResponseTotal = new ArrayList<>( );
+        if ( ( null != valueNotifyMessages ) && !valueNotifyMessages.isEmpty( ) )
+        {
+            for ( Map.Entry<String, String> mapEntry : valueNotifyMessages.entrySet( ) )
+            {
+                if ( ( null != mapEntry.getValue( ) ) && mapEntry.getValue( ).contains( "a href=" ) )
+                {
+                    List<Integer> idResponseListForAgent = TicketTransfertPjService.extractIdResponse( mapEntry.getValue( ) );
+                    idResponseTotal.addAll( idResponseListForAgent );
+                }
+            }
+        }
+        return idResponseTotal;
+    }
+
     @Override
     public String getTitle( Locale locale )
     {
         return I18nService.getLocalizedString( MESSAGE_AUTOMATIC_CENTRALIZATION_PJ, locale );
     }
 }
+
