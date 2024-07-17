@@ -176,6 +176,10 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
     {
         List<Integer> usagerAttachment = TicketTransfertPjService.findUsagerAttachment( ticket );
 
+        List<Integer> idUsagerPjToDelete = TicketPjHome.getIdResponsePjUsagerToDelete( ticket.getId( ) );
+
+        TicketPjHome.removePjUsager( idUsagerPjToDelete );
+
         if ( ( null != usagerAttachment ) && !usagerAttachment.isEmpty( ) )
         {
             // usager true
