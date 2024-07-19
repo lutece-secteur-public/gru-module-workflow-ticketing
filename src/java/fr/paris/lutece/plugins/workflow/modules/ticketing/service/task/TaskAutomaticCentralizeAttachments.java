@@ -68,6 +68,7 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
 {
     // Messages
     private static final String        MESSAGE_AUTOMATIC_CENTRALIZATION_PJ = "module.workflow.ticketing.task_automatic_centralize_attachments.labelAutomaticCentralization";
+    private static final int           STATUS_TRANSFERT_OK                 = 1;
 
     private static IResourceHistoryDAO _daoResourceHist                        = SpringContextService.getBean( IResourceHistoryDAO.BEAN_SERVICE );
     private static IAnonymisationDAO   _daoAnonymisation                       = SpringContextService.getBean( IAnonymisationDAO.BEAN_SERVICE );
@@ -178,7 +179,10 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
 
         List<Integer> idUsagerPjToDelete = TicketPjHome.getIdResponsePjUsagerToDelete( ticket.getId( ) );
 
-        TicketPjHome.removePjUsager( idUsagerPjToDelete );
+        if ( ( null != idUsagerPjToDelete ) && !idUsagerPjToDelete.isEmpty( ) )
+        {
+            TicketPjHome.removePjUsager( idUsagerPjToDelete );
+        }
 
         if ( ( null != usagerAttachment ) && !usagerAttachment.isEmpty( ) )
         {
