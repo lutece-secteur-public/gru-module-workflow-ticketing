@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>module-workflow-ticketing</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>4.10.0</version>
+    <version>4.10.1-SNAPSHOT</version>
     <name>Lutece Workflow Ticketing module</name>
 
     <repositories>
@@ -135,7 +135,7 @@
         <connection>scm:git:https://github.com/lutece-secteur-public/gru-module-workflow-ticketing.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-secteur-public/gru-module-workflow-ticketing.git</developerConnection>
         <url>https://github.com/lutece-secteur-public/gru-module-workflow-ticketing.git</url>
-      <tag>module-workflow-ticketing-4.10.0</tag>
+      <tag>gru-module-workflow-ticketing-2.0.24</tag>
   </scm>
     
 </project>

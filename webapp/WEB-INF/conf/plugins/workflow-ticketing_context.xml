@@ -417,6 +417,19 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeAutomaticAgentAssignmentParisFamille" />
         
+    <!-- Task Auto centralize pj Ticket -->
+	<bean id="workflow-ticketing.taskAutomaticCentralizeAttachments"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAutomaticCentralizeAttachments"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAutomaticCentralizeAttachments"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskAutomaticCentralizeAttachments" p:titleI18nKey="module.workflow.ticketing.task_automatic_centralize_attachments.title"
+		p:beanName="workflow-ticketing.taskAutomaticCentralizeAttachments"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.automaticCentralizeAttachments"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeAutomaticCentralizeAttachments" />
+        
     <!-- Task Auto close ticket -->
 	<bean id="workflow-ticketing.taskCloseTicket"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskCloseTicket"
