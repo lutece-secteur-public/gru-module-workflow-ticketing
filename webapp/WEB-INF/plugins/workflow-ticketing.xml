@@ -96,5 +96,11 @@
 			<daemon-description>module.workflow.ticketing.daemon.ticketAnonymisationDaemon.description</daemon-description>
 			<daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketAnonymisationDaemon</daemon-class>
 		</daemon>
+        <daemon>
+            <daemon-id>migrationPjDaemon</daemon-id>
+            <daemon-name>module.workflow.ticketing.daemon.migrationPjDaemon.name</daemon-name>
+            <daemon-description>module.workflow.ticketing.daemon.migrationPjDaemon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketPjMigrationDaemon</daemon-class>
+        </daemon>
     </daemons>
 </plug-in>
