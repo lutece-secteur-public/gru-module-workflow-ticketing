@@ -68,7 +68,6 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
 {
     // Messages
     private static final String        MESSAGE_AUTOMATIC_CENTRALIZATION_PJ = "module.workflow.ticketing.task_automatic_centralize_attachments.labelAutomaticCentralization";
-    private static final int           STATUS_TRANSFERT_OK                 = 1;
 
     private static IResourceHistoryDAO _daoResourceHist                        = SpringContextService.getBean( IResourceHistoryDAO.BEAN_SERVICE );
     private static IAnonymisationDAO   _daoAnonymisation                       = SpringContextService.getBean( IAnonymisationDAO.BEAN_SERVICE );
@@ -187,7 +186,7 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
         if ( ( null != usagerAttachment ) && !usagerAttachment.isEmpty( ) )
         {
             // usager true
-            insertTicketPjAndUpdateFileName( usagerAttachment, ticket, true );
+            insertTicketPjFromList( usagerAttachment, ticket, true );
         }
     }
 
@@ -205,8 +204,13 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
         {
             if ( TicketPjHome.isFileExistInCoreFile( idFile ) && !TicketPjHome.isFileExistInTicketPj( idFile ) )
             {
-                cleanidList.add( idFile );
+                File file = FileHome.findByPrimaryKey( idFile );
+                if ( TicketPjHome.isFileExistInCorePhysicalFile( file.getPhysicalFile( ).getIdPhysicalFile( ) ) )
+                {
+                    cleanidList.add( idFile );
+                }
             }
+
         }
         return cleanidList;
     }
@@ -223,7 +227,7 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
      */
     private void managePjforS3ForAgent( List<Integer> idCoreUploadFinal, Ticket ticket, boolean isUsagerPj )
     {
-        insertTicketPjAndUpdateFileName( idCoreUploadFinal, ticket, isUsagerPj );
+        insertTicketPjFromList( idCoreUploadFinal, ticket, isUsagerPj );
     }
 
     /**
@@ -241,7 +245,7 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
         if ( !coreIdFileAgentFromIdResponseList.isEmpty( ) )
         {
             // usager false
-            insertTicketPjAndUpdateFileNameFromMap( coreIdFileAgentFromIdResponseList, ticket, false );
+            insertTicketPjFromMap( coreIdFileAgentFromIdResponseList, ticket, false );
         }
     }
 
@@ -303,49 +307,10 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
      * @param isUsagerPj
      *            true if the pj is from usager otherwise false
      */
-    private void insertTicketPjAndUpdateFileName( List<Integer> idFileList, Ticket ticket, boolean isUsagerPj )
+    private void insertTicketPjFromList( List<Integer> idFileList, Ticket ticket, boolean isUsagerPj )
     {
         idFileList = cleanIdCoreList( idFileList );
         insertTicketPj( idFileList, ticket, isUsagerPj );
-        updateFileName( idFileList, ticket );
-    }
-
-    /**
-     * Insert pj in ticketing_ticket_pj and update file name in core_file with from id file and id response map
-     *
-     * @param coreIdFileAgent
-     *            the id file list
-     * @param ticket
-     *            the ticket
-     * @param isUsagerPj
-     *            true if the pj is from usager otherwise false
-     */
-    private void insertTicketPjAndUpdateFileNameFromMap( Map<Integer, Integer> coreIdFileAgent, Ticket ticket, boolean isUsagerPj )
-    {
-        insertTicketPjFromMap( coreIdFileAgent, ticket, isUsagerPj );
-        List<Integer> idFileList = new ArrayList<>( coreIdFileAgent.values( ) );
-        updateFileName( idFileList, ticket );
-    }
-
-    /**
-     * Update the name of file in core_file
-     *
-     * @param idFileList
-     *            the id file list
-     * @param ticket
-     *            the ticket
-     */
-    private void updateFileName( List<Integer> idFileList, Ticket ticket )
-    {
-        for ( Integer idFile : idFileList )
-        {
-            File file = FileHome.findByPrimaryKey( idFile );
-            if ( null != file )
-            {
-                String newNameForS3 = TicketTransfertPjService.nomDepotFichierUsager( ticket.getId( ), file.getTitle( ) );
-                TicketPjHome.storeFileName( newNameForS3, idFile );
-            }
-        }
     }
 
     /**

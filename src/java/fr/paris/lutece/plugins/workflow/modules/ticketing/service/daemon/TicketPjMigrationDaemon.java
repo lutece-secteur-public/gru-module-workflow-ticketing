@@ -222,7 +222,7 @@ public class TicketPjMigrationDaemon extends Daemon
         {
             usagerAttachment = cleanIdCoreList( usagerAttachment );
             // usager true
-            insertTicketPjAndUpdateFileName( usagerAttachment, ticket, true );
+            insertTicketPjAndCleanIdCoreList( usagerAttachment, ticket, true );
         }
     }
 
@@ -240,7 +240,11 @@ public class TicketPjMigrationDaemon extends Daemon
         {
             if ( TicketPjHome.isFileExistInCoreFile( idFile ) )
             {
-                cleanidList.add( idFile );
+                File file = FileHome.findByPrimaryKey( idFile );
+                if ( TicketPjHome.isFileExistInCorePhysicalFile( file.getPhysicalFile( ).getIdPhysicalFile( ) ) )
+                {
+                    cleanidList.add( idFile );
+                }
             }
         }
         return cleanidList;
@@ -259,7 +263,7 @@ public class TicketPjMigrationDaemon extends Daemon
     private void managePjforS3ForAgent( List<Integer> idCoreUploadFinal, Ticket ticket, boolean isUsagerPj )
     {
         idCoreUploadFinal = cleanIdCoreList( idCoreUploadFinal );
-        insertTicketPjAndUpdateFileName( idCoreUploadFinal, ticket, isUsagerPj );
+        insertTicketPjAndCleanIdCoreList( idCoreUploadFinal, ticket, isUsagerPj );
     }
 
     /**
@@ -285,7 +289,7 @@ public class TicketPjMigrationDaemon extends Daemon
                 }
             }
             // usager false
-            insertTicketPjAndUpdateFileNameFromMap( coreIdFileAgentFromIdResponseListClean, ticket, false );
+            insertTicketPjFromMap( coreIdFileAgentFromIdResponseListClean, ticket, false );
         }
     }
 
@@ -347,49 +351,10 @@ public class TicketPjMigrationDaemon extends Daemon
      * @param isUsagerPj
      *            true if the pj is from usager otherwise false
      */
-    private void insertTicketPjAndUpdateFileName( List<Integer> idFileList, Ticket ticket, boolean isUsagerPj )
+    private void insertTicketPjAndCleanIdCoreList( List<Integer> idFileList, Ticket ticket, boolean isUsagerPj )
     {
         idFileList = cleanIdCoreList( idFileList );
         insertTicketPj( idFileList, ticket, isUsagerPj );
-        updateFileName( idFileList, ticket );
-    }
-
-    /**
-     * Insert pj in ticketing_ticket_pj and update file name in core_file with from id file and id response map
-     *
-     * @param coreIdFileAgent
-     *            the id file list
-     * @param ticket
-     *            the ticket
-     * @param isUsagerPj
-     *            true if the pj is from usager otherwise false
-     */
-    private void insertTicketPjAndUpdateFileNameFromMap( Map<Integer, Integer> coreIdFileAgent, Ticket ticket, boolean isUsagerPj )
-    {
-        insertTicketPjFromMap( coreIdFileAgent, ticket, isUsagerPj );
-        List<Integer> idFileList = new ArrayList<>( coreIdFileAgent.values( ) );
-        updateFileName( idFileList, ticket );
-    }
-
-    /**
-     * Update the name of file in core_file
-     *
-     * @param idFileList
-     *            the id file list
-     * @param ticket
-     *            the ticket
-     */
-    private void updateFileName( List<Integer> idFileList, Ticket ticket )
-    {
-        for ( Integer idFile : idFileList )
-        {
-            File file = FileHome.findByPrimaryKey( idFile );
-            if ( null != file )
-            {
-                String newNameForS3 = TicketTransfertPjService.nomDepotFichierUsager( ticket.getId( ), file.getTitle( ) );
-                TicketPjHome.storeFileName( newNameForS3, idFile );
-            }
-        }
     }
 
     /**
