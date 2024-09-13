@@ -122,8 +122,8 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                             ticketCategory.getCategoryType( ).getLabel( ),
                             StringUtils.isNotEmpty( strPreviousCategoryLabel ) ? strPreviousCategoryLabel
                                     : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ),
-                            StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( )
-                                    : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
+                                    StringUtils.isNotEmpty( ticketCategory.getLabel( ) ) ? ticketCategory.getLabel( )
+                                            : I18nService.getLocalizedString( MESSAGE_NO_VALUE, locale ) );
                 }
             }
 
@@ -218,7 +218,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                     ResponseHome.create( response );
                     if ( response.getFile( ) != null )
                     {
-                        // TicketFileHome.migrateToBlob( response.getFile( ) );
+                        // retrait archivage
                     }
                     TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
                 }
