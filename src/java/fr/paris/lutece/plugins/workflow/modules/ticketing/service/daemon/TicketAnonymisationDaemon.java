@@ -49,12 +49,17 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
+import fr.paris.lutece.plugins.ticketing.business.file.TicketFileHome;
+import fr.paris.lutece.plugins.ticketing.business.profilstrois.Profilstrois;
 import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
 import fr.paris.lutece.plugins.ticketing.business.search.TicketIndexer;
 import fr.paris.lutece.plugins.ticketing.business.search.TicketIndexerException;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPj;
+import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPjHome;
 import fr.paris.lutece.plugins.ticketing.service.category.TicketCategoryService;
+import fr.paris.lutece.plugins.ticketing.service.strois.StockageService;
 import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
 import fr.paris.lutece.plugins.ticketing.web.util.TicketIndexerActionUtil;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.anonymisation.IAnonymisationDAO;
@@ -63,6 +68,7 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.I
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.IResourceHistoryDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket.IEditableTicketDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
+import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -84,6 +90,9 @@ public class TicketAnonymisationDaemon extends Daemon
     private static IResourceHistoryDAO daoResourceHist = SpringContextService.getBean( IResourceHistoryDAO.BEAN_SERVICE );
     private static IEditableTicketDAO daoEditableTicketHist = SpringContextService.getBean( IEditableTicketDAO.BEAN_SERVICE );
     private static IAnonymisationDAO daoAnonymisation = SpringContextService.getBean( IAnonymisationDAO.BEAN_SERVICE );
+
+    private final StockageService                     _stockageS3DaemonMinio        = new StockageService( Profilstrois.PROFIL_MINIO_DAEMON_NAME );
+    private final StockageService                     _stockageS3DaemonNetapp       = new StockageService( Profilstrois.PROFIL_NETAPP_DAEMON_NAME );
 
     private static Plugin plugin = WorkflowTicketingPlugin.getPlugin( );
 
@@ -148,53 +157,60 @@ public class TicketAnonymisationDaemon extends Daemon
 
         int delaiAnonymisation = ( !categorieDomaine.getDelaiAnonymisation( ).trim( ).isEmpty( ) )
                 ? Integer.parseInt( categorieDomaine.getDelaiAnonymisation( ).trim( ) )
-                : DELAI_ANONYMISATION;
+                        : DELAI_ANONYMISATION;
 
         if ( !allChildrenForADomaine.isEmpty( ) )
         {
             java.sql.Date date = findDateClotureForAnonymisationDomaine( delaiAnonymisation, categorieDomaine, sb );
 
+            if ( allChildrenForADomaine.isEmpty( ) )
+            {
+                allChildrenForADomaine.add( categorieDomaine.getId( ) );
+            }
+
             List<Integer> listIdTickets = TicketHome.getForAnonymisationForDomaine( date, allChildrenForADomaine, MAX_ANONYMISATION_PAR_DOMAINE );
 
             if ( !listIdTickets.isEmpty( ) )
             {
-
                 sb.add( "nombre de tickets à anonymiser : " + listIdTickets.size( ) );
                 for ( Integer idTicket : listIdTickets )
                 {
                     Ticket ticket = TicketHome.findByPrimaryKeyWithoutFiles( idTicket );
-                    try
+                    if ( null != ticket )
                     {
-                        TransactionManager.beginTransaction( plugin );
-                        // suppression des données sensibles dans l'historique
-                        anonymizeTicketHistoryData( ticket );
+                        try
+                        {
+                            TransactionManager.beginTransaction( plugin );
+                            // suppression des données sensibles dans l'historique
+                            anonymizeTicketHistoryData( ticket );
 
-                        // anonymisation du ticket
-                        String newComment = sanitizeCommentTicket( ticket );
-                        ticket.setTicketComment( newComment );
-                        String userMessage = sanitizeUserMessageTicket( ticket );
-                        ticket.setUserMessage( userMessage );
-                        ticket.setFirstname( ticket.getReference( ) );
-                        ticket.setLastname( ticket.getReference( ) );
-                        ticket.setIdUserTitle( 0 );
-                        ticket.setEmail( ticket.getReference( ) + "@yopmail.com" );
-                        ticket.setFixedPhoneNumber( null );
-                        ticket.setMobilePhoneNumber( null );
-                        ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
-                        ticket.setAnonymisation( 1 );
-                        TicketAddress cleanAddress = new TicketAddress( );
-                        ticket.setTicketAddress( cleanAddress );
-                        TicketHome.update( ticket );
-                        anonymizeAddress( ticket.getId( ) );
-                        indexingTicketAnonymize( ticket.getId( ), sb );
+                            // anonymisation du ticket
+                            String newComment = sanitizeCommentTicket( ticket );
+                            ticket.setTicketComment( newComment );
+                            String userMessage = sanitizeUserMessageTicket( ticket );
+                            ticket.setUserMessage( userMessage );
+                            ticket.setFirstname( ticket.getReference( ) );
+                            ticket.setLastname( ticket.getReference( ) );
+                            ticket.setIdUserTitle( 0 );
+                            ticket.setEmail( ticket.getReference( ) + "@yopmail.com" );
+                            ticket.setFixedPhoneNumber( null );
+                            ticket.setMobilePhoneNumber( null );
+                            ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
+                            ticket.setAnonymisation( 1 );
+                            TicketAddress cleanAddress = new TicketAddress( );
+                            ticket.setTicketAddress( cleanAddress );
+                            TicketHome.update( ticket );
+                            anonymizeAddress( ticket.getId( ) );
+                            indexingTicketAnonymize( ticket.getId( ), sb );
+                        }
+                        catch( Exception e )
+                        {
+                            TransactionManager.rollBack( plugin );
+                            sb.add( "Annulation de l'anonymisation pour le domaine" + categorieDomaine.getLabel( ) );
+                            AppLogService.error( e );
+                        }
+                        TransactionManager.commitTransaction( plugin );
                     }
-                    catch( Exception e )
-                    {
-                        TransactionManager.rollBack( plugin );
-                        sb.add( "Annulation de l'anonymisation pour le domaine" + categorieDomaine.getLabel( ) );
-                        AppLogService.error( e );
-                    }
-                    TransactionManager.commitTransaction( plugin );
                 }
             }
             else
@@ -260,17 +276,33 @@ public class TicketAnonymisationDaemon extends Daemon
      *            the ticket to anonymize
      * @param sb
      */
-    private void deleteAttachment( List<Integer> coreFileId )
+    private void deleteAttachment( Map<Integer, Integer> coreFileAndIdStockage )
     {
-        if ( !coreFileId.isEmpty( ) )
+        if ( !coreFileAndIdStockage.isEmpty( ) )
         {
-            List<Integer> corePhysicalFilesId = TicketHome.getIdAttachmentCorePhysicalFileListByTicket( coreFileId );
-
-            if ( !corePhysicalFilesId.isEmpty( ) )
+            for ( Entry<Integer, Integer> entry : coreFileAndIdStockage.entrySet( ) )
             {
-                TicketHome.deleteCorePhysicalFile( corePhysicalFilesId );
+                // Stockage sur BDD
+                if ( entry.getValue( ) == 0 )
+                {
+                    int idPhysicalFile = TicketFileHome.findIdPhysicalFile( entry.getKey( ) );
+                    TicketPjHome.removePhysicalFile( idPhysicalFile );
+                    FileHome.remove( entry.getKey( ) );
+                }
+                else
+                {
+                    TicketPj pj = TicketPjHome.findByIdFile( entry.getKey( ) );
+                    if ( pj.getStockageTicketing( ) == 1 )
+                    {
+                        _stockageS3DaemonMinio.deleteFileOnS3Serveur( pj.getUrlTicketing( ) );
+                    } else
+                    {
+                        _stockageS3DaemonNetapp.deleteFileOnS3Serveur( pj.getUrlTicketing( ) );
+                    }
+                    FileHome.remove( entry.getKey( ) );
+                    TicketPjHome.remove( pj.getId( ) );
+                }
             }
-            TicketHome.deleteCoreFile( coreFileId );
         }
     }
 
@@ -334,10 +366,11 @@ public class TicketAnonymisationDaemon extends Daemon
      * @param ticket
      *            the ticket to clean
      */
-    private List<Integer> findUsagerAttachment( Ticket ticket )
+    private Map<Integer, Integer> findAttachment( Ticket ticket, boolean usager )
     {
-        return TicketHome.getIdAttachmentCoreFileListByTicket( ticket.getId( ) );
+        return TicketPjHome.getIdFileToDeleteAndStockage( ticket.getId( ), usager );
     }
+
 
     /**
      * Delete attachemant for a usager
@@ -348,7 +381,7 @@ public class TicketAnonymisationDaemon extends Daemon
      */
     private void deleteAttachmentUsagerTicket( Ticket ticket )
     {
-        List<Integer> usagerAttachment = findUsagerAttachment( ticket );
+        Map<Integer, Integer> usagerAttachment = findAttachment( ticket, true );
 
         deleteAttachment( usagerAttachment );
     }
@@ -385,17 +418,35 @@ public class TicketAnonymisationDaemon extends Daemon
         }
         if ( !idResponseTotal.isEmpty( ) )
         {
-            List<Integer> coreIdFileAgent = findAgentAttachment( idResponseTotal );
-            coreIdFileAgent.addAll( idCoreUploadFinal );
+            Map<Integer, Integer> coreIdFileAgent = findAgentAttachment( idResponseTotal );
+            if ( !idCoreUploadFinal.isEmpty( ) )
+            {
+                Map<Integer, Integer> coreUploadAgent = findAttachmentAndStockagByIdFile( idCoreUploadFinal, false );
+                coreIdFileAgent.putAll( coreUploadAgent );
+            }
 
             deleteAttachment( coreIdFileAgent );
         }
         else
             if ( !idCoreUploadFinal.isEmpty( ) )
             {
-                deleteAttachment( idCoreUploadFinal );
+                Map<Integer, Integer> coreUploadAgent = findAttachmentAndStockagByIdFile( idCoreUploadFinal, false );
+                deleteAttachment( coreUploadAgent );
             }
+    }
 
+    private Map<Integer, Integer> findAttachmentAndStockagByIdFile( List<Integer> idCoreUploadFinal, boolean usager )
+    {
+        Map<Integer, Integer> idFileAndStockage = new HashMap<>( );
+        for ( Integer idFile : idCoreUploadFinal )
+        {
+            TicketPj pj = TicketPjHome.findByIdFile( idFile );
+            if ( !usager )
+            {
+                idFileAndStockage.put( idFile, pj.getStockageTicketing( ) );
+            }
+        }
+        return idFileAndStockage;
     }
 
     /**
@@ -585,9 +636,9 @@ public class TicketAnonymisationDaemon extends Daemon
      *
      * @return the list id_file from genatt_response
      */
-    private List<Integer> findAgentAttachment( List<Integer> idResponseList )
+    private Map<Integer, Integer> findAgentAttachment( List<Integer> idResponseList )
     {
-        return TicketHome.getCoreFileForAgent( idResponseList );
+        return TicketPjHome.getIdFileToDeleteAndStockage( idResponseList, false );
     }
 
     /**
