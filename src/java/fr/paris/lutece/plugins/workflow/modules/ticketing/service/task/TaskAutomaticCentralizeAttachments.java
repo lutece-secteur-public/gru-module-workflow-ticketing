@@ -176,11 +176,11 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
     {
         List<Integer> usagerAttachment = TicketTransfertPjService.findUsagerAttachment( ticket );
 
-        List<Integer> idUsagerPjToDelete = TicketPjHome.getIdResponsePjUsagerToDelete( ticket.getId( ) );
+        List<Integer> idUsagerResponseToDelete = TicketPjHome.getIdResponsePjUsagerToDelete( ticket.getId( ) );
 
-        if ( ( null != idUsagerPjToDelete ) && !idUsagerPjToDelete.isEmpty( ) )
+        if ( ( null != idUsagerResponseToDelete ) && !idUsagerResponseToDelete.isEmpty( ) )
         {
-            TicketPjHome.removePjUsager( idUsagerPjToDelete );
+            TicketPjHome.removePjUsager( idUsagerResponseToDelete );
         }
 
         if ( ( null != usagerAttachment ) && !usagerAttachment.isEmpty( ) )
