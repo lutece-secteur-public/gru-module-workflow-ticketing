@@ -53,7 +53,11 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPj;
+import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPjHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.service.strois.STroisService;
+import fr.paris.lutece.plugins.ticketing.service.strois.StockageService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig;
@@ -70,6 +74,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
 
 /**
@@ -100,6 +105,7 @@ public class TaskEditTicket extends AbstractTicketingTask
     private static final String UNDERSCORE = "_";
     private static final String SEPARATOR = "; ";
 
+    private static final String    SERVEUR_SIDE                                               = AppPropertiesService.getProperty( TicketingConstants.PROPERTY_STROIS_SERVEUR );
     // Services
     @Inject
     private IEditableTicketService _editableTicketService;
@@ -165,7 +171,7 @@ public class TaskEditTicket extends AbstractTicketingTask
         Ticket ticket = getTicket( nIdResourceHistory );
 
         boolean bCreate = false;
-        List<EditableTicketField> listEditableTicketFields = new ArrayList<EditableTicketField>( );
+        List<EditableTicketField> listEditableTicketFields = new ArrayList<>( );
 
         EditableTicket editableTicket = _editableTicketService.find( nIdResourceHistory, getId( ) );
 
@@ -289,6 +295,11 @@ public class TaskEditTicket extends AbstractTicketingTask
         {
             for ( Response response : ticket.getListResponse( ) )
             {
+                TicketPj pj = TicketPjHome.findIdPjFromIdResponse( response.getIdResponse( ) );
+                if ( pj.getStockageTicketing( ) != 0 )
+                {
+                    deletePj( pj );
+                }
                 ResponseHome.create( response );
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             }
@@ -328,6 +339,13 @@ public class TaskEditTicket extends AbstractTicketingTask
         }
 
         return strTaskInformation;
+    }
+
+    private void deletePj( TicketPj pj )
+    {
+        String profil = STroisService.findTheProfilAndServerS3( pj.getStockageTicketing( ), SERVEUR_SIDE );
+        StockageService stockageService = new StockageService( profil );
+        stockageService.deleteFileOnS3Serveur( pj.getUrlTicketing( ) );
     }
 
     /**
