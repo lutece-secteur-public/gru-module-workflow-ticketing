@@ -53,11 +53,17 @@ import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.contactmode.ContactModeHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPj;
+import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPjHome;
 import fr.paris.lutece.plugins.ticketing.business.usertitle.UserTitleHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.service.entrytype.EntryTypeFile;
+import fr.paris.lutece.plugins.ticketing.service.strois.STroisService;
+import fr.paris.lutece.plugins.ticketing.service.strois.StockageService;
 import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUploadHandler;
+import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.bean.BeanUtil;
 
 /**
@@ -66,27 +72,28 @@ import fr.paris.lutece.util.bean.BeanUtil;
 public class TaskModifyTicket extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_TASK_MODIFY_TICKET = "module.workflow.ticketing.task_modify_ticket.labelModifyTicket";
-    private static final String MESSAGE_MODIFY_TICKET_USER_TITLE_INFORMATION = "module.workflow.ticketing.task_modify_ticket.user_title_information";
-    private static final String MESSAGE_MODIFY_TICKET_LASTNAME_INFORMATION = "module.workflow.ticketing.task_modify_ticket.lastname_information";
-    private static final String MESSAGE_MODIFY_TICKET_FIRSTNAME_INFORMATION = "module.workflow.ticketing.task_modify_ticket.firstname_information";
-    private static final String MESSAGE_MODIFY_TICKET_EMAIL_INFORMATION = "module.workflow.ticketing.task_modify_ticket.email_information";
-    private static final String MESSAGE_MODIFY_TICKET_FIXED_PHONE_NUMBER_INFORMATION = "module.workflow.ticketing.task_modify_ticket.fixed_phone_number_information";
+    private static final String MESSAGE_TASK_MODIFY_TICKET                            = "module.workflow.ticketing.task_modify_ticket.labelModifyTicket";
+    private static final String MESSAGE_MODIFY_TICKET_USER_TITLE_INFORMATION          = "module.workflow.ticketing.task_modify_ticket.user_title_information";
+    private static final String MESSAGE_MODIFY_TICKET_LASTNAME_INFORMATION            = "module.workflow.ticketing.task_modify_ticket.lastname_information";
+    private static final String MESSAGE_MODIFY_TICKET_FIRSTNAME_INFORMATION           = "module.workflow.ticketing.task_modify_ticket.firstname_information";
+    private static final String MESSAGE_MODIFY_TICKET_EMAIL_INFORMATION               = "module.workflow.ticketing.task_modify_ticket.email_information";
+    private static final String MESSAGE_MODIFY_TICKET_FIXED_PHONE_NUMBER_INFORMATION  = "module.workflow.ticketing.task_modify_ticket.fixed_phone_number_information";
     private static final String MESSAGE_MODIFY_TICKET_MOBILE_PHONE_NUMBER_INFORMATION = "module.workflow.ticketing.task_modify_ticket.mobile_phone_number_information";
-    private static final String MESSAGE_MODIFY_TICKET_ADDRESS_INFORMATION = "module.workflow.ticketing.task_modify_ticket.address_information";
-    private static final String MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION = "module.workflow.ticketing.task_modify_ticket.address_detail_information";
-    private static final String MESSAGE_MODIFY_TICKET_CITY_INFORMATION = "module.workflow.ticketing.task_modify_ticket.postal_code_information";
-    private static final String MESSAGE_MODIFY_TICKET_POSTAL_CODE_INFORMATION = "module.workflow.ticketing.task_modify_ticket.city_information";
-    private static final String MESSAGE_MODIFY_TICKET_CONTACT_MODE_INFORMATION = "module.workflow.ticketing.task_modify_ticket.contact_mode_information";
-    private static final String MESSAGE_MODIFY_TICKET_COMMENT_INFORMATION = "module.workflow.ticketing.task_modify_ticket.comment_information";
-    private static final String MESSAGE_MODIFY_TICKET_NO_MODIFICATIONS_INFORMATION = "module.workflow.ticketing.task_modify_ticket.no_modifications_information";
-    private static final String MESSAGE_MODIFY_TICKET_ATTACHMENT = "module.workflow.ticketing.task_modify_ticket_attachment.information";
+    private static final String MESSAGE_MODIFY_TICKET_ADDRESS_INFORMATION             = "module.workflow.ticketing.task_modify_ticket.address_information";
+    private static final String MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION      = "module.workflow.ticketing.task_modify_ticket.address_detail_information";
+    private static final String MESSAGE_MODIFY_TICKET_CITY_INFORMATION                = "module.workflow.ticketing.task_modify_ticket.postal_code_information";
+    private static final String MESSAGE_MODIFY_TICKET_POSTAL_CODE_INFORMATION         = "module.workflow.ticketing.task_modify_ticket.city_information";
+    private static final String MESSAGE_MODIFY_TICKET_CONTACT_MODE_INFORMATION        = "module.workflow.ticketing.task_modify_ticket.contact_mode_information";
+    private static final String MESSAGE_MODIFY_TICKET_COMMENT_INFORMATION             = "module.workflow.ticketing.task_modify_ticket.comment_information";
+    private static final String MESSAGE_MODIFY_TICKET_NO_MODIFICATIONS_INFORMATION    = "module.workflow.ticketing.task_modify_ticket.no_modifications_information";
+    private static final String MESSAGE_MODIFY_TICKET_ATTACHMENT                      = "module.workflow.ticketing.task_modify_ticket_attachment.information";
 
     // Constant
-    private static final String NOT_FILLED_INFORMATION = "module.workflow.ticketing.task_modify_ticket.no_information";
+    private static final String NOT_FILLED_INFORMATION                                = "module.workflow.ticketing.task_modify_ticket.no_information";
+    private static final String SERVEUR_SIDE                                          = AppPropertiesService.getProperty( TicketingConstants.PROPERTY_STROIS_SERVEUR );
 
     @Inject
-    private TicketFormService _ticketFormService;
+    private TicketFormService   _ticketFormService;
 
     @Override
     public String getTitle( Locale locale )
@@ -100,30 +107,40 @@ public class TaskModifyTicket extends AbstractTicketingTask
         String strTaskInformation = StringUtils.EMPTY;
         Ticket ticket = getTicket( nIdResourceHistory );
 
+
         // save current values, clear ticket
         List<Response> listCurrentResponse = ticket.getListResponse( );
 
+
         // Gets Map of Response by idEntry
         Map<Integer, List<Response>> currentResponsesByIdEntry = listCurrentResponse.stream( )
-                .filter( r -> StringUtils.equals( r.getEntry( ).getEntryType( ).getBeanName( ), EntryTypeFile.BEAN_NAME ) )
-                .collect( Collectors.groupingBy( r -> r.getEntry( ).getIdEntry( ) ) );
+                .filter( r -> StringUtils.equals( r.getEntry( ).getEntryType( ).getBeanName( ), EntryTypeFile.BEAN_NAME ) ).collect( Collectors.groupingBy( r -> r.getEntry( ).getIdEntry( ) ) );
 
         for ( Map.Entry<Integer, List<Response>> mapEntry : currentResponsesByIdEntry.entrySet( ) )
         {
 
             Entry entry = EntryHome.findByPrimaryKey( mapEntry.getKey( ) );
             _ticketFormService.getResponseEntry( request, entry.getIdEntry( ), locale, ticket );
-            List<Response> newResponsesForEntry = ticket.getListResponse( ).stream( )
-                    .filter( r -> ( r.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) ) && ( r.getIdResponse( ) == 0 ) ).collect( Collectors.toList( ) );
+            List<Response> newResponsesForEntry = ticket.getListResponse( ).stream( ).filter( r -> ( r.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) ) && ( r.getIdResponse( ) == 0 ) )
+                    .collect( Collectors.toList( ) );
 
             // Create new responses
-            newResponsesForEntry.forEach( response -> {
+            newResponsesForEntry.forEach( response ->
+            {
                 ResponseHome.create( response );
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             } );
 
             // Delete old responses
-            mapEntry.getValue( ).forEach( response -> TicketHome.removeTicketResponse( ticket.getId( ), response.getIdResponse( ) ) );
+            mapEntry.getValue( ).forEach( response ->
+            {
+                TicketPj pj = TicketPjHome.findIdPjFromIdResponse( response.getIdResponse( ) );
+                if ( ( null != pj ) && ( pj.getStockageTicketing( ) != 0 ) )
+                {
+                    deletePj( pj );
+                }
+                TicketHome.removeTicketResponse( ticket.getId( ), response.getIdResponse( ) );
+            } );
 
             strTaskInformation += I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ATTACHMENT, locale );
         }
@@ -185,8 +202,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
             if ( ( strNewFixedPhoneNumer != null ) && !strNewFixedPhoneNumer.equals( strCurrentFixedPhoneNumber ) )
             {
                 ticket.setFixedPhoneNumber( strNewFixedPhoneNumer );
-                strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_FIXED_PHONE_NUMBER_INFORMATION, strCurrentFixedPhoneNumber,
-                        strNewFixedPhoneNumer, locale );
+                strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_FIXED_PHONE_NUMBER_INFORMATION, strCurrentFixedPhoneNumber, strNewFixedPhoneNumer, locale );
             }
 
             // Update the mobile phone number
@@ -195,8 +211,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
             if ( ( strNewMobilePhoneNumber != null ) && !strNewMobilePhoneNumber.equals( strCurrentMobilePhoneNumber ) )
             {
                 ticket.setMobilePhoneNumber( strNewMobilePhoneNumber );
-                strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_MOBILE_PHONE_NUMBER_INFORMATION, strCurrentMobilePhoneNumber,
-                        strNewMobilePhoneNumber, locale );
+                strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_MOBILE_PHONE_NUMBER_INFORMATION, strCurrentMobilePhoneNumber, strNewMobilePhoneNumber, locale );
             }
 
             // Update the Address
@@ -219,8 +234,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
                 {
                     String strCurrentAddressDetail = currentTicketAddress.getAddressDetail( );
                     currentTicketAddress.setAddressDetail( strNewAdressDetail );
-                    strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION, strCurrentAddressDetail, strNewAdressDetail,
-                            locale );
+                    strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION, strCurrentAddressDetail, strNewAdressDetail, locale );
                 }
                 // Update the city
                 if ( !currentTicketAddress.getCity( ).isEmpty( ) && !currentTicketAddress.getCity( ).equals( strNewCity ) )
@@ -237,11 +251,9 @@ public class TaskModifyTicket extends AbstractTicketingTask
                     strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_POSTAL_CODE_INFORMATION, strCurrentPostalCode, strNewPostalCode, locale );
                 }
                 ticket.setTicketAddress( currentTicketAddress );
-            }
-            else
+            } else
             {
-                if ( StringUtils.isNotBlank( strNewAdress ) || StringUtils.isNotBlank( strNewAdressDetail ) || StringUtils.isNotBlank( strNewPostalCode )
-                        || StringUtils.isNotBlank( strNewCity ) )
+                if ( StringUtils.isNotBlank( strNewAdress ) || StringUtils.isNotBlank( strNewAdressDetail ) || StringUtils.isNotBlank( strNewPostalCode ) || StringUtils.isNotBlank( strNewCity ) )
                 {
                     TicketAddress newTicketAddress = new TicketAddress( );
 
@@ -256,8 +268,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
                     newTicketAddress.setAddressDetail( strNewAdressDetail );
                     if ( StringUtils.isNotBlank( strNewAdressDetail ) )
                     {
-                        strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION, StringUtils.EMPTY, strNewAdressDetail,
-                                locale );
+                        strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION, StringUtils.EMPTY, strNewAdressDetail, locale );
                     }
 
                     // Update the city
@@ -325,8 +336,7 @@ public class TaskModifyTicket extends AbstractTicketingTask
      */
     private String formatInfoMessage( String strKey, String strOldValue, String strNewValue, Locale locale )
     {
-        return MessageFormat.format( I18nService.getLocalizedString( strKey, locale ), evaluateValue( strOldValue, locale ),
-                evaluateValue( strNewValue, locale ) );
+        return MessageFormat.format( I18nService.getLocalizedString( strKey, locale ), evaluateValue( strOldValue, locale ), evaluateValue( strNewValue, locale ) );
     }
 
     /**
@@ -340,6 +350,13 @@ public class TaskModifyTicket extends AbstractTicketingTask
     private String evaluateValue( String strValue, Locale locale )
     {
         return ( StringUtils.isBlank( strValue ) ? I18nService.getLocalizedString( NOT_FILLED_INFORMATION, locale ) : strValue );
+    }
+
+    private void deletePj( TicketPj pj )
+    {
+        String profil = STroisService.findTheProfilAndServerS3( pj.getStockageTicketing( ), SERVEUR_SIDE );
+        StockageService stockageService = new StockageService( profil );
+        stockageService.deleteFileOnS3Serveur( pj.getUrlTicketing( ) );
     }
 
 }
