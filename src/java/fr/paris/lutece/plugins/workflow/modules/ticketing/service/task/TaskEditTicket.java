@@ -296,7 +296,7 @@ public class TaskEditTicket extends AbstractTicketingTask
             for ( Response response : ticket.getListResponse( ) )
             {
                 TicketPj pj = TicketPjHome.findIdPjFromIdResponse( response.getIdResponse( ) );
-                if ( pj.getStockageTicketing( ) != 0 )
+                if ( ( null != pj ) && ( pj.getStockageTicketing( ) != 0 ) )
                 {
                     deletePj( pj );
                 }
