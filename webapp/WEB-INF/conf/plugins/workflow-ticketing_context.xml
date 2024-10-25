@@ -364,6 +364,15 @@
     <bean id="workflow-ticketing.selectChannelTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.SelectChannelTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeSelectChannel" />
+            <!-- Task Register channel Courrier -->
+    <bean id="workflow-ticketing.taskRegisterChannelCourrierPostal"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskRegisterChannelCourrierPostal"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeRegisterChannelCourrierPostal"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskRegisterChannelCourrierPostal" p:titleI18nKey="module.workflow.ticketing.task_register_channel_courrier.title"
+        p:beanName="workflow-ticketing.taskRegisterChannelCourrierPostal"
+        p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
 
     <!-- Task Index ticket -->
     <bean id="workflow-ticketing.taskIndexTicket"
