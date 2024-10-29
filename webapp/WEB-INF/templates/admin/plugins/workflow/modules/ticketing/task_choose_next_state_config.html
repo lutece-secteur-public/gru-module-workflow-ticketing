@@ -1,0 +1,18 @@
+<#assign idStateOK = -1>
+<#assign idStateKO = -1>
+<#if config?exists>
+	<#assign idStateOK = config.idStateOK>
+	<#assign idStateKO = config.idStateKO>
+</#if>
+<@row>
+	<@columns>
+		<@fieldSet legend='#i18n{module.workflow.state.task.choose.state.config.title}'>
+			<@formGroup labelFor='id_state_ok' helpKey='#i18n{module.workflow.state.task.choose.state.config.controller.state.ok}'>
+				<@select name='id_state_ok' default_value=idStateOK?string items=list_states />
+			</@formGroup>
+			<@formGroup labelFor='id_state_ko' helpKey='#i18n{module.workflow.state.task.choose.state.config.controller.state.ko}'>
+				<@select name='id_state_ko' default_value=idStateKO?string items=list_states />
+			</@formGroup>
+		</@fieldSet>
+	</@columns>
+</@row>

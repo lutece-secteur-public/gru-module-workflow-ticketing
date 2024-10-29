@@ -18,6 +18,8 @@
 	<!-- DAO -->
 	<bean id="workflow-ticketing.taskInformationDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformationDAO" />
+<bean id="workflow-ticketing.chooseNextStateTaskInformationDAO"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.ChooseNextStateTaskInformationDAO" />
 	<bean id="workflow-ticketing.taskReplyConfigDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfigDAO" />
     <bean id="workflow-ticketing.taskEditTicketConfigDAO"
@@ -44,6 +46,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCcDAO" />
     <bean id="workflow-ticketing.taskMarkAsUnreadConfigDAO"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskMarkAsUnreadConfigDAO" />
+    <bean id="workflow-ticketing.taskChooseNextStateConfigDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskChooseNextStateConfigDAO" />
 	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfigDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfigDAO" />
 	<bean id="workflow-ticketing.taskAssignTicketToUnitConfigDAO"
@@ -82,6 +86,9 @@
     <bean id="workflow-ticketing.taskMarkAsUnreadConfigService"
         class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
         p:taskConfigDAO-ref="workflow-ticketing.taskMarkAsUnreadConfigDAO" />
+    <bean id="workflow-ticketing.taskChooseNextStateConfigService"
+        class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+        p:taskConfigDAO-ref="workflow-ticketing.taskChooseNextStateConfigDAO" />
 	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfigService"
 		  class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
 		  p:taskConfigDAO-ref="workflow-ticketing.taskNotifyWaitingTicketConfigDAO" />
@@ -111,6 +118,9 @@
 		  scope="prototype" />
 	<bean id="workflow-ticketing.taskAssignTicketToUnitConfig"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskAssignTicketToUnitConfig"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskChooseNextStateConfig"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskChooseNextStateConfig"
         scope="prototype" />
 
 	<!-- Task Generate ticket reference -->
@@ -364,6 +374,21 @@
     <bean id="workflow-ticketing.selectChannelTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.SelectChannelTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeSelectChannel" />
+        
+    <!-- Task Choose Next State -->
+    <bean id="workflow-ticketing.taskChooseNextState"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskChooseNextState"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeChooseNextState"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskChooseNextState" p:titleI18nKey="module.workflow.ticketing.task_choose_next_state.title"
+        p:beanName="workflow-ticketing.taskChooseNextState"
+        p:configRequired="true" p:formTaskRequired="true" p:taskForAutomaticAction="true" />
+    <bean id="workflow-ticketing.chooseNextStateTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ChooseNextStateTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeChooseNextState"
+		p:taskConfigService-ref="workflow-ticketing.taskChooseNextStateConfigService" />
+        
             <!-- Task Register channel Courrier -->
     <bean id="workflow-ticketing.taskRegisterChannelCourrierPostal"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskRegisterChannelCourrierPostal"

@@ -139,6 +139,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
                 {
                     processAgentRecontactTask( nIdResourceHistory, ticket, request, locale, config );
                 }
+                TicketHome.update( ticket, true );
         }
     }
 

@@ -102,5 +102,11 @@
             <daemon-description>module.workflow.ticketing.daemon.migrationPjDaemon.description</daemon-description>
             <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketPjMigrationDaemon</daemon-class>
         </daemon>
+        <daemon>
+            <daemon-id>CreationBrouillonDaemon</daemon-id>
+            <daemon-name>module.workflow.ticketing.daemon.creationBrouillonDaemon.name</daemon-name>
+            <daemon-description>module.workflow.ticketing.daemon.creationBrouillonDaemon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketCreationBrouillonDaemon</daemon-class>
+        </daemon>
     </daemons>
 </plug-in>
