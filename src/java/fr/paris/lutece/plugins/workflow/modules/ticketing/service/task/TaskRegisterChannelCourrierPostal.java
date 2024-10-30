@@ -49,6 +49,7 @@ import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehisto
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory;
 import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
  * This class represents a task to register the channel on ticket creation
@@ -59,7 +60,8 @@ public class TaskRegisterChannelCourrierPostal extends AbstractTicketingTask
     // Messages
     private static final String MESSAGE_REGISTER_CHANNEL = "module.workflow.ticketing.task_register_channel.labelRegisterChannel";
 
-    private static final String       CHANNEL_COURRIER         = "Courrier scanné";
+    private static final String       PROPERTY_CHANNEL_SCAN_NAME = "ticketing.channelScan.name";
+    private String                    _strchannelScanName        = AppPropertiesService.getProperty( PROPERTY_CHANNEL_SCAN_NAME );
 
     // Services
     @Inject
@@ -76,7 +78,7 @@ public class TaskRegisterChannelCourrierPostal extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            Channel channel = ChannelHome.findByName( CHANNEL_COURRIER );
+            Channel channel = ChannelHome.findByName( _strchannelScanName );
             idChannel = channel.getId( );
 
 
