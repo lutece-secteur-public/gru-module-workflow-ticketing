@@ -47,9 +47,6 @@ import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.service.TicketInitService;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskChooseNextStateConfig;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.ChooseNextStateTaskInformation;
-import fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.ChooseNextStateTaskInformationHome;
-import fr.paris.lutece.plugins.workflow.utils.WorkflowUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.plugins.workflowcore.business.action.ActionFilter;
 import fr.paris.lutece.plugins.workflowcore.business.resource.IResourceHistoryFactory;
@@ -77,8 +74,6 @@ public class TaskChooseNextState extends AbstractTicketingTask
     private static final String      MESSAGE_MARK_TITLE                    = "module.workflow.ticketing.task_choose_next_state.labelChooseNextState";
 
     private static final String      BEAN_CHOOSE_NEXT_STATE_CONFIG_SERVICE = "workflow-ticketing.taskChooseNextStateConfigService";
-
-    private static final String      USER_AUTO                             = "auto";
 
     private static final String      PROPERTY_CHANNEL_SCAN_NAME            = "ticketing.channelScan.name";
     private String                   _strchannelScanName                   = AppPropertiesService.getProperty( PROPERTY_CHANNEL_SCAN_NAME );
@@ -184,60 +179,12 @@ public class TaskChooseNextState extends AbstractTicketingTask
 
         if ( ( state != null ) && ( action != null ) )
         {
-
-            // Create Resource History
-            ResourceHistory resourceHistory = new ResourceHistory( );
-            resourceHistory.setIdResource( nIdResource );
-            resourceHistory.setResourceType( strResourceType );
-            resourceHistory.setAction( action );
-            resourceHistory.setWorkFlow( action.getWorkflow( ) );
-            resourceHistory.setCreationDate( WorkflowUtils.getCurrentTimestamp( ) );
-            resourceHistory.setUserAccessCode( USER_AUTO );
-            _resourceHistoryService.create( resourceHistory );
-
             // Update Resource
             ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, nIdWorkflow );
             resourceWorkflow.setState( state );
             _resourceWorkflowService.update( resourceWorkflow );
-            saveTaskInformation( resourceHistory.getId( ), task, state );
 
-            // eAe the relative tasks of the state in the workflow
-            // We use AutomaticReflexiveActions because we don't want to change the state of the resource by executing actions.
             _ticketInitService.doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale, null );
-        }
-    }
-
-    protected void saveTaskInformation( int nIdResourceHistory, ITask task, State state )
-    {
-        ChooseNextStateTaskInformation taskInformation = new ChooseNextStateTaskInformation( );
-        taskInformation.setIdHistory( nIdResourceHistory );
-        taskInformation.setIdTask( task.getId( ) );
-        taskInformation.setNewState( state.getName( ) );
-
-        ChooseNextStateTaskInformationHome.create( taskInformation );
-    }
-
-    public void executeActionAutomatic( int nIdResource, String strResourceType, int nIdWorkflow, Integer nExternalParentId, User user )
-    {
-        ResourceWorkflow resourceWorkflow = _resourceWorkflowService.findByPrimaryKey( nIdResource, strResourceType, nIdWorkflow );
-
-        if ( ( resourceWorkflow != null ) && ( resourceWorkflow.getState( ) != null ) )
-        {
-            State state = resourceWorkflow.getState( );
-            state = _stateService.findByPrimaryKey( state.getId( ) );
-
-            ActionFilter actionFilter = new ActionFilter( );
-            actionFilter.setIdWorkflow( state.getWorkflow( ).getId( ) );
-            actionFilter.setIdStateBefore( state.getId( ) );
-            actionFilter.setIsAutomaticState( 1 );
-            actionFilter.setAutomaticReflexiveAction( false );
-
-            List<Action> listAction = _actionService.getListActionByFilter( actionFilter );
-
-            if ( ( listAction != null ) && !listAction.isEmpty( ) && ( listAction.get( 0 ) != null ) )
-            {
-                doProcessAction( nIdResource, strResourceType, listAction.get( 0 ).getId( ), nExternalParentId, null, null, true, null, user );
-            }
         }
     }
 
