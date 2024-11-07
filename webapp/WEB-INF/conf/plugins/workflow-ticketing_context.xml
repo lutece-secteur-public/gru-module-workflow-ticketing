@@ -18,7 +18,7 @@
 	<!-- DAO -->
 	<bean id="workflow-ticketing.taskInformationDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformationDAO" />
-<bean id="workflow-ticketing.chooseNextStateTaskInformationDAO"
+    <bean id="workflow-ticketing.chooseNextStateTaskInformationDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.ChooseNextStateTaskInformationDAO" />
 	<bean id="workflow-ticketing.taskReplyConfigDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfigDAO" />
@@ -336,6 +336,20 @@
 	<bean id="workflow-ticketing.modifyTicketCategoryTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketCategoryTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeModifyTicketCategory"
+        p:taskConfigService-ref="workflow-ticketing.taskModifyTicketCategoryConfigService" />
+        
+    <!-- Task Modify draft category -->
+	<bean id="workflow-ticketing.taskModifyDraftCategory"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyDraftCategory"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeModifyDraftCategory"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingModifyDraftCategory" p:titleI18nKey="module.workflow.ticketing.task_modify_draft_category.title"
+		p:beanName="workflow-ticketing.taskModifyDraftCategory"
+		p:taskForAutomaticAction="false" p:configBeanName="workflow-ticketing.taskModifyTicketCategoryConfig" p:configRequired="true"/>
+	<bean id="workflow-ticketing.modifyDraftCategoryTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyDraftCategoryTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeModifyDraftCategory"
         p:taskConfigService-ref="workflow-ticketing.taskModifyTicketCategoryConfigService" />
 		
 	<!-- Task Reply assign up ticket -->    
