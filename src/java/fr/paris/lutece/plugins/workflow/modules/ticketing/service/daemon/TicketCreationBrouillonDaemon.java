@@ -41,12 +41,17 @@ import java.util.StringJoiner;
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
+import fr.paris.lutece.plugins.ticketing.business.channel.Channel;
+import fr.paris.lutece.plugins.ticketing.business.channel.ChannelHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
+import fr.paris.lutece.plugins.ticketing.service.TicketInitService;
 import fr.paris.lutece.plugins.ticketing.web.workflow.WorkflowCapableJspBean;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
 /**
@@ -57,6 +62,9 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
     // Services
     private static WorkflowService     _workflowService;
+
+    private static final String    PROPERTY_CHANNEL_SCAN_NAME = "ticketing.channelScan.name";
+    private String                 _strchannelScanName        = AppPropertiesService.getProperty( PROPERTY_CHANNEL_SCAN_NAME );
 
     /**
      * Constructor
@@ -104,6 +112,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
          *
          * }
          */
+        TicketInitService ticketInitService = SpringContextService.getBean( TicketInitService.BEAN_NAME );
 
         Ticket ticket = new Ticket( );
         TicketCategory category = TicketCategoryHome.findByPrimaryKey( 20 );
@@ -117,13 +126,15 @@ public class TicketCreationBrouillonDaemon extends Daemon
         ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
         ticket.setDateCreate( new Timestamp( new Date( ).getTime( ) ) );
         ticket.setIdContactMode( 2 );
+        Channel channel = ChannelHome.findByName( _strchannelScanName );
+        ticket.setChannel( channel );
 
         TicketHome.create( ticket );
 
         User user = AdminUserHome.findByPrimaryKey( 5 );
         Locale local = I18nService.getDefaultLocale( );
 
-        WorkflowCapableJspBean.doProcessNextWorkflowActionInit( ticket, local, user );
+        ticketInitService.doProcessNextWorkflowActionInit( ticket, null, local, user );
 
         // Immediate indexation of the Ticket
         WorkflowCapableJspBean.immediateTicketIndexing( ticket.getId( ) );
