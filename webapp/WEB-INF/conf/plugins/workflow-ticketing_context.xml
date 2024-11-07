@@ -553,6 +553,18 @@
 	<bean id="workflow-ticketing.modifyTicketTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeModifyTicket" />
+		
+	<!-- Task Modify draft -->
+	<bean id="workflow-ticketing.taskModifyDraft"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyDraft"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeModifyDraft"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskModifyDraft" p:titleI18nKey="module.workflow.ticketing.task_modify_draft.title"
+		p:beanName="workflow-ticketing.taskModifyDraft" p:formTaskRequired="true" />
+	<bean id="workflow-ticketing.modifyDraftTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyDraftTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeModifyDraft" />
 
 	<!-- Task Notify waiting ticket -->
 	<bean id="workflow-ticketing.taskNotifyWaitingTicket"

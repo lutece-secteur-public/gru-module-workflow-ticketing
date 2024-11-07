@@ -1,0 +1,67 @@
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_user_title">#i18n{ticketing.modify_ticket.labelUserTitle} :</label>
+	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+		<@select name='id_user_title' items=user_titles_list default_value='${ticket.idUserTitle!\'\'}' class='input-lg' />
+	</div>
+</div>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelLastname}' mandatory=true>
+   <@input type='text' name='lastname' value='${ticket.lastname!\'\'}' class='input-lg' />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelFirstname}' mandatory=true>
+   <@input type='text' name='firstname' value='${ticket.firstname!\'\'}' class='input-lg'/>
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelEmail}' mandatory=false>
+   <@input type='text' name='email' value='${ticket.email!\'\'}' class='input-lg'/>
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelFixedPhoneNumber}' mandatory=false>
+   <@input type='text' name='fixed_phone_number' value='${ticket.fixedPhoneNumber!\'\'}' class='input-lg' maxlength=10 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelMobilePhoneNumber}' mandatory=false>
+   <@input type='text' name='mobile_phone_number' value='${ticket.mobilePhoneNumber!\'\'}'class='input-lg'  maxlength=10 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' mandatory=false>
+   <@input type='text' name='address' value='${(ticket.ticketAddress.address)!\'\'}' class='input-lg' maxlength=76 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddressDetail}' mandatory=false>
+   <@input type='text' name='address_detail' value='${(ticket.ticketAddress.addressDetail)!\'\'}' class='input-lg' maxlength=76 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelPostalCode}' mandatory=false>
+   <@input type='text' name='postal_code' value='${(ticket.ticketAddress.postalCode)!\'\'}' class='input-lg' maxlength=5 />
+</@formGroup>
+
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelCity}' mandatory=false>
+   <@input type='text' name='city' value='${(ticket.ticketAddress.city)!\'\'}' class='input-lg' maxlength=76 />
+</@formGroup>
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_contact_mode">#i18n{ticketing.modify_ticket.labelContactMode} :</label>
+	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+		<@select name='id_contact_mode' items=contact_modes_list default_value='${ticket.idContactMode!\'\'}' class='input-lg' />
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="ticket_comment">#i18n{ticketing.modify_ticket.labelTicketComment} :</label>
+	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+		<textarea type="text" name="ticket_comment" id="ticket_comment" class="ticketing form-control" maxlength="5000">${ticket.ticketComment!''}</textarea>
+		<span class="help-block">#i18n{ticketing.create_ticket.labelTicketComment.help}</span>
+	</div>
+</div>
+
+<#if read_only_reponses_html_list?has_content>
+  <hr>
+  <#list read_only_reponses_html_list as html_response>
+    <#if html_response?has_content>
+      ${html_response}
+    </#if>
+  </#list>
+</#if>
