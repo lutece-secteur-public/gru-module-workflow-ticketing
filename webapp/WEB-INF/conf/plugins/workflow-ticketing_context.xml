@@ -514,6 +514,17 @@
 		p:beanName="workflow-ticketing.taskSphinx"
 		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
 		
+			<!-- Task Delete Draft -->
+	<bean id="workflow-ticketing.taskDeleteDraft"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskDeleteDraft"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeDeleteDraft"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskDeleteDraft" p:titleI18nKey="module.workflow.ticketing.task_delete_draft_title"
+		p:beanName="workflow-ticketing.taskDeleteDraft"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+		
+
 	<!-- Task Mark as unread -->
     <bean id="workflow-ticketing.taskMarkAsUnread"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskMarkAsUnread"
