@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.StringJoiner;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.channel.Channel;
@@ -64,6 +65,9 @@ public class TicketCreationBrouillonDaemon extends Daemon
     private static WorkflowService     _workflowService;
 
     private static final String    PROPERTY_CHANNEL_SCAN_NAME = "ticketing.channelScan.name";
+    private static final String    PROPERTY_ID_ADMIN_USER_FOR_DRAFT_DAEMON = "ticketing.draft.daemon.admin.user.id";
+    private static final String    MENTION_A_PRECISER         = "A préciser";
+
     private String                 _strchannelScanName        = AppPropertiesService.getProperty( PROPERTY_CHANNEL_SCAN_NAME );
 
     /**
@@ -116,13 +120,18 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
         Ticket ticket = new Ticket( );
         TicketCategory category = TicketCategoryHome.findByPrimaryKey( 20 );
+        TicketAddress address = new TicketAddress( );
+        address.setAddress( MENTION_A_PRECISER );
+        address.setPostalCode( "00" );
+        address.setCity( MENTION_A_PRECISER );
         ticket.setTicketCategory(category);
         ticket.setIdUserTitle( 0 );
         ticket.setUserTitle( "" );
-        ticket.setFirstname( "" );
-        ticket.setLastname( "" );
+        ticket.setFirstname( MENTION_A_PRECISER );
+        ticket.setLastname( MENTION_A_PRECISER );
         ticket.setEmail( "" );
         ticket.setTicketComment( "" );
+        ticket.setTicketAddress( address );
         ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
         ticket.setDateCreate( new Timestamp( new Date( ).getTime( ) ) );
         ticket.setIdContactMode( 2 );
@@ -131,7 +140,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
         TicketHome.create( ticket );
 
-        User user = AdminUserHome.findByPrimaryKey( 5 );
+        User user = AdminUserHome.findByPrimaryKey( Integer.parseInt( PROPERTY_ID_ADMIN_USER_FOR_DRAFT_DAEMON ) );
         Locale local = I18nService.getDefaultLocale( );
 
         ticketInitService.doProcessNextWorkflowActionInit( ticket, null, local, user );
