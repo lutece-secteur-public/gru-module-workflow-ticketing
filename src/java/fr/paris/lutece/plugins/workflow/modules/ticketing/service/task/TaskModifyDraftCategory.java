@@ -70,7 +70,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class TaskModifyDraftCategory extends AbstractTicketingTask
 {
     // Messages
-    private static final String MESSAGE_MODIFY_TICKET_CATEGORY              = "module.workflow.ticketing.task_modify_ticket_category.task_modify_draft_category.labelModifyDraftCategory";
+    private static final String MESSAGE_MODIFY_DRAFT_CATEGORY               = "module.workflow.ticketing.task_modify_draft_category.labelModifyDraftCategory";
     private static final String MESSAGE_MODIFY_TICKET_CATEGORY_INFORMATION = "module.workflow.ticketing.task_modify_ticket_category.information";
     private static final String MESSAGE_MODIFY_TICKET_ATTRIBUTE_INFORMATION = "module.workflow.ticketing.task_modify_ticket_attribute.information";
     private static final String MESSAGE_NO_VALUE = "module.workflow.ticketing.task_modify_ticket_category.noValue";
@@ -241,6 +241,6 @@ public class TaskModifyDraftCategory extends AbstractTicketingTask
     @Override
     public String getTitle( Locale locale )
     {
-        return I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_CATEGORY, locale );
+        return I18nService.getLocalizedString( MESSAGE_MODIFY_DRAFT_CATEGORY, locale );
     }
 }
