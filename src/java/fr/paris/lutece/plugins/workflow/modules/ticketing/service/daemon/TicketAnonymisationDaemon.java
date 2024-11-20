@@ -282,16 +282,17 @@ public class TicketAnonymisationDaemon extends Daemon
         {
             for ( Entry<Integer, Integer> entry : coreFileAndIdStockage.entrySet( ) )
             {
+                TicketPj pj = TicketPjHome.findByIdFile( entry.getKey( ) );
                 // Stockage sur BDD
                 if ( entry.getValue( ) == 0 )
                 {
                     int idPhysicalFile = TicketFileHome.findIdPhysicalFile( entry.getKey( ) );
                     TicketPjHome.removePhysicalFile( idPhysicalFile );
+                    TicketPjHome.remove( pj.getId( ) );
                     FileHome.remove( entry.getKey( ) );
                 }
                 else
                 {
-                    TicketPj pj = TicketPjHome.findByIdFile( entry.getKey( ) );
                     if ( pj.getStockageTicketing( ) == 1 )
                     {
                         _stockageS3DaemonMinio.deleteFileOnS3Serveur( pj.getUrlTicketing( ) );

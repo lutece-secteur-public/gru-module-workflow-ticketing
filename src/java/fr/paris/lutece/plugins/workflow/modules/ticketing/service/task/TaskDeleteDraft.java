@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
@@ -48,29 +47,19 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class TaskDeleteDraft extends AbstractTicketingTask
 {
+
     // Messages
-    private static final String MESSAGE_INDEX_TICKET = "module.workflow.ticketing.task_delete_draft.labelDeleteDraft";
+    private static final String   MESSAGE_DELETE_DRAFT_TICKET            = "module.workflow.ticketing.task_delete_draft.labelDeleteDraft";
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
     {
-        String strTaskInformation = StringUtils.EMPTY;
-
-        // We get the ticket to modify
-        Ticket ticket = getTicket( nIdResourceHistory );
-
-        if ( null != ticket )
-        {
-
-        }
-
-
-        return strTaskInformation;
+        return StringUtils.EMPTY;
     }
 
     @Override
     public String getTitle( Locale locale )
     {
-        return I18nService.getLocalizedString( MESSAGE_INDEX_TICKET, locale );
+        return I18nService.getLocalizedString( MESSAGE_DELETE_DRAFT_TICKET, locale );
     }
 }
