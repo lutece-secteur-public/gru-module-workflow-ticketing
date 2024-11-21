@@ -73,6 +73,12 @@ public class TaskGenerateTicketReference extends AbstractTicketingTask
             synchronized( _ticketReferenceService )
             {
                 strReference = _ticketReferenceService.generateReference( ticket );
+                int nbBoucle = 0;
+                while ( ( nbBoucle < 10 ) && ( strReference.isEmpty( ) || !TicketHome.isTicketReferenceIsUnique( strReference ) ) )
+                {
+                    strReference = _ticketReferenceService.generateReference( ticket );
+                    nbBoucle++;
+                }
                 ticket.setReference( strReference );
                 TicketHome.update( ticket );
             }
