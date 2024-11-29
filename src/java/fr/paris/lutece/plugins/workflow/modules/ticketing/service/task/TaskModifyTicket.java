@@ -81,8 +81,8 @@ public class TaskModifyTicket extends AbstractTicketingTask
     private static final String MESSAGE_MODIFY_TICKET_MOBILE_PHONE_NUMBER_INFORMATION = "module.workflow.ticketing.task_modify_ticket.mobile_phone_number_information";
     private static final String MESSAGE_MODIFY_TICKET_ADDRESS_INFORMATION             = "module.workflow.ticketing.task_modify_ticket.address_information";
     private static final String MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION      = "module.workflow.ticketing.task_modify_ticket.address_detail_information";
-    private static final String MESSAGE_MODIFY_TICKET_CITY_INFORMATION                = "module.workflow.ticketing.task_modify_ticket.postal_code_information";
-    private static final String MESSAGE_MODIFY_TICKET_POSTAL_CODE_INFORMATION         = "module.workflow.ticketing.task_modify_ticket.city_information";
+    private static final String MESSAGE_MODIFY_TICKET_CITY_INFORMATION                = "module.workflow.ticketing.task_modify_ticket.city_information";
+    private static final String MESSAGE_MODIFY_TICKET_POSTAL_CODE_INFORMATION         = "module.workflow.ticketing.task_modify_ticket.postal_code_information";
     private static final String MESSAGE_MODIFY_TICKET_CONTACT_MODE_INFORMATION        = "module.workflow.ticketing.task_modify_ticket.contact_mode_information";
     private static final String MESSAGE_MODIFY_TICKET_COMMENT_INFORMATION             = "module.workflow.ticketing.task_modify_ticket.comment_information";
     private static final String MESSAGE_MODIFY_TICKET_NO_MODIFICATIONS_INFORMATION    = "module.workflow.ticketing.task_modify_ticket.no_modifications_information";

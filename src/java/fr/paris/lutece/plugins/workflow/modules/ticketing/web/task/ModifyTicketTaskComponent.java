@@ -63,6 +63,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.utils.MVCMessage;
 import fr.paris.lutece.util.ErrorMessage;
 import fr.paris.lutece.util.bean.BeanUtil;
@@ -78,6 +79,8 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
 {
     // Constants
     private static final String JSP_VIEW_TICKET = TicketingConstants.ADMIN_CONTROLLLER_PATH + TicketingConstants.JSP_VIEW_TICKET;
+    private static final String URL_STOREADR                     = "ticketing.storeadr.url";
+    private static final String URL_CAPGEO                       = "ticketing.capgeo.url";
 
     // Templates
     private static final String TEMPLATE_TASK_MODIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket.html";
@@ -87,6 +90,8 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
     private static final String MARK_CONTACT_MODE_LIST = "contact_modes_list";
     private static final String MARK_HANDLER = "upload_handler";
     private static final String MARK_ENTRY_ATTACHED_FILE = "entry_attached_files";
+    private static final String MARK_STOREADR_URL                = "storeAdrUrl";
+    private static final String MARK_CAPGEO_URL                  = "capgeoUrl";
 
     // Messages
     private static final String MESSAGE_MODIFY_TICKET_ERROR = "module.workflow.ticketing.task_modify_ticket.error";
@@ -121,6 +126,8 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
         model.put( MARK_ENTRY_ATTACHED_FILE, htmlForm );
         model.put( MARK_USER_TITLE_LIST, UserTitleHome.getReferenceList( request.getLocale( ) ) );
         model.put( MARK_CONTACT_MODE_LIST, ContactModeHome.getReferenceList( request.getLocale( ) ) );
+        model.put( MARK_STOREADR_URL, AppPropertiesService.getProperty( URL_STOREADR ) );
+        model.put( MARK_CAPGEO_URL, AppPropertiesService.getProperty( URL_CAPGEO ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_FORM, locale, model );
 
