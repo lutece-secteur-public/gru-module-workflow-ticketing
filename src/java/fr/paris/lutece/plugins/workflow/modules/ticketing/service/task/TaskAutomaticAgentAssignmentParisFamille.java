@@ -108,7 +108,7 @@ public class TaskAutomaticAgentAssignmentParisFamille extends AbstractTicketingT
 
         if ( assigneeUnit != null )
         {
-            if ( ( ticket.getAssigneeUnit( ).getUnitId( ) != assigneeUnit.getUnitId( ) ) && ( request != null ) )
+            if ( ( null != ticket.getAssigneeUnit( ) ) && ( ticket.getAssigneeUnit( ).getUnitId( ) != assigneeUnit.getUnitId( ) ) && ( request != null ) )
             {
                 request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
             }
