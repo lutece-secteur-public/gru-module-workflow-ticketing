@@ -54,6 +54,7 @@ import fr.paris.lutece.plugins.ticketing.business.arrondissement.ArrondissementH
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.contactmode.ContactModeHome;
 import fr.paris.lutece.plugins.ticketing.business.quartier.Quartier;
+import fr.paris.lutece.plugins.ticketing.business.quartier.QuartierHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPj;
@@ -68,6 +69,7 @@ import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.bean.BeanUtil;
 
@@ -98,6 +100,9 @@ public class TaskModifyDraft extends AbstractTicketingTask
     // Constant
     private static final String NOT_FILLED_INFORMATION                                = "module.workflow.ticketing.task_modify_ticket.no_information";
     private static final String SERVEUR_SIDE                                          = AppPropertiesService.getProperty( TicketingConstants.PROPERTY_STROIS_SERVEUR );
+
+    // Errors
+    private static final String ERROR_RESOURCE_NOT_FOUND                              = "Resource not found";
 
     @Inject
     private TicketFormService   _ticketFormService;
@@ -231,7 +236,8 @@ public class TaskModifyDraft extends AbstractTicketingTask
             String strNewAdressDetail = ticketAdressToValidate.getAddressDetail( );
             String strNewPostalCode = ticketAdressToValidate.getPostalCode( );
             String strNewCity = ticketAdressToValidate.getCity( );
-            Quartier newQuartier = ticketAdressToValidate.getQuartier( );
+            int idQuartier = Integer.parseInt( request.getParameter( "id_quartier" ) );
+            Quartier newQuartier = QuartierHome.findByPrimaryKey( idQuartier ).orElseThrow( ( ) -> new AppException( ERROR_RESOURCE_NOT_FOUND ) );
             TicketAddress currentTicketAddress = ticket.getTicketAddress( );
 
             if ( currentTicketAddress != null )
@@ -266,8 +272,7 @@ public class TaskModifyDraft extends AbstractTicketingTask
                     strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_POSTAL_CODE_INFORMATION, strCurrentPostalCode, strNewPostalCode, locale );
                 }
                 // Update the quartier
-                if ( ( null != currentTicketAddress.getQuartier( ) ) && ( currentTicketAddress.getQuartier( ).getId( ) != 0 )
-                        && ( currentTicketAddress.getQuartier( ).getId( ) != newQuartier.getId( ) ) )
+                if ( ( null != newQuartier ) && ( newQuartier.getId( ) != 0 ) )
                 {
                     String strCurrentQuartier = currentTicketAddress.getQuartier( ).getLabel( );
                     currentTicketAddress.setQuartier( newQuartier );

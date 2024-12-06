@@ -51,7 +51,7 @@
 </@formGroup>
 
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.quartier}' labelFor='id_quartier' mandatory=false>
-  <@input type='text' name='id_quartier' id='id_quartier' value='${(ticket.ticketAddress.id_quartier)!\'\'}' class='input-lg' />
+	<@select name='id_quartier' items=quartier_list default_value='${ticket.ticketAddress.id_quartier!\'\'}' disabled=true params=' id=\"id_quartier\" class=\"form-control input-lg\" '/>
 </@formGroup>
 
 <div class="form-group">
@@ -83,4 +83,7 @@
 			$('#id_adrposte').val("");
 		}
 	} );
+	$("#next_button").on('click', function() {
+    	$('#id_quartier').prop('disabled', false);
+    });
 </script>

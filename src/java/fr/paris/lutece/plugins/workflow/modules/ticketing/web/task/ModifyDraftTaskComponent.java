@@ -144,7 +144,7 @@ public class ModifyDraftTaskComponent extends TicketingTaskComponent
         model.put( MARK_STOREADR_URL, AppPropertiesService.getProperty( URL_STOREADR ) );
         model.put( MARK_CAPGEO_URL, AppPropertiesService.getProperty( URL_CAPGEO ) );
         model.put( MARK_ARRONDISSEMENTS_LIST, ArrondissementHome.getReferenceList( ) );
-        model.put( MARK_QUARTIER_LIST, QuartierHome.getQuartiersList( ) );
+        model.put( MARK_QUARTIER_LIST, QuartierHome.getQuartiersReferenceList( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_FORM, locale, model );
 
