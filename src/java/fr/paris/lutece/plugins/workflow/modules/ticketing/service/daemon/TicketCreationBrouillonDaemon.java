@@ -33,22 +33,33 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.channel.Channel;
 import fr.paris.lutece.plugins.ticketing.business.channel.ChannelHome;
 import fr.paris.lutece.plugins.ticketing.business.profilstrois.Profilstrois;
+import fr.paris.lutece.plugins.ticketing.business.quartier.Quartier;
+import fr.paris.lutece.plugins.ticketing.business.quartier.QuartierHome;
 import fr.paris.lutece.plugins.ticketing.business.referentielscanner.ReferentielScanner;
 import fr.paris.lutece.plugins.ticketing.business.referentielscanner.ReferentielScannerHome;
 import fr.paris.lutece.plugins.ticketing.business.search.IndexerActionHome;
@@ -57,20 +68,33 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPj;
 import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPjHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketInitService;
+import fr.paris.lutece.plugins.ticketing.service.TicketTransfertPjService;
 import fr.paris.lutece.plugins.ticketing.service.strois.StockageService;
+import fr.paris.lutece.plugins.ticketing.service.util.FileUtils;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.workflow.WorkflowCapableJspBean;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
+import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.sql.TransactionManager;
+import io.minio.Result;
+import io.minio.errors.ErrorResponseException;
+import io.minio.errors.InsufficientDataException;
+import io.minio.errors.InternalException;
+import io.minio.errors.InvalidResponseException;
+import io.minio.errors.MinioException;
+import io.minio.errors.ServerException;
+import io.minio.errors.XmlParserException;
+import io.minio.messages.Item;
 
 /**
  * Daemon used to Pj Migration Tickets
@@ -97,6 +121,9 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
     private String                 _strchannelScanName        = AppPropertiesService.getProperty( PROPERTY_CHANNEL_SCAN_NAME );
     private String                 _strAdminUserId                         = AppPropertiesService.getProperty( PROPERTY_ID_ADMIN_USER_FOR_DRAFT_DAEMON );
+
+    // Errors
+    private static final String    ERROR_RESOURCE_NOT_FOUND                = "Resource not found";
 
     /**
      * Constructor
@@ -132,54 +159,38 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
         List<ReferentielScanner> referentielScannerList = ReferentielScannerHome.getReferentielScannersList( );
 
-        List<ReferentielScanner> referentielScannerForTypeRoot = referentielScannerList.stream( ).filter( r -> r.getTypeScanner( ) == 0 ).collect( Collectors.toList( ) );
-
-        List<ReferentielScanner> referentielScannerForTypeFolder = referentielScannerList.stream( ).filter( r -> r.getTypeScanner( ) == 1 ).collect( Collectors.toList( ) );
-
-        for ( ReferentielScanner referentielScannerRoot : referentielScannerForTypeRoot )
+        Iterable<Result<Item>> contenuList = _stockageS3ScannerDaemonMinio.findAllFileOrFolder( _stockageS3ScannerDaemonMinio );
+        Iterator<Result<Item>> iteration = contenuList.iterator( );
+        while ( iteration.hasNext( ) )
         {
-            // TODO
+            Item i;
+            try
+            {
+                i = iteration.next( ).get( );
+                for ( ReferentielScanner referentielScanner : referentielScannerList )
+                {
+                    Iterable<Result<Item>> filesForDossierS3List = null;
+                    String iFolderRoot = i.objectName( ).split( "/" )[0];
+                    // Appel récupération des fichiers du dossierS3 avec prefix du dossier
+                    if ( iFolderRoot.equals( referentielScanner.getDossierStrois( ) ) )
+                    {
+                        filesForDossierS3List = _stockageS3ScannerDaemonMinio.findAllFileInPrefix( _stockageS3ScannerDaemonMinio, referentielScanner.getDossierStrois( ) );
+                    }
+
+                    }
+                }
+
+                //
+
+                System.out.println( "Object : " + i.objectName( ) );
+            } catch ( InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException | InternalException | InvalidResponseException | NoSuchAlgorithmException
+                    | ServerException | XmlParserException | IOException e )
+            {
+                e.printStackTrace( );
+            }
+
         }
 
-        for ( ReferentielScanner referentielScannerFolder : referentielScannerForTypeFolder )
-        {
-            // TODO
-        }
-
-
-        TicketInitService ticketInitService = SpringContextService.getBean( TicketInitService.BEAN_NAME );
-
-        Ticket ticket = new Ticket( );
-        TicketCategory category = TicketCategoryHome.findByPrimaryKey( 20 );
-        TicketAddress address = new TicketAddress( );
-        address.setAddress( MENTION_A_PRECISER );
-        address.setPostalCode( "00" );
-        address.setCity( MENTION_A_PRECISER );
-        ticket.setTicketCategory(category);
-        ticket.setIdUserTitle( 0 );
-        ticket.setUserTitle( "" );
-        ticket.setFirstname( MENTION_A_PRECISER );
-        ticket.setLastname( MENTION_A_PRECISER );
-        ticket.setEmail( "" );
-        ticket.setTicketComment( "" );
-        ticket.setTicketAddress( address );
-        ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
-        ticket.setDateCreate( new Timestamp( new Date( ).getTime( ) ) );
-        ticket.setIdContactMode( 2 );
-        Channel channel = ChannelHome.findByName( _strchannelScanName );
-        ticket.setChannel( channel );
-
-        TicketHome.create( ticket );
-
-        User user = AdminUserHome.findByPrimaryKey( Integer.parseInt( _strAdminUserId ) );
-        Locale local = I18nService.getDefaultLocale( );
-
-        ticketInitService.doProcessNextWorkflowActionInit( ticket, null, local, user );
-
-        // Immediate indexation of the Ticket
-        WorkflowCapableJspBean.immediateTicketIndexing( ticket.getId( ) );
-
-        sb.add( "Brouillon créé id : " + ticket.getId( ) );
 
     }
 
@@ -232,6 +243,9 @@ public class TicketCreationBrouillonDaemon extends Daemon
      *
      * @param ticket
      *            the ticket to clean
+     * @param usager
+     *            boolean true if the attachement is from usager
+     *
      */
     private Map<Integer, Integer> findDraftAttachment( Ticket ticket, boolean usager )
     {
@@ -242,8 +256,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
      * Delete attachemant for a ticket core_file and core_physical_fle
      *
      * @param ticket
-     *            the ticket to anonymize
-     * @param sb
+     *            the ticket to delete
      */
     private void deleteDraftAttachment( Map<Integer, Integer> coreFileAndIdStockage )
     {
@@ -266,8 +279,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
      * Delete Draft attachement
      *
      * @param ticket
-     *            the ticket to anonymize
-     * @param sb
+     *            the ticket to delete
      */
     private void deleteDraftAttachmentTicket( Ticket ticket )
     {
@@ -275,4 +287,113 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
         deleteDraftAttachment( usagerAttachment );
     }
+
+    /**
+     * Create Draft attachement
+     *
+     * @param sb
+     */
+    private Ticket createDraftDefault( StringJoiner sb, int idCategory )
+    {
+        Ticket ticket = new Ticket( );
+
+        try
+        {
+            TransactionManager.beginTransaction( _plugin );
+
+            TicketInitService ticketInitService = SpringContextService.getBean( TicketInitService.BEAN_NAME );
+
+            TicketCategory category = TicketCategoryHome.findByPrimaryKey( idCategory );
+            TicketAddress address = new TicketAddress( );
+            Optional<Quartier> optQuartier = QuartierHome.findByPrimaryKey( 1 );
+            Quartier quartier = optQuartier.orElseThrow( ( ) -> new AppException( ERROR_RESOURCE_NOT_FOUND ) );
+            address.setAddress( MENTION_A_PRECISER );
+            address.setPostalCode( "00" );
+            address.setCity( MENTION_A_PRECISER );
+            address.setQuartier( quartier );
+            ticket.setTicketCategory( category );
+            ticket.setIdUserTitle( 0 );
+            ticket.setUserTitle( "" );
+            ticket.setFirstname( MENTION_A_PRECISER );
+            ticket.setLastname( MENTION_A_PRECISER );
+            ticket.setEmail( "" );
+            ticket.setTicketComment( "" );
+            ticket.setTicketAddress( address );
+            ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
+            ticket.setDateCreate( new Timestamp( new Date( ).getTime( ) ) );
+            ticket.setIdContactMode( 2 );
+            Channel channel = ChannelHome.findByName( _strchannelScanName );
+            ticket.setChannel( channel );
+
+            TicketHome.create( ticket );
+
+            User user = AdminUserHome.findByPrimaryKey( Integer.parseInt( _strAdminUserId ) );
+            Locale local = I18nService.getDefaultLocale( );
+
+            ticketInitService.doProcessNextWorkflowActionInit( ticket, null, local, user );
+
+            // Immediate indexation of the Ticket
+            WorkflowCapableJspBean.immediateTicketIndexing( ticket.getId( ) );
+
+            sb.add( "Brouillon créé id : " + ticket.getId( ) );
+
+            TransactionManager.commitTransaction( _plugin );
+
+        } catch ( Exception e )
+        {
+            TransactionManager.rollBack( _plugin );
+            e.printStackTrace( );
+        }
+        return ticket;
+    }
+
+    /**
+     * Insert pj in ticketing_ticket_pj with id file list from scanner and get the id
+     *
+     * @param idFileList
+     *            the id file list
+     * @param ticket
+     *            the ticket
+     * @param isUsagerPj
+     *            true if the pj is from usager otherwise false
+     * @return the id pj
+     */
+    private int insertTicketPjScanner( List<Integer> idFileList, Ticket ticket, boolean isUsagerPj )
+    {
+        int idPj = 0;
+        if ( ( null != idFileList ) && !idFileList.isEmpty( ) )
+        {
+            for ( Integer idFile : idFileList )
+            {
+                TicketPj pj = new TicketPj( );
+                pj.setIdTicket( ticket.getId( ) );
+                pj.setIdFile( idFile );
+                pj.setUrlTicketing( "" );
+                pj.setStockageTicketing( -1 );
+                pj.setUsager( isUsagerPj );
+                idPj = TicketPjHome.createPjAndGetId( pj );
+            }
+        }
+        return idPj;
+    }
+
+    /**
+     * Update the name of file in core_file
+     *
+     * @param idFileList
+     *            the id file list
+     * @param ticket
+     *            the ticket
+     */
+    private String createTechnicalFileName( int idFile, int idTicket )
+    {
+        String newNameForS3 = "";
+        File file = FileHome.findByPrimaryKey( idFile );
+        if ( null != file )
+        {
+            newNameForS3 = TicketTransfertPjService.nomDepotFichierUsager( idTicket, file.getTitle( ) );
+        }
+        return newNameForS3;
+    }
+
 }
