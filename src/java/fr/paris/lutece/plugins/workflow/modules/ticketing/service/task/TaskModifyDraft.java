@@ -69,7 +69,6 @@ import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.bean.BeanUtil;
 
@@ -237,7 +236,7 @@ public class TaskModifyDraft extends AbstractTicketingTask
             String strNewPostalCode = ticketAdressToValidate.getPostalCode( );
             String strNewCity = ticketAdressToValidate.getCity( );
             int idQuartier = Integer.parseInt( request.getParameter( "id_quartier" ) );
-            Quartier newQuartier = QuartierHome.findByPrimaryKey( idQuartier ).orElseThrow( ( ) -> new AppException( ERROR_RESOURCE_NOT_FOUND ) );
+            Quartier newQuartier = QuartierHome.getQuartierByCode( String.valueOf( idQuartier ) );
             TicketAddress currentTicketAddress = ticket.getTicketAddress( );
 
             if ( currentTicketAddress != null )
