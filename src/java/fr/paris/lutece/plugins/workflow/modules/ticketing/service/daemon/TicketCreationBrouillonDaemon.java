@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -57,6 +58,8 @@ import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryHome;
 import fr.paris.lutece.plugins.ticketing.business.channel.Channel;
 import fr.paris.lutece.plugins.ticketing.business.channel.ChannelHome;
+import fr.paris.lutece.plugins.ticketing.business.erreurscannerstrois.ErreurScannerStrois;
+import fr.paris.lutece.plugins.ticketing.business.erreurscannerstrois.ErreurScannerStroisHome;
 import fr.paris.lutece.plugins.ticketing.business.profilstrois.Profilstrois;
 import fr.paris.lutece.plugins.ticketing.business.quartier.Quartier;
 import fr.paris.lutece.plugins.ticketing.business.quartier.QuartierHome;
@@ -71,6 +74,7 @@ import fr.paris.lutece.plugins.ticketing.service.TicketInitService;
 import fr.paris.lutece.plugins.ticketing.service.TicketTransfertPjService;
 import fr.paris.lutece.plugins.ticketing.service.strois.StockageService;
 import fr.paris.lutece.plugins.ticketing.service.util.FileUtils;
+import fr.paris.lutece.plugins.ticketing.service.util.PluginConfigurationService;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.workflow.WorkflowCapableJspBean;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
@@ -121,6 +125,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
     private String                 _strchannelScanName        = AppPropertiesService.getProperty( PROPERTY_CHANNEL_SCAN_NAME );
     private String                 _strAdminUserId                         = AppPropertiesService.getProperty( PROPERTY_ID_ADMIN_USER_FOR_DRAFT_DAEMON );
+    private static final int       MAX_FILES_BY_DOSSIERS3                  = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_MAX_FILES_BY_DOSSIERS3_FOR_DRAFT_CREATION, 10 );
 
     // Errors
     private static final String    ERROR_RESOURCE_NOT_FOUND                = "Resource not found";
@@ -161,6 +166,12 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
         Iterable<Result<Item>> contenuList = _stockageS3ScannerDaemonMinio.findAllFileOrFolder( _stockageS3ScannerDaemonMinio );
         Iterator<Result<Item>> iteration = contenuList.iterator( );
+        List<ErreurScannerStrois> erreurList = ErreurScannerStroisHome.getErreurScannerStroisList( );
+        List<String> erreurPathsList = erreurList.stream( ).map( e -> e.getPath( ) ).collect( Collectors.toList( ) );
+
+        List<String> erreurPathsInsertion = erreurList.stream( ).filter( e -> e.getPbInsertion( ) ).map( e -> e.getPath( ) ).collect( Collectors.toList( ) );
+        List<String> erreurPathsSuppression = erreurList.stream( ).filter( e -> !e.getPbInsertion( ) ).map( e -> e.getPath( ) ).collect( Collectors.toList( ) );
+
         while ( iteration.hasNext( ) )
         {
             Item i;
@@ -176,6 +187,129 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     {
                         filesForDossierS3List = _stockageS3ScannerDaemonMinio.findAllFileInPrefix( _stockageS3ScannerDaemonMinio, referentielScanner.getDossierStrois( ) );
                     }
+                    if ( null != filesForDossierS3List )
+                    {
+                        int n = 1;
+                        String filepath = "";
+                        for ( Result<Item> result : filesForDossierS3List )
+                        {
+                            List<Integer> idFileList = new ArrayList<>( );
+                            if ( n < MAX_FILES_BY_DOSSIERS3 )
+                            {
+                                boolean insertionSuccess = false;
+                                boolean suppressionSuccess = false;
+
+                                int idCoreFile = 0;
+                                boolean fileAllowed = false;
+                                try
+                                {
+                                    TransactionManager.beginTransaction( _plugin );
+
+                                    filepath = result.get( ).objectName( );
+                                    ZonedDateTime zoneDateModified = result.get( ).lastModified( );
+                                    Date dateModified = java.util.Date.from( zoneDateModified.toInstant( ) );
+                                    java.sql.Timestamp timestampDate = new java.sql.Timestamp( dateModified.getTime( ) );
+                                    String fileName = StringUtils.substringAfterLast( filepath, "/" );
+                                    String extension = StringUtils.substringAfterLast( fileName, "." );
+
+                                    boolean isAnOldErreurPath = erreurPathsList.contains( filepath );
+
+                                    if ( !isAnOldErreurPath )
+                                    {
+                                        if ( extension.equals( "exe" ) )
+                                        {
+                                            addScannerS3Erreur( filepath, true );
+                                        } else
+                                        {
+                                            idCoreFile = TicketPjHome.insertPjFromScannerAndGetIdCoreFile( fileName, timestampDate );
+                                            idFileList.add( idCoreFile );
+                                            fileAllowed = true;
+                                        }
+                                    }
+                                } catch ( MinioException e )
+                                {
+                                    TransactionManager.rollBack( _plugin );
+                                    sb.add( "rollback core" );
+                                    e.printStackTrace( );
+                                    idFileList.remove( Integer.valueOf( idCoreFile ) );
+                                    addScannerS3Erreur( filepath, true );
+                                }
+                                TransactionManager.commitTransaction( _plugin );
+
+                                if ( fileAllowed )
+                                {
+                                    Ticket ticket = createDraftDefault( sb, referentielScanner.getIdCategory( ) );
+
+                                    if ( ( null != ticket ) )
+                                    {
+                                        int idResponseCreated = 0;
+                                        try
+                                        {
+                                            TransactionManager.beginTransaction( _plugin );
+
+                                            int idTicketPj = insertTicketPjScanner( idFileList, ticket, true );
+
+                                            byte[] file = _stockageS3ScannerDaemonMinio.loadFileFromS3Serveur( filepath );
+                                            String technicalName = createTechnicalFileName( idFileList.get( 0 ), ticket.getId( ) );
+
+                                            String fileSolenS3Path = _stockageS3DaemonMinio.saveFileToS3Server( file,
+                                                    FileUtils.cheminDepotFichierUsager( TicketingConstants.CODE_APPLI ) + technicalName );
+
+                                            insertionSuccess = _stockageS3DaemonMinio.isObjectExistWithStockageService( _stockageS3DaemonMinio, fileSolenS3Path );
+
+                                            if ( !insertionSuccess )
+                                            {
+                                                addScannerS3Erreur( filepath, true );
+                                                sb.add( "ajout table erreur suppression" );
+                                            } else
+                                            {
+                                                idResponseCreated = TicketPjHome.insertResponseAndGetIdCoreFile( idCoreFile );
+
+                                                TicketHome.insertTicketResponse( ticket.getId( ), idResponseCreated );
+
+                                                if ( idTicketPj != 0 )
+                                                {
+                                                    TicketPj pj = TicketPjHome.findByPrimaryKey( idTicketPj );
+                                                    pj.setTechnicalName( technicalName );
+                                                    pj.setUrlTicketing( fileSolenS3Path );
+                                                    pj.setStockageTicketing( 1 );
+                                                    pj.setIdResponse( idResponseCreated );
+                                                    TicketPjHome.update( pj );
+                                                }
+                                            }
+                                        } catch ( Exception e )
+                                        {
+                                            TransactionManager.rollBack( _plugin );
+                                            sb.add( "rollback file" );
+                                            e.printStackTrace( );
+                                            TicketHome.deleteCoreFile( idFileList );
+                                            ResponseHome.remove( idResponseCreated );
+                                            addScannerS3Erreur( filepath, true );
+                                        }
+                                        TransactionManager.commitTransaction( _plugin );
+
+                                        try
+                                        {
+                                            TransactionManager.beginTransaction( _plugin );
+                                            suppressionSuccess = _stockageS3ScannerDaemonMinio.deleteFileOnS3Serveur( filepath );
+                                            if ( !suppressionSuccess )
+                                            {
+                                                addScannerS3Erreur( filepath, false );
+                                                sb.add( "ajout table erreur suppression" );
+                                            }
+                                        } catch ( Exception e )
+                                        {
+                                            TransactionManager.rollBack( _plugin );
+                                            sb.add( "rollback supp" );
+                                            e.printStackTrace( );
+                                        }
+                                        TransactionManager.commitTransaction( _plugin );
+                                    }
+                                }
+
+                            }
+                            n++;
+                        }
 
                     }
                 }
@@ -195,7 +329,6 @@ public class TicketCreationBrouillonDaemon extends Daemon
     }
 
     // Purge ticket ou brouillon au statut supprimé
-
     private void purgeDeletedTicketOrDraft( StringJoiner sb )
     {
         // commencer par récupérer les tickets au status supprimé
@@ -394,6 +527,44 @@ public class TicketCreationBrouillonDaemon extends Daemon
             newNameForS3 = TicketTransfertPjService.nomDepotFichierUsager( idTicket, file.getTitle( ) );
         }
         return newNameForS3;
+    }
+
+    // Gestion des erreurs
+
+    /**
+     * Insert a record in table ticketing_erreur_scanner_strois
+     *
+     * @param filepath
+     *            the
+     * @param isInsertion
+     *            true if it is an insertion error
+     */
+    private void addScannerS3Erreur( String filepath, boolean isInsertion )
+    {
+        boolean suppressionOk = false;
+        if ( !isInsertion )
+        {
+            suppressionOk = _stockageS3ScannerDaemonMinio.deleteFileOnS3Serveur( filepath );
+            if ( suppressionOk )
+            {
+                ErreurScannerStroisHome.removeByFilePath( filepath );
+            }
+        }
+        List<ErreurScannerStrois> erreursTotalesList = ErreurScannerStroisHome.getErreurScannerStroisList( );
+        List<String> erreursTotalesPathsList = erreursTotalesList.stream( ).map( e -> e.getPath( ) ).collect( Collectors.toList( ) );
+
+        if ( !erreursTotalesPathsList.contains( filepath ) )
+        {
+            ErreurScannerStrois erreurSuppression = new ErreurScannerStrois( );
+            erreurSuppression.setPath( filepath );
+            erreurSuppression.setFileName( StringUtils.substringAfterLast( filepath, "/" ) );
+            erreurSuppression.setDateErreur( new Timestamp( new java.util.Date( ).getTime( ) ) );
+            erreurSuppression.setPbInsertion( isInsertion );
+            ErreurScannerStroisHome.create( erreurSuppression );
+
+            // TODO Ajout notification agent
+        }
+
     }
 
 }
