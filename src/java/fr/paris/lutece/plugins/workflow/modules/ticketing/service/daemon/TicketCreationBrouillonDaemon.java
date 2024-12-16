@@ -113,6 +113,12 @@ public class TicketCreationBrouillonDaemon extends Daemon
     private static final String    PROPERTY_ID_ADMIN_USER_FOR_DRAFT_DAEMON = "ticketing.draft.daemon.admin.user.id";
     private static final String    MENTION_A_PRECISER         = "A préciser";
 
+    private static final String    DAEMON_INSERTION_ERROR_MAIL_SUBJECT     = "module.workflow.ticketing.daemon.creationBrouillonDaemon.error.mail.insertion.subject";
+    private static final String    DAEMON_INSERTION_ERROR_MAIL_BODY        = "module.workflow.ticketing.daemon.creationBrouillonDaemon.error.mail.insertion.body";
+    private static final String    DAEMON_SUPPRESSION_ERROR_MAIL_SUBJECT   = "module.workflow.ticketing.daemon.creationBrouillonDaemon.error.mail.suppression.subject";
+    private static final String    DAEMON_SUPPRESSION_ERROR_MAIL_BODY      = "module.workflow.ticketing.daemon.creationBrouillonDaemon.error.mail.suppression.body";
+
+
     private static Plugin          _plugin                                 = WorkflowTicketingPlugin.getPlugin( );
 
     private final StockageService  _stockageS3DaemonMinio                  = new StockageService( Profilstrois.PROFIL_MINIO_DAEMON_NAME );
@@ -129,6 +135,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
     // Errors
     private static final String    ERROR_RESOURCE_NOT_FOUND                = "Resource not found";
+    private static Locale          local                                   = I18nService.getDefaultLocale( );
 
     /**
      * Constructor
@@ -252,14 +259,20 @@ public class TicketCreationBrouillonDaemon extends Daemon
                                             byte[] file = _stockageS3ScannerDaemonMinio.loadFileFromS3Serveur( filepath );
                                             String technicalName = createTechnicalFileName( idFileList.get( 0 ), ticket.getId( ) );
 
+                                            String destination = FileUtils.cheminDepotFichierUsager( TicketingConstants.CODE_APPLI );
+
                                             String fileSolenS3Path = _stockageS3DaemonMinio.saveFileToS3Server( file,
-                                                    FileUtils.cheminDepotFichierUsager( TicketingConstants.CODE_APPLI ) + technicalName );
+                                                    destination + technicalName );
 
                                             insertionSuccess = _stockageS3DaemonMinio.isObjectExistWithStockageService( _stockageS3DaemonMinio, fileSolenS3Path );
 
                                             if ( !insertionSuccess )
                                             {
+                                                TicketHome.deleteCoreFile( idFileList );
+                                                ResponseHome.remove( idResponseCreated );
+                                                TicketHome.remove( ticket.getId( ) );
                                                 addScannerS3Erreur( filepath, true );
+                                                sendMail( filepath, _stockageS3ScannerDaemonMinio, destination, _stockageS3DaemonMinio, true );
                                                 sb.add( "ajout table erreur suppression" );
                                             } else
                                             {
@@ -284,6 +297,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
                                             e.printStackTrace( );
                                             TicketHome.deleteCoreFile( idFileList );
                                             ResponseHome.remove( idResponseCreated );
+                                            TicketHome.remove( ticket.getId( ) );
                                             addScannerS3Erreur( filepath, true );
                                         }
                                         TransactionManager.commitTransaction( _plugin );
@@ -314,8 +328,6 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     }
                 }
 
-                //
-
                 System.out.println( "Object : " + i.objectName( ) );
             } catch ( InvalidKeyException | ErrorResponseException | IllegalArgumentException | InsufficientDataException | InternalException | InvalidResponseException | NoSuchAlgorithmException
                     | ServerException | XmlParserException | IOException e )
@@ -326,6 +338,17 @@ public class TicketCreationBrouillonDaemon extends Daemon
         }
 
 
+    }
+
+    private void sendMail( String filepath, StockageService _stockageS3ScannerDaemonMinio, String destination, StockageService _stockageS3DaemonMinio, boolean isInsertionProblem )
+    {
+        String message = "";
+        String subject = "";
+        /*
+         * if ( isInsertionProblem ) { subject = MessageFormat.format( I18nService.getLocalizedString( DAEMON_INSERTION_ERROR_MAIL_SUBJECT, Locale.FRENCH ), AppPropertiesService.getProperty( "lutece.prod.url" ) ); message = MessageFormat.format( I18nService.getLocalizedString( DAEMON_INSERTION_ERROR_MAIL_BODY, Locale.FRENCH ), AppPropertiesService.getProperty( "strois.url.minio.scanner" ), AppPropertiesService.getProperty( "strois.url.minio.scanner" ), AppPropertiesService.getProperty( "strois.url.minio" ), destination ); } else { subject = I18nService.getLocalizedString( DAEMON_SUPPRESSION_ERROR_MAIL_SUBJECT, local ); message = MessageFormat.format( I18nService.getLocalizedString( DAEMON_SUPPRESSION_ERROR_MAIL_BODY, Locale.FRENCH ), AppPropertiesService.getProperty( "strois.url.minio.scanner" ), filepath ); }
+         */
+
+        // MailService.sendMailHtml( to, atname, atemail, subject, message );
     }
 
     // Purge ticket ou brouillon au statut supprimé
@@ -461,7 +484,6 @@ public class TicketCreationBrouillonDaemon extends Daemon
             TicketHome.create( ticket );
 
             User user = AdminUserHome.findByPrimaryKey( Integer.parseInt( _strAdminUserId ) );
-            Locale local = I18nService.getDefaultLocale( );
 
             ticketInitService.doProcessNextWorkflowActionInit( ticket, null, local, user );
 
