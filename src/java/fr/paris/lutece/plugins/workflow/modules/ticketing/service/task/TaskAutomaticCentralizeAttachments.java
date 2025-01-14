@@ -330,8 +330,6 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
             for ( Integer idFile : idFileList )
             {
                 TicketPj pj = new TicketPj( );
-                pj.setIdTicket( ticket.getId( ) );
-                pj.setIdFile( idFile );
                 for ( Response response : ticket.getListResponse( ) )
                 {
                     if ( ( null != response.getFile( ) ) && ( response.getFile( ).getIdFile( ) == idFile ) )
@@ -340,10 +338,15 @@ public class TaskAutomaticCentralizeAttachments extends AbstractTicketingTask
                         break;
                     }
                 }
-                pj.setUrlTicketing( "" );
-                pj.setStockageTicketing( 0 );
-                pj.setUsager( isUsagerPj );
-                TicketPjHome.create( pj );
+                if ( !TicketPjHome.isCoupleIdFileIdResponseExistInTicketPj( pj.getIdResponse( ), idFile ) )
+                {
+                    pj.setIdTicket( ticket.getId( ) );
+                    pj.setIdFile( idFile );
+                    pj.setUrlTicketing( "" );
+                    pj.setStockageTicketing( 0 );
+                    pj.setUsager( isUsagerPj );
+                    TicketPjHome.create( pj );
+                }
             }
         }
     }
