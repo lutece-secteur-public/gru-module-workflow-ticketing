@@ -31,7 +31,7 @@
 
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' labelFor='address' mandatory=true>
 <@adressInputWithComplement name='address' id='address' codePostalId='postal_code' communeId='city' complement='address_detail' value=adresseConnue fullAdress=false mandatory=false 
-            url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' arr='id_arrondissement' capgeo=capgeoUrl />
+            url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' capgeo=capgeoUrl />
 </@formGroup>
 
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddressDetail}' labelFor='address_detail' mandatory=false>
@@ -46,7 +46,7 @@
    <@input type='text' name='city' id='city' value='${(ticket.ticketAddress.city)!\'\'}' class='input-lg' maxlength=76 />
 </@formGroup>
 
-<@formGroup labelKey='#i18n{ticketing.modify_ticket.arrondissement}' labelFor='id_arrondissement' mandatory=true>
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.arrondissement}' labelFor='id_arrondissement' mandatory=false>
 <@select name='id_arrondissement' items=arrondissements_list default_value='${ticket.idArrondissement!\'\'}' params=' id=\"id_arrondissement\" class=\"form-control input-lg\" '/>
 </@formGroup>
 

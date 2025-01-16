@@ -47,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
+import fr.paris.lutece.plugins.ticketing.business.arrondissement.ArrondissementHome;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.contactmode.ContactModeHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -81,6 +82,7 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
     private static final String JSP_VIEW_TICKET = TicketingConstants.ADMIN_CONTROLLLER_PATH + TicketingConstants.JSP_VIEW_TICKET;
     private static final String URL_STOREADR                     = "ticketing.storeadr.url";
     private static final String URL_CAPGEO                       = "ticketing.capgeo.url";
+    private static final String MARK_ARRONDISSEMENTS_LIST        = "arrondissements_list";
 
     // Templates
     private static final String TEMPLATE_TASK_MODIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket.html";
@@ -128,6 +130,7 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
         model.put( MARK_CONTACT_MODE_LIST, ContactModeHome.getReferenceList( request.getLocale( ) ) );
         model.put( MARK_STOREADR_URL, AppPropertiesService.getProperty( URL_STOREADR ) );
         model.put( MARK_CAPGEO_URL, AppPropertiesService.getProperty( URL_CAPGEO ) );
+        model.put( MARK_ARRONDISSEMENTS_LIST, ArrondissementHome.getReferenceList( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_FORM, locale, model );
 

@@ -49,6 +49,8 @@ import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
+import fr.paris.lutece.plugins.ticketing.business.arrondissement.Arrondissement;
+import fr.paris.lutece.plugins.ticketing.business.arrondissement.ArrondissementHome;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
 import fr.paris.lutece.plugins.ticketing.business.contactmode.ContactModeHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -87,10 +89,12 @@ public class TaskModifyTicket extends AbstractTicketingTask
     private static final String MESSAGE_MODIFY_TICKET_COMMENT_INFORMATION             = "module.workflow.ticketing.task_modify_ticket.comment_information";
     private static final String MESSAGE_MODIFY_TICKET_NO_MODIFICATIONS_INFORMATION    = "module.workflow.ticketing.task_modify_ticket.no_modifications_information";
     private static final String MESSAGE_MODIFY_TICKET_ATTACHMENT                      = "module.workflow.ticketing.task_modify_ticket_attachment.information";
+    private static final String MESSAGE_MODIFY_TICKET_ARRONDISSEMNT_INFORMATION       = "module.workflow.ticketing.task_modify_ticket.arrondissement_information";
 
     // Constant
     private static final String NOT_FILLED_INFORMATION                                = "module.workflow.ticketing.task_modify_ticket.no_information";
     private static final String SERVEUR_SIDE                                          = AppPropertiesService.getProperty( TicketingConstants.PROPERTY_STROIS_SERVEUR );
+
 
     @Inject
     private TicketFormService   _ticketFormService;
@@ -151,6 +155,11 @@ public class TaskModifyTicket extends AbstractTicketingTask
         Ticket ticketWithNewData = new Ticket( );
         ticketWithNewData.setTicketCategory( new TicketCategory( ) ); // -- to not generate validation error on this field
         BeanUtil.populate( ticketWithNewData, request );
+
+        int idArrondissement = Integer.parseInt( request.getParameter( "id_arrondissement" ) );
+        Arrondissement arr = ArrondissementHome.findByPrimaryKey( idArrondissement );
+
+        ticketWithNewData.setArrondissement( arr );
 
         // Update the ticket adress
         TicketAddress ticketAdressToValidate = new TicketAddress( );
@@ -288,6 +297,16 @@ public class TaskModifyTicket extends AbstractTicketingTask
 
                     ticket.setTicketAddress( newTicketAddress );
                 }
+            }
+
+            // Update the arrondissement
+            Arrondissement newArrondissement = ticketWithNewData.getArrondissement( );
+            Arrondissement currentArrondissement = ticket.getArrondissement( );
+            if ( ( newArrondissement != null ) && ( newArrondissement.getId( ) != currentArrondissement.getId( ) ) )
+            {
+                ticket.setArrondissement( newArrondissement );
+                String strNewArrondissement = newArrondissement.getId( ) < 5 ? "Paris Centre" : String.valueOf( newArrondissement.getId( ) );
+                strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ARRONDISSEMNT_INFORMATION, String.valueOf( currentArrondissement.getId( ) ), strNewArrondissement, locale );
             }
 
             // Update the contact mode
