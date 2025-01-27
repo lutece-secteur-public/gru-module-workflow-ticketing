@@ -113,12 +113,12 @@ public class TicketCreationBrouillonDaemon extends Daemon
     private static final String    DAEMON_SUPPRESSION_ERROR_MAIL_SUBJECT   = "module.workflow.ticketing.daemon.creationBrouillonDaemon.error.mail.suppression.subject";
     private static final String    DAEMON_SUPPRESSION_ERROR_MAIL_BODY      = "module.workflow.ticketing.daemon.creationBrouillonDaemon.error.mail.suppression.body";
     private static final String    DAEMON_ALERT_MAIL_ERROR_RECIPIENT       = PluginConfigurationService.getString( PluginConfigurationService.PROPERTY_ALERT_MAIL_ERROR_RECIPIENT,
-            "alexandre.close@ymail.com" );
+            "DSTISTINBSUNparticipationcitoyenne@paris.fr" );
 
     private static Plugin          _plugin                                 = WorkflowTicketingPlugin.getPlugin( );
 
     private final StockageService  _stockageS3DaemonMinio                  = new StockageService( Profilstrois.PROFIL_MINIO_DAEMON_NAME );
-    private final StockageService  _stockageS3ScannerDaemonMinio           = new StockageService( Profilstrois.PROFIL_MINIO_COURRIER_SCANNER_DAEMON_NAME );
+    private final StockageService    _stockageS3ScannerDaemonMinio           = new StockageService( Profilstrois.PROFIL_NETAPP_COURRIER_SCANNER_DAEMON_NAME );
 
     /**
      * Statut "Supprimé"
@@ -473,8 +473,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
         if ( isInsertionProblem )
         {
-            subject = MessageFormat.format( I18nService.getLocalizedString( DAEMON_INSERTION_ERROR_MAIL_SUBJECT, Locale.FRENCH ), AppPropertiesService.getProperty( "lutece.prod.url" ) );
-            message = MessageFormat.format( I18nService.getLocalizedString( DAEMON_INSERTION_ERROR_MAIL_BODY, Locale.FRENCH ), AppPropertiesService.getProperty( "strois.url.minio.scanner" ),
+            subject = MessageFormat.format( I18nService.getLocalizedString( DAEMON_INSERTION_ERROR_MAIL_SUBJECT, Locale.FRENCH ), AppPropertiesService.getProperty( "lutece.env.name" ) );
+            message = MessageFormat.format( I18nService.getLocalizedString( DAEMON_INSERTION_ERROR_MAIL_BODY, Locale.FRENCH ), AppPropertiesService.getProperty( "strois.url.netapp.scanner" ),
                     filepath, AppPropertiesService.getProperty( "strois.url.minio" ), destination );
             if(isFileOvreSize)
             {
@@ -482,8 +482,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
             }
         } else
         {
-            subject = MessageFormat.format( I18nService.getLocalizedString( DAEMON_SUPPRESSION_ERROR_MAIL_SUBJECT, _local ), AppPropertiesService.getProperty( "lutece.prod.url" ) );
-            message = MessageFormat.format( I18nService.getLocalizedString( DAEMON_SUPPRESSION_ERROR_MAIL_BODY, Locale.FRENCH ), AppPropertiesService.getProperty( "strois.url.minio.scanner" ),
+            subject = MessageFormat.format( I18nService.getLocalizedString( DAEMON_SUPPRESSION_ERROR_MAIL_SUBJECT, _local ), AppPropertiesService.getProperty( "lutece.env.name" ) );
+            message = MessageFormat.format( I18nService.getLocalizedString( DAEMON_SUPPRESSION_ERROR_MAIL_BODY, Locale.FRENCH ), AppPropertiesService.getProperty( "strois.url.netapp.scanner" ),
                     filepath );
         }
         String fromSenderName = "CreationBrouillonDaemon";
