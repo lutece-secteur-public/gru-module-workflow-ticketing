@@ -446,10 +446,10 @@ public class TicketCreationBrouillonDaemon extends Daemon
             TransactionManager.rollBack( _plugin );
             sb.add( "rollback file" );
             e.printStackTrace( );
-            // TicketHome.deleteCoreFile( idFileList );
-            // ResponseHome.remove( idResponseCreated );
+            TicketHome.deleteCoreFile( idFileList );
+            ResponseHome.remove( idResponseCreated );
             TicketHome.remove( ticket.getId( ) );
-            // idFileList.remove( Integer.valueOf( idCoreFile ) );
+            idFileList.remove( Integer.valueOf( idCoreFile ) );
             addScannerS3Erreur( filepath, destination, true, sb, false );
         }
         TransactionManager.commitTransaction( _plugin );
@@ -609,9 +609,10 @@ public class TicketCreationBrouillonDaemon extends Daemon
             ticket.setChannel( channel );
 
             TicketHome.create( ticket );
+            sb.add( "ticket créé :" + ticket.getId( ) );
 
             User user = AdminUserHome.findByPrimaryKey( Integer.parseInt( _strAdminUserId ) );
-
+            sb.add( "user : " + user.getFirstName( ) + " " + user.getLastName( ) );
             ticketInitService.doProcessNextWorkflowActionInit( ticket, null, _local, user );
 
             // Immediate indexation of the Ticket
