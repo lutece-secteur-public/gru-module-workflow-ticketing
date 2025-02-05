@@ -136,7 +136,7 @@ public class TaskChooseNextState extends AbstractTicketingTask
         TaskChooseNextStateConfig config = _taskConfigService.findByPrimaryKey( this.getId( ) );
 
         // LOG TEST
-        AppLogService.error( ( ( "config is null : " + config ) == null ) );
+        AppLogService.error( ( ( ( "config is null : " + config ) == null ) ) );
         if ( task != null )
         {
             try
