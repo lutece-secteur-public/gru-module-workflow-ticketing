@@ -123,26 +123,31 @@ public class TaskChooseNextState extends AbstractTicketingTask
 
         State state = _stateService.getInitialState( 301 );
         // LOG TEST
-        AppLogService.error( "id_state_initial : ", +state.getId( ) );
+        AppLogService.error( "id_state_initial : " + state.getId( ) );
 
         ResourceWorkflow resource = new ResourceWorkflow( );
         resource.setIdResource( ticket.getId( ) );
         resource.setResourceType( "ticket" );
         resource.setWorkFlow( workflowService.findByPrimaryKey( state.getWorkflow( ).getId( ) ) );
         resource.setState( state );
+        // LOG TEST
+        AppLogService.error( "quel id ? : " + this.getId( ) );
 
         TaskChooseNextStateConfig config = _taskConfigService.findByPrimaryKey( this.getId( ) );
+
+        // LOG TEST
+        AppLogService.error( ( ( "config is null : " + config ) == null ) );
         if ( task != null )
         {
             try
             {
-                chooseNewState( resource.getIdResource( ), resource.getResourceType( ), task, config, 301, resource.getState( ).getId( ), ticket );
                 // LOG TEST
                 AppLogService.error( "id_ticket : ", +resource.getIdResource( ) );
                 AppLogService.error( "id_state ticket : ", +resource.getState( ).getId( ) );
                 AppLogService.error( "task_id : ", +task.getId( ) );
                 AppLogService.error( "ko idtate : ", +config.getIdStateKO( ) );
                 AppLogService.error( "ok idtate : ", +config.getIdStateOK( ) );
+                chooseNewState( resource.getIdResource( ), resource.getResourceType( ), task, config, 301, resource.getState( ).getId( ), ticket );
             } catch ( Exception e )
             {
                 AppLogService.error( "Unexpected Error", e );
