@@ -118,7 +118,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
     private static Plugin          _plugin                                 = WorkflowTicketingPlugin.getPlugin( );
 
     private final StockageService  _stockageS3DaemonMinio                  = new StockageService( Profilstrois.PROFIL_MINIO_DAEMON_NAME );
-    private final StockageService    _stockageS3ScannerDaemonMinio           = new StockageService( Profilstrois.PROFIL_NETAPP_COURRIER_SCANNER_DAEMON_NAME );
+    private final StockageService    _stockageS3ScannerDaemonNetapp          = new StockageService( Profilstrois.PROFIL_NETAPP_COURRIER_SCANNER_DAEMON_NAME );
 
     /**
      * Statut "Supprimé"
@@ -199,7 +199,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
     {
         for ( ErreurScannerStrois erreur : erreurInsertion )
         {
-            if ( _stockageS3ScannerDaemonMinio.isObjectExistWithStockageService( _stockageS3ScannerDaemonMinio, erreur.getPath( ) ) )
+            if ( _stockageS3ScannerDaemonNetapp.isObjectExistWithStockageService( _stockageS3ScannerDaemonNetapp, erreur.getPath( ) ) )
             {
                 if ( !erreur.isOverSize( ) )
                 {
@@ -243,7 +243,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
             int idTicketPj = insertTicketPjScanner( idFileList, ticket, true );
 
-            byte[] file = _stockageS3ScannerDaemonMinio.loadFileFromS3Serveur( filepath );
+            byte[] file = _stockageS3ScannerDaemonNetapp.loadFileFromS3Serveur( filepath );
             String technicalName = createTechnicalFileName( idFileList.get( 0 ), ticket.getId( ) );
             String fileSolenS3Path = _stockageS3DaemonMinio.saveFileToS3Server( file, destination + technicalName );
 
@@ -274,7 +274,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
                 }
                 sb.add( "seconde chance : insertion ok - " + erreur.getPath( ) );
                 // suppression S3 courrier postal / scanner
-                removeFromS3scanner( filepath, _stockageS3ScannerDaemonMinio, destination, sb );
+                removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, destination, sb );
                 ErreurScannerStroisHome.removeByFilePath( erreur.getPath( ) );
                 sb.add( "supp s3 courrier car ok now - " + erreur.getPath( ) );
             }
@@ -310,7 +310,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
             Iterable<Result<Item>> filesForDossierS3List = null;
 
             // Appel récupération des fichiers du dossierS3 avec prefix du dossier du scanner
-            filesForDossierS3List = _stockageS3ScannerDaemonMinio.findAllFileInPrefix( _stockageS3ScannerDaemonMinio, scanner.getDossierStrois( ) );
+            filesForDossierS3List = _stockageS3ScannerDaemonNetapp.findAllFileInPrefix( _stockageS3ScannerDaemonNetapp, scanner.getDossierStrois( ) );
 
             sb.add( "dossier :" + scanner.getDossierStrois( ) );
 
@@ -332,13 +332,15 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
     private int createBrouillonFromPJScanner( int n, Result<Item> result, ReferentielScanner scanner, StringJoiner sb )
     {
-        int interation = n;
+        int iteration = n;
         String filepath = "";
         try
         {
             TransactionManager.beginTransaction( _plugin );
+            sb.add( " n : " + iteration );
 
             filepath = result.get( ).objectName( );
+            sb.add( "chemin : "+ filepath );
             long sizeFile = result.get( ).size( );
             String fileName = StringUtils.substringAfterLast( filepath, "/" );
             String extension = StringUtils.substringAfterLast( fileName, "." );
@@ -350,7 +352,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
             {
                 if ( extension.equals( "exe" ) )
                 {
-                    removeFromS3scanner( filepath, _stockageS3ScannerDaemonMinio, _destination, sb );
+                    removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, _destination, sb );
                     sb.add( "suppression fichier avec extension non autorisée : " + filepath );
                 } else if ( sizeFile > 10000000 )
                 {
@@ -362,7 +364,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
                 }
             } else
             {
-                interation--;
+                iteration--;
             }
         } catch ( MinioException | IllegalArgumentException | NoSuchAlgorithmException | IOException | InvalidKeyException e )
         {
@@ -372,8 +374,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
             addScannerS3Erreur( filepath, _destination, true, sb, false );
         }
         TransactionManager.commitTransaction( _plugin );
-        interation++;
-        return interation;
+        iteration++;
+        return iteration;
     }
 
     private void createDraft( ReferentielScanner scanner, String filepath, String destination, Result<Item> result, StringJoiner sb )
@@ -402,7 +404,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
                 int idTicketPj = insertTicketPjScanner( idFileList, ticket, true );
 
-                byte[] file = _stockageS3ScannerDaemonMinio.loadFileFromS3Serveur( filepath );
+                byte[] file = _stockageS3ScannerDaemonNetapp.loadFileFromS3Serveur( filepath );
                 String technicalName = createTechnicalFileName( idFileList.get( 0 ), ticket.getId( ) );
                 String fileSolenS3Path = _stockageS3DaemonMinio.saveFileToS3Server( file, destination + technicalName );
 
@@ -432,7 +434,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
                         TicketPjHome.update( pj );
                     }
                     // suppression S3 courrier postal / scanner
-                    removeFromS3scanner( filepath, _stockageS3ScannerDaemonMinio, destination, sb );
+                    removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, destination, sb );
                 }
             }
             else
@@ -719,7 +721,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
     {
         for ( ErreurScannerStrois erreur : erreurPathsSuppression )
         {
-            boolean suppressionOk = _stockageS3ScannerDaemonMinio.deleteFileOnS3Serveur( erreur.getPath( ) );
+            boolean suppressionOk = _stockageS3ScannerDaemonNetapp.deleteFileOnS3Serveur( erreur.getPath( ) );
             if ( suppressionOk )
             {
                 ErreurScannerStroisHome.removeByFilePath( erreur.getPath( ) );
