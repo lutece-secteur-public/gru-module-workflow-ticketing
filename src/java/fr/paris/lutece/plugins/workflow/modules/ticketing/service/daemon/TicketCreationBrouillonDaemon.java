@@ -345,27 +345,35 @@ public class TicketCreationBrouillonDaemon extends Daemon
             String fileName = StringUtils.substringAfterLast( filepath, "/" );
             String extension = StringUtils.substringAfterLast( fileName, "." );
 
-            // recherche d'erreurs anciennes
-            boolean isAnOldErreurPath = _erreurPathsList.contains( filepath );
-
-            if ( !isAnOldErreurPath )
+            // pas de nom de fichier cas de test winscp uniquement
+            if ( !fileName.isEmpty( ) )
             {
-                if ( extension.equals( "exe" ) )
+                // recherche d'erreurs anciennes
+                boolean isAnOldErreurPath = _erreurPathsList.contains( filepath );
+
+                if ( !isAnOldErreurPath )
                 {
-                    removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, _destination, sb );
-                    sb.add( "suppression fichier avec extension non autorisée : " + filepath );
-                } else if ( sizeFile > 10000000 )
-                {
-                    addScannerS3Erreur( filepath, _destination, true, sb, true );
+                    if ( extension.equals( "exe" ) )
+                    {
+                        removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, _destination, sb );
+                        sb.add( "suppression fichier avec extension non autorisée : " + filepath );
+                    } else if ( sizeFile > 10000000 )
+                    {
+                        addScannerS3Erreur( filepath, _destination, true, sb, true );
+                    } else
+                    {
+                        // insertion minio SOLEN
+                        createDraft( scanner, filepath, _destination, result, sb );
+                    }
                 } else
                 {
-                    // insertion minio SOLEN
-                    createDraft( scanner, filepath, _destination, result, sb );
+                    iteration--;
                 }
             } else
             {
                 iteration--;
             }
+
         } catch ( MinioException | IllegalArgumentException | NoSuchAlgorithmException | IOException | InvalidKeyException e )
         {
             TransactionManager.rollBack( _plugin );
