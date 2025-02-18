@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2024, City of Paris
+ * Copyright (c) 2002-2025, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -125,6 +125,7 @@ public class TaskChooseNextState extends AbstractTicketingTask
         // LOG TEST
         AppLogService.error( "id_state_initial : " + state.getId( ) );
 
+
         ResourceWorkflow resource = new ResourceWorkflow( );
         resource.setIdResource( ticket.getId( ) );
         resource.setResourceType( "ticket" );
@@ -148,6 +149,12 @@ public class TaskChooseNextState extends AbstractTicketingTask
                 AppLogService.error( "ko idtate : ", +config.getIdStateKO( ) );
                 AppLogService.error( "ok idtate : ", +config.getIdStateOK( ) );
                 chooseNewState( resource.getIdResource( ), resource.getResourceType( ), task, config, 301, resource.getState( ).getId( ), ticket );
+                // LOG TEST
+                AppLogService.error( "id_ticket : ", +resource.getIdResource( ) );
+                AppLogService.error( "id_state ticket : ", +resource.getState( ).getId( ) );
+                AppLogService.error( "task_id : ", +task.getId( ) );
+                AppLogService.error( "ko idtate : ", +config.getIdStateKO( ) );
+                AppLogService.error( "ok idtate : ", +config.getIdStateOK( ) );
             } catch ( Exception e )
             {
                 AppLogService.error( "Unexpected Error", e );
