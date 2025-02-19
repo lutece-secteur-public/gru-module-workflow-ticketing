@@ -130,7 +130,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
     private static final int       MAX_FILES_BY_DOSSIERS3                  = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_MAX_FILES_BY_DOSSIERS3_FOR_DRAFT_CREATION, 10 );
 
     private List<String>           _erreurPathsList                        = new ArrayList<>( );
-    private String                   _destination                            = FileUtils.cheminDepotFichierUsager( TicketingConstants.CODE_APPLI );
+    private String                   _destination                            = "";
     private List<ReferentielScanner> _referentielScannerList                 = ReferentielScannerHome.getReferentielScannersList( );
     // Errors
     private static final String    ERROR_RESOURCE_NOT_FOUND                = "Resource not found";
@@ -151,7 +151,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
     public void run( )
     {
         StringJoiner sb = new StringJoiner( "\n\r" );
-
+        _destination = FileUtils.cheminDepotFichierUsager( TicketingConstants.CODE_APPLI );
         sb.add( "Début de la création des brouillons" );
         purgeDeletedTicketOrDraft( sb );
         cleanErrorRegistered( sb );
