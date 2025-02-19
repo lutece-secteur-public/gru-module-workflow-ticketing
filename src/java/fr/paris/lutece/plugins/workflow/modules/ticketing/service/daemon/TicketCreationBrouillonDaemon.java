@@ -106,6 +106,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
     private static final String    PROPERTY_CHANNEL_SCAN_NAME = "ticketing.channelScan.name";
     private static final String    PROPERTY_ID_ADMIN_USER_FOR_DRAFT_DAEMON = "ticketing.draft.daemon.admin.user.id";
+    private static final String      PROPERTY_EMAIL_SENDER_FOR_DRAFT_DAEMON  = "ticketing.draft.daemon.email.sender";
     private static final String    MENTION_A_PRECISER         = "A préciser";
 
     private static final String    DAEMON_INSERTION_ERROR_MAIL_SUBJECT     = "module.workflow.ticketing.daemon.creationBrouillonDaemon.error.mail.insertion.subject";
@@ -154,7 +155,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
         _destination = FileUtils.cheminDepotFichierUsager( TicketingConstants.CODE_APPLI );
         sb.add( "Début de la création des brouillons" );
         purgeDeletedTicketOrDraft( sb );
-        cleanErrorRegistered( sb );
+        cleanErrorRegistered( );
         createBrouillonProcess( sb );
         sb.add( "Fin de la création des brouillons" );
         setLastRunLogs( sb.toString( ) );
@@ -174,7 +175,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
                 if ( null != ticket )
                 {
-                    deleteDraftAndAttchement( ticket, sb );
+                    deleteDraftAndAttchement( ticket );
                 }
             }
         } else
@@ -184,7 +185,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
     }
 
     // tenter de supprimer les erreurs de suppression connue
-    private void cleanErrorRegistered( StringJoiner sb )
+    private void cleanErrorRegistered( )
     {
         List<ErreurScannerStrois> erreurList = ErreurScannerStroisHome.getErreurScannerStroisList( );
 
@@ -192,10 +193,10 @@ public class TicketCreationBrouillonDaemon extends Daemon
         List<ErreurScannerStrois> erreurSuppression = erreurList.stream( ).filter( e -> !e.getPbInsertion( ) ).collect( Collectors.toList( ) );
 
         tryToDeleteAgainPJAboutErreurPath( erreurSuppression );
-        tryToInsertAgain( erreurInsertion, sb );
+        tryToInsertAgain( erreurInsertion );
     }
 
-    private void tryToInsertAgain( List<ErreurScannerStrois> erreurInsertion, StringJoiner sb )
+    private void tryToInsertAgain( List<ErreurScannerStrois> erreurInsertion )
     {
         for ( ErreurScannerStrois erreur : erreurInsertion )
         {
@@ -213,26 +214,25 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     if ( idCoreFile != 0 )
                     {
                         idFileList.add( idCoreFile );
-                        createDraftTryAgain( scannerFilter.get( 0 ), idFileList, erreur.getPath( ), _destination, erreur, sb );
+                        createDraftTryAgain( scannerFilter.get( 0 ), idFileList, erreur.getPath( ), _destination, erreur );
                     } else
                     {
-                        addScannerS3Erreur( erreur.getPath( ), _destination, true, sb, false );
-                        sendMail( erreur.getPath( ), _destination, true, sb, false );
+                        addScannerS3Erreur( erreur.getPath( ), _destination, true, false );
+                        sendMail( erreur.getPath( ), _destination, true, false );
                     }
                 }
             } else
             {
                 ErreurScannerStroisHome.removeByFilePath( erreur.getPath( ) );
-                sb.add( "n'existe plus - " + erreur.getPath( ) );
             }
         }
     }
 
-    private void createDraftTryAgain( ReferentielScanner scanner, List<Integer> idFileList, String filepath, String destination, ErreurScannerStrois erreur, StringJoiner sb )
+    private void createDraftTryAgain( ReferentielScanner scanner, List<Integer> idFileList, String filepath, String destination, ErreurScannerStrois erreur )
     {
         boolean insertionSuccess = false;
 
-        Ticket ticket = createDraftDefault( sb, scanner.getIdCategory( ) );
+        Ticket ticket = createDraftDefault( scanner.getIdCategory( ) );
         List<ErreurScannerStrois> erreurList = ErreurScannerStroisHome.getErreurScannerStroisList( );
         _erreurPathsList = erreurList.stream( ).map( e -> e.getPath( ) ).collect( Collectors.toList( ) );
 
@@ -254,9 +254,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
                 TicketHome.deleteCoreFile( idFileList );
                 ResponseHome.remove( idResponseCreated );
                 TicketHome.remove( ticket.getId( ) );
-                sb.add( "Toujours pas - " + erreur.getPath( ) );
-                sendMail( filepath, destination, erreur.getPbInsertion( ), sb, erreur.isOverSize( ) );
-                sb.add( "pb insertion continue - " + erreur.getPath( ) );
+                sendMail( filepath, destination, erreur.getPbInsertion( ), erreur.isOverSize( ) );
             } else
             {
                 idResponseCreated = TicketPjHome.insertResponseAndGetIdCoreFile( idFileList.get( 0 ) );
@@ -272,23 +270,20 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     pj.setIdResponse( idResponseCreated );
                     TicketPjHome.update( pj );
                 }
-                sb.add( "seconde chance : insertion ok - " + erreur.getPath( ) );
                 // suppression S3 courrier postal / scanner
-                removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, destination, sb );
+                removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, destination );
                 ErreurScannerStroisHome.removeByFilePath( erreur.getPath( ) );
-                sb.add( "supp s3 courrier car ok now - " + erreur.getPath( ) );
             }
         } catch ( Exception e )
         {
             TransactionManager.rollBack( _plugin );
-            sb.add( "rollback file" );
             e.printStackTrace( );
             TicketHome.deleteCoreFile( idFileList );
             ResponseHome.remove( idResponseCreated );
             TicketHome.remove( ticket.getId( ) );
             if ( insertionSuccess )
             {
-                sendMail( filepath, destination, erreur.getPbInsertion( ), sb, erreur.isOverSize( ) );
+                sendMail( filepath, destination, erreur.getPbInsertion( ), erreur.isOverSize( ) );
             }
         }
         TransactionManager.commitTransaction( _plugin );
@@ -311,8 +306,6 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
             // Appel récupération des fichiers du dossierS3 avec prefix du dossier du scanner
             filesForDossierS3List = _stockageS3ScannerDaemonNetapp.findAllFileInPrefix( _stockageS3ScannerDaemonNetapp, scanner.getDossierStrois( ) );
-
-            sb.add( "dossier :" + scanner.getDossierStrois( ) );
 
             if ( null != filesForDossierS3List )
             {
@@ -337,10 +330,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
         try
         {
             TransactionManager.beginTransaction( _plugin );
-            sb.add( " n : " + iteration );
 
             filepath = result.get( ).objectName( );
-            sb.add( "chemin : "+ filepath );
             long sizeFile = result.get( ).size( );
             String fileName = StringUtils.substringAfterLast( filepath, "/" );
             String extension = StringUtils.substringAfterLast( fileName, "." );
@@ -355,15 +346,15 @@ public class TicketCreationBrouillonDaemon extends Daemon
                 {
                     if ( extension.equals( "exe" ) )
                     {
-                        removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, _destination, sb );
+                        removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, _destination );
                         sb.add( "suppression fichier avec extension non autorisée : " + filepath );
                     } else if ( sizeFile > 10000000 )
                     {
-                        addScannerS3Erreur( filepath, _destination, true, sb, true );
+                        addScannerS3Erreur( filepath, _destination, true, true );
                     } else
                     {
                         // insertion minio SOLEN
-                        createDraft( scanner, filepath, _destination, result, sb );
+                        createDraft( scanner, filepath, _destination, result );
                     }
                 } else
                 {
@@ -377,23 +368,22 @@ public class TicketCreationBrouillonDaemon extends Daemon
         } catch ( MinioException | IllegalArgumentException | NoSuchAlgorithmException | IOException | InvalidKeyException e )
         {
             TransactionManager.rollBack( _plugin );
-            sb.add( "rollback core" );
             e.printStackTrace( );
-            addScannerS3Erreur( filepath, _destination, true, sb, false );
+            addScannerS3Erreur( filepath, _destination, true, false );
         }
         TransactionManager.commitTransaction( _plugin );
         iteration++;
         return iteration;
     }
 
-    private void createDraft( ReferentielScanner scanner, String filepath, String destination, Result<Item> result, StringJoiner sb )
+    private void createDraft( ReferentielScanner scanner, String filepath, String destination, Result<Item> result )
     {
         boolean insertionSuccess = false;
         List<Integer> idFileList = new ArrayList<>( );
         int idCoreFile = 0;
 
         // creation du ticket avec les valeurs par defaut
-        Ticket ticket = createDraftDefault( sb, scanner.getIdCategory( ) );
+        Ticket ticket = createDraftDefault( scanner.getIdCategory( ) );
 
         int idResponseCreated = 0;
         try
@@ -423,9 +413,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     TicketHome.deleteCoreFile( idFileList );
                     ResponseHome.remove( idResponseCreated );
                     TicketHome.remove( ticket.getId( ) );
-                    addScannerS3Erreur( filepath, destination, true, sb, false );
-                    sendMail( filepath, destination, true, sb, false );
-                    sb.add( "ajout table erreur insertion" );
+                    addScannerS3Erreur( filepath, destination, true, false );
+                    sendMail( filepath, destination, true, false );
                 } else
                 {
                     idResponseCreated = TicketPjHome.insertResponseAndGetIdCoreFile( idFileList.get( 0 ) );
@@ -442,41 +431,38 @@ public class TicketCreationBrouillonDaemon extends Daemon
                         TicketPjHome.update( pj );
                     }
                     // suppression S3 courrier postal / scanner
-                    removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, destination, sb );
+                    removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, destination );
                 }
             }
             else
             {
-                addScannerS3Erreur( filepath, destination, true, sb, false );
-                sendMail( filepath, destination, true, sb, false );
+                addScannerS3Erreur( filepath, destination, true, false );
+                sendMail( filepath, destination, true, false );
             }
 
         } catch ( Exception e )
         {
             TransactionManager.rollBack( _plugin );
-            sb.add( "rollback file" );
             e.printStackTrace( );
             TicketHome.deleteCoreFile( idFileList );
             ResponseHome.remove( idResponseCreated );
             TicketHome.remove( ticket.getId( ) );
             idFileList.remove( Integer.valueOf( idCoreFile ) );
-            addScannerS3Erreur( filepath, destination, true, sb, false );
+            addScannerS3Erreur( filepath, destination, true, false );
         }
         TransactionManager.commitTransaction( _plugin );
     }
 
-    private void removeFromS3scanner( String filepath, StockageService stockageS3ScannerDaemonMinio, String destination, StringJoiner sb )
+    private void removeFromS3scanner( String filepath, StockageService stockageS3ScannerDaemonMinio, String destination )
     {
         boolean suppressionSuccess = stockageS3ScannerDaemonMinio.deleteFileOnS3Serveur( filepath );
         if ( !suppressionSuccess )
         {
-            addScannerS3Erreur( filepath, destination, false, sb, false );
-            sb.add( "ajout table erreur suppression" );
+            addScannerS3Erreur( filepath, destination, false, false );
         }
     }
 
-    private void sendMail( String filepath, String destination, boolean isInsertionProblem, StringJoiner sb,
-            boolean isFileOvreSize )
+    private void sendMail( String filepath, String destination, boolean isInsertionProblem, boolean isFileOvreSize )
     {
         String message = "";
         String subject = "";
@@ -497,19 +483,13 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     filepath );
         }
         String fromSenderName = "CreationBrouillonDaemon";
-        String fromSenderEmail = "admintrybis@yopmail.com";
-
-        sb.add( "Mail pb insertion : " + isInsertionProblem );
-        sb.add( "subject : " + subject );
-        sb.add( "message : " + message );
-        sb.add( "to : " + DAEMON_ALERT_MAIL_ERROR_RECIPIENT );
-        sb.add( "from : " + fromSenderName + "avec ce mail " + fromSenderEmail );
+        String fromSenderEmail = PROPERTY_EMAIL_SENDER_FOR_DRAFT_DAEMON;
 
         MailService.sendMailHtml( DAEMON_ALERT_MAIL_ERROR_RECIPIENT, fromSenderName, fromSenderEmail, subject, message );
     }
 
 
-    private void deleteDraftAndAttchement( Ticket ticket, StringJoiner sb )
+    private void deleteDraftAndAttchement( Ticket ticket )
     {
         try
         {
@@ -528,7 +508,6 @@ public class TicketCreationBrouillonDaemon extends Daemon
             AppLogService.error( e );
         }
         TransactionManager.commitTransaction( _plugin );
-        sb.add( "Brouillon supprimé id : " + ticket.getId( ) );
     }
 
     /**
@@ -586,7 +565,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
      *
      * @param sb
      */
-    private Ticket createDraftDefault( StringJoiner sb, int idCategory )
+    private Ticket createDraftDefault( int idCategory )
     {
         Ticket ticket = new Ticket( );
 
@@ -619,16 +598,12 @@ public class TicketCreationBrouillonDaemon extends Daemon
             ticket.setChannel( channel );
 
             TicketHome.create( ticket );
-            sb.add( "ticket créé :" + ticket.getId( ) );
 
             User user = AdminUserHome.findByPrimaryKey( Integer.parseInt( _strAdminUserId ) );
-            sb.add( "user : " + user.getFirstName( ) + " " + user.getLastName( ) );
             ticketInitService.doProcessNextWorkflowActionInit( ticket, null, _local, user );
 
             // Immediate indexation of the Ticket
             WorkflowCapableJspBean.immediateTicketIndexing( ticket.getId( ) );
-
-            sb.add( "Brouillon créé id : " + ticket.getId( ) );
 
             TransactionManager.commitTransaction( _plugin );
 
@@ -699,7 +674,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
      * @param isInsertion
      *            true if it is an insertion error
      */
-    private void addScannerS3Erreur( String filepath, String destination, boolean isInsertion, StringJoiner sb,
+    private void addScannerS3Erreur( String filepath, String destination, boolean isInsertion,
             boolean isFileOverSize )
     {
         List<ErreurScannerStrois> erreursTotalesList = ErreurScannerStroisHome.getErreurScannerStroisList( );
@@ -715,7 +690,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
             erreurSuppression.setIsOverSize( isFileOverSize );
             ErreurScannerStroisHome.create( erreurSuppression );
 
-            sendMail( filepath, destination, isInsertion, sb, isFileOverSize );
+            sendMail( filepath, destination, isInsertion, isFileOverSize );
         }
     }
 

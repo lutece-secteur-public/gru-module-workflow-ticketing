@@ -113,17 +113,12 @@ public class TaskChooseNextState extends AbstractTicketingTask
         Ticket ticket = getTicket( nIdResourceHistory );
         IWorkflowService workflowService = SpringContextService.getBean( "workflow.workflowService" );
 
-        // LOG TEST
-        AppLogService.error( ( ( "workflowService dans process action is null : " + workflowService ) == null ) );
-
         Action action = _actionService.findByPrimaryKey( Integer.parseInt( _nActionInitWorkflowId ) );
         List<ITask> listActionTasks = _taskService.getListTaskByIdAction( action.getId( ), Locale.getDefault( ) );
 
         ITask task = listActionTasks.get( 0 );
 
         State state = _stateService.getInitialState( 301 );
-        // LOG TEST
-        AppLogService.error( "id_state_initial : ", +state.getId( ) );
 
         ResourceWorkflow resource = new ResourceWorkflow( );
         resource.setIdResource( ticket.getId( ) );
@@ -137,12 +132,6 @@ public class TaskChooseNextState extends AbstractTicketingTask
             try
             {
                 chooseNewState( resource.getIdResource( ), resource.getResourceType( ), task, config, 301, resource.getState( ).getId( ), ticket );
-                // LOG TEST
-                AppLogService.error( "id_ticket : ", +resource.getIdResource( ) );
-                AppLogService.error( "id_state ticket : ", +resource.getState( ).getId( ) );
-                AppLogService.error( "task_id : ", +task.getId( ) );
-                AppLogService.error( "ko idtate : ", +config.getIdStateKO( ) );
-                AppLogService.error( "ok idtate : ", +config.getIdStateOK( ) );
             } catch ( Exception e )
             {
                 AppLogService.error( "Unexpected Error", e );
