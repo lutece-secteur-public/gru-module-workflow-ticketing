@@ -128,6 +128,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
     private String                 _strchannelScanName        = AppPropertiesService.getProperty( PROPERTY_CHANNEL_SCAN_NAME );
     private String                 _strAdminUserId                         = AppPropertiesService.getProperty( PROPERTY_ID_ADMIN_USER_FOR_DRAFT_DAEMON );
+    private String                   _strEmailSender                         = AppPropertiesService.getProperty( PROPERTY_EMAIL_SENDER_FOR_DRAFT_DAEMON );
     private static final int       MAX_FILES_BY_DOSSIERS3                  = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_MAX_FILES_BY_DOSSIERS3_FOR_DRAFT_CREATION, 10 );
 
     private List<String>           _erreurPathsList                        = new ArrayList<>( );
@@ -483,7 +484,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     filepath );
         }
         String fromSenderName = "CreationBrouillonDaemon";
-        String fromSenderEmail = PROPERTY_EMAIL_SENDER_FOR_DRAFT_DAEMON;
+        String fromSenderEmail = _strEmailSender;
 
         MailService.sendMailHtml( DAEMON_ALERT_MAIL_ERROR_RECIPIENT, fromSenderName, fromSenderEmail, subject, message );
     }
