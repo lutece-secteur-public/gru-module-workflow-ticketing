@@ -215,7 +215,6 @@ public class TicketCreationBrouillonDaemon extends Daemon
                         createDraftTryAgain( scannerFilter.get( 0 ), idFileList, erreur.getPath( ), _destination, erreur );
                     } else
                     {
-                        addScannerS3Erreur( erreur.getPath( ), _destination, true, false );
                         sendMail( erreur.getPath( ), _destination, true, false );
                     }
                 }
