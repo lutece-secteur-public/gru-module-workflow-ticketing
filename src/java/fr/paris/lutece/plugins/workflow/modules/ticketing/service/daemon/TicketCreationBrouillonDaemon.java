@@ -179,9 +179,6 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     deleteDraftAndAttchement( ticket );
                 }
             }
-        } else
-        {
-            sb.add( "Aucune sollicitation au statut supprimé" );
         }
     }
 
@@ -300,6 +297,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
     {
         List<ErreurScannerStrois> erreurList = ErreurScannerStroisHome.getErreurScannerStroisList( );
         _erreurPathsList = erreurList.stream( ).map( e -> e.getPath( ) ).collect( Collectors.toList( ) );
+
+        sb.add( "Nombre de fichiers maximum par dossier S3 : " + MAX_FILES_BY_DOSSIERS3 );
 
         for ( ReferentielScanner scanner : _referentielScannerList )
         {
