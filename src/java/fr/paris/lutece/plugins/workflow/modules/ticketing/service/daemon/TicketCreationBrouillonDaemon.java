@@ -347,6 +347,10 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     {
                         removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, _destination );
                         sb.add( "suppression fichier avec extension non autorisée : " + filepath );
+                    } else if ( sizeFile == 0 )
+                    {
+                        removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, _destination );
+                        sb.add( "suppression fichier de taille 0 : " + filepath );
                     } else if ( sizeFile > 10000000 )
                     {
                         addScannerS3Erreur( filepath, _destination, true, true );
