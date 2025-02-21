@@ -588,7 +588,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
             ticket.setFirstname( MENTION_A_PRECISER );
             ticket.setLastname( MENTION_A_PRECISER );
             ticket.setEmail( "" );
-            ticket.setTicketComment( "" );
+            ticket.setTicketComment( MENTION_A_PRECISER );
             ticket.setTicketAddress( address );
             ticket.setDateUpdate( new Timestamp( new Date( ).getTime( ) ) );
             ticket.setDateCreate( new Timestamp( new Date( ).getTime( ) ) );
