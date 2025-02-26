@@ -38,7 +38,7 @@
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>plugin-ticketing</artifactId>
-            <version>[4.5.0,)</version>
+            <version>[4.18.0,)</version>
             <type>lutece-plugin</type>
         </dependency>
         <dependency>
@@ -121,8 +121,17 @@
                     <artifactId>library-httpaccess</artifactId>
                     <groupId>fr.paris.lutece.plugins</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>library-identitybusiness</artifactId>
+                    <groupId>fr.paris.lutece.plugins</groupId>
+                </exclusion>
             </exclusions>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>fr.paris.lutece.plugins</groupId>
+            <artifactId>library-identitybusiness</artifactId>
+            <version>[3.1.10]</version>
+        </dependency>
     </dependencies>
 
     <properties>
