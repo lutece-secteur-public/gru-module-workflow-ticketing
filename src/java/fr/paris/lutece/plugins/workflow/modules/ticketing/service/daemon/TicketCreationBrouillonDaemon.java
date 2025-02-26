@@ -274,7 +274,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
         } catch ( Exception e )
         {
             TransactionManager.rollBack( _plugin );
-            e.printStackTrace( );
+            AppLogService.error( e );
             TicketHome.deleteCoreFile( idFileList );
             ResponseHome.remove( idResponseCreated );
             TicketHome.remove( ticket.getId( ) );
@@ -371,7 +371,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
         } catch ( MinioException | IllegalArgumentException | NoSuchAlgorithmException | IOException | InvalidKeyException e )
         {
             TransactionManager.rollBack( _plugin );
-            e.printStackTrace( );
+            AppLogService.error( e );
             addScannerS3Erreur( filepath, _destination, true, false );
         }
         TransactionManager.commitTransaction( _plugin );
@@ -446,7 +446,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
         } catch ( Exception e )
         {
             TransactionManager.rollBack( _plugin );
-            e.printStackTrace( );
+            AppLogService.error( e );
             TicketHome.deleteCoreFile( idFileList );
             ResponseHome.remove( idResponseCreated );
             TicketHome.remove( ticket.getId( ) );
@@ -613,7 +613,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
         } catch ( Exception e )
         {
             TransactionManager.rollBack( _plugin );
-            e.printStackTrace( );
+            AppLogService.error( e );
         }
         return ticket;
     }
