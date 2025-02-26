@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2024, City of Paris
+ * Copyright (c) 2002-2025, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -263,6 +265,9 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
 
+        // Supprime emoji non inserable
+        strUserMessage = unescapeEmojiCharacters( strUserMessage );
+
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
@@ -339,6 +344,33 @@ public class TaskEditTicket extends AbstractTicketingTask
         }
 
         return strTaskInformation;
+    }
+
+    private String unescapeEmojiCharacters( String value )
+    {
+        if ( ( value == null ) || "".equals( value ) )
+        {
+            return value;
+        }
+
+        StringBuilder sb = new StringBuilder( );
+        Pattern emojiPattern = Pattern.compile( "[\\uD83C-\\uDBFF\\uDC00-\\uDFFF]+" );
+
+        for ( int i = 0; i < value.length( ); i++ )
+        {
+            int codePoint = value.codePointAt( i );
+
+            if ( ( codePoint == 0x9 ) || ( codePoint == 0xA ) || ( codePoint == 0xD ) || ( ( codePoint >= 0x20 ) && ( codePoint <= 0xD7FF ) ) || ( ( codePoint >= 0xE000 ) && ( codePoint <= 0xFFFD ) )
+                    || ( ( codePoint >= 0x10000 ) && ( codePoint <= 0x10FFFF ) ) )
+            {
+                Matcher emojiMatcher = emojiPattern.matcher( new String( Character.toChars( codePoint ) ) );
+                if ( !emojiMatcher.find( ) )
+                {
+                    sb.appendCodePoint( codePoint );
+                }
+            }
+        }
+        return sb.toString( );
     }
 
     private void deletePj( TicketPj pj )

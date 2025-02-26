@@ -18,6 +18,8 @@
 	<!-- DAO -->
 	<bean id="workflow-ticketing.taskInformationDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.TaskInformationDAO" />
+    <bean id="workflow-ticketing.chooseNextStateTaskInformationDAO"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.information.ChooseNextStateTaskInformationDAO" />
 	<bean id="workflow-ticketing.taskReplyConfigDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfigDAO" />
     <bean id="workflow-ticketing.taskEditTicketConfigDAO"
@@ -44,6 +46,8 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCcDAO" />
     <bean id="workflow-ticketing.taskMarkAsUnreadConfigDAO"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskMarkAsUnreadConfigDAO" />
+    <bean id="workflow-ticketing.taskChooseNextStateConfigDAO"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskChooseNextStateConfigDAO" />
 	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfigDAO"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskNotifyWaitingTicketConfigDAO" />
 	<bean id="workflow-ticketing.taskAssignTicketToUnitConfigDAO"
@@ -82,6 +86,9 @@
     <bean id="workflow-ticketing.taskMarkAsUnreadConfigService"
         class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
         p:taskConfigDAO-ref="workflow-ticketing.taskMarkAsUnreadConfigDAO" />
+    <bean id="workflow-ticketing.taskChooseNextStateConfigService"
+        class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+        p:taskConfigDAO-ref="workflow-ticketing.taskChooseNextStateConfigDAO" />
 	<bean id="workflow-ticketing.taskNotifyWaitingTicketConfigService"
 		  class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
 		  p:taskConfigDAO-ref="workflow-ticketing.taskNotifyWaitingTicketConfigDAO" />
@@ -111,6 +118,9 @@
 		  scope="prototype" />
 	<bean id="workflow-ticketing.taskAssignTicketToUnitConfig"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskAssignTicketToUnitConfig"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskChooseNextStateConfig"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskChooseNextStateConfig"
         scope="prototype" />
 
 	<!-- Task Generate ticket reference -->
@@ -327,6 +337,20 @@
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketCategoryTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeModifyTicketCategory"
         p:taskConfigService-ref="workflow-ticketing.taskModifyTicketCategoryConfigService" />
+        
+    <!-- Task Modify draft category -->
+	<bean id="workflow-ticketing.taskModifyDraftCategory"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyDraftCategory"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeModifyDraftCategory"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskTicketingModifyDraftCategory" p:titleI18nKey="module.workflow.ticketing.task_modify_draft_category.title"
+		p:beanName="workflow-ticketing.taskModifyDraftCategory"
+		p:taskForAutomaticAction="false" p:configBeanName="workflow-ticketing.taskModifyTicketCategoryConfig" p:configRequired="true"/>
+	<bean id="workflow-ticketing.modifyDraftCategoryTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyDraftCategoryTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeModifyDraftCategory"
+        p:taskConfigService-ref="workflow-ticketing.taskModifyTicketCategoryConfigService" />
 		
 	<!-- Task Reply assign up ticket -->    
     <bean id="workflow-ticketing.taskReplyAssignUpTicket" class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskReplyAssignUpTicket" scope="prototype" />
@@ -364,6 +388,30 @@
     <bean id="workflow-ticketing.selectChannelTaskComponent"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.SelectChannelTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeSelectChannel" />
+        
+    <!-- Task Choose Next State -->
+    <bean id="workflow-ticketing.taskChooseNextState"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskChooseNextState"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeChooseNextState"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskChooseNextState" p:titleI18nKey="module.workflow.ticketing.task_choose_next_state.title"
+        p:beanName="workflow-ticketing.taskChooseNextState"
+        p:configRequired="true" p:formTaskRequired="true" p:taskForAutomaticAction="true" />
+    <bean id="workflow-ticketing.chooseNextStateTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ChooseNextStateTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeChooseNextState"
+		p:taskConfigService-ref="workflow-ticketing.taskChooseNextStateConfigService" />
+        
+            <!-- Task Register channel Courrier -->
+    <bean id="workflow-ticketing.taskRegisterChannelCourrierPostal"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskRegisterChannelCourrierPostal"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeRegisterChannelCourrierPostal"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskRegisterChannelCourrierPostal" p:titleI18nKey="module.workflow.ticketing.task_register_channel_courrier.title"
+        p:beanName="workflow-ticketing.taskRegisterChannelCourrierPostal"
+        p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
 
     <!-- Task Index ticket -->
     <bean id="workflow-ticketing.taskIndexTicket"
@@ -466,6 +514,17 @@
 		p:beanName="workflow-ticketing.taskSphinx"
 		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
 		
+			<!-- Task Delete Draft -->
+	<bean id="workflow-ticketing.taskDeleteDraft"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskDeleteDraft"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeDeleteDraft"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskDeleteDraft" p:titleI18nKey="module.workflow.ticketing.task_delete_draft_title"
+		p:beanName="workflow-ticketing.taskDeleteDraft"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+		
+
 	<!-- Task Mark as unread -->
     <bean id="workflow-ticketing.taskMarkAsUnread"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskMarkAsUnread"
@@ -505,6 +564,18 @@
 	<bean id="workflow-ticketing.modifyTicketTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeModifyTicket" />
+		
+	<!-- Task Modify draft -->
+	<bean id="workflow-ticketing.taskModifyDraft"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyDraft"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeModifyDraft"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskModifyDraft" p:titleI18nKey="module.workflow.ticketing.task_modify_draft.title"
+		p:beanName="workflow-ticketing.taskModifyDraft" p:formTaskRequired="true" />
+	<bean id="workflow-ticketing.modifyDraftTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyDraftTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeModifyDraft" />
 
 	<!-- Task Notify waiting ticket -->
 	<bean id="workflow-ticketing.taskNotifyWaitingTicket"

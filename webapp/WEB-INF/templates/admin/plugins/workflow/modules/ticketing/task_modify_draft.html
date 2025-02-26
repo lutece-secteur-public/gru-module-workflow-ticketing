@@ -1,0 +1,89 @@
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_user_title">#i18n{ticketing.modify_ticket.labelUserTitle} :</label>
+	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+		<@select name='id_user_title' items=user_titles_list default_value='${ticket.idUserTitle!\'\'}' class='input-lg' />
+	</div>
+</div>
+
+<input type="hidden" id="id_adrposte" name="id_adrposte" value="">
+
+<#assign adresseConnue = (ticket.ticketAddress??)?then(ticket.ticketAddress.address,'')>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelLastname}' labelFor='lastname' mandatory=true>
+   <@input type='text' name='lastname' id='lastname' value='${ticket.lastname!\'\'}' class='input-lg' />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelFirstname}' labelFor='firstname' mandatory=true>
+   <@input type='text' name='firstname' id='firstname' value='${ticket.firstname!\'\'}' class='input-lg'/>
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelEmail}' labelFor='email' mandatory=false>
+   <@input type='text' name='email' id='email' value='${ticket.email!\'\'}' class='input-lg'/>
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelFixedPhoneNumber}' labelFor='fixed_phone_number' mandatory=false>
+   <@input type='text' name='fixed_phone_number' id='fixed_phone_number' value='${ticket.fixedPhoneNumber!\'\'}' class='input-lg' maxlength=10 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelMobilePhoneNumber}' labelFor='mobile_phone_number' mandatory=false>
+   <@input type='text' name='mobile_phone_number' id='mobile_phone_number' value='${ticket.mobilePhoneNumber!\'\'}'class='input-lg'  maxlength=10 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' labelFor='address' mandatory=true>
+<@adressInputWithComplement name='address' id='address' codePostalId='postal_code' communeId='city' complement='address_detail' value=adresseConnue fullAdress=false mandatory=false 
+            url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' capgeo=capgeoUrl />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddressDetail}' labelFor='address_detail' mandatory=false>
+   <@input type='text' name='address_detail' id='address_detail' value='${(ticket.ticketAddress.addressDetail)!\'\'}' class='input-lg' maxlength=76 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelPostalCode}' labelFor='postal_code' mandatory=true>
+   <@input type='text' name='postal_code' id='postal_code' value='${(ticket.ticketAddress.postalCode)!\'\'}' class='input-lg' maxlength=5 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelCity}' labelFor='city' mandatory=true>
+   <@input type='text' name='city' id='city' value='${(ticket.ticketAddress.city)!\'\'}' class='input-lg' maxlength=76 />
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.arrondissement}' labelFor='id_arrondissement' mandatory=false>
+<@select name='id_arrondissement' items=arrondissements_list default_value='${ticket.idArrondissement!\'\'}' params=' id=\"id_arrondissement\" class=\"form-control input-lg\" '/>
+</@formGroup>
+
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.quartier}' labelFor='id_quartier' mandatory=false>
+	<@select name='id_quartier' items=quartier_list default_value='${ticket.ticketAddress.id_quartier!\'\'}' disabled=true params=' id=\"id_quartier\" class=\"form-control input-lg\" '/>
+</@formGroup>
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_contact_mode">#i18n{ticketing.modify_ticket.labelContactMode} :</label>
+	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+		<@select name='id_contact_mode' items=contact_modes_list default_value='${ticket.idContactMode!\'\'}' class='input-lg' />
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="ticket_comment">#i18n{ticketing.modify_ticket.labelTicketComment} <i class="fas fa-asterisk" aria-hidden="true"></i></label>
+	<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+		<textarea required type="text" name="ticket_comment" id="ticket_comment" class="ticketing form-control" maxlength="5000">${ticket.ticketComment!''}</textarea>
+		<span class="help-block">#i18n{ticketing.create_ticket.labelTicketComment.help}</span>
+	</div>
+</div>
+
+<#if read_only_reponses_html_list?has_content>
+  <hr>
+  <#list read_only_reponses_html_list as html_response>
+    <#if html_response?has_content>
+      ${html_response}
+    </#if>
+  </#list>
+</#if>
+<script>
+	$('#address').on( "change", function() {
+			if ($('#address').val() == ""){
+			$('#id_adrposte').val("");
+		}
+	} );
+	$("#next_button").on('click', function() {
+    	$('#id_quartier').prop('disabled', false);
+    });
+</script>

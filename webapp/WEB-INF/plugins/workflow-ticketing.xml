@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><plug-in>
     <name>workflow-ticketing</name>
     <class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin</class>
-    <version>4.15.1</version>
+    <version>4.15.2-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
@@ -101,6 +101,12 @@
             <daemon-name>module.workflow.ticketing.daemon.migrationPjDaemon.name</daemon-name>
             <daemon-description>module.workflow.ticketing.daemon.migrationPjDaemon.description</daemon-description>
             <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketPjMigrationDaemon</daemon-class>
+        </daemon>
+        <daemon>
+            <daemon-id>creationBrouillonDaemon</daemon-id>
+            <daemon-name>module.workflow.ticketing.daemon.creationBrouillonDaemon.name</daemon-name>
+            <daemon-description>module.workflow.ticketing.daemon.creationBrouillonDaemon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketCreationBrouillonDaemon</daemon-class>
         </daemon>
     </daemons>
 </plug-in>

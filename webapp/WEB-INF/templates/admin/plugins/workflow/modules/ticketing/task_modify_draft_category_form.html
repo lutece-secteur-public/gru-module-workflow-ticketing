@@ -1,0 +1,24 @@
+<input name="redirect" id="redirect" value="" type="hidden">
+
+<#list categories_depths as depth>
+    <div class="form-group">
+      <label class="col-xs-12 col-sm-3 col-md-3 col-lg-3 control-label" for="id_category_${depth.depthNumber}">${depth.label}&nbsp;:</label>
+	    <div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+	      <@select name='id_category_${depth.depthNumber}' items=[] default_value='' params='id=\"id_category_${depth.depthNumber}\" depth=\"${depth.depthNumber}\" class=\"form-control input-lg\"' />
+	      <span class="help-block" id="help_message_${depth.depthNumber}"></span>
+	    </div>
+    </div>
+</#list>
+
+<div id="generic_attributes"></div>
+
+<script src="js/bootstrap-datepicker.js"></script>
+<script src="js/locales/bootstrap-datepicker.fr.js" charset="utf-8"></script>
+<script src="js/plugins/ticketing/ticket_tree.js"></script>
+<script language="javascript"> 
+    var url = "jsp/admin/plugins/ticketing/ModifyTicketCategory.jsp?view=ticketForm&id_task=${id_task}";
+    $(document).ready(function() {
+        lutece_ticket_tree(${ticket.branchJSONObject}, ${categories_tree}, url,true);
+    });
+</script>
+
