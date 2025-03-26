@@ -31,35 +31,36 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.web.task;
 
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
-
-import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.plugins.workflowcore.service.task.ITask;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
- * This class represents a task that change status to deleted
+ * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskDeleteDraft}
  *
  */
-public class TaskDeleteDraft extends AbstractTicketingTask
+public class DeleteDraftTaskComponent extends TicketingTaskComponent
 {
+    // TEMPLATES
+    private static final String TEMPLATE_TASK_DELETE_DRAFT_FORM = "admin/plugins/workflow/modules/ticketing/task_delete_draft_form.html";
 
-    // Messages
-    private static final String   MESSAGE_DELETE_DRAFT_TICKET            = "module.workflow.ticketing.task_delete_draft.labelDeleteDraft";
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
+    public String getDisplayTaskForm( int nIdResource, String strResourceType, HttpServletRequest request, Locale locale, ITask task )
     {
-        return StringUtils.EMPTY;
-    }
+        Map<String, Object> model = getModel( getTicket( nIdResource, strResourceType ) );
 
-    @Override
-    public String getTitle( Locale locale )
-    {
-        return I18nService.getLocalizedString( MESSAGE_DELETE_DRAFT_TICKET, locale );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_DELETE_DRAFT_FORM, locale, model );
+
+        return template.getHtml( );
     }
 }
