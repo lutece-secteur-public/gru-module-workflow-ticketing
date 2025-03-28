@@ -133,7 +133,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
     private List<String>           _erreurPathsList                        = new ArrayList<>( );
     private String                   _destination                            = "";
-    private List<ReferentielScanner> _referentielScannerList                 = ReferentielScannerHome.getReferentielScannersList( );
+    private List<ReferentielScanner> _referentielScannerList                 = new ArrayList<>( );
     // Errors
     private static final String    ERROR_RESOURCE_NOT_FOUND                = "Resource not found";
     private static Locale          _local                                  = I18nService.getDefaultLocale( );
@@ -154,6 +154,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
     {
         StringJoiner sb = new StringJoiner( "\n\r" );
         _destination = FileUtils.cheminDepotFichierUsager( TicketingConstants.CODE_APPLI );
+        _referentielScannerList = ReferentielScannerHome.getReferentielScannersList( );
         sb.add( "Début de la création des brouillons" );
         purgeDeletedTicketOrDraft( sb );
         cleanErrorRegistered( );
