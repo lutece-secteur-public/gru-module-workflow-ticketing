@@ -7,8 +7,6 @@
 
 <input type="hidden" id="id_adrposte" name="id_adrposte" value="">
 
-<#assign adresseConnue = (ticket.ticketAddress??)?then(ticket.ticketAddress.address,'')>
-
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelLastname}' labelFor='lastname' mandatory=true>
    <@input type='text' name='lastname' id='lastname' value='${ticket.lastname!\'\'}' class='input-lg' />
 </@formGroup>
@@ -30,8 +28,8 @@
 </@formGroup>
 
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' labelFor='address' mandatory=true>
-<@adressInputWithComplement name='address' id='address' codePostalId='postal_code' communeId='city' complement='address_detail' value=adresseConnue fullAdress=false mandatory=false 
-            url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' capgeo=capgeoUrl />
+<@adressInputWithComplement name='address' id='address' codePostalId='postal_code' communeId='city' complement='address_detail' value=ticket.ticketAddress.address!'' fullAdress=false mandatory=false 
+            url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' capgeo=capgeoUrl freeEntryMode=true/>
 </@formGroup>
 
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddressDetail}' labelFor='address_detail' mandatory=false>
@@ -78,11 +76,6 @@
   </#list>
 </#if>
 <script>
-	$('#address').on( "change", function() {
-			if ($('#address').val() == ""){
-			$('#id_adrposte').val("");
-		}
-	} );
 	$("#next_button").on('click', function() {
     	$('#id_quartier').prop('disabled', false);
     });

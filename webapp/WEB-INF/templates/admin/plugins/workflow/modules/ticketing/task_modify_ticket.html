@@ -31,7 +31,7 @@
 
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' labelFor='address' mandatory=false>
 <@adressInputWithComplement name='address' id='address' codePostalId='postal_code' communeId='city' complement='address_detail' value=adresseConnue fullAdress=false mandatory=false 
-            url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' capgeo=capgeoUrl />
+            url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' capgeo=capgeoUrl freeEntryMode=false/>
 </@formGroup>
 
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddressDetail}' labelFor='address_detail' mandatory=false>
