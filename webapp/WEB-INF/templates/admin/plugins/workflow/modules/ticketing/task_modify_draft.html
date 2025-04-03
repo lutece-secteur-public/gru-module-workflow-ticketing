@@ -27,7 +27,7 @@
    <@input type='text' name='mobile_phone_number' id='mobile_phone_number' value='${ticket.mobilePhoneNumber!\'\'}'class='input-lg'  maxlength=10 />
 </@formGroup>
 
-<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' labelFor='address' mandatory=true>
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' labelFor='address' mandatory=false>
 <@adressInputWithComplement name='address' id='address' codePostalId='postal_code' communeId='city' complement='address_detail' value=ticket.ticketAddress.address!'' fullAdress=false mandatory=false 
             url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' capgeo=capgeoUrl freeEntryMode=true/>
 </@formGroup>
@@ -36,11 +36,11 @@
    <@input type='text' name='address_detail' id='address_detail' value='${(ticket.ticketAddress.addressDetail)!\'\'}' class='input-lg' maxlength=76 />
 </@formGroup>
 
-<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelPostalCode}' labelFor='postal_code' mandatory=true>
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelPostalCode}' labelFor='postal_code' mandatory=false>
    <@input type='text' name='postal_code' id='postal_code' value='${(ticket.ticketAddress.postalCode)!\'\'}' class='input-lg' maxlength=5 />
 </@formGroup>
 
-<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelCity}' labelFor='city' mandatory=true>
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelCity}' labelFor='city' mandatory=false>
    <@input type='text' name='city' id='city' value='${(ticket.ticketAddress.city)!\'\'}' class='input-lg' maxlength=76 />
 </@formGroup>
 
