@@ -71,10 +71,20 @@ ${entry_attached_files!''}
  
 <@addRequiredJsFiles />
 <script>
-	$('#address').on( "change", function() {
-			if ($('#address').val() == ""){
-			$('#id_adrposte').val("");
-		}
-	} );
+$( function() {
+	$('#next_button').prop('disabled', false);
+	
+/* 	$('#address').on( "change", function() {
+		if ($('#address').val() == ""){
+		$('#id_adrposte').val("");
+	}
+	} ); */
+	
+	$('#wf_action_form').submit(function( ){
+		$('#id_quartier').prop('disabled', false);
+		$('#next_button').prop('disabled', true);
+	});
+	
+});
 </script>
 <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
