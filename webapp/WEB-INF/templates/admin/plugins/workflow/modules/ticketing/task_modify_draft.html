@@ -7,8 +7,6 @@
 
 <input type="hidden" id="id_adrposte" name="id_adrposte" value="">
 
-<#assign adresseConnue = (ticket.ticketAddress??)?then(ticket.ticketAddress.address,'')>
-
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelLastname}' labelFor='lastname' mandatory=true>
    <@input type='text' name='lastname' id='lastname' value='${ticket.lastname!\'\'}' class='input-lg' />
 </@formGroup>
@@ -29,20 +27,20 @@
    <@input type='text' name='mobile_phone_number' id='mobile_phone_number' value='${ticket.mobilePhoneNumber!\'\'}'class='input-lg'  maxlength=10 />
 </@formGroup>
 
-<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' labelFor='address' mandatory=true>
-<@adressInputWithComplement name='address' id='address' codePostalId='postal_code' communeId='city' complement='address_detail' value=adresseConnue fullAdress=false mandatory=false 
-            url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' capgeo=capgeoUrl />
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddress}' labelFor='address' mandatory=false>
+<@adressInputWithComplement name='address' id='address' codePostalId='postal_code' communeId='city' complement='address_detail' value=ticket.ticketAddress.address!'' fullAdress=false mandatory=false 
+            url=storeAdrUrl class='form-control input-lg' quartier='id_quartier' capgeo=capgeoUrl freeEntryMode=true/>
 </@formGroup>
 
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelAddressDetail}' labelFor='address_detail' mandatory=false>
    <@input type='text' name='address_detail' id='address_detail' value='${(ticket.ticketAddress.addressDetail)!\'\'}' class='input-lg' maxlength=76 />
 </@formGroup>
 
-<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelPostalCode}' labelFor='postal_code' mandatory=true>
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelPostalCode}' labelFor='postal_code' mandatory=false>
    <@input type='text' name='postal_code' id='postal_code' value='${(ticket.ticketAddress.postalCode)!\'\'}' class='input-lg' maxlength=5 />
 </@formGroup>
 
-<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelCity}' labelFor='city' mandatory=true>
+<@formGroup labelKey='#i18n{ticketing.modify_ticket.labelCity}' labelFor='city' mandatory=false>
    <@input type='text' name='city' id='city' value='${(ticket.ticketAddress.city)!\'\'}' class='input-lg' maxlength=76 />
 </@formGroup>
 
@@ -78,12 +76,13 @@
   </#list>
 </#if>
 <script>
-	$('#address').on( "change", function() {
-			if ($('#address').val() == ""){
-			$('#id_adrposte').val("");
-		}
-	} );
-	$("#next_button").on('click', function() {
-    	$('#id_quartier').prop('disabled', false);
-    });
+$( function() {
+	$('#next_button').prop('disabled', false);
+	
+	$('#wf_action_form').submit(function( ){
+		$('#id_quartier').prop('disabled', false);
+		$('#next_button').prop('disabled', true);
+	});
+	
+});
 </script>
