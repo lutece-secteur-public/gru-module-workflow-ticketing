@@ -134,6 +134,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
     private List<String>           _erreurPathsList                        = new ArrayList<>( );
     private String                   _destination                            = "";
     private List<ReferentielScanner> _referentielScannerList                 = new ArrayList<>( );
+    TicketInitService                _ticketInitService                      = SpringContextService.getBean( TicketInitService.BEAN_NAME );
+
     // Errors
     private static final String    ERROR_RESOURCE_NOT_FOUND                = "Resource not found";
     private static Locale          _local                                  = I18nService.getDefaultLocale( );
@@ -252,6 +254,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
                 TicketHome.deleteCoreFile( idFileList );
                 ResponseHome.remove( idResponseCreated );
                 TicketHome.remove( ticket.getId( ) );
+                TicketInitService.doRemoveWorkFlowResource( ticket.getId( ) );
                 sendMail( filepath, destination, erreur.getPbInsertion( ), erreur.isOverSize( ) );
             } else
             {
@@ -271,6 +274,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
                 // suppression S3 courrier postal / scanner
                 removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, destination );
                 ErreurScannerStroisHome.removeByFilePath( erreur.getPath( ) );
+                // Immediate indexation of the Ticket
+                WorkflowCapableJspBean.immediateTicketIndexing( ticket.getId( ) );
             }
         } catch ( Exception e )
         {
@@ -279,7 +284,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
             TicketHome.deleteCoreFile( idFileList );
             ResponseHome.remove( idResponseCreated );
             TicketHome.remove( ticket.getId( ) );
-            if ( insertionSuccess )
+            TicketInitService.doRemoveWorkFlowResource( ticket.getId( ) );
+            if ( !insertionSuccess )
             {
                 sendMail( filepath, destination, erreur.getPbInsertion( ), erreur.isOverSize( ) );
             }
@@ -416,7 +422,7 @@ public class TicketCreationBrouillonDaemon extends Daemon
                 {
                     TicketHome.deleteCoreFile( idFileList );
                     ResponseHome.remove( idResponseCreated );
-                    TicketHome.remove( ticket.getId( ) );
+                    TicketInitService.doRemoveWorkFlowResource( ticket.getId( ) );
                     addScannerS3Erreur( filepath, destination, true, false );
                     sendMail( filepath, destination, true, false );
                 } else
@@ -436,6 +442,8 @@ public class TicketCreationBrouillonDaemon extends Daemon
                     }
                     // suppression S3 courrier postal / scanner
                     removeFromS3scanner( filepath, _stockageS3ScannerDaemonNetapp, destination );
+                    // Immediate indexation of the Ticket
+                    WorkflowCapableJspBean.immediateTicketIndexing( ticket.getId( ) );
                 }
             }
             else
@@ -504,7 +512,6 @@ public class TicketCreationBrouillonDaemon extends Daemon
             IndexerActionHome.removeByIdTicket( ticket.getId( ) );
 
             TicketHome.remove( ticket.getId( ) );
-            WorkflowCapableJspBean.immediateRemoveTicketFromIndex( ticket.getId( ) );
 
         } catch ( Exception e )
         {
@@ -605,9 +612,6 @@ public class TicketCreationBrouillonDaemon extends Daemon
 
             User user = AdminUserHome.findByPrimaryKey( Integer.parseInt( _strAdminUserId ) );
             ticketInitService.doProcessNextWorkflowActionInit( ticket, null, _local, user );
-
-            // Immediate indexation of the Ticket
-            WorkflowCapableJspBean.immediateTicketIndexing( ticket.getId( ) );
 
             TransactionManager.commitTransaction( _plugin );
 
