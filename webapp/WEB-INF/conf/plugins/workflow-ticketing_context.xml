@@ -520,7 +520,7 @@
 		scope="prototype" />
 	<bean id="workflow-ticketing.taskTypeDeleteDraft"
 		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-		p:key="taskDeleteDraft" p:titleI18nKey="module.workflow.ticketing.task_delete_draft.title"
+		p:key="taskDeleteDraft" p:titleI18nKey="module.workflow.ticketing.task_delete_draft_title"
 		p:beanName="workflow-ticketing.taskDeleteDraft" p:formTaskRequired="true"
 		p:configRequired="false" p:taskForAutomaticAction="false" />
 	<bean id="workflow-ticketing.deleteDraftTaskComponent"
