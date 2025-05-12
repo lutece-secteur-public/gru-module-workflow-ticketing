@@ -131,7 +131,7 @@ public class TaskChooseNextState extends AbstractTicketingTask
         {
             try
             {
-                chooseNewState( resource.getIdResource( ), resource.getResourceType( ), task, config, 301, resource.getState( ).getId( ), ticket );
+                chooseNewState( resource.getIdResource( ), resource.getResourceType( ), task, config, 301, request, resource.getState( ).getId( ), ticket );
             } catch ( Exception e )
             {
                 AppLogService.error( "Unexpected Error", e );
@@ -153,7 +153,7 @@ public class TaskChooseNextState extends AbstractTicketingTask
         _taskConfigService.remove( getId( ) );
     }
 
-    private void chooseNewState( int nIdResource, String strResourceType, ITask task, TaskChooseNextStateConfig config, int nIdWorkflow, int oldState, Ticket ticket )
+    private void chooseNewState( int nIdResource, String strResourceType, ITask task, TaskChooseNextStateConfig config, int nIdWorkflow, HttpServletRequest request, int oldState, Ticket ticket )
     {
         int newState = -1;
 
@@ -167,11 +167,11 @@ public class TaskChooseNextState extends AbstractTicketingTask
 
         if ( ( newState != -1 ) && ( newState != oldState ) )
         {
-            doChangeState( task, nIdResource, strResourceType, nIdWorkflow, newState );
+            doChangeState( task, nIdResource, strResourceType, nIdWorkflow, request, newState );
         }
     }
 
-    private void doChangeState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, int newState )
+    private void doChangeState( ITask task, int nIdResource, String strResourceType, int nIdWorkflow, HttpServletRequest request, int newState )
     {
         Locale locale = I18nService.getDefaultLocale( );
         State state = _stateService.findByPrimaryKey( newState );
@@ -184,7 +184,7 @@ public class TaskChooseNextState extends AbstractTicketingTask
             resourceWorkflow.setState( state );
             _resourceWorkflowService.update( resourceWorkflow );
 
-            _ticketInitService.doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, locale, null );
+            _ticketInitService.doProcessAutomaticReflexiveActions( nIdResource, strResourceType, state.getId( ), null, request, locale, null );
         }
     }
 
