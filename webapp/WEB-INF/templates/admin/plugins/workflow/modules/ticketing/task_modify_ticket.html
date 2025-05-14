@@ -7,7 +7,7 @@
 
 <input type="hidden" id="id_adrposte" name="id_adrposte" value="">
 
-<#assign adresseConnue = (ticket.ticketAddress??)?then(ticket.ticketAddress.address,'')>
+<#assign adresseConnue = (ticket.ticketAddress??)?then(ticket.ticketAddress.address?replace("'","&#39;"),'')>
 
 <@formGroup labelKey='#i18n{ticketing.modify_ticket.labelLastname}' labelFor='lastname' mandatory=true>
    <@input type='text' name='lastname' id='lastname' value='${ticket.lastname!\'\'}' class='input-lg' />
