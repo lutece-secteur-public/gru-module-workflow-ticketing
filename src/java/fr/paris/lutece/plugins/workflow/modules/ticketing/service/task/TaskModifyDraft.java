@@ -242,29 +242,32 @@ public class TaskModifyDraft extends AbstractTicketingTask
             if ( currentTicketAddress != null )
             {
                 // Update the address
-                if ( ( null != currentTicketAddress.getAddress( ) ) && !currentTicketAddress.getAddress( ).equals( strNewAdress ) )
+                if ( ( ( null != currentTicketAddress.getAddress( ) ) && ( !currentTicketAddress.getAddress( ).equals( strNewAdress ) ) )
+                        || ( ( null == currentTicketAddress.getAddress( ) ) && ( null != strNewAdress ) ) )
                 {
                     String strCurrentAddress = currentTicketAddress.getAddress( );
                     currentTicketAddress.setAddress( strNewAdress );
                     strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_INFORMATION, strCurrentAddress, strNewAdress, locale );
                 }
                 // Update the address detail
-                if ( ( null != currentTicketAddress.getAddressDetail( ) )
-                        && !currentTicketAddress.getAddressDetail( ).equals( strNewAdressDetail ) )
+                if ( ( ( null != currentTicketAddress.getAddressDetail( ) ) && ( !currentTicketAddress.getAddressDetail( ).equals( strNewAdressDetail ) ) )
+                        || ( ( null == currentTicketAddress.getAddressDetail( ) ) && ( null != strNewAdressDetail ) ) )
                 {
                     String strCurrentAddressDetail = currentTicketAddress.getAddressDetail( );
                     currentTicketAddress.setAddressDetail( strNewAdressDetail );
                     strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_ADDRESS_DETAIL_INFORMATION, strCurrentAddressDetail, strNewAdressDetail, locale );
                 }
                 // Update the city
-                if ( ( null != currentTicketAddress.getCity( ) ) && !currentTicketAddress.getCity( ).equals( strNewCity ) )
+                if ( ( ( null != currentTicketAddress.getCity( ) ) && ( !currentTicketAddress.getCity( ).equals( strNewCity ) ) )
+                        || ( ( null == currentTicketAddress.getCity( ) ) && ( null != strNewCity ) ) )
                 {
                     String strCurrentCity = currentTicketAddress.getCity( );
                     currentTicketAddress.setCity( strNewCity );
                     strTaskInformation += formatInfoMessage( MESSAGE_MODIFY_TICKET_CITY_INFORMATION, strCurrentCity, strNewCity, locale );
                 }
                 // Update the postal code
-                if ( ( null != currentTicketAddress.getPostalCode( ) ) && !currentTicketAddress.getPostalCode( ).equals( strNewPostalCode ) )
+                if ( ( ( null != currentTicketAddress.getPostalCode( ) ) && ( !currentTicketAddress.getPostalCode( ).equals( strNewPostalCode ) ) )
+                        || ( ( null == currentTicketAddress.getPostalCode( ) ) && ( null != strNewPostalCode ) ) )
                 {
                     String strCurrentPostalCode = currentTicketAddress.getPostalCode( );
                     currentTicketAddress.setPostalCode( strNewPostalCode );
