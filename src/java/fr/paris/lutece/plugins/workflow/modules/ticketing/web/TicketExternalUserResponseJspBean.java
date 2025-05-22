@@ -172,6 +172,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
 
         // Retrieve objects
         String strIdEmailExternalUser = request.getParameter( TicketEmailExternalUserConstants.PARAMETER_ID_MESSAGE_EXTERNAL_USER );
+        String strIdTicket = request.getParameter( TicketEmailExternalUserConstants.PARAMETER_ID_TICKET );
         List<TicketEmailExternalUserMessageDisplay> listEmailExternalUserMessageDisplay = new ArrayList<>( );
         TicketEmailExternalUserMessage requiredEmailExternalUserMessage = null;
         TicketEmailExternalUserHistory externalUserHistory = null;
@@ -190,6 +191,11 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
             if ( requiredEmailExternalUserMessage == null )
             {
                 return getMessagePage( PROPERTY_TICKET_DELETED, SiteMessage.TYPE_WARNING );
+            }
+
+            if ( ( ( null != strIdTicket ) && ( requiredEmailExternalUserMessage.getIdTicket( ) != Integer.parseInt( strIdTicket ) ) ) || ( null == strIdTicket ) )
+            {
+                return redirect( request, AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP ) );
             }
 
             // ticket status
