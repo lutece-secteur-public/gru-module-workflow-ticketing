@@ -193,15 +193,15 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                 return getMessagePage( PROPERTY_TICKET_DELETED, SiteMessage.TYPE_WARNING );
             }
 
+            if ( ( ( null != strIdTicket ) && ( requiredEmailExternalUserMessage.getIdTicket( ) != Integer.parseInt( strIdTicket ) ) ) || ( null == strIdTicket ) )
+            {
+                return redirect( request, AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP ) );
+            }
+
             // ticket status
             if ( requiredEmailExternalUserMessage.getIsAnswered( ) )
             {
                 return getMessagePage( PROPERTY_EXTERNAL_USER_MESSAGE_ALREADY_ANSWER, SiteMessage.TYPE_WARNING );
-            }
-
-            if ( ( ( null != strIdTicket ) && ( requiredEmailExternalUserMessage.getIdTicket( ) != Integer.parseInt( strIdTicket ) ) ) || ( null == strIdTicket ) )
-            {
-                return redirect( request, AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP ) );
             }
 
             for ( TicketEmailExternalUserMessage emailExternalUserMessage : _ticketEmailExternalUserMessageDAO
