@@ -75,6 +75,7 @@ public final class TicketEmailExternalUserConstants
     public static final String PARAMETER_ID_MESSAGE_EXTERNAL_USER = "id_message_external_user";
     public static final String PARAMETER_SIGNATURE = "signature";
     public static final String PARAMETER_ID_TIMETAMP = "timestamp";
+    public static final String PARAMETER_ID_TICKET                   = "id_ticket";
 
     /**
      * Private constructor
