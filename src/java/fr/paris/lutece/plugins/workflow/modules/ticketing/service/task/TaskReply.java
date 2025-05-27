@@ -47,13 +47,13 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.service.util.ResponseUtil;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
@@ -195,7 +195,7 @@ public class TaskReply extends AbstractTicketingTask
         {
             for ( Response response : ticket.getListResponse( ) )
             {
-                ResponseHome.create( response );
+                ResponseUtil.createResponse( response );
                 mapDownloadUrls.put( response.getFile( ).getTitle( ),
                         ( (AbstractEntryTypeUpload) entryTypeService ).getUrlDownloadFile( response.getIdResponse( ), AppPathService.getProdUrl( request ) ) );
             }

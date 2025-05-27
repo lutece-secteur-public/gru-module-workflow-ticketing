@@ -52,7 +52,6 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPj;
@@ -60,6 +59,7 @@ import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPjHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.service.strois.STroisService;
 import fr.paris.lutece.plugins.ticketing.service.strois.StockageService;
+import fr.paris.lutece.plugins.ticketing.service.util.ResponseUtil;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskEditTicketConfig;
@@ -305,7 +305,7 @@ public class TaskEditTicket extends AbstractTicketingTask
                 {
                     deletePj( pj );
                 }
-                ResponseHome.create( response );
+                ResponseUtil.createResponse( response );
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             }
         }
