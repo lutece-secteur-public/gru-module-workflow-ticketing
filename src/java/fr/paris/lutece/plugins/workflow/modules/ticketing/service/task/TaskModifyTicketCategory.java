@@ -215,7 +215,7 @@ public class TaskModifyTicketCategory extends AbstractTicketingTask
                 // add new responses
                 for ( Response response : listResponseToAdd )
                 {
-                    ResponseUtil.createResponse( response );
+                    response = ResponseUtil.createResponse( response );
                     if ( response.getFile( ) != null )
                     {
                         // retrait archivage

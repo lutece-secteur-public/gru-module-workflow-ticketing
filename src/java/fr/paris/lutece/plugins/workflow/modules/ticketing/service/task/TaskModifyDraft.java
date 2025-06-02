@@ -137,7 +137,7 @@ public class TaskModifyDraft extends AbstractTicketingTask
             // Create new responses
             newResponsesForEntry.forEach( response ->
             {
-                ResponseUtil.createResponse( response );
+                response = ResponseUtil.createResponse( response );
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             } );
 

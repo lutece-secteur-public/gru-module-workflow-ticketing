@@ -305,7 +305,7 @@ public class TaskEditTicket extends AbstractTicketingTask
                 {
                     deletePj( pj );
                 }
-                ResponseUtil.createResponse( response );
+                response = ResponseUtil.createResponse( response );
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             }
         }
