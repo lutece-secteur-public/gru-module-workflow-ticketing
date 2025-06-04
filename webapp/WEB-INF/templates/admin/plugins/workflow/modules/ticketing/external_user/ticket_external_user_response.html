@@ -17,7 +17,7 @@
       <#if !expired??>
   <br/>
   <div id="demand-panel" class="row ticket-content">
-	<form class="form-horizontal" action="${form_action}" method="post" enctype="multipart/form-data">
+	<form class="form-horizontal" id="user_response_action" action="${form_action}" method="post" enctype="multipart/form-data">
 	<input id="action" name="action" value="doProcessWorkflowAction" type="hidden">
 	<input id="id_action" name="id_action" value="${id_action}" type="hidden">
 	<input id="id_message_external_user" name="id_message_external_user" value="${id_message_external_user}" type="hidden">
@@ -102,3 +102,12 @@
   </div>
   </#if>
 </div>
+<script>
+$( function() {	
+	$('#next_button').prop('disabled', false);
+
+	$('#user_response_action').submit(function( ){
+		$('#next_button').prop('disabled', true);
+	});	
+});
+</script>
