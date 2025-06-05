@@ -68,15 +68,12 @@
 <#include "/skin/plugins/asynchronousupload/upload_commons.html"/>
 
 ${entry_attached_files!''} 
- 
+
 <@addRequiredJsFiles />
 <script>
 $( function() {
-	$('#next_button').prop('disabled', false);
-	
 	$('#wf_action_form').submit(function( ){
 		$('#id_quartier').prop('disabled', false);
-		$('#next_button').prop('disabled', true);
 	});
 	
 });
