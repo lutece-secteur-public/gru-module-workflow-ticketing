@@ -35,7 +35,10 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -47,21 +50,28 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
+import fr.paris.lutece.plugins.ticketing.service.authentication.RequestAuthenticationService;
+import fr.paris.lutece.plugins.ticketing.service.download.TicketingNewFileServlet;
+import fr.paris.lutece.plugins.ticketing.service.util.ResponseUtil;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.MessageDirection;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskReplyConfig;
+import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
 import fr.paris.lutece.plugins.workflowcore.service.config.ITaskConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.util.sql.TransactionManager;
+import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * This class represents a task to reply to a ticket
@@ -80,6 +90,8 @@ public class TaskReply extends AbstractTicketingTask
     // PARAMETERS
     public static final String PARAMETER_USER_MESSAGE = "user_message";
     private ITaskConfigService _taskConfigService;
+    private static Plugin       _plugin                              = WorkflowTicketingPlugin.getPlugin( );
+
 
     // TEMPLATES
     private static final String TEMPLATE_USER_MESSAGE = "admin/plugins/workflow/modules/ticketing/user_message.html";
@@ -103,32 +115,42 @@ public class TaskReply extends AbstractTicketingTask
 
         if ( ticket != null )
         {
-            String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
-
-            strUserMessage = fillWithDownloadUrls( strUserMessage, request );
-
-            ticket.setUserMessage( strUserMessage );
-
-            TaskReplyConfig config = _taskConfigService.findByPrimaryKey( getId( ) );
-
-            if ( ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) ) && config.isCloseTicket( ) )
+            try
             {
-                ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
-                ticket.setDateClose( new Timestamp( new java.util.Date( ).getTime( ) ) );
-                request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
+                TransactionManager.beginTransaction( _plugin );
+
+                String strUserMessage = request.getParameter( PARAMETER_USER_MESSAGE );
+
+                strUserMessage = fillWithDownloadUrls( strUserMessage, ticket.getReference( ), request );
+
+                ticket.setUserMessage( strUserMessage );
+
+                TaskReplyConfig config = _taskConfigService.findByPrimaryKey( getId( ) );
+
+                if ( ( MessageDirection.AGENT_TO_USER == config.getMessageDirection( ) ) && config.isCloseTicket( ) )
+                {
+                    ticket.setTicketStatus( TicketingConstants.TICKET_STATUS_CLOSED );
+                    ticket.setDateClose( new Timestamp( new java.util.Date( ).getTime( ) ) );
+                    request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
+                }
+
+                TicketHome.update( ticket );
+
+                if ( StringUtils.isEmpty( strUserMessage ) )
+                {
+                    strUserMessage = I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_NO_MESSAGE, Locale.FRENCH );
+                }
+
+                strTaskInformation = MessageFormat.format( I18nService
+                        .getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ), Locale.FRENCH ),
+                        TicketingConstants.MESSAGE_MARK + strUserMessage );
             }
-
-            TicketHome.update( ticket );
-
-            if ( StringUtils.isEmpty( strUserMessage ) )
+            catch ( Exception e )
             {
-                strUserMessage = I18nService.getLocalizedString( MESSAGE_REPLY_INFORMATION_NO_MESSAGE, Locale.FRENCH );
+                TransactionManager.rollBack( _plugin );
+                AppLogService.error( e );
             }
-
-            strTaskInformation = MessageFormat.format( I18nService
-                    .getLocalizedString( MESSAGE_REPLY_INFORMATION_PREFIX + config.getMessageDirection( ).toString( ).toLowerCase( ), Locale.FRENCH ),
-                    TicketingConstants.MESSAGE_MARK + strUserMessage );
-
+            TransactionManager.commitTransaction( _plugin );
         }
 
         return strTaskInformation;
@@ -170,11 +192,12 @@ public class TaskReply extends AbstractTicketingTask
      *
      * @param strUserMessage
      *            The user message
+     * @param strReference
      * @param request
      *            The request
      * @return the completed user message
      */
-    private String fillWithDownloadUrls( String strUserMessage, HttpServletRequest request )
+    private String fillWithDownloadUrls( String strUserMessage, String strReference, HttpServletRequest request )
     {
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_USER_MESSAGE, strUserMessage );
@@ -195,13 +218,34 @@ public class TaskReply extends AbstractTicketingTask
         {
             for ( Response response : ticket.getListResponse( ) )
             {
-                ResponseHome.create( response );
+                response = ResponseUtil.createResponse( response );
                 mapDownloadUrls.put( response.getFile( ).getTitle( ),
-                        ( (AbstractEntryTypeUpload) entryTypeService ).getUrlDownloadFile( response.getIdResponse( ), AppPathService.getProdUrl( request ) ) );
+                        ( getUrlDownloadNewFile( response.getIdResponse( ), strReference, AppPathService.getProdUrl( request ) ) ) );
             }
         }
 
         model.put( MARK_MAP_DOWNLOAD_URL, mapDownloadUrls );
         return AppTemplateService.getTemplate( TEMPLATE_USER_MESSAGE, request.getLocale( ), model ).getHtml( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getUrlDownloadNewFile( int nResponseId, String strReference, String strBaseUrl )
+    {
+        List<String> listElements = new ArrayList<>( );
+        listElements.add( Integer.toString( nResponseId ) );
+
+        String strTimestamp = Long.toString( new Date( ).getTime( ) );
+        String strSignature = RequestAuthenticationService.getRequestAuthenticator( ).buildSignature( listElements, strTimestamp );
+
+        UrlItem url = new UrlItem( strBaseUrl + TicketingNewFileServlet.URL_NEW_SERVLET );
+
+        url.addParameter( TicketingNewFileServlet.PARAMETER_ID_RESPONSE, String.valueOf( nResponseId ) );
+        url.addParameter( TicketingNewFileServlet.PARAMETER_REFERENCE, strReference );
+        url.addParameter( TicketingConstants.PARAMETER_SIGNATURE, strSignature );
+        url.addParameter( TicketingConstants.PARAMETER_TIMESTAMP, strTimestamp );
+
+        return url.getUrl( );
     }
 }

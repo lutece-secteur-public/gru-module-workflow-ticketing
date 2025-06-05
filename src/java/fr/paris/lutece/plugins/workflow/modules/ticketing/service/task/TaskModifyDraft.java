@@ -47,7 +47,6 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
 import fr.paris.lutece.plugins.ticketing.business.arrondissement.Arrondissement;
 import fr.paris.lutece.plugins.ticketing.business.arrondissement.ArrondissementHome;
@@ -65,6 +64,7 @@ import fr.paris.lutece.plugins.ticketing.service.entrytype.EntryTypeFile;
 import fr.paris.lutece.plugins.ticketing.service.strois.STroisService;
 import fr.paris.lutece.plugins.ticketing.service.strois.StockageService;
 import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUploadHandler;
+import fr.paris.lutece.plugins.ticketing.service.util.ResponseUtil;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -137,7 +137,7 @@ public class TaskModifyDraft extends AbstractTicketingTask
             // Create new responses
             newResponsesForEntry.forEach( response ->
             {
-                ResponseHome.create( response );
+                response = ResponseUtil.createResponse( response );
                 TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
             } );
 

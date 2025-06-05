@@ -76,13 +76,9 @@
   </#list>
 </#if>
 <script>
-$( function() {
-	$('#next_button').prop('disabled', false);
-	
+$( function() {	
 	$('#wf_action_form').submit(function( ){
 		$('#id_quartier').prop('disabled', false);
-		$('#next_button').prop('disabled', true);
-	});
-	
+	});		
 });
 </script>
