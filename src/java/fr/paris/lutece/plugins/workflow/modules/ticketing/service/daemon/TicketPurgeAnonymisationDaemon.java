@@ -76,9 +76,9 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.sql.TransactionManager;
 
 /**
- * Daemon used to anonymize Tickets
+ * The purge daemon for tickets to be anonymized.
  */
-public class TicketAnonymisationDaemon extends Daemon
+public class TicketPurgeAnonymisationDaemon extends Daemon
 {
 
     private static final int DELAI_ANONYMISATION = PluginConfigurationService.getInt( PluginConfigurationService.PROPERTY_ANONYMISATION_DELAI, 1096 );
@@ -102,7 +102,7 @@ public class TicketAnonymisationDaemon extends Daemon
     /*
      * Constructor
      */
-    public TicketAnonymisationDaemon( )
+    public TicketPurgeAnonymisationDaemon( )
     {
         super( );
     }
@@ -116,7 +116,7 @@ public class TicketAnonymisationDaemon extends Daemon
         StringJoiner sb = new StringJoiner( "\n\r" );
 
         sb.add( "Début de l'anonymisation" );
-        anonymisation( sb );
+        anonymisationPurge( sb );
         sb.add( "Fin de l'anonymisation" );
         setLastRunLogs( sb.toString( ) );
     }
@@ -127,7 +127,7 @@ public class TicketAnonymisationDaemon extends Daemon
      * @param sb
      *            the logs
      */
-    public void anonymisation( StringJoiner sb )
+    public void anonymisationPurge( StringJoiner sb )
     {
         List<Integer> allIdDomaines = TicketCategoryHome.selectIdCategoriesDomainList( );
 
@@ -137,7 +137,7 @@ public class TicketAnonymisationDaemon extends Daemon
 
             if ( null != categorieDomaine )
             {
-                anonymizeByDomaine( categorieDomaine, sb );
+                anonymizePurgeByDomaine( categorieDomaine, sb );
             }
         }
     }
@@ -150,7 +150,7 @@ public class TicketAnonymisationDaemon extends Daemon
      * @param sb
      *            The logs
      */
-    private void anonymizeByDomaine( TicketCategory categorieDomaine, StringJoiner sb )
+    private void anonymizePurgeByDomaine( TicketCategory categorieDomaine, StringJoiner sb )
     {
 
         List<Integer> allChildrenForADomaine = TicketCategoryService.getInstance( true ).getAllChildren( categorieDomaine );

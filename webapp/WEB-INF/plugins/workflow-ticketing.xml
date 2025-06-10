@@ -91,10 +91,10 @@
             <daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.NotifyLevel3Daemon</daemon-class>
         </daemon>
 		<daemon>
-			<daemon-id>ticketAnonymisationDaemon</daemon-id>
-			<daemon-name>module.workflow.ticketing.daemon.ticketAnonymisationDaemon.name</daemon-name>
-			<daemon-description>module.workflow.ticketing.daemon.ticketAnonymisationDaemon.description</daemon-description>
-			<daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketAnonymisationDaemon</daemon-class>
+			<daemon-id>ticketPurgeAnonymisationDaemon</daemon-id>
+			<daemon-name>module.workflow.ticketing.daemon.ticketPurgeAnonymisationDaemon.name</daemon-name>
+			<daemon-description>module.workflow.ticketing.daemon.ticketPurgeAnonymisationDaemon.description</daemon-description>
+			<daemon-class>fr.paris.lutece.plugins.workflow.modules.ticketing.service.daemon.TicketPurgeAnonymisationDaemon</daemon-class>
 		</daemon>
         <daemon>
             <daemon-id>migrationPjDaemon</daemon-id>
