@@ -61,8 +61,21 @@ public interface IAnonymisationDAO
      *            the id History
      * @param message
      *            the message to anoymise
+     * @param plugin
+     *            the plugin
      */
     void storeAnonymisationCommentValue( String message, int idHistory, Plugin plugin );
+
+    /**
+     * Remove Comment value by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param idHistoryList
+     * @param plugin
+     *            the plugin
+     */
+    void deleteCommentValueIdHistoryList( List<Integer> idHistoryList, Plugin plugin );
 
     /**
      * Get the list of id upload files history with an id history
@@ -109,5 +122,75 @@ public interface IAnonymisationDAO
      *            the plugin
      */
     void storeAnonymisationNotifyGruHistoryTotal( Map<String, String> messagesList, int idHistory, Plugin plugin );
+
+    /**
+     * Remove ExternalEmailMessage by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteMessageNotifyGruByIdHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove upload files by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteUploadFilesIdHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove upload history by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteUploadHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove workflow_resource_user_history by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteWorkflowUserHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove workflow_resource_history_ticketing by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteWorkflowTicketingHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove workflow_resource_history by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteHistoryWorkflowHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove workflow_resource_workflow by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteWorkflowResource( int idTicket, Plugin plugin );
 
 }

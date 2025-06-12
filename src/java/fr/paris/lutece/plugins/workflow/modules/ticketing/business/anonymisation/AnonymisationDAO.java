@@ -38,17 +38,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 public class AnonymisationDAO implements IAnonymisationDAO
 {
+    private static final String IDS_TO_REPLACE                                           = "%IDS%";
     private static final String SQL_QUERY_SELECT_EMAIL_COMMENT_VALUE_HISTORY = "SELECT comment_value FROM workflow_task_comment_value WHERE id_history = ?";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY = "UPDATE workflow_task_comment_value SET comment_value=? WHERE id_history = ?";
     private static final String SQL_QUERY_SELECT_UPLOAD_FILES_HISTORY = "SELECT id_file FROM workflow_task_upload_files WHERE id_history = ?";
-    private static final String SQL_QUERY_DELETE_UPLOAD_FILE_REFERENCE_FOR_ANONYMISATION = "DELETE FROM workflow_task_upload_files WHERE id_history = ?";
+
     private static final String SQL_QUERY_SELECT_MESSAGE_NOTIFY_GRU_HISTORY_TOTAL = "SELECT message_email, message_guichet, message_agent,message_broadcast,message_sms FROM workflow_task_notify_gru_history WHERE id_history = ?";
+
+    // DELETE
+    private static final String SQL_QUERY_DELETE_MESSAGE_NOTIFY_GRU_HISTORY_LIST         = "DELETE FROM workflow_task_notify_gru_history WHERE id_history IN (" + IDS_TO_REPLACE + ")";
+    private static final String SQL_QUERY_DELETE_ANONYMISATION_COMMENT_VALUE_HISTORY_LIST = "DELETE FROM workflow_task_comment_value WHERE id_history IN (" + IDS_TO_REPLACE + ")";
+    private static final String SQL_QUERY_DELETE_UPLOAD_FILE_REFERENCE_FOR_ANONYMISATION = "DELETE FROM workflow_task_upload_files WHERE id_history = ?";
+    private static final String SQL_QUERY_DELETE_UPLOAD_FILES_HISTORY_LIST                = "DELETE FROM workflow_task_upload_files WHERE id_history IN (" + IDS_TO_REPLACE + ")";
+    private static final String SQL_QUERY_DELETE_UPLOAD_HISTORY_LIST                      = "DELETE FROM workflow_task_upload_history WHERE id_history IN (" + IDS_TO_REPLACE + ")";
+    // workflow history ticketing
+    private static final String SQL_QUERY_DELETE_WORKFLOW_TICKETING_HISTORY_LIST          = "DELETE FROM workflow_resource_history_ticketing WHERE id_history IN (" + IDS_TO_REPLACE + ")";
+    // workflow history
+    private static final String SQL_QUERY_DELETE_HIST_WORKFLOW_HISTORY_LIST               = "DELETE FROM workflow_resource_history WHERE id_history IN (" + IDS_TO_REPLACE + ")";
+    // workflow user history
+    private static final String SQL_QUERY_DELETE_USER_WORKFLOW_HISTORY_LIST               = "DELETE FROM workflow_resource_user_history WHERE id_history IN (" + IDS_TO_REPLACE + ")";
+    // workflow resource
+    private static final String SQL_QUERY_DELETE_RESOURCE_WORKFLOW                        = "DELETE FROM workflow_resource_workflow WHERE id_resource = ? ";
+
+    private static final String SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY     = "UPDATE workflow_task_comment_value SET comment_value=? WHERE id_history = ?";
     private static final String SQL_QUERY_UPDATE_ANONYMISATION_NOTIFY_GRU_HISTORY_TOTAL = "UPDATE workflow_task_notify_gru_history SET ";
+
     private static final String SQL_QUERY_WHERE_ID_HISTORY = " WHERE id_history = ?";
 
     /**
@@ -74,6 +94,19 @@ public class AnonymisationDAO implements IAnonymisationDAO
             }
         }
         return messageListHistory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteMessageNotifyGruByIdHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_MESSAGE_NOTIFY_GRU_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -137,6 +170,19 @@ public class AnonymisationDAO implements IAnonymisationDAO
      * {@inheritDoc}
      */
     @Override
+    public void deleteCommentValueIdHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_ANONYMISATION_COMMENT_VALUE_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void storeAnonymisationCommentValue( String message, int idHistory, Plugin plugin )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY, plugin ) )
@@ -148,6 +194,7 @@ public class AnonymisationDAO implements IAnonymisationDAO
             daoUtil.executeUpdate( );
         }
     }
+
 
     /**
      * {@inheritDoc}
@@ -181,6 +228,84 @@ public class AnonymisationDAO implements IAnonymisationDAO
         {
             daoUtil.setInt( 1, idHistory );
 
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteUploadFilesIdHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_UPLOAD_FILES_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteWorkflowUserHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_USER_WORKFLOW_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteWorkflowTicketingHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_WORKFLOW_TICKETING_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteHistoryWorkflowHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_HIST_WORKFLOW_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteWorkflowResource( int idTicket, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_RESOURCE_WORKFLOW, plugin ) )
+        {
+            daoUtil.setInt( 1, idTicket );
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteUploadHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_UPLOAD_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
             daoUtil.executeUpdate( );
         }
     }

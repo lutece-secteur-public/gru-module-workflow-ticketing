@@ -36,9 +36,11 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
@@ -46,6 +48,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcDAO
 {
+    private static final String IDS_TO_REPLACE                   = "%IDS%";
     private static final String SQL_QUERY_NEW_PK = "SELECT max( id_cc ) FROM workflow_task_ticketing_email_external_user_cc";
     private static final String SQL_QUERY_FIND_BY_ID_HISTORY = " SELECT  id_cc, id_task, id_history, email FROM workflow_task_ticketing_email_external_user_cc "
             + " WHERE id_history = ? AND id_task = ? ORDER BY id_cc ASC";
@@ -53,6 +56,8 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
             + " VALUES ( ?,?,?,? ) ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_email_external_user_cc WHERE id_cc = ?";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = " DELETE FROM workflow_task_ticketing_email_external_user_cc WHERE id_history = ?";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY_LIST = " DELETE FROM workflow_task_ticketing_email_external_user_cc WHERE id_history IN (" + IDS_TO_REPLACE + ")";
+    private static final Plugin PLUGIN                           = WorkflowTicketingPlugin.getPlugin( );
 
     /**
      * Generates a new primary key
@@ -63,7 +68,7 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
     {
         int nKey = 1;
 
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, WorkflowTicketingPlugin.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, PLUGIN ) )
         {
             daoUtil.executeQuery( );
 
@@ -82,7 +87,7 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
     @Transactional( "workflow.transactionManager" )
     public synchronized void insert( TicketEmailExternalUserCc infosEmailExternalUser )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowTicketingPlugin.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PLUGIN ) )
         {
             infosEmailExternalUser.setIdInfosHistory( newPrimaryKey( ) );
 
@@ -106,7 +111,7 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
         TicketEmailExternalUserCc infosEmailExternalUser;
         List<TicketEmailExternalUserCc> listInfosEmailExternalUser = new ArrayList<>( );
 
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_HISTORY, WorkflowTicketingPlugin.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_HISTORY, PLUGIN ) )
         {
             daoUtil.setInt( 1, nIdHistory );
             daoUtil.setInt( 2, nIdTask );
@@ -137,7 +142,7 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
     @Transactional( "workflow.transactionManager" )
     public void deleteByIdCc( int nIdCc )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, WorkflowTicketingPlugin.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, PLUGIN ) )
         {
             daoUtil.setInt( 1, nIdCc );
             daoUtil.executeUpdate( );
@@ -151,9 +156,22 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
     @Transactional( "workflow.transactionManager" )
     public void deleteByIdHistory( int nIdHistory )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, WorkflowTicketingPlugin.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, PLUGIN ) )
         {
             daoUtil.setInt( 1, nIdHistory );
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteEmailExternalUserCcByIdHistoryList( List<Integer> idHistoryList )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, PLUGIN ) )
+        {
             daoUtil.executeUpdate( );
         }
     }

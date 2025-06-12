@@ -36,7 +36,10 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
@@ -47,6 +50,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class EditableTicketDAO implements IEditableTicketDAO
 {
+    private static final String IDS_TO_REPLACE                 = "%IDS%";
     private static final String SQL_SELECT = " SELECT id_history, id_task, id_ticket, message, is_edited ";
     private static final String SQL_QUERY_SELECT = SQL_SELECT + " FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? AND id_task = ? ";
     private static final String SQL_QUERY_SELECT_BY_ID_TASK = SQL_SELECT + " FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
@@ -54,11 +58,12 @@ public class EditableTicketDAO implements IEditableTicketDAO
             + " VALUES ( ?,?,?,?,? ) ";
     private static final String SQL_QUERY_SELECT_BY_ID_TICKET = SQL_SELECT
             + " FROM workflow_task_ticketing_editable_ticket WHERE id_ticket = ? AND is_edited = 0 ";
-    private static final String SQL_QUERY_DELETE_BY_ID_HISTORY = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? AND id_task = ? ";
+    private static final String SQL_QUERY_DELETE_BY_ID_HISTORY_LIST = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_history IN (" + IDS_TO_REPLACE + ")";
     private static final String SQL_QUERY_DELETE_BY_TASK = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
     private static final String SQL_QUERY_UPDATE = " UPDATE workflow_task_ticketing_editable_ticket SET message = ?, is_edited = ? WHERE id_history = ? AND id_task = ? ";
     private static final String SQL_QUERY_UPDATE_ANONYMISATION = " UPDATE workflow_task_ticketing_editable_ticket SET message = ? WHERE id_history = ? ";
-    private static final String SQL_QUERY_SELECT_BY_ID_HISTORY = " SELECT message FROM workflow_task_ticketing_editable_ticket WHERE id_history = ? ";
+    private static final String SQL_QUERY_SELECT_BY_ID_HISTORY      = " SELECT message FROM workflow_task_ticketing_editable_ticket WHERE id_history id_history = ? AND id_task = ?";
+    private static final Plugin PLUGIN                              = PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME );
 
     /**
      * {@inheritDoc}
@@ -66,7 +71,7 @@ public class EditableTicketDAO implements IEditableTicketDAO
     @Override
     public synchronized void insert( EditableTicket ediableTicket )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PLUGIN ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, ediableTicket.getIdHistory( ) );
@@ -85,7 +90,7 @@ public class EditableTicketDAO implements IEditableTicketDAO
     @Override
     public void store( EditableTicket editableTicket )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, PLUGIN ) )
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++, editableTicket.getMessage( ) );
@@ -104,7 +109,7 @@ public class EditableTicketDAO implements IEditableTicketDAO
     @Override
     public void storeAnonymisation( String message, int idHistory )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION, PLUGIN ) )
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++, message );
@@ -122,7 +127,7 @@ public class EditableTicketDAO implements IEditableTicketDAO
     {
         EditableTicket editableTicket = null;
 
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, PLUGIN ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, nIdHistory );
@@ -153,7 +158,7 @@ public class EditableTicketDAO implements IEditableTicketDAO
     {
         EditableTicket editableTicket = null;
 
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_TICKET, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_TICKET, PLUGIN ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, nIdTicket );
@@ -182,7 +187,7 @@ public class EditableTicketDAO implements IEditableTicketDAO
     public String loadByIdHistory( int idHistory )
     {
         String message = "";
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_HISTORY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_HISTORY, PLUGIN ) )
         {
             daoUtil.setInt( 1, idHistory );
             daoUtil.executeQuery( );
@@ -202,7 +207,7 @@ public class EditableTicketDAO implements IEditableTicketDAO
     public List<EditableTicket> loadByIdTask( int nIdTask )
     {
         List<EditableTicket> listEditableTickets = new ArrayList<>( );
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_TASK, PLUGIN ) )
         {
             daoUtil.setInt( 1, nIdTask );
 
@@ -230,7 +235,7 @@ public class EditableTicketDAO implements IEditableTicketDAO
     @Override
     public void deleteByIdHistory( int nIdHistory, int nIdTask )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_ID_HISTORY, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_HISTORY, PLUGIN ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, nIdHistory );
@@ -244,9 +249,22 @@ public class EditableTicketDAO implements IEditableTicketDAO
      * {@inheritDoc}
      */
     @Override
+    public void deleteByIdHistoryList( List<Integer> idHistoryList )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_ID_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, PLUGIN ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void deleteByIdTask( int nIdTask )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, PLUGIN ) )
         {
             daoUtil.setInt( 1, nIdTask );
             daoUtil.executeUpdate( );

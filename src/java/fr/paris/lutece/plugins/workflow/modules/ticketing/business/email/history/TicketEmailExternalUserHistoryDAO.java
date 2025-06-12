@@ -36,9 +36,11 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.histor
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
@@ -46,6 +48,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUserHistoryDAO
 {
+    private static final String IDS_TO_REPLACE               = "%IDS%";
     private static final String SQL_QUERY_FIND_BY_ID_HISTORY = " SELECT id_task, id_history, id_message_external_user FROM workflow_task_ticketing_email_external_user_history "
             + " WHERE id_history = ? ";
     private static final String SQL_QUERY_FIND_BY_ID_MESSAGE = " SELECT id_task, id_history, id_message_external_user FROM workflow_task_ticketing_email_external_user_history "
@@ -53,6 +56,8 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
     private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_email_external_user_history ( id_task, id_history, id_message_external_user ) "
             + " VALUES ( ?,?,? ) ";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = " DELETE FROM workflow_task_ticketing_email_external_user_history WHERE id_history = ? ";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY_LIST = " DELETE FROM workflow_task_ticketing_email_external_user_history WHERE id_history IN (" + IDS_TO_REPLACE + ")";
+    private static final Plugin PLUGIN                           = WorkflowTicketingPlugin.getPlugin( );
 
     /**
      * {@inheritDoc}
@@ -61,7 +66,7 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
     @Transactional( "workflow.transactionManager" )
     public synchronized void insert( TicketEmailExternalUserHistory emailExternalUser )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, WorkflowTicketingPlugin.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, PLUGIN ) )
         {
             int nIndex = 1;
 
@@ -80,7 +85,7 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
     public TicketEmailExternalUserHistory loadByIdHistory( int nIdHistory )
     {
         TicketEmailExternalUserHistory emailExternalUser = null;
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_HISTORY, WorkflowTicketingPlugin.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_HISTORY, PLUGIN ) )
         {
             daoUtil.setInt( 1, nIdHistory );
 
@@ -108,7 +113,7 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
         TicketEmailExternalUserHistory emailExternalUser = null;
         List<TicketEmailExternalUserHistory> lstEmailExternalUser = new ArrayList<>( );
 
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_MESSAGE, WorkflowTicketingPlugin.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_ID_MESSAGE, PLUGIN ) )
         {
             daoUtil.setInt( 1, nIdMessageAgent );
 
@@ -135,9 +140,22 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
     @Transactional( "workflow.transactionManager" )
     public void deleteByHistory( int nIdHistory )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, WorkflowTicketingPlugin.getPlugin( ) ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, PLUGIN ) )
         {
             daoUtil.setInt( 1, nIdHistory );
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteEmailExternalUserByIdHistoryList( List<Integer> idHistoryList )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, PLUGIN ) )
+        {
             daoUtil.executeUpdate( );
         }
     }

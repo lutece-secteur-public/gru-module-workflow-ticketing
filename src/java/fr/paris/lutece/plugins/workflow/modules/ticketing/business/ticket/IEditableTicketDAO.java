@@ -110,6 +110,16 @@ public interface IEditableTicketDAO
     void deleteByIdHistory( int nIdHistory, int nIdTask );
 
     /**
+     * Remove EditableTicket by id history
+     *
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the task id
+     */
+    void deleteByIdHistoryList( List<Integer> idHistoryList );
+
+    /**
      * Remove EditableTicket by id task
      *
      * @param nIdTask

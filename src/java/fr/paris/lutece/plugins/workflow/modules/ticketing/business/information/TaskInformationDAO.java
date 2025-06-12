@@ -33,6 +33,10 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.information;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
@@ -43,15 +47,16 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TaskInformationDAO implements ITaskInformationDAO
 {
+    private static final String IDS_TO_REPLACE                       = "%IDS%";
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_history,id_task,information_value  "
             + "FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
     private static final String SQL_QUERY_FIND_BY_ID_HISTORY = "SELECT  information_value FROM workflow_task_ticketing_information WHERE id_history=?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO  workflow_task_ticketing_information "
             + "(id_history,id_task,information_value ) VALUES( ?, ?, ? )";
     private static final String SQL_QUERY_UPDATE = "UPDATE workflow_task_ticketing_information SET information_value=? WHERE id_history = ?";
-    private static final String SQL_QUERY_DELETE_BY_HISTORY = "DELETE FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY_AND_TASK = "DELETE FROM workflow_task_ticketing_information WHERE id_history=? AND id_task=?";
     private static final String SQL_QUERY_DELETE_BY_TASK = "DELETE FROM workflow_task_ticketing_information WHERE id_task=?";
-
+    private static final String SQL_QUERY_DELETE_BY_HISTORY_LIST     = "DELETE FROM workflow_task_ticketing_information WHERE id_history IN (" + IDS_TO_REPLACE + ")";
     /**
      * {@inheritDoc}
      */
@@ -137,11 +142,24 @@ public class TaskInformationDAO implements ITaskInformationDAO
     @Override
     public void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY_AND_TASK, plugin ) )
         {
             daoUtil.setInt( 1, nIdHistory );
             daoUtil.setInt( 2, nIdTask );
 
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteByHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
             daoUtil.executeUpdate( );
         }
     }
