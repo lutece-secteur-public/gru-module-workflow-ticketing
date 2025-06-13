@@ -249,24 +249,26 @@ public class EditableTicketDAO implements IEditableTicketDAO
      * {@inheritDoc}
      */
     @Override
-    public void deleteByIdHistoryList( List<Integer> idHistoryList )
-    {
-        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_ID_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
-        try ( DAOUtil daoUtil = new DAOUtil( sql, PLUGIN ) )
-        {
-            daoUtil.executeUpdate( );
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void deleteByIdTask( int nIdTask )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, PLUGIN ) )
         {
             daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    //// PURGE ANONYMISATION ////
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteByIdHistoryList( List<Integer> idHistoryList )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_ID_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, PLUGIN ) )
+        {
             daoUtil.executeUpdate( );
         }
     }

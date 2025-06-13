@@ -100,19 +100,6 @@ public class AnonymisationDAO implements IAnonymisationDAO
      * {@inheritDoc}
      */
     @Override
-    public void deleteMessageNotifyGruByIdHistoryList( List<Integer> idHistoryList, Plugin plugin )
-    {
-        final String sql = StringUtils.replace( SQL_QUERY_DELETE_MESSAGE_NOTIFY_GRU_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
-        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
-        {
-            daoUtil.executeUpdate( );
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void storeAnonymisationNotifyGruHistoryTotal( Map<String, String> messagesList, int idHistory, Plugin plugin )
     {
         StringBuilder sbSQL = new StringBuilder( );
@@ -170,19 +157,6 @@ public class AnonymisationDAO implements IAnonymisationDAO
      * {@inheritDoc}
      */
     @Override
-    public void deleteCommentValueIdHistoryList( List<Integer> idHistoryList, Plugin plugin )
-    {
-        final String sql = StringUtils.replace( SQL_QUERY_DELETE_ANONYMISATION_COMMENT_VALUE_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
-        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
-        {
-            daoUtil.executeUpdate( );
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void storeAnonymisationCommentValue( String message, int idHistory, Plugin plugin )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION_COMMENT_VALUE_HISTORY, plugin ) )
@@ -232,39 +206,15 @@ public class AnonymisationDAO implements IAnonymisationDAO
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteUploadFilesIdHistoryList( List<Integer> idHistoryList, Plugin plugin )
-    {
-        final String sql = StringUtils.replace( SQL_QUERY_DELETE_UPLOAD_FILES_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
-        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
-        {
-            daoUtil.executeUpdate( );
-        }
-    }
+    //// PURGE ANONYMISATION ////
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void deleteWorkflowUserHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    public void deleteMessageNotifyGruByIdHistoryList( List<Integer> idHistoryList, Plugin plugin )
     {
-        final String sql = StringUtils.replace( SQL_QUERY_DELETE_USER_WORKFLOW_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
-        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
-        {
-            daoUtil.executeUpdate( );
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteWorkflowTicketingHistoryList( List<Integer> idHistoryList, Plugin plugin )
-    {
-        final String sql = StringUtils.replace( SQL_QUERY_DELETE_WORKFLOW_TICKETING_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_MESSAGE_NOTIFY_GRU_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
         try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
         {
             daoUtil.executeUpdate( );
@@ -293,6 +243,58 @@ public class AnonymisationDAO implements IAnonymisationDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_RESOURCE_WORKFLOW, plugin ) )
         {
             daoUtil.setInt( 1, idTicket );
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteWorkflowTicketingHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_WORKFLOW_TICKETING_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteCommentValueIdHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_ANONYMISATION_COMMENT_VALUE_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteWorkflowUserHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_USER_WORKFLOW_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteUploadFilesIdHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_UPLOAD_FILES_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
             daoUtil.executeUpdate( );
         }
     }

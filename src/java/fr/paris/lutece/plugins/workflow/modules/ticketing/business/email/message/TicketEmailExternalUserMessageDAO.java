@@ -363,19 +363,6 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteMessageExternalUserByIdTicket( int nIdTicket, Plugin plugin )
-    {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TICKET, plugin ) )
-        {
-            daoUtil.setInt( 1, nIdTicket );
-            daoUtil.executeUpdate( );
-        }
-    }
-
     @Override
     public void update( Map<String, String> data, int id, Plugin plugin )
     {
@@ -425,5 +412,20 @@ public class TicketEmailExternalUserMessageDAO implements ITicketEmailExternalUs
             }
         }
         return list;
+    }
+
+    //// PURGE ANONYMISATION ////
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteMessageExternalUserByIdTicket( int nIdTicket, Plugin plugin )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TICKET, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdTicket );
+            daoUtil.executeUpdate( );
+        }
     }
 }

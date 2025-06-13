@@ -116,6 +116,8 @@ public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
         }
     }
 
+    //// PURGE ANONYMISATION ////
+
     /**
      * {@inheritDoc}
      */

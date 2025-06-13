@@ -163,6 +163,8 @@ public class TicketEmailExternalUserCcDAO implements ITicketEmailExternalUserCcD
         }
     }
 
+    //// PURGE ANONYMISATION ////
+
     /**
      * {@inheritDoc}
      */

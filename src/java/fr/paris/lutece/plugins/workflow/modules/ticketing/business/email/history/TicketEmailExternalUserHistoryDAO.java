@@ -147,6 +147,8 @@ public class TicketEmailExternalUserHistoryDAO implements ITicketEmailExternalUs
         }
     }
 
+    //// PURGE ANONYMISATION ////
+
     /**
      * {@inheritDoc}
      */

@@ -151,18 +151,6 @@ public class TaskInformationDAO implements ITaskInformationDAO
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteByHistoryList( List<Integer> idHistoryList, Plugin plugin )
-    {
-        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
-        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
-        {
-            daoUtil.executeUpdate( );
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -173,6 +161,21 @@ public class TaskInformationDAO implements ITaskInformationDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_TASK, plugin ) )
         {
             daoUtil.setInt( 1, nIdTask );
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    //// PURGE ANONYMISATION ////
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteByHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
             daoUtil.executeUpdate( );
         }
     }
