@@ -127,14 +127,4 @@ public interface IEditableTicketDAO
      */
     void deleteByIdTask( int nIdTask );
 
-    /**
-     * Update editable ticket
-     *
-     * @param idHistory
-     *            the id History
-     * @param message
-     *            the message to anoymise
-     */
-    void storeAnonymisation( String message, int idHistory );
-
 }

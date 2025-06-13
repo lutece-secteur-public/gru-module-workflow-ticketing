@@ -61,7 +61,6 @@ public class EditableTicketDAO implements IEditableTicketDAO
     private static final String SQL_QUERY_DELETE_BY_ID_HISTORY_LIST = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_history IN (" + IDS_TO_REPLACE + ")";
     private static final String SQL_QUERY_DELETE_BY_TASK = " DELETE FROM workflow_task_ticketing_editable_ticket WHERE id_task = ? ";
     private static final String SQL_QUERY_UPDATE = " UPDATE workflow_task_ticketing_editable_ticket SET message = ?, is_edited = ? WHERE id_history = ? AND id_task = ? ";
-    private static final String SQL_QUERY_UPDATE_ANONYMISATION = " UPDATE workflow_task_ticketing_editable_ticket SET message = ? WHERE id_history = ? ";
     private static final String SQL_QUERY_SELECT_BY_ID_HISTORY      = " SELECT message FROM workflow_task_ticketing_editable_ticket WHERE id_history id_history = ? AND id_task = ?";
     private static final Plugin PLUGIN                              = PluginService.getPlugin( WorkflowTicketingPlugin.PLUGIN_NAME );
 
@@ -98,22 +97,6 @@ public class EditableTicketDAO implements IEditableTicketDAO
 
             daoUtil.setInt( nIndex++, editableTicket.getIdHistory( ) );
             daoUtil.setInt( nIndex++, editableTicket.getIdTask( ) );
-
-            daoUtil.executeUpdate( );
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void storeAnonymisation( String message, int idHistory )
-    {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE_ANONYMISATION, PLUGIN ) )
-        {
-            int nIndex = 1;
-            daoUtil.setString( nIndex++, message );
-            daoUtil.setInt( nIndex++, idHistory );
 
             daoUtil.executeUpdate( );
         }

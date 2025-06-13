@@ -44,29 +44,6 @@ public interface IAnonymisationDAO
     String BEAN_SERVICE = "workflow-ticketing.anonymisationDAO";
 
     /**
-     * Find the CommentValue with id history
-     *
-     * @param idHistory
-     *            the id History
-     * @param plugin
-     *            the plugin
-     * @return the comment value
-     */
-    String loadCommentValue( int idHistory, Plugin plugin );
-
-    /**
-     * Update CommentValue
-     *
-     * @param idHistory
-     *            the id History
-     * @param message
-     *            the message to anoymise
-     * @param plugin
-     *            the plugin
-     */
-    void storeAnonymisationCommentValue( String message, int idHistory, Plugin plugin );
-
-    /**
      * Remove Comment value by id history list
      *
      * @param idHistoryList
@@ -89,18 +66,6 @@ public interface IAnonymisationDAO
     List<Integer> getIdUploadFilesByIdHistory( int idHistory, Plugin plugin );
 
     /**
-     * Delete upload reference line in workflow_upload_files tables with id history
-     *
-     * @param idHistory
-     *            the id History
-     * @param message
-     *            the message to anoymise
-     * @param plugin
-     *            the plugin
-     */
-    void cleanUploadLines( int idHistory, Plugin plugin );
-
-    /**
      * Get the map of all the messages and their column from notify history table for an id history
      *
      * @param idHistory
@@ -110,18 +75,6 @@ public interface IAnonymisationDAO
      * @return the map of colonne, message
      */
     Map<String, String> loadMessageNotifyHIstoryTotal( int idHistory, Plugin plugin );
-
-    /**
-     * Update the messages in the matching column from notify history table for an id history
-     *
-     * @param idHistory
-     *            the id History
-     * @param messagesList
-     *            the map of column and messages to update
-     * @param plugin
-     *            the plugin
-     */
-    void storeAnonymisationNotifyGruHistoryTotal( Map<String, String> messagesList, int idHistory, Plugin plugin );
 
     /**
      * Remove ExternalEmailMessage by id history list
