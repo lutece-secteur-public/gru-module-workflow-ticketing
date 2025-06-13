@@ -169,7 +169,7 @@ public class PurgeAnonymisationService implements IPurgeAnonymisationService
         daoAnonymisation.deleteWorkflowResource( idTicket, plugin );
     }
 
-
+    // pas de retrait ligne de centralisation table ticketing_ticket_pj
     @Override
     public void deleteAllAttachment( int idTicket )
     {
@@ -185,7 +185,6 @@ public class PurgeAnonymisationService implements IPurgeAnonymisationService
                 {
                     int idPhysicalFile = TicketFileHome.findIdPhysicalFile( entry.getKey( ) );
                     TicketPjHome.removePhysicalFile( idPhysicalFile );
-                    TicketPjHome.remove( pj.getId( ) );
                     FileHome.remove( entry.getKey( ) );
                 } else
                 {
@@ -197,7 +196,6 @@ public class PurgeAnonymisationService implements IPurgeAnonymisationService
                         _stockageS3DaemonNetapp.deleteFileOnS3Serveur( pj.getUrlTicketing( ) );
                     }
                     FileHome.remove( entry.getKey( ) );
-                    TicketPjHome.remove( pj.getId( ) );
                 }
             }
         }
