@@ -44,25 +44,15 @@ public interface IAnonymisationDAO
     String BEAN_SERVICE = "workflow-ticketing.anonymisationDAO";
 
     /**
-     * Find the CommentValue with id history
+     * Remove Comment value by id history list
      *
-     * @param idHistory
-     *            the id History
+     * @param idHistoryList
+     *            the id history list
+     * @param idHistoryList
      * @param plugin
      *            the plugin
-     * @return the comment value
      */
-    String loadCommentValue( int idHistory, Plugin plugin );
-
-    /**
-     * Update CommentValue
-     *
-     * @param idHistory
-     *            the id History
-     * @param message
-     *            the message to anoymise
-     */
-    void storeAnonymisationCommentValue( String message, int idHistory, Plugin plugin );
+    void deleteCommentValueIdHistoryList( List<Integer> idHistoryList, Plugin plugin );
 
     /**
      * Get the list of id upload files history with an id history
@@ -76,18 +66,6 @@ public interface IAnonymisationDAO
     List<Integer> getIdUploadFilesByIdHistory( int idHistory, Plugin plugin );
 
     /**
-     * Delete upload reference line in workflow_upload_files tables with id history
-     *
-     * @param idHistory
-     *            the id History
-     * @param message
-     *            the message to anoymise
-     * @param plugin
-     *            the plugin
-     */
-    void cleanUploadLines( int idHistory, Plugin plugin );
-
-    /**
      * Get the map of all the messages and their column from notify history table for an id history
      *
      * @param idHistory
@@ -99,15 +77,73 @@ public interface IAnonymisationDAO
     Map<String, String> loadMessageNotifyHIstoryTotal( int idHistory, Plugin plugin );
 
     /**
-     * Update the messages in the matching column from notify history table for an id history
+     * Remove ExternalEmailMessage by id history list
      *
-     * @param idHistory
-     *            the id History
-     * @param messagesList
-     *            the map of column and messages to update
+     * @param idHistoryList
+     *            the id history list
      * @param plugin
      *            the plugin
      */
-    void storeAnonymisationNotifyGruHistoryTotal( Map<String, String> messagesList, int idHistory, Plugin plugin );
+    void deleteMessageNotifyGruByIdHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove upload files by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteUploadFilesIdHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove upload history by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteUploadHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove workflow_resource_user_history by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteWorkflowUserHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove workflow_resource_history_ticketing by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteWorkflowTicketingHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove workflow_resource_history by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteHistoryWorkflowHistoryList( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove workflow_resource_workflow by id history list
+     *
+     * @param idHistoryList
+     *            the id history list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteWorkflowResource( int idTicket, Plugin plugin );
 
 }

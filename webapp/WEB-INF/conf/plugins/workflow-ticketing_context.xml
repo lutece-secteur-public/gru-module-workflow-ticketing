@@ -95,7 +95,8 @@
 	<bean id="workflow-ticketing.taskAssignTicketToUnitConfigService"
         class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
         p:taskConfigDAO-ref="workflow-ticketing.taskAssignTicketToUnitConfigDAO" />
-        
+    <bean id="workflow-ticketing.purgeAnonymisationService"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.purgeanonymisation.PurgeAnonymisationService" />
 
 	<!-- Task config -->
 	<bean id="workflow-ticketing.taskReplyConfig"
