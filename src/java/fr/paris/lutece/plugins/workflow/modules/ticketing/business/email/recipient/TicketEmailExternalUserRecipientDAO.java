@@ -36,9 +36,11 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipi
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
@@ -46,6 +48,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class TicketEmailExternalUserRecipientDAO implements ITicketEmailExternalUserRecipientDAO
 {
+    private static final String IDS_TO_REPLACE                   = "%IDS%";
     private static final String SQL_QUERY_NEW_PK = "SELECT max( id_recipient ) FROM ticket_email_external_user_recipient";
     private static final String SQL_QUERY_FIND_BY_ID_HISTORY = " SELECT  id_recipient, id_task, id_history, email, field, name, firstname FROM ticket_email_external_user_recipient "
             + " WHERE id_history = ? AND id_task = ? ORDER BY id_recipient ASC";
@@ -53,6 +56,7 @@ public class TicketEmailExternalUserRecipientDAO implements ITicketEmailExternal
             + " VALUES ( ?,?,?,?,?,?,? ) ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM ticket_email_external_user_recipient WHERE id_recipient = ?";
     private static final String SQL_QUERY_DELETE_BY_HISTORY = " DELETE FROM ticket_email_external_user_recipient WHERE id_history = ?";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY_LIST = " DELETE FROM ticket_email_external_user_recipient WHERE id_history IN (" + IDS_TO_REPLACE + ")";
 
     /**
      * Generates a new primary key
@@ -158,6 +162,21 @@ public class TicketEmailExternalUserRecipientDAO implements ITicketEmailExternal
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_HISTORY, WorkflowTicketingPlugin.getPlugin( ) ) )
         {
             daoUtil.setInt( 1, nIdHistory );
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    //// PURGE ANONYMISATION ////
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteByHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
             daoUtil.executeUpdate( );
         }
     }

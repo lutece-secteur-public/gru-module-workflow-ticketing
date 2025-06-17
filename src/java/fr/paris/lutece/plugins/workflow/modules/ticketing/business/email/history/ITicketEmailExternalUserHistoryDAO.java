@@ -73,7 +73,15 @@ public interface ITicketEmailExternalUserHistoryDAO
      * Delete by history.
      *
      * @param nIdHistory
-     *            the n id emailExternalUser
+     *            the id hitory
      */
     void deleteByHistory( int nIdHistory );
+
+    /**
+     * Delete by history.
+     *
+     * @param idHistoryList
+     *            the id history list
+     */
+    void deleteEmailExternalUserByIdHistoryList( List<Integer> idHistoryList );
 }

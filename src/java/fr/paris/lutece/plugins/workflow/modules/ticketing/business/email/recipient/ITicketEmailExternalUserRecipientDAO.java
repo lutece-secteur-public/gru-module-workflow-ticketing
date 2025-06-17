@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.recipi
 
 import java.util.List;
 
+import fr.paris.lutece.portal.service.plugin.Plugin;
+
 /**
  * Interface for the TicketEmailExternalUserRecipient DAO
  */
@@ -77,4 +79,14 @@ public interface ITicketEmailExternalUserRecipientDAO
      *            the identifier of the history
      */
     void deleteByIdHistory( int nIdHistory );
+
+    /**
+     * Delete recipient by id history list
+     *
+     * @param idHistoryList
+     *            the History id list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteByHistoryList( List<Integer> idHistoryList, Plugin plugin );
 }

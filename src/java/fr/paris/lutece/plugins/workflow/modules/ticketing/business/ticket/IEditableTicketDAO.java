@@ -110,21 +110,21 @@ public interface IEditableTicketDAO
     void deleteByIdHistory( int nIdHistory, int nIdTask );
 
     /**
+     * Remove EditableTicket by id history
+     *
+     * @param nIdHistory
+     *            the id history
+     * @param nIdTask
+     *            the task id
+     */
+    void deleteByIdHistoryList( List<Integer> idHistoryList );
+
+    /**
      * Remove EditableTicket by id task
      *
      * @param nIdTask
      *            the task id
      */
     void deleteByIdTask( int nIdTask );
-
-    /**
-     * Update editable ticket
-     *
-     * @param idHistory
-     *            the id History
-     * @param message
-     *            the message to anoymise
-     */
-    void storeAnonymisation( String message, int idHistory );
 
 }

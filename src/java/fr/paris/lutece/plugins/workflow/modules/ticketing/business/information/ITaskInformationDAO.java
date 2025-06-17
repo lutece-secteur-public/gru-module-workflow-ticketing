@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.workflow.modules.ticketing.business.information;
 
+import java.util.List;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
 /**
@@ -81,7 +83,7 @@ public interface ITaskInformationDAO
     void update( int idHistory, String infoValue, Plugin plugin );
 
     /**
-     * Remove information by history
+     * Remove information by history and id task
      *
      * @param nIdHistory
      *            the History id
@@ -91,6 +93,16 @@ public interface ITaskInformationDAO
      *            the plugin
      */
     void deleteByHistory( int nIdHistory, int nIdTask, Plugin plugin );
+
+    /**
+     * Remove information by id history list
+     *
+     * @param idHistoryList
+     *            the History id list
+     * @param plugin
+     *            the plugin
+     */
+    void deleteByHistoryList( List<Integer> idHistoryList, Plugin plugin );
 
     /**
      * Remove information by task
@@ -111,5 +123,6 @@ public interface ITaskInformationDAO
      *            the plugin
      */
     String getInfoHistoryValueByIdHistory( int idHistory, Plugin plugin );
+
 
 }

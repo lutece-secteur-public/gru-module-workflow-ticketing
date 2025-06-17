@@ -56,7 +56,7 @@ public interface ITicketEmailExternalUserMessageDAO
 
     /**
      * Test if the id given is the last question of a ticket
-     * 
+     *
      * @param nIdTicket
      *            ticket ID
      * @param nIdMessageExternalUser
@@ -142,4 +142,6 @@ public interface ITicketEmailExternalUserMessageDAO
     Map<String, String> getHistoryEmailToAnonymize( int idMessage, Plugin plugin );
 
     List<Integer> getListIDMessageExternalUser( int idTicket, Plugin plugin );
+
+    void deleteMessageExternalUserByIdTicket( int nIdTicket, Plugin plugin );
 }

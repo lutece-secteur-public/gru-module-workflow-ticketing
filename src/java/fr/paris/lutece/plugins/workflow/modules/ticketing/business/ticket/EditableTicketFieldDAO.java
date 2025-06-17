@@ -36,7 +36,10 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.WorkflowTicketingPlugin;
+import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
@@ -47,10 +50,12 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
 {
+    private static final String IDS_TO_REPLACE   = "%IDS%";
     private static final String SQL_QUERY_SELECT = " SELECT id_history, id_entry "
             + " FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
     private static final String SQL_QUERY_INSERT = " INSERT INTO workflow_task_ticketing_editable_ticket_field (id_history, id_entry ) " + " VALUES ( ?,? ) ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM workflow_task_ticketing_editable_ticket_field WHERE id_history = ? ";
+    private static final String SQL_QUERY_DELETE_BY_HISTORY_LIST = "DELETE FROM workflow_task_ticketing_editable_ticket_field WHERE id_history IN (" + IDS_TO_REPLACE + ")";
 
     /**
      * {@inheritDoc}
@@ -107,6 +112,21 @@ public class EditableTicketFieldDAO implements IEditableTicketFieldDAO
         {
             daoUtil.setInt( 1, nIdHistory );
 
+            daoUtil.executeUpdate( );
+        }
+    }
+
+    //// PURGE ANONYMISATION ////
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteByHistoryList( List<Integer> idHistoryList, Plugin plugin )
+    {
+        final String sql = StringUtils.replace( SQL_QUERY_DELETE_BY_HISTORY_LIST, IDS_TO_REPLACE, StringUtils.join( idHistoryList, "," ) );
+        try ( DAOUtil daoUtil = new DAOUtil( sql, plugin ) )
+        {
             daoUtil.executeUpdate( );
         }
     }

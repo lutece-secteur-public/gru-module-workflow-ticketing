@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.workflow.modules.ticketing.business.ticket;
+package fr.paris.lutece.plugins.workflow.modules.ticketing.service.purgeanonymisation;
 
 import java.util.List;
 
@@ -39,46 +39,52 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 /**
  *
- * This class is a data access object for {@link EditableTicketField}
+ * ITaskInformationService
  *
  */
-public interface IEditableTicketFieldDAO
+public interface IPurgeAnonymisationService
 {
-    /** The Constant BEAN_SERVICE. */
-    String BEAN_SERVICE = "workflow-ticketing.editableTicketFieldDAO";
 
     /**
-     * Insert new editable ticket field
+     * Purge History workfow for anonymisation
      *
-     * @param editableTicketField
-     *            the EditableTicketField Object
-     */
-    void insert( EditableTicketField editableTicketField );
-
-    /**
-     * Load a EditableTicketField by id of the editable ticket
-     *
-     * @param nIdHistory
-     *            the id history
-     * @return a list of EditableTicketField
-     */
-    List<EditableTicketField> load( int nIdHistory );
-
-    /**
-     * Remove by id editable ticket field
-     *
-     * @param nIdHistory
-     *            the id history
-     */
-    void delete( int nIdHistory );
-
-    /**
-     * Delete EditableTicketField by id history list
-     *
-     * @param idHistoryList
-     *            the History id list
+     * @param ticket
+     *            The ticket
      * @param plugin
-     *            the plugin
+     *            the Plugin
      */
-    void deleteByHistoryList( List<Integer> idHistoryList, Plugin plugin );
+    void purgeHistoryAnonymisation( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove attachment by ticket
+     *
+     * @param ticket
+     *            The ticket
+     * @param plugin
+     *            the Plugin
+     */
+    void deleteAllAttachment( int idTicket );
+
+    /**
+     * Remove workflow and history tables by id history list
+     *
+     * @param ticket
+     *            The ticket
+     * @param plugin
+     *            the Plugin
+     */
+    void purgeHistoryWorkflowTablesAnonymisation( List<Integer> idHistoryList, Plugin plugin );
+
+    /**
+     * Remove workflow and history tables by id history list
+     *
+     * @param ticket
+     *            The ticket
+     * @param plugin
+     *            the Plugin
+     */
+    void removeMessageExternalUserByIdTicket( int idTicket );
+
+    void purgeWorkflowResourceAnonymisation( int idTicket, Plugin plugin );
+
 }

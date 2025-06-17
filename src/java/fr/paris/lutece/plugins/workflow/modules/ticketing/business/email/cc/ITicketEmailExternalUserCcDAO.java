@@ -77,4 +77,12 @@ public interface ITicketEmailExternalUserCcDAO
      *            the id of history resource
      */
     void deleteByIdHistory( int nIdHistory );
+
+    /**
+     * Delete by id history list.
+     *
+     * @param idHistoryList
+     *            the id of history list
+     */
+    void deleteEmailExternalUserCcByIdHistoryList( List<Integer> idHistoryList );
 }
