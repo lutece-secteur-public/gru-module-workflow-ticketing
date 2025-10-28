@@ -478,6 +478,45 @@
 	<bean id="workflow-ticketing.automaticCentralizeAttachments"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
         p:taskType-ref="workflow-ticketing.taskTypeAutomaticCentralizeAttachments" />
+ 
+    <!-- Task Auto centralize pj Usager -->
+	<bean id="workflow-ticketing.taskAutomaticCentralizeUsager"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAutomaticCentralizeUsager"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAutomaticCentralizeUsager"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="askAutomaticCentralizeUsager" p:titleI18nKey="module.workflow.ticketing.task_automatic_centralize_usager.title"
+		p:beanName="workflow-ticketing.taskAutomaticCentralizeUsager"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.automaticCentralizeUsager"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeAutomaticCentralizeUsager" />
+        
+    <!-- Task Auto centralize pj Agent -->
+	<bean id="workflow-ticketing.taskAutomaticCentralizeAgent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAutomaticCentralizeAgent"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAutomaticCentralizeAgent"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskAutomaticCentralizeAgent" p:titleI18nKey="module.workflow.ticketing.task_automatic_centralize_agent.title"
+		p:beanName="workflow-ticketing.taskAutomaticCentralizeAgent"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.automaticCentralizeAgent"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeAutomaticCentralizeAgent" />
+        
+    <!-- Task Auto centralize pj Init -->
+	<bean id="workflow-ticketing.taskAutomaticCentralizeInit"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskAutomaticCentralizeInit"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeAutomaticCentralizeInit"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskAutomaticCentralizeInit" p:titleI18nKey="module.workflow.ticketing.task_automatic_centralize_init.title"
+		p:beanName="workflow-ticketing.taskAutomaticCentralizeInit"
+		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
+	<bean id="workflow-ticketing.automaticCentralizeInit"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.TicketingTaskComponent"
+        p:taskType-ref="workflow-ticketing.taskTypeAutomaticCentralizeInit" />
         
     <!-- Task Auto close ticket -->
 	<bean id="workflow-ticketing.taskCloseTicket"
