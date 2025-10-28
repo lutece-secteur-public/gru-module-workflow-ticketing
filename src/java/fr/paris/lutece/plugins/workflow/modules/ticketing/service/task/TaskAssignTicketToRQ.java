@@ -67,8 +67,8 @@ public class TaskAssignTicketToRQ extends AbstractTicketingTask
         // We get the ticket to modify
         Ticket ticket = getTicket( nIdResourceHistory );
 
-        if ( ticket != null && ticket.getTicketAddress( ) != null && ticket.getTicketAddress( ).getQuartier( ) != null
-                && ticket.getTicketAddress( ).getQuartier( ).getRespQuartier( ) != null )
+        if ( ( ticket != null ) && ( ticket.getTicketAddress( ) != null ) && ( ticket.getTicketAddress( ).getQuartier( ) != null )
+                && ( ticket.getTicketAddress( ).getQuartier( ).getRespQuartier( ) != null ) )
         {
             User respQuartier = ticket.getTicketAddress( ).getQuartier( ).getRespQuartier( );
             AssigneeUser assigneeUser = new AssigneeUser( );
@@ -79,8 +79,9 @@ public class TaskAssignTicketToRQ extends AbstractTicketingTask
             strCurrentUser = assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( );
             if ( assigneeUser.getAdminUserId( ) != 0 )
             {
-                ticket.setAssigneeUser( assigneeUser );
-                TicketHome.update( ticket );
+                TicketHome.updateAssignAll( assigneeUser, null, null, null, ticket.getId( ) );
+                // TicketHome.update( ticket );
+                // ticket.setAssigneeUser( assigneeUser );
 
                 strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ),
                         strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );

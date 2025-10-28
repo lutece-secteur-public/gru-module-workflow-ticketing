@@ -96,7 +96,6 @@ public class TaskAutomaticAgentAssignmentParisFamille extends AbstractTicketingT
     private String returnInfoWhenAssignUserAndUnit( AdminUser adminUser, Ticket ticket, HttpServletRequest request )
     {
         AssigneeUser assigneeUser = new AssigneeUser( adminUser );
-        ticket.setAssigneeUser( assigneeUser );
 
         List<Unit> listUnit = UnitHome.findByIdUser( adminUser.getUserId( ) );
         AssigneeUnit assigneeUnit = null;
@@ -112,11 +111,9 @@ public class TaskAutomaticAgentAssignmentParisFamille extends AbstractTicketingT
             {
                 request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
             }
-
-            ticket.setAssigneeUnit( assigneeUnit );
         }
 
-        TicketHome.update( ticket );
+        TicketHome.updateAssignAll( assigneeUser, assigneeUnit, null, null, ticket.getId( ) );
 
         return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AGENT_AUTOMATIC_ASSIGNATION_INFORMATION, Locale.FRENCH ),
                 adminUser.getFirstName( ) + " " + adminUser.getLastName( ), ticket.getAssigneeUnit( ).getName( ) );

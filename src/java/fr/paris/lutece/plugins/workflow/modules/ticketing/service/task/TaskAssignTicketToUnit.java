@@ -106,9 +106,8 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
                 int oldUnit = assigneeUnit.getUnitId( );
                 assigneeUnit.setUnitId( unit.getIdUnit( ) );
                 assigneeUnit.setName( unit.getLabel( ) );
-                ticket.setAssigneeUnit( assigneeUnit );
-                ticket.setAssigneeUser( null );
-                TicketHome.update( ticket );
+
+                TicketHome.updateAssignAll( null, assigneeUnit, null, null, ticket.getId( ) );
 
                 request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                 request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
