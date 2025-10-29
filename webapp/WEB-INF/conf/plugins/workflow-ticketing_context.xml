@@ -485,7 +485,7 @@
 		scope="prototype" />
 	<bean id="workflow-ticketing.taskTypeAutomaticCentralizeUsager"
 		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-		p:key="askAutomaticCentralizeUsager" p:titleI18nKey="module.workflow.ticketing.task_automatic_centralize_usager.title"
+		p:key="taskAutomaticCentralizeUsager" p:titleI18nKey="module.workflow.ticketing.task_automatic_centralize_usager.title"
 		p:beanName="workflow-ticketing.taskAutomaticCentralizeUsager"
 		p:configRequired="false" p:formTaskRequired="false" p:taskForAutomaticAction="true" />
 	<bean id="workflow-ticketing.automaticCentralizeUsager"
