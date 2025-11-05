@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
+import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUnit;
 import fr.paris.lutece.plugins.ticketing.business.assignee.AssigneeUser;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
@@ -73,7 +74,12 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
 
         if ( ticket != null )
         {
+            // assignee
             AssigneeUser assigneeUser = ticket.getAssigneeUser( );
+            AssigneeUnit assigneeUnit = null;
+            // assigner
+            AssigneeUser assignerUser = null;
+            AssigneeUnit assignerUnit = null;
             String strCurrentUser = null;
 
             if ( assigneeUser == null )
@@ -101,8 +107,8 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
                     assigneeUser.setEmail( user.getEmail( ) );
                     assigneeUser.setFirstname( user.getFirstName( ) );
                     assigneeUser.setLastname( user.getLastName( ) );
-                    ticket.setAssigneeUser( assigneeUser );
-                    TicketHome.update( ticket );
+
+                    TicketHome.updateAssignAll( assigneeUser, assigneeUnit, assignerUser, assignerUnit, ticket.getId( ) );
 
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_USER_INFORMATION, Locale.FRENCH ),
                             strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
@@ -111,8 +117,7 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
             else
             {
                 // Unassign ticket
-                ticket.setAssigneeUser( null );
-                TicketHome.update( ticket );
+                TicketHome.updateAssignAll( null, assigneeUnit, assignerUser, assignerUnit, ticket.getId( ) );
 
                 if ( assigneeUser.getAdminUserId( ) != 0 )
                 {

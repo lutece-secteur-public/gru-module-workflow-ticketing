@@ -92,24 +92,25 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
             if ( request != null )
             {
                 AdminUser user = AdminUserService.getAdminUser( request );
-
+                AssigneeUnit assigneeUnit = null;
+                // assigner
+                AssigneeUser assignerUser = null;
+                AssigneeUnit assignerUnit = null;
                 if ( ( user != null ) && ( user.getUserId( ) != assigneeUser.getAdminUserId( ) ) )
                 {
                     assigneeUser.setAdminUserId( user.getUserId( ) );
                     assigneeUser.setEmail( user.getEmail( ) );
                     assigneeUser.setFirstname( user.getFirstName( ) );
                     assigneeUser.setLastname( user.getLastName( ) );
-                    ticket.setAssigneeUser( assigneeUser );
 
                     List<Unit> unitsList = UnitHome.findByIdUser( user.getUserId( ) );
 
                     if ( ( unitsList != null ) && ( !unitsList.isEmpty( ) ) )
                     {
-                        AssigneeUnit assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
-                        ticket.setAssigneeUnit( assigneeUnit );
+                        assigneeUnit = new AssigneeUnit( unitsList.get( 0 ) );
                     }
 
-                    TicketHome.update( ticket );
+                    TicketHome.updateAssignAll( assigneeUser, assigneeUnit, assignerUser, assignerUnit, ticket.getId( ) );
 
                     strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_ME_INFORMATION, Locale.FRENCH ),
                             strCurrentUser, assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
