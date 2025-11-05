@@ -82,7 +82,7 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
 
             if ( unit != null )
             {
-                if ( assigneeUnit.getUnitId( ) != unit.getIdUnit( ) && request != null )
+                if ( ( assigneeUnit.getUnitId( ) != unit.getIdUnit( ) ) && ( request != null ) )
                 {
                     request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                     request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );
@@ -90,9 +90,8 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
 
                 assigneeUnit.setUnitId( unit.getIdUnit( ) );
                 assigneeUnit.setName( unit.getLabel( ) );
-                ticket.setAssigneeUnit( assigneeUnit );
-                ticket.setAssigneeUser( null );
-                TicketHome.update( ticket );
+
+                TicketHome.updateAssignAll( null, assigneeUnit, null, null, ticket.getId( ) );
 
                 strTaskInformation = MessageFormat.format(
                         I18nService.getLocalizedString( MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY_INFORMATION, Locale.FRENCH ), assigneeUnit.getName( ),

@@ -116,19 +116,18 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
 
                 String strFormerUserInfos = ( assigneeUser == null )
                         ? I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_UNKNOWN_FORMER_USER, Locale.FRENCH )
-                        : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
+                                : ( assigneeUser.getFirstname( ) + " " + assigneeUser.getLastname( ) );
                 strTaskInformation = MessageFormat.format( I18nService.getLocalizedString( MESSAGE_ASSIGN_UP_TICKET_INFORMATION, Locale.FRENCH ),
                         strFormerUserInfos, unit.getLabel( ) );
 
-                ticket.setAssignerUser( ticket.getAssigneeUser( ) );
-                ticket.setAssignerUnit( ticket.getAssigneeUnit( ) );
-                ticket.setAssigneeUser( null );
+                AssigneeUnit assignerUnit = ticket.getAssigneeUnit( );
+                AssigneeUser assignerUser = ticket.getAssigneeUser( );
+                assigneeUser = null;
+
                 assigneeUnit.setUnitId( unit.getIdUnit( ) );
                 assigneeUnit.setName( unit.getLabel( ) );
-                ticket.setAssigneeUnit( assigneeUnit );
-                ticket.setAssigneeUser( null );
 
-                TicketHome.update( ticket );
+                TicketHome.updateAssignAll( assigneeUser, assigneeUnit, assignerUser, assignerUnit, ticket.getId( ) );
 
                 // insert in workflow_resource_history_ticketing
                 ResourceHistory resourceHistory = new ResourceHistory( );
