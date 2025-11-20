@@ -76,7 +76,7 @@ public class TaskAssignTicketToUser extends AbstractTicketingTask
         {
             // assignee
             AssigneeUser assigneeUser = ticket.getAssigneeUser( );
-            AssigneeUnit assigneeUnit = null;
+            AssigneeUnit assigneeUnit = ticket.getAssigneeUnit( );
             // assigner
             AssigneeUser assignerUser = null;
             AssigneeUnit assignerUnit = null;
