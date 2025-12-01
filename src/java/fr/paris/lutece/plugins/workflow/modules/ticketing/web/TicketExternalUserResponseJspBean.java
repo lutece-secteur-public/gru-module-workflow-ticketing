@@ -38,8 +38,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
@@ -184,6 +186,14 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         Map<String, Timestamp> mapAllMessageQuestion = new HashMap<>( );
         AdminUser userAdmin = null;
 
+        HttpSession session = request.getSession( );
+        String token = ( String ) session.getAttribute( "token_wkf" );
+        if ( null == token )
+        {
+            token = UUID.randomUUID( ).toString( );
+        }
+        session.setAttribute( "token_wkf", token );
+
         try
         {
             requiredEmailExternalUserMessage = _ticketEmailExternalUserMessageDAO.loadByIdMessageExternalUser( Integer.parseInt( strIdEmailExternalUser ) );
@@ -298,6 +308,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_ID_ACTION, externalUserConfig.getIdFollowingAction( ) );
         model.put( MARK_ID_TICKET, ticket.getId( ) );
         model.put( MARK_ID_MESSAGE_EXTERNAL_USER, strIdEmailExternalUser );
+        model.put( TicketingConstants.MARK_TOKEN_WKF, token );
 
         if ( ( state != null ) && ( state.getId( ) != AppPropertiesService.getPropertyInt( PROPERTY_TICKET_STATUS_WAITING, 307 ) ) )
         {
