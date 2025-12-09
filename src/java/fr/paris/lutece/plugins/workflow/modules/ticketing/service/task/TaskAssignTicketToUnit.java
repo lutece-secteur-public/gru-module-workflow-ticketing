@@ -82,6 +82,7 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
         if ( ticket != null )
         {
             AssigneeUnit assigneeUnit = ticket.getAssigneeUnit( );
+            AssigneeUnit assignerUnit = ticket.getAssignerUnit( );
             String strCurrentUnit = null;
 
             if ( assigneeUnit == null )
@@ -107,7 +108,7 @@ public class TaskAssignTicketToUnit extends AbstractTicketingTask
                 assigneeUnit.setUnitId( unit.getIdUnit( ) );
                 assigneeUnit.setName( unit.getLabel( ) );
 
-                TicketHome.updateAssignAll( null, assigneeUnit, null, null, ticket.getId( ) );
+                TicketHome.updateAssignAll( null, assigneeUnit, null, assignerUnit, ticket.getId( ) );
 
                 request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
                 request.setAttribute( TicketingConstants.ATTRIBUTE_REDIRECT_AFTER_WORKFLOW_ACTION, REDIRECT_TO_LIST );

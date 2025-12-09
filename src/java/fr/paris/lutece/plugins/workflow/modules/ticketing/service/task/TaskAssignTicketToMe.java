@@ -94,8 +94,8 @@ public class TaskAssignTicketToMe extends AbstractTicketingTask
                 AdminUser user = AdminUserService.getAdminUser( request );
                 AssigneeUnit assigneeUnit = null;
                 // assigner
-                AssigneeUser assignerUser = null;
-                AssigneeUnit assignerUnit = null;
+                AssigneeUser assignerUser = ticket.getAssignerUser( );
+                AssigneeUnit assignerUnit = ticket.getAssignerUnit( );
                 if ( ( user != null ) && ( user.getUserId( ) != assigneeUser.getAdminUserId( ) ) )
                 {
                     assigneeUser.setAdminUserId( user.getUserId( ) );
