@@ -199,8 +199,7 @@ public class NotifyLevel3Daemon extends Daemon
             }
         }
 
-        sbLog.append( "Nombre de tickets au statut " )
-                .append( _workflowService.getState( nIdStateLevel3, Ticket.TICKET_RESOURCE_TYPE, nIdWorkflow, null ).getName( ) ).append( " dont :" );
+        sbLog.append( "Nombre de tickets : " );
         sbLog.append( "\n   " ).append( nNbTicketRelance ).append( " tickets relancés" );
         sbLog.append( "\n   " ).append( nNbTicketRetour ).append( " tickets en retour de sollicitation" );
 
