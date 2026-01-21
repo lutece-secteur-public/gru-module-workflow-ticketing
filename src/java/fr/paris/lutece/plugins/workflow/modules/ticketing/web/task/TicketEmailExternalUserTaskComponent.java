@@ -53,8 +53,8 @@ import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.ticketing.web.util.ModelUtils;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.business.TaskNotifyGruConfig;
 import fr.paris.lutece.plugins.workflow.modules.notifygru.service.TaskNotifyGruConfigService;
-import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
-import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
+import fr.paris.lutece.plugins.workflowcore.service.provider.IProvider;
+import fr.paris.lutece.plugins.workflowcore.service.provider.InfoMarker;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.ITicketEmailExternalUserCcDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.cc.TicketEmailExternalUserCc;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.config.MessageDirectionExternalUser;
@@ -246,7 +246,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
                         ResourceHistory resourceHistory = new ResourceHistory( );
                         resourceHistory.setIdResource( nIdResource );
                         IProvider provider = _ticketEmailExternalUserProviderManager.createProvider( strProviderId, resourceHistory, request );
-                        Collection<NotifyGruMarker> markerValues = provider.provideMarkerValues( );
+                        Collection<InfoMarker> markerValues = provider.provideMarkerValues( );
 
                         String subject = config.getDefaultSubject( );
                         if ( StringUtils.isBlank( subject ) )
@@ -254,7 +254,7 @@ public class TicketEmailExternalUserTaskComponent extends TaskComponent
                             subject = configNotify.getSubjectBroadcast( );
                         }
 
-                        for ( NotifyGruMarker marker : markerValues )
+                        for ( InfoMarker marker : markerValues )
                         {
                             String markerKey = marker.getMarker( );
                             if ( markerKey != null )

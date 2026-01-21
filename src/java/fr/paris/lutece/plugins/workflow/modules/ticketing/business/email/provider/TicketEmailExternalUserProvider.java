@@ -48,8 +48,8 @@ import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryType;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategoryTypeHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
-import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.IProvider;
-import fr.paris.lutece.plugins.workflow.modules.notifygru.service.provider.NotifyGruMarker;
+import fr.paris.lutece.plugins.workflowcore.service.provider.IProvider;
+import fr.paris.lutece.plugins.workflowcore.service.provider.InfoMarker;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.ITicketEmailExternalUserHistoryDAO;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.history.TicketEmailExternalUserHistory;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.message.ITicketEmailExternalUserMessageDAO;
@@ -237,9 +237,9 @@ public class TicketEmailExternalUserProvider implements IProvider
      * {@inheritDoc}
      */
     @Override
-    public Collection<NotifyGruMarker> provideMarkerValues( )
+    public Collection<InfoMarker> provideMarkerValues( )
     {
-        Collection<NotifyGruMarker> collectionNotifyGruMarkers = new ArrayList<>( );
+        Collection<InfoMarker> collectionNotifyGruMarkers = new ArrayList<>( );
 
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_USER_TITLE, _ticket.getUserTitle( ) ) );
         collectionNotifyGruMarkers.add( createMarkerValues( TicketEmailExternalUserConstants.MARK_USER_FIRSTNAME, _ticket.getFirstname( ) ) );
@@ -314,9 +314,9 @@ public class TicketEmailExternalUserProvider implements IProvider
      *
      * @return Collection of NotifyGruMarker
      */
-    public static Collection<NotifyGruMarker> getProviderMarkerDescriptions( )
+    public static Collection<InfoMarker> getProviderMarkerDescriptions( )
     {
-        Collection<NotifyGruMarker> collectionNotifyGruMarkers = new ArrayList<>( );
+        Collection<InfoMarker> collectionNotifyGruMarkers = new ArrayList<>( );
 
         // GENERIC GRU
         collectionNotifyGruMarkers.add( createMarkerDescriptions( TicketEmailExternalUserConstants.MARK_USER_TITLE, MESSAGE_MARKER_USER_TITLE ) );
@@ -335,7 +335,7 @@ public class TicketEmailExternalUserProvider implements IProvider
         {
             int depth = categoryType.getDepthNumber( );
 
-            NotifyGruMarker notifyGruMarker = new NotifyGruMarker( TicketEmailExternalUserConstants.MARK_CATEGORY + depth );
+            InfoMarker notifyGruMarker = new InfoMarker( TicketEmailExternalUserConstants.MARK_CATEGORY + depth );
             notifyGruMarker.setDescription( categoryType.getLabel( ) );
 
             collectionNotifyGruMarkers.add( notifyGruMarker );
@@ -369,9 +369,9 @@ public class TicketEmailExternalUserProvider implements IProvider
      *            value
      * @return a NotifyGruMarker
      */
-    private static NotifyGruMarker createMarkerValues( String strMarker, String strValue )
+    private static InfoMarker createMarkerValues( String strMarker, String strValue )
     {
-        NotifyGruMarker notifyGruMarker = new NotifyGruMarker( strMarker );
+        InfoMarker notifyGruMarker = new InfoMarker( strMarker );
         notifyGruMarker.setValue( strValue );
 
         return notifyGruMarker;
@@ -386,9 +386,9 @@ public class TicketEmailExternalUserProvider implements IProvider
      *            description
      * @return a NotifyGruMarker
      */
-    private static NotifyGruMarker createMarkerDescriptions( String strMarker, String strDescription )
+    private static InfoMarker createMarkerDescriptions( String strMarker, String strDescription )
     {
-        NotifyGruMarker notifyGruMarker = new NotifyGruMarker( strMarker );
+        InfoMarker notifyGruMarker = new InfoMarker( strMarker );
         notifyGruMarker.setDescription( I18nService.getLocalizedString( strDescription, I18nService.getDefaultLocale( ) ) );
 
         return notifyGruMarker;
