@@ -78,7 +78,7 @@
         <dependency>
             <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>module-workflow-notifygru</artifactId>
-            <version>1.3.6</version>
+            <version>2.1.2</version>
             <type>lutece-plugin</type>
             <exclusions>
                 <exclusion>
@@ -94,7 +94,7 @@
         <dependency>
 			<groupId>fr.paris.lutece.plugins</groupId>
 			<artifactId>library-notifygru</artifactId>
-			<version>1.1.2</version>
+			<version>1.2.2</version>
 			<exclusions>
                 <exclusion>
                     <artifactId>library-httpaccess</artifactId>
