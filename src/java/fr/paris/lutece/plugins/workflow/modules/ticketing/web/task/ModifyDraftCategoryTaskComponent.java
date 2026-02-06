@@ -205,7 +205,7 @@ public class ModifyDraftCategoryTaskComponent extends TicketingTaskComponent
         {
             List<GenericAttributeError> listFormErrors = new ArrayList<>( );
             TaskModifyTicketCategoryConfig config = getTaskConfigService( ).findByPrimaryKey( task.getId( ) );
-            List<Entry> listEntry = TicketFormService.getFilterInputs( ticket.getTicketCategory( ).getId( ), config.getSelectedEntries( ) );
+            List<Entry> listEntry = TicketFormService.getFilterInputs( categoryValidatorResult.getTicketCategory( ).getId( ), config.getSelectedEntries( ) );
 
             boolean hasFFError = false;
             for ( Entry entry : listEntry )
