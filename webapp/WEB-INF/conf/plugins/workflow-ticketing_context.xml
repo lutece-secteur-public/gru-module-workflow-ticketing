@@ -54,6 +54,9 @@
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskAssignTicketToUnitConfigDAO" />
     <bean id="workflow-ticketing.anonymisationDAO"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.anonymisation.AnonymisationDAO" />
+    <bean id="workflow-ticketing.taskManageNbRelanceConfigDAO"
+    class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskManageNbRelanceConfigDAO" />
+        
 
     <!-- NotifyGRU Provider -->
     <bean id="workflow-ticketing.externaluser.provider-manager" class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.email.provider.TicketEmailExternalUserProviderManager">
@@ -97,6 +100,10 @@
         p:taskConfigDAO-ref="workflow-ticketing.taskAssignTicketToUnitConfigDAO" />
     <bean id="workflow-ticketing.purgeAnonymisationService"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.purgeanonymisation.PurgeAnonymisationService" />
+	<bean id="workflow-ticketing.taskManageNbRelanceConfigService"
+    class="fr.paris.lutece.plugins.workflowcore.service.config.TaskConfigService"
+    p:taskConfigDAO-ref="workflow-ticketing.taskManageNbRelanceConfigDAO" />
+		
 
 	<!-- Task config -->
 	<bean id="workflow-ticketing.taskReplyConfig"
@@ -123,6 +130,9 @@
     <bean id="workflow-ticketing.taskChooseNextStateConfig"
         class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskChooseNextStateConfig"
         scope="prototype" />
+    <bean id="workflow-ticketing.taskManageNbRelanceConfig"
+    class="fr.paris.lutece.plugins.workflow.modules.ticketing.business.config.TaskManageNbRelanceConfig"
+    scope="prototype" />
 
 	<!-- Task Generate ticket reference -->
 	<bean id="workflow-ticketing.taskGenerateTicketReference"
@@ -403,6 +413,20 @@
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ChooseNextStateTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeChooseNextState"
 		p:taskConfigService-ref="workflow-ticketing.taskChooseNextStateConfigService" />
+		
+	<!-- Task Manage Nb Relance -->
+    <bean id="workflow-ticketing.taskManageNbRelance"
+        class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskManageNbRelance"
+        scope="prototype" />
+    <bean id="workflow-ticketing.taskTypeManageNbRelance"
+        class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+        p:key="taskManageNbRelance" p:titleI18nKey="module.workflow.ticketing.task_manage_nb_relance.title"
+        p:beanName="workflow-ticketing.taskManageNbRelance"
+        p:configRequired="true" p:formTaskRequired="true" p:taskForAutomaticAction="true" />
+    <bean id="workflow-ticketing.manageNbRelanceTaskComponent"
+    class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ManageNbRelanceTaskComponent"
+    p:taskType-ref="workflow-ticketing.taskTypeManageNbRelance"
+    p:taskConfigService-ref="workflow-ticketing.taskManageNbRelanceConfigService" />
         
             <!-- Task Register channel Courrier -->
     <bean id="workflow-ticketing.taskRegisterChannelCourrierPostal"

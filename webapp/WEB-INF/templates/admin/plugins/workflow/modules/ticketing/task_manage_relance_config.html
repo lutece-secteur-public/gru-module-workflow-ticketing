@@ -1,0 +1,43 @@
+<div id='manage_relance_container'>
+	<#if config?exists>
+		<#assign isUsager = config.isUsager>
+		<#assign isReinit = config.isReinit>
+	<#else>
+	    <#assign isUsager = false>
+        <#assign isReinit = true>
+	</#if>
+	    <@formGroup labelKey='#i18n{module.workflow.ticketing.task_manage_relance_action.title}' helpKey='#i18n{module.workflow.ticketing.manage_relance_action.help}' mandatory=true>
+	     	<@radioButton orientation='horizontal' labelKey='#i18n{module.workflow.ticketing.task_manage_relance_action.labelReinit}' name='is_reinit' value='1'  checked=(isReinit?? && isReinit ) />
+		    <@radioButton orientation='horizontal' labelKey='#i18n{module.workflow.ticketing.task_manage_relance_action.labelAdd}' name='is_reinit' value='0' checked=(isReinit?? && !isReinit ) />	
+		</@formGroup>
+		<@formGroup labelKey='#i18n{module.workflow.ticketing.task_manage_relance_type.title}' helpKey='#i18n{module.workflow.ticketing.manage_relance_type.help}' mandatory=true>
+	     	<@radioButton orientation='horizontal' labelKey='#i18n{module.workflow.ticketing.task_manage_relance_action.labelUsager}' name='is_usager' value='1'  checked=(isUsager?? && isUsager ) />
+		    <@radioButton orientation='horizontal' labelKey='#i18n{module.workflow.ticketing.task_manage_relance_action.labelAgent}' name='is_usager' value='0' checked=(isUsager?? && !isUsager ) />	
+		</@formGroup>
+</div>
+
+<script language="javascript">
+$(document).ready(function() { 
+    	
+	  	$(document).on('change', '.radio input[type=radio]', function () {
+    		if( $(this).prop('checked') == false ){
+    			$(this).prop('checked', false ).removeAttr('checked');
+    		} else {
+    			$(this).prop('checked', true).attr('checked', 'checked');
+    		}
+    	});
+
+	  	/* $('#wf_action_form').submit(function(){
+        	
+        	let relanceTypeSelected = false;
+        	
+    		$('#manage_relance_container input[type=radio]').each(function(){
+    			if( $(this).is(':checked') ){
+    				relanceTypeSelected = true;
+    			}
+    		});
+    		
+	}); */
+
+});
+</script>

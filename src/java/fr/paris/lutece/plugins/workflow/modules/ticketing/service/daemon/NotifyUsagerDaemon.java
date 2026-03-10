@@ -131,7 +131,7 @@ public class NotifyUsagerDaemon extends Daemon
         // boucle sur les tickets
         for ( int nIdResource : listResourceWaitingId )
         {
-            int nNbRelance = 0;
+            int nNbRelanceUsager = 0;
             Timestamp dateDerniereRelance = null;
             Ticket ticket = null;
             boolean isTicketUpdated = false;
@@ -141,10 +141,10 @@ public class NotifyUsagerDaemon extends Daemon
 
                 if ( ticket != null )
                 {
-                    nNbRelance = ticket.getNbRelance( );
+                    nNbRelanceUsager = ticket.getNbRelanceUsager( );
                     dateDerniereRelance = ticket.getDateDerniereRelance( );
 
-                    if ( ( dateDerniereRelance == null ) || ( nNbRelance == 0 ) )
+                    if ( ( dateDerniereRelance == null ) || ( nNbRelanceUsager == 0 ) )
                     {
                         List<ResourceHistory> allHistory = _resourceHistoryService.getAllHistoryByResource( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
                                 nIdWorkflow );
@@ -162,7 +162,7 @@ public class NotifyUsagerDaemon extends Daemon
                         }
                     }
                     else
-                        if ( nNbRelance < nbRelanceMax )
+                    if ( nNbRelanceUsager < nbRelanceMax )
                         {
                             int nRelance = processRelance( ticket, dateDerniereRelance, dateExecution );
                             nNbTicketRelance = nNbTicketRelance + nRelance;
@@ -180,10 +180,10 @@ public class NotifyUsagerDaemon extends Daemon
             {
                 AppLogService.error( "Erreur du traitement du ticket " + nIdResource, e );
 
-                if ( ( ticket != null ) && ( ticket.getNbRelance( ) != nNbRelance ) )
+                if ( ( ticket != null ) && ( ticket.getNbRelanceUsager( ) != nNbRelanceUsager ) )
                 {
                     // si le ticket a été mis à jour mais a eu une erreur
-                    ticket.setNbRelance( nNbRelance );
+                    ticket.setNbRelanceUsager( nNbRelanceUsager );
                     ticket.setDateDerniereRelance( dateDerniereRelance );
                     TicketHome.update( ticket, false );
                     isTicketUpdated = true;
@@ -267,7 +267,7 @@ public class NotifyUsagerDaemon extends Daemon
         if ( dateLimiteRelance.before( dateExecution ) )
         {
             ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
-            ticket.setNbRelance( ticket.getNbRelance( ) + 1 );
+            ticket.setNbRelanceUsager( ticket.getNbRelanceUsager( ) + 1 );
 
             // mise à jour du ticket (sans màj de la date d'update)
             // update date true si retour de sollicitation, false si relance auto
@@ -303,8 +303,9 @@ public class NotifyUsagerDaemon extends Daemon
             if ( nIdDerniereActionManuelle == nIdActionDemandeComplementUsager )
             {
                 ticket.setDateDerniereRelance( new Timestamp( dateExecution.getTime( ) ) );
+                ;
                 // remise à 0
-                ticket.setNbRelance( 0 );
+                ticket.setNbRelanceUsager( 0 );
 
                 // mise à jour du ticket
                 // update date true si retour de sollicitation, false si relance auto
