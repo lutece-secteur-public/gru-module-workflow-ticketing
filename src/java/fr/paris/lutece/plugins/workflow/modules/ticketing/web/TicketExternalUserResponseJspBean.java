@@ -114,6 +114,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
     private static final String MARK_LIST_EXTERNAL_USER_MESSAGE = "list_external_user_message";
     private static final String MARK_ID_ACTION = "id_action";
     private static final String MARK_ID_TICKET = "id_ticket";
+    private static final String                MARK_TICKET_INFO_LIST                         = "ticket_info_list";
     private static final String MARK_ID_MESSAGE_EXTERNAL_USER = "id_message_external_user";
     private static final String MARK_LIST_FILE_UPLOAD = "list_file_uploaded";
     private static final String MARK_LIST_FILE_INIT = "list_file_init";
@@ -289,6 +290,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
                 }
             }
         }
+        Map<String, String> ticketInfolist = TicketHome.getTicketinfoExternalResponseReferenceList( ticket.getId( ) );
 
         State state = WorkflowService.getInstance( ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
                 AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ID, 301 ), -1 );
@@ -309,6 +311,7 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         model.put( MARK_ID_TICKET, ticket.getId( ) );
         model.put( MARK_ID_MESSAGE_EXTERNAL_USER, strIdEmailExternalUser );
         model.put( TicketingConstants.MARK_TOKEN_WKF, token );
+        model.put( MARK_TICKET_INFO_LIST, ticketInfolist );
 
         if ( ( state != null ) && ( state.getId( ) != AppPropertiesService.getPropertyInt( PROPERTY_TICKET_STATUS_WAITING, 307 ) ) )
         {
