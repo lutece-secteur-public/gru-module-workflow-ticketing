@@ -76,7 +76,7 @@ import fr.paris.lutece.util.url.UrlItem;
 
 /**
  *
- * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicket}
+ * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyDraft}
  *
  */
 public class ModifyDraftTaskComponent extends TicketingTaskComponent

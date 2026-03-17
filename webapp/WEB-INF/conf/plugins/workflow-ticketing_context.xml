@@ -595,17 +595,17 @@
         p:taskType-ref="workflow-ticketing.taskTypeTicketEmailExternalUser"
         p:taskConfigService-ref="workflow-ticketing.taskTicketEmailExternalUserConfigService" />
 
-	<!-- Task Modify ticket -->
-	<bean id="workflow-ticketing.taskModifyTicket"
-		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicket"
+	<!-- Task Modify pj -->
+	<bean id="workflow-ticketing.taskModifyPj"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyPj"
 		scope="prototype" />
-	<bean id="workflow-ticketing.taskTypeModifyTicket"
+	<bean id="workflow-ticketing.taskTypeModifyPj"
 		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
-		p:key="taskModifyTicket" p:titleI18nKey="module.workflow.ticketing.task_modify_ticket.title"
-		p:beanName="workflow-ticketing.taskModifyTicket" p:formTaskRequired="true" />
-	<bean id="workflow-ticketing.modifyTicketTaskComponent"
-		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketTaskComponent"
-		p:taskType-ref="workflow-ticketing.taskTypeModifyTicket" />
+		p:key="taskModifyPj" p:titleI18nKey="module.workflow.ticketing.task_modify_pj.title"
+		p:beanName="workflow-ticketing.taskModifyPj" p:formTaskRequired="true" />
+	<bean id="workflow-ticketing.modifyPjTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyPjTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeModifyPj" />
 		
 	<!-- Task Modify draft -->
 	<bean id="workflow-ticketing.taskModifyDraft"
@@ -618,6 +618,18 @@
 	<bean id="workflow-ticketing.modifyDraftTaskComponent"
 		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyDraftTaskComponent"
 		p:taskType-ref="workflow-ticketing.taskTypeModifyDraft" />
+		
+	<!-- Task Modify ticket without pj -->
+	<bean id="workflow-ticketing.taskModifyTicketWithoutPj"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketWithoutPj"
+		scope="prototype" />
+	<bean id="workflow-ticketing.taskTypeModifyTicketWithoutPj"
+		class="fr.paris.lutece.plugins.workflowcore.business.task.TaskType"
+		p:key="taskModifyTicketWithoutPj" p:titleI18nKey="module.workflow.ticketing.task_modify_without_pj.title"
+		p:beanName="workflow-ticketing.taskModifyTicketWithoutPj" p:formTaskRequired="true" />
+	<bean id="workflow-ticketing.modifyTicketWithoutPjTaskComponent"
+		class="fr.paris.lutece.plugins.workflow.modules.ticketing.web.task.ModifyTicketWithoutPjTaskComponent"
+		p:taskType-ref="workflow-ticketing.taskTypeModifyTicketWithoutPj" />
 
 	<!-- Task Notify waiting ticket -->
 	<bean id="workflow-ticketing.taskNotifyWaitingTicket"
