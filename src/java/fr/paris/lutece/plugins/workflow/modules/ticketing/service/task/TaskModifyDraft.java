@@ -34,19 +34,12 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
 import fr.paris.lutece.plugins.ticketing.business.arrondissement.Arrondissement;
 import fr.paris.lutece.plugins.ticketing.business.arrondissement.ArrondissementHome;
@@ -56,20 +49,10 @@ import fr.paris.lutece.plugins.ticketing.business.quartier.Quartier;
 import fr.paris.lutece.plugins.ticketing.business.quartier.QuartierHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
-import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPj;
-import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPjHome;
 import fr.paris.lutece.plugins.ticketing.business.usertitle.UserTitleHome;
-import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
-import fr.paris.lutece.plugins.ticketing.service.entrytype.EntryTypeFile;
-import fr.paris.lutece.plugins.ticketing.service.strois.STroisService;
-import fr.paris.lutece.plugins.ticketing.service.strois.StockageService;
-import fr.paris.lutece.plugins.ticketing.service.upload.TicketAsynchronousUploadHandler;
-import fr.paris.lutece.plugins.ticketing.service.util.ResponseUtil;
-import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.bean.BeanUtil;
 
 /**
@@ -94,17 +77,9 @@ public class TaskModifyDraft extends AbstractTicketingTask
     private static final String MESSAGE_MODIFY_TICKET_CONTACT_MODE_INFORMATION        = "module.workflow.ticketing.task_modify_ticket.contact_mode_information";
     private static final String MESSAGE_MODIFY_TICKET_COMMENT_INFORMATION             = "module.workflow.ticketing.task_modify_ticket.comment_information";
     private static final String MESSAGE_MODIFY_TICKET_NO_MODIFICATIONS_INFORMATION    = "module.workflow.ticketing.task_modify_ticket.no_modifications_information";
-    private static final String MESSAGE_MODIFY_TICKET_ATTACHMENT                      = "module.workflow.ticketing.task_modify_ticket_attachment.information";
 
     // Constant
-    private static final String NOT_FILLED_INFORMATION                                = "module.workflow.ticketing.task_modify_ticket.no_information";
-    private static final String SERVEUR_SIDE                                          = AppPropertiesService.getProperty( TicketingConstants.PROPERTY_STROIS_SERVEUR );
-
-    // Errors
-    private static final String ERROR_RESOURCE_NOT_FOUND                              = "Resource not found";
-
-    @Inject
-    private TicketFormService   _ticketFormService;
+    private static final String NOT_FILLED_INFORMATION                                = "module.workflow.ticketing.task_modify_ticket.no_information";;
 
     @Override
     public String getTitle( Locale locale )
@@ -117,45 +92,6 @@ public class TaskModifyDraft extends AbstractTicketingTask
     {
         String strTaskInformation = StringUtils.EMPTY;
         Ticket ticket = getTicket( nIdResourceHistory );
-
-        // save current values, clear ticket
-        List<Response> listCurrentResponse = ticket.getListResponse( );
-
-
-        // Gets Map of Response by idEntry
-        Map<Integer, List<Response>> currentResponsesByIdEntry = listCurrentResponse.stream( )
-                .filter( r -> StringUtils.equals( r.getEntry( ).getEntryType( ).getBeanName( ), EntryTypeFile.BEAN_NAME ) ).collect( Collectors.groupingBy( r -> r.getEntry( ).getIdEntry( ) ) );
-
-        for ( Map.Entry<Integer, List<Response>> mapEntry : currentResponsesByIdEntry.entrySet( ) )
-        {
-
-            Entry entry = EntryHome.findByPrimaryKey( mapEntry.getKey( ) );
-            _ticketFormService.getResponseEntry( request, entry.getIdEntry( ), locale, ticket );
-            List<Response> newResponsesForEntry = ticket.getListResponse( ).stream( ).filter( r -> ( r.getEntry( ).getIdEntry( ) == entry.getIdEntry( ) ) && ( r.getIdResponse( ) == 0 ) )
-                    .collect( Collectors.toList( ) );
-
-            // Create new responses
-            newResponsesForEntry.forEach( response ->
-            {
-                response = ResponseUtil.createResponse( response );
-                TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
-            } );
-
-            // Delete old responses
-            mapEntry.getValue( ).forEach( response ->
-            {
-                TicketPj pj = TicketPjHome.findIdPjFromIdResponse( response.getIdResponse( ) );
-                if ( ( null != pj ) && ( pj.getStockageTicketing( ) != 0 ) )
-                {
-                    deletePj( pj );
-                }
-                TicketHome.removeTicketResponse( ticket.getId( ), response.getIdResponse( ) );
-            } );
-
-            strTaskInformation += I18nService.getLocalizedString( MESSAGE_MODIFY_TICKET_ATTACHMENT, locale );
-        }
-        TicketAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
-        _ticketFormService.removeTicketFromSession( request.getSession( ) );
 
         // Populate the Ticket
         Ticket ticketWithNewData = new Ticket( );
@@ -396,12 +332,5 @@ public class TaskModifyDraft extends AbstractTicketingTask
     private String evaluateValue( String strValue, Locale locale )
     {
         return ( StringUtils.isBlank( strValue ) ? I18nService.getLocalizedString( NOT_FILLED_INFORMATION, locale ) : strValue );
-    }
-
-    private void deletePj( TicketPj pj )
-    {
-        String profil = STroisService.findTheProfilAndServerS3( pj.getStockageTicketing( ), SERVEUR_SIDE );
-        StockageService stockageService = new StockageService( profil );
-        stockageService.deleteFileOnS3Serveur( pj.getUrlTicketing( ) );
     }
 }

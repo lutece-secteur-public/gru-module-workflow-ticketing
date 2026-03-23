@@ -99,10 +99,15 @@ public class TaskAutomaticAgentAssignmentParisFamille extends AbstractTicketingT
 
         List<Unit> listUnit = UnitHome.findByIdUser( adminUser.getUserId( ) );
         AssigneeUnit assigneeUnit = null;
+        String strUnitName = StringUtils.EMPTY;
 
         if ( ( listUnit != null ) && ( !listUnit.isEmpty( ) ) )
         {
             assigneeUnit = new AssigneeUnit( listUnit.get( 0 ) );
+            if( null != assigneeUnit )
+            {
+                strUnitName = assigneeUnit.getName( );
+            }
         }
 
         if ( assigneeUnit != null )
@@ -115,8 +120,9 @@ public class TaskAutomaticAgentAssignmentParisFamille extends AbstractTicketingT
 
         TicketHome.updateAssignAll( assigneeUser, assigneeUnit, null, null, ticket.getId( ) );
 
-        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AGENT_AUTOMATIC_ASSIGNATION_INFORMATION, Locale.FRENCH ),
-                adminUser.getFirstName( ) + " " + adminUser.getLastName( ), ticket.getAssigneeUnit( ).getName( ) );
+        return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AGENT_AUTOMATIC_ASSIGNATION_INFORMATION, Locale.FRENCH ), adminUser.getFirstName( ) + " " + adminUser.getLastName( ),
+                ticket.getAssigneeUnit( ) != null ? ticket.getAssigneeUnit( ).getName( ) : strUnitName );
+
     }
 
     @Override
