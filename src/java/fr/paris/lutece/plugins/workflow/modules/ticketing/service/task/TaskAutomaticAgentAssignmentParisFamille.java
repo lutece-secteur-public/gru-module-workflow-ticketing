@@ -53,6 +53,7 @@ import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
 import fr.paris.lutece.plugins.workflow.modules.ticketing.service.assignment.IAutomaticAssignmentAgentParisFamilleService;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
@@ -103,8 +104,11 @@ public class TaskAutomaticAgentAssignmentParisFamille extends AbstractTicketingT
         if ( ( listUnit != null ) && ( !listUnit.isEmpty( ) ) )
         {
             assigneeUnit = new AssigneeUnit( listUnit.get( 0 ) );
+            if( null != assigneeUnit )
+            {
+                AppLogService.info( "Unite trouvee pour user " + adminUser.getUserId( ) + "  : " + assigneeUnit.getName( ) );
+            }
         }
-
         if ( assigneeUnit != null )
         {
             if ( ( null != ticket.getAssigneeUnit( ) ) && ( ticket.getAssigneeUnit( ).getUnitId( ) != assigneeUnit.getUnitId( ) ) && ( request != null ) )
@@ -116,7 +120,7 @@ public class TaskAutomaticAgentAssignmentParisFamille extends AbstractTicketingT
         TicketHome.updateAssignAll( assigneeUser, assigneeUnit, null, null, ticket.getId( ) );
 
         return MessageFormat.format( I18nService.getLocalizedString( MESSAGE_AGENT_AUTOMATIC_ASSIGNATION_INFORMATION, Locale.FRENCH ),
-                adminUser.getFirstName( ) + " " + adminUser.getLastName( ), ticket.getAssigneeUnit( ).getName( ) );
+                adminUser.getFirstName( ) + " " + adminUser.getLastName( ), ticket.getAssigneeUnit( ) != null ? ticket.getAssigneeUnit( ).getName( ) : "" );
     }
 
     @Override
