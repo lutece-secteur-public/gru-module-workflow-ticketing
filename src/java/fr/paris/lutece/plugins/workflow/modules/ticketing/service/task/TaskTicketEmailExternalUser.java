@@ -222,6 +222,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
                 _ticketEmailExternalUserCcDAO.insert( infosEmailExternalUser );
             }
         }
+        TicketHome.updateDate( ticket );
     }
 
     /**
@@ -263,6 +264,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
         emailExternalUserHistory.setIdTask( getId( ) );
         emailExternalUserHistory.setIdMessageExternalUser( emailExternalUser.getIdMessageExternalUser( ) );
         _ticketEmailExternalUserHistoryDAO.insert( emailExternalUserHistory );
+        TicketHome.updateDate( ticket );
     }
 
     /**
