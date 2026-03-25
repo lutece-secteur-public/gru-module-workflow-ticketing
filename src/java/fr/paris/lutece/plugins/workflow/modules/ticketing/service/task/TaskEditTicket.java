@@ -296,8 +296,11 @@ public class TaskEditTicket extends AbstractTicketingTask
             sbEntries.append( entry.getTitle( ) ).append( SEPARATOR );
         }
 
-        // remove and add generic attributes responses
-        TicketHome.removeTicketResponseByIdEntry( ticket.getId( ), listIdsEntryToEdit );
+        if ( listIdsEntryToEdit.size( ) > 0 )
+        {
+            // remove and add generic attributes responses
+            TicketHome.removeTicketResponseByIdEntry( ticket.getId( ), listIdsEntryToEdit );
+        }
 
         if ( ( ticket.getListResponse( ) != null ) && !ticket.getListResponse( ).isEmpty( ) )
         {
