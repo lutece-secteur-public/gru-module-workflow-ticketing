@@ -72,17 +72,58 @@
        <#if ticket_info_list?has_content>
 	    <div class="col-xs-12 col-sm-offset-1 col-sm-10">
 		    <#list ticket_info_list as key, value>
-	       		<div class="row form-group">
-					<div class="info_user col-xs-12 col-sm-12 col-md-3 col-lg-3 control-label right">
-				    	<p class="mr-5">${key}</p>
-				    </div>
-					<div class="info_user col-xs-12 col-sm-12 col-md-9 col-lg-9 control-label left">
-						<div class="pull-left">
-					    	<p class="pull-left">${value!}</p>
-					    </div>
-			    	</div>
+			  <#-- CAS SPECIAL : on remplace l'affichage de la ligne "Adresse" -->
+			  <#if key == "Adresse">
+			
+			    <#-- On récupère les 3 champs depuis la map (mêmes clés que chez toi) -->
+			    <#assign adr  = (ticket_info_list["Adresse"]!"")?trim >
+			    <#assign cp   = (ticket_info_list["CP"]!"")?trim >
+			    <#assign city = (ticket_info_list["City"]!"")?trim >
+			
+			    <#-- Construction de la ligne -->
+			    <#assign adresseLine = "" >
+			
+			    <#if adr?has_content>
+			      <#assign adresseLine = adr>
+			    </#if>
+			
+			    <#if cp?has_content>
+			      <#assign adresseLine = (adresseLine?has_content)?then(adresseLine + " " + cp, cp)>
+			    </#if>
+			
+			    <#if city?has_content>
+			      <#assign adresseLine = (adresseLine?has_content)?then(adresseLine + " " + city, city)>
+			    </#if>
+			
+			    <#-- Affichage uniquement si au moins un des 3 champs existe -->
+			    <#if adresseLine?has_content>
+			      <div class="row form-group">
+			        <div class="info_user col-xs-12 col-sm-12 col-md-3 col-lg-3 control-label right">
+			          <p class="mr-5">Adresse postale</p>
+			        </div>
+			        <div class="info_user col-xs-12 col-sm-12 col-md-9 col-lg-9 control-label left">
+			          <div class="pull-left">
+			            <p class="pull-left">${adresseLine}</p>
+			          </div>
+			        </div>
+			      </div>
+			    </#if>
+			
+			  <#-- CAS STANDARD : on affiche toutes les autres entrées -->
+			  <#elseif value?has_content && key != "CP" && key != "City">
+			    <div class="row form-group">
+			      <div class="info_user col-xs-12 col-sm-12 col-md-3 col-lg-3 control-label right">
+			        <p class="mr-5">${key}</p>
+			      </div>
+			      <div class="info_user col-xs-12 col-sm-12 col-md-9 col-lg-9 control-label left">
+			        <div class="pull-left">
+			          <p class="pull-left">${value!}</p>
+			        </div>
+			      </div>
 			    </div>
-		   	 </#list>
+			  </#if>
+			
+			</#list>
 	   	</div> 
     	</#if>
       <#if list_file_init?has_content>

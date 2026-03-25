@@ -35,10 +35,12 @@ package fr.paris.lutece.plugins.workflow.modules.ticketing.web;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -295,9 +297,16 @@ public class TicketExternalUserResponseJspBean extends WorkflowCapableJspBean
         State state = WorkflowService.getInstance( ).getState( ticket.getId( ), Ticket.TICKET_RESOURCE_TYPE,
                 AppPropertiesService.getPropertyInt( PROPERTY_WORKFLOW_ID, 301 ), -1 );
 
+        List<TicketEmailExternalUserMessageDisplay> listEmailExternalUserMessageDisplayReversed = listEmailExternalUserMessageDisplay.stream( )
+                .collect( Collectors.collectingAndThen( Collectors.toList( ), l ->
+                {
+                    Collections.reverse( l );
+                    return l;
+                } ) );
+
         Map<String, Object> model = getModel( );
         model.put( MARK_REFERENCE, ticket.getReference( ) );
-        model.put( MARK_LIST_EXTERNAL_USER_MESSAGE, listEmailExternalUserMessageDisplay );
+        model.put( MARK_LIST_EXTERNAL_USER_MESSAGE, listEmailExternalUserMessageDisplayReversed );
         model.put( MARK_LIST_FILE_UPLOAD, listFileUpload );
         model.put( MARK_LIST_FILE_INIT, listFileInit );
         model.put( MARK_MAP_FILE_URL, mapFileUrl );
