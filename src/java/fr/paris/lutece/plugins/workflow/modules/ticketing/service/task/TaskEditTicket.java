@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -52,10 +53,10 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.ticketing.business.ticket.Ticket;
 import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPj;
-import fr.paris.lutece.plugins.ticketing.business.ticketpj.TicketPjHome;
 import fr.paris.lutece.plugins.ticketing.service.TicketFormService;
 import fr.paris.lutece.plugins.ticketing.service.strois.STroisService;
 import fr.paris.lutece.plugins.ticketing.service.strois.StockageService;
@@ -275,6 +276,8 @@ public class TaskEditTicket extends AbstractTicketingTask
 
         List<Entry> listEntriesToEdit = _editableTicketService.buildListEntriesToEdit( request, editableTicket.getListEditableTicketFields( ) );
 
+        List<Integer> listIdsEntryToEdit = listEntriesToEdit.stream( ).filter( entry -> entry.getEntryType( ).getIdType( ) != 215 ).map( Entry::getIdEntry ).collect( Collectors.toList( ) );
+
         for ( Entry entry : listEntriesToEdit )
         {
             Iterator<Response> iterator = ticket.getListResponse( ).iterator( );
@@ -293,22 +296,33 @@ public class TaskEditTicket extends AbstractTicketingTask
             sbEntries.append( entry.getTitle( ) ).append( SEPARATOR );
         }
 
-        // remove and add generic attributes responses
-        TicketHome.removeTicketResponse( ticket.getId( ) );
+        if ( listIdsEntryToEdit.size( ) > 0 )
+        {
+            // remove and add generic attributes responses
+            TicketHome.removeTicketResponseByIdEntry( ticket.getId( ), listIdsEntryToEdit );
+        }
 
         if ( ( ticket.getListResponse( ) != null ) && !ticket.getListResponse( ).isEmpty( ) )
         {
             for ( Response response : ticket.getListResponse( ) )
             {
-                TicketPj pj = TicketPjHome.findIdPjFromIdResponse( response.getIdResponse( ) );
-                if ( ( null != pj ) && ( pj.getStockageTicketing( ) != 0 ) )
+                // Vérifier si la réponse contient un fichier
+                if ( response.getFile( ) == null )
                 {
-                    deletePj( pj );
+                    // supprimer les reponse qui n'en ont pas 
+                    TicketHome.removeTicketResponse( ticket.getId( ), response.getIdResponse( ) );
+                    ResponseHome.remove( response.getIdResponse( ) );
                 }
-                response = ResponseUtil.createResponse( response );
-                TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
+
+                if ( response.getIdResponse( ) == 0 )
+                {
+                    response = ResponseUtil.createResponse( response );
+                    TicketHome.insertTicketResponse( ticket.getId( ), response.getIdResponse( ) );
+                }
             }
+
         }
+        // Vérifier si la réponse contient un fichie
 
         if ( sbEntries.length( ) != 0 )
         {

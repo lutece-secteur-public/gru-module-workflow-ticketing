@@ -1,0 +1,14 @@
+<#include "/skin/plugins/asynchronousupload/upload_commons.html"/>
+
+${entry_attached_files!''} 
+
+<@addRequiredJsFiles />
+<script>
+$( function() {
+	$('#wf_action_form').submit(function( ){
+		$('#id_quartier').prop('disabled', false);
+	});
+	
+});
+</script>
+<script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>

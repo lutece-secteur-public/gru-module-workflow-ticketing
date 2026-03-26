@@ -46,6 +46,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.ticketing.business.address.TicketAddress;
 import fr.paris.lutece.plugins.ticketing.business.arrondissement.ArrondissementHome;
 import fr.paris.lutece.plugins.ticketing.business.category.TicketCategory;
@@ -73,19 +75,18 @@ import fr.paris.lutece.util.url.UrlItem;
 
 /**
  *
- * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicket}
+ * This class is a component for the task {@link fr.paris.lutece.plugins.workflow.modules.ticketing.service.task.TaskModifyTicketWithoutPj}
  *
  */
-public class ModifyTicketTaskComponent extends TicketingTaskComponent
+public class ModifyTicketWithoutPjTaskComponent extends TicketingTaskComponent
 {
     // Constants
     private static final String JSP_VIEW_TICKET = TicketingConstants.ADMIN_CONTROLLLER_PATH + TicketingConstants.JSP_VIEW_TICKET;
     private static final String URL_STOREADR                     = "ticketing.storeadr.url";
     private static final String URL_CAPGEO                       = "ticketing.capgeo.url";
-    private static final String MARK_ARRONDISSEMENTS_LIST        = "arrondissements_list";
 
     // Templates
-    private static final String TEMPLATE_TASK_MODIFY_TICKET_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket.html";
+    private static final String TEMPLATE_TASK_MODIFY_TICKET_WITHOUT_PJ_FORM = "admin/plugins/workflow/modules/ticketing/task_modify_ticket_without_pj.html";
 
     // Marks
     private static final String MARK_USER_TITLE_LIST = "user_titles_list";
@@ -94,6 +95,7 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
     private static final String MARK_ENTRY_ATTACHED_FILE = "entry_attached_files";
     private static final String MARK_STOREADR_URL                = "storeAdrUrl";
     private static final String MARK_CAPGEO_URL                  = "capgeoUrl";
+    private static final String MARK_ARRONDISSEMENTS_LIST        = "arrondissements_list";
 
     // Messages
     private static final String MESSAGE_MODIFY_TICKET_ERROR = "module.workflow.ticketing.task_modify_ticket.error";
@@ -125,6 +127,15 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
         _ticketFormService.saveTicketInSession( request.getSession( ), ticket );
         String htmlForm = _ticketFormService.getHtmlForm( listEntries, request.getLocale( ), false, request );
 
+        List<String> listReadOnlyResponseHtml = new ArrayList<>( listEntries.size( ) );
+
+        for ( Response response : responseList )
+        {
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( response.getEntry( ) );
+            listReadOnlyResponseHtml.add( entryTypeService.getResponseValueForRecap( response.getEntry( ), request, response, request.getLocale( ) ) );
+        }
+
+        model.put( TicketingConstants.MARK_LIST_READ_ONLY_HTML_RESPONSES, listReadOnlyResponseHtml );
         model.put( MARK_ENTRY_ATTACHED_FILE, htmlForm );
         model.put( MARK_USER_TITLE_LIST, UserTitleHome.getReferenceList( request.getLocale( ) ) );
         model.put( MARK_CONTACT_MODE_LIST, ContactModeHome.getReferenceList( request.getLocale( ) ) );
@@ -132,7 +143,7 @@ public class ModifyTicketTaskComponent extends TicketingTaskComponent
         model.put( MARK_CAPGEO_URL, AppPropertiesService.getProperty( URL_CAPGEO ) );
         model.put( MARK_ARRONDISSEMENTS_LIST, ArrondissementHome.getReferenceList( ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_FORM, locale, model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_TASK_MODIFY_TICKET_WITHOUT_PJ_FORM, locale, model );
 
         return template.getHtml( );
     }
