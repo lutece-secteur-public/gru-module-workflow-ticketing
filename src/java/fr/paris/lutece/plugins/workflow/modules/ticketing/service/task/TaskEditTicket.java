@@ -307,7 +307,7 @@ public class TaskEditTicket extends AbstractTicketingTask
             for ( Response response : ticket.getListResponse( ) )
             {
                 // Vérifier si la réponse contient un fichier
-                if ( response.getFile( ) == null )
+                if ( response.getFile( ) == null && response.getEntry( ) != null && listIdsEntryToEdit.contains( response.getEntry( ).getIdEntry( ) ) )
                 {
                     // supprimer les reponse qui n'en ont pas 
                     TicketHome.removeTicketResponse( ticket.getId( ), response.getIdResponse( ) );
