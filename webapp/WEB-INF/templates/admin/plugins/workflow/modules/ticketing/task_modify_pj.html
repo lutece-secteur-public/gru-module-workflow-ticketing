@@ -1,14 +1,9 @@
 <#include "/skin/plugins/asynchronousupload/upload_commons.html"/>
 
-${entry_attached_files!''} 
+<#if entry_attached_files?? && entry_attached_files?has_content>
+    ${entry_attached_files!''}
+<#else>    
+	<p>Cette sollicitation ne contient pas de pièce jointe</p>
+</#if>
 
-<@addRequiredJsFiles />
-<script>
-$( function() {
-	$('#wf_action_form').submit(function( ){
-		$('#id_quartier').prop('disabled', false);
-	});
-	
-});
-</script>
 <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=ticketAsynchronousUploadHandler" ></script>
