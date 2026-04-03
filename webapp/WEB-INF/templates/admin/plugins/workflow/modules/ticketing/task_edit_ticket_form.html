@@ -55,7 +55,7 @@
       </div>
       <@initEditor />
       <script>
-	   $( function(){
+	   $( function(){	   
             $("#search_results_div").hide();
             //unregister previous listeners
             $(document).off('click','a[name^="response_"]');
@@ -67,7 +67,8 @@
                 }
             });
 		 });
-		function showSearchResponse() {
+
+	       function showSearchResponse() {
 			$("#search_results_div").toggle();
 			//start search
 			if( $("#search_results_div").is(':visible') ) {
@@ -104,14 +105,53 @@
 	        <div class="form-group">
 	          <label class="col-xs-12 col-sm-3 control-label" for="message_${config.idTask}">#i18n{module.workflow.ticketing.task_edit_ticket_form.labelUserMessage} :</label>
 	          <div class="col-xs-12 col-sm-9">
-	              <textarea rows="6" class="form-control" name="user_message"></textarea>
-	          </div>
+	              <textarea rows="6" class="form-control" id="user_message" name="user_message" maxlength="4000"></textarea>
+	          </div>        
 	        </div>
+	        <div id="id_error_message" class="col-sm-offset-3 col-sm-9 label label-warning hide">Le message ne peut pas dépasser 4000 caractères.</div>
     </#if>
     <#if displayAlertEmail?? && displayAlertEmail == false>
  		<div class="col-xs-12 col-sm-offset-3 col-sm-9 col-md-9 col-lg-9 alert alert-warning mt-15">
        		<i class="fas fa-exclamation-circle"></i>
        		<span>#i18n{module.workflow.ticketing.task_reply.message.email.not.found}</span>
      	</div>
-	</#if>   
+	</#if>
+	<script>
+	   $( function(){
+			
+			$("#save").click(function(  ){
+        		$('#save').prop('disabled', true);
+        		$('#edit_ticket').submit();
+        	});
+            
+            const max = 4000;
+            
+            function checkLength() {
+            	$('#next_button').prop('disabled', false); 
+                const textarea = $("#user_message");
+                const error = $("#id_error_message");
+                
+                if (textarea.length === 0) {
+                    return;
+                    console.log("textarea vide");	
+                } 
+                
+                const length = textarea.val().length;
+
+                // affichage / masquage erreur
+                if (length >= max) {
+                    error.removeClass("hide");
+                    $('#next_button').prop('disabled', true);
+                } else {
+                    error.addClass("hide");
+                	$('#next_button').prop('disabled', false);
+                }
+            }
+    		// EVENT DÉLÉGUÉ : fonctionne même si le textarea est injecté après
+    		$(document).on("input", "#user_message", checkLength);
+
+            // sécurité : au chargement (valeur déjà présente)
+            checkLength();
+            });
+            </script>
 </#if>

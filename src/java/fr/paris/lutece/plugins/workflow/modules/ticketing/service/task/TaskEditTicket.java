@@ -76,6 +76,7 @@ import fr.paris.lutece.portal.service.content.XPageAppService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
@@ -327,6 +328,14 @@ public class TaskEditTicket extends AbstractTicketingTask
         if ( sbEntries.length( ) != 0 )
         {
             sbEntries.delete( sbEntries.length( ) - SEPARATOR.length( ), sbEntries.length( ) );
+        }
+
+        // Limitation appliquée ici car le message usager est renseigné
+        // via une tache de workflow et ne passe pas par un controleur
+        if ( strUserMessage != null && strUserMessage.replace( "\r\n", "\n" ).length( ) > 4000 )
+        {
+            // on stoppe la tâche
+            throw new AppException( "Le message ne peut pas dépasser 4000 caractères." );
         }
 
         // Date execution
