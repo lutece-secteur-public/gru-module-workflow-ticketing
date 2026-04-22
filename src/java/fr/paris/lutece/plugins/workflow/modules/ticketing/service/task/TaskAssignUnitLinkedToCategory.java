@@ -34,7 +34,10 @@
 package fr.paris.lutece.plugins.workflow.modules.ticketing.service.task;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,7 +50,9 @@ import fr.paris.lutece.plugins.ticketing.business.ticket.TicketHome;
 import fr.paris.lutece.plugins.ticketing.web.TicketingConstants;
 import fr.paris.lutece.plugins.unittree.business.unit.Unit;
 import fr.paris.lutece.plugins.unittree.business.unit.UnitHome;
+import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
  * This class represents a task to assign a unit from the category selected
@@ -58,6 +63,7 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
     // Messages
     private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY = "module.workflow.ticketing.task_assign_unit_linked_to_category.labelAssignTicketLinkedToCategory";
     private static final String MESSAGE_ASSIGN_TICKET_TO_UNIT_LINKED_TO_CATEGORY_INFORMATION = "module.workflow.ticketing.task_assign_unit_linked_to_category.information";
+    private static final String PROPERTY_REQUALIFICATION_ACTION_IDS                          = "workflow.ticketing.actions.requalification";
 
     @Override
     public String processTicketingTask( int nIdResourceHistory, HttpServletRequest request, Locale locale )
@@ -82,6 +88,12 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
 
             if ( unit != null )
             {
+                // Si c'est une requalification, persister l'entité en cours AVANT le changement
+                if ( isRequalificationAction( nIdResourceHistory ) && assigneeUnit.getUnitId( ) >= 0 )
+                {
+                    TicketHome.updateLastEntityAssigned( assigneeUnit.getUnitId( ), ticket.getId( ) );
+                }
+
                 if ( ( assigneeUnit.getUnitId( ) != unit.getIdUnit( ) ) && ( request != null ) )
                 {
                     request.setAttribute( TicketingConstants.ATTRIBUTE_IS_UNIT_CHANGED, true );
@@ -100,6 +112,25 @@ public class TaskAssignUnitLinkedToCategory extends AbstractTicketingTask
         }
 
         return strTaskInformation;
+    }
+
+    /**
+     * Vérifie si l'action workflow en cours fait partie des actions de requalification configurées
+     */
+    private boolean isRequalificationAction( int nIdResourceHistory )
+    {
+        String strActionIds = AppPropertiesService.getProperty( PROPERTY_REQUALIFICATION_ACTION_IDS, "" );
+
+        if ( StringUtils.isEmpty( strActionIds ) )
+        {
+            return false;
+        }
+
+        List<Integer> listRequalifActionIds = Arrays.stream( strActionIds.split( ";" ) ).map( String::trim ).filter( s -> !s.isEmpty( ) ).map( Integer::parseInt ).collect( Collectors.toList( ) );
+
+        ResourceHistory resourceHistory = _resourceHistoryService.findByPrimaryKey( nIdResourceHistory );
+
+        return ( resourceHistory != null ) && listRequalifActionIds.contains( resourceHistory.getAction( ).getId( ) );
     }
 
     @Override
