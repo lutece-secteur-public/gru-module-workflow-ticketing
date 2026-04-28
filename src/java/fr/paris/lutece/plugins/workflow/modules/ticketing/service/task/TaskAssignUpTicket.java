@@ -128,6 +128,7 @@ public class TaskAssignUpTicket extends AbstractTicketingTask
                 assigneeUnit.setName( unit.getLabel( ) );
 
                 TicketHome.updateAssignAll( assigneeUser, assigneeUnit, assignerUser, assignerUnit, ticket.getId( ) );
+                TicketHome.updateLastEntityN3( oldUnit, ticket.getId( ) );
 
                 // insert in workflow_resource_history_ticketing
                 ResourceHistory resourceHistory = new ResourceHistory( );
