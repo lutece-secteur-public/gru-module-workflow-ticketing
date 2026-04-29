@@ -75,6 +75,7 @@ public class TaskMarkAsUnread extends AbstractTicketingTask
         if ( ticket != null && config != null )
         {
             TicketHome.setTicketMarkingId( ticket.getId( ), config.getIdMarking( ) );
+            TicketHome.updateDate( ticket );
         }
 
         // no information stored in the history

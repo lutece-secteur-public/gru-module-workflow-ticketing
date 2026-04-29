@@ -135,6 +135,7 @@ public class TaskNotifyWaitingTicket extends SimpleTask
                 {
                     processAgentRecontactTask( nIdResourceHistory, ticket, request );
                 }
+                TicketHome.updateDate( ticket );
         }
     }
 
