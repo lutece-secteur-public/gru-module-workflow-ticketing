@@ -140,6 +140,7 @@ public class TaskTicketEmailExternalUser extends SimpleTask
                     processAgentRecontactTask( nIdResourceHistory, ticket, request, locale, config );
                 }
                 TicketHome.update( ticket, true );
+                TicketHome.updateDate( ticket );
         }
     }
 
@@ -222,7 +223,6 @@ public class TaskTicketEmailExternalUser extends SimpleTask
                 _ticketEmailExternalUserCcDAO.insert( infosEmailExternalUser );
             }
         }
-        TicketHome.updateDate( ticket );
     }
 
     /**
@@ -264,7 +264,6 @@ public class TaskTicketEmailExternalUser extends SimpleTask
         emailExternalUserHistory.setIdTask( getId( ) );
         emailExternalUserHistory.setIdMessageExternalUser( emailExternalUser.getIdMessageExternalUser( ) );
         _ticketEmailExternalUserHistoryDAO.insert( emailExternalUserHistory );
-        TicketHome.updateDate( ticket );
     }
 
     /**
@@ -298,7 +297,6 @@ public class TaskTicketEmailExternalUser extends SimpleTask
         emailExternalUserHistory.setIdTask( getId( ) );
         emailExternalUserHistory.setIdMessageExternalUser( nIdMessageExternalUser );
         _ticketEmailExternalUserHistoryDAO.insert( emailExternalUserHistory );
-
         // No email for this process
     }
 
