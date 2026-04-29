@@ -132,6 +132,33 @@ public class ResourceHistoryService implements IResourceHistoryService, IResourc
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Channel> getChannelHistoryMapByIds( List<Integer> listIdHistory )
+    {
+        Map<String, Channel> mapHistoryChannel = new HashMap<>( );
+
+        if ( listIdHistory == null || listIdHistory.isEmpty( ) )
+        {
+            return mapHistoryChannel;
+        }
+
+        for ( Integer nIdHistory : listIdHistory )
+        {
+            fr.paris.lutece.plugins.workflow.modules.ticketing.business.resourcehistory.ResourceHistory resourceHistoryChannel = findByPrimaryKey( nIdHistory, WorkflowUtils.getPlugin( ) );
+
+            if ( resourceHistoryChannel != null )
+            {
+                Channel channel = ChannelHome.findByPrimaryKey( resourceHistoryChannel.getIdChannel( ) );
+                mapHistoryChannel.put( Integer.toString( resourceHistoryChannel.getIdHistory( ) ), channel );
+            }
+        }
+
+        return mapHistoryChannel;
+    }
+
+    /**
      * remove all the list of ticketing history resource associated to a ticket resource.
      *
      * @param nIdResource
