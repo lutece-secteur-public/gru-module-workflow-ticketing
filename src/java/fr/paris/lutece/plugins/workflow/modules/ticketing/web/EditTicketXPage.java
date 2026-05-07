@@ -102,7 +102,7 @@ public class EditTicketXPage implements XPageApplication
     // MESSAGES
     private static final String MESSAGE_TICKET_ALREADY_EDITED = "module.workflow.ticketing.edit_ticket.message.ticket_already_edited";
     private static final String MESSAGE_EDITION_COMPLETE = "module.workflow.ticketing.edit_ticket.message.edition_complete";
-    private static final String MESSAGE_TICKET_DELETED = "module.workflow.ticketing.externalUserResponse.message.ticket_closed";
+    private static final String              MESSAGE_TICKET_DELETED_OR_DENIED     = "module.workflow.ticketing.externalUserResponse.message.ticket_closed.or.denied";
 
     // Marks
     private static final String MARK_SIGNATURE = "signature";
@@ -206,7 +206,7 @@ public class EditTicketXPage implements XPageApplication
             }
             else
             {
-                setSiteMessage( request, Messages.USER_ACCESS_DENIED, SiteMessage.TYPE_STOP, strUrlReturn );
+                setSiteMessage( request, MESSAGE_TICKET_DELETED_OR_DENIED, SiteMessage.TYPE_INFO, strUrlReturn );
             }
         }
         else
@@ -216,7 +216,7 @@ public class EditTicketXPage implements XPageApplication
             }
             else
             {
-                setSiteMessage( request, MESSAGE_TICKET_DELETED, SiteMessage.TYPE_INFO, strUrlReturn );
+                setSiteMessage( request, MESSAGE_TICKET_DELETED_OR_DENIED, SiteMessage.TYPE_INFO, strUrlReturn );
             }
 
         return page;
